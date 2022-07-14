@@ -14,7 +14,9 @@
           <a-button type="primary" class="tree-button" @click="addEvent">新增分组</a-button>
         </a-col>
         <a-col :span="8">
-          <a-button type="primary" ghost class="tree-button" @click="addSubEvent">新增下级</a-button>
+          <a-button type="primary" ghost class="tree-button" @click="addSubEvent"
+            >新增下级</a-button
+          >
         </a-col>
         <a-col :span="8">
           <a-button danger class="tree-button" @click="deleteEvent">删除分组</a-button>
@@ -23,6 +25,7 @@
     </card>
     <basic-tree
       ref="tree"
+      @select="selectTree"
       :search="prop.search"
       :toolbar="prop.toolbar"
       :tree-data="prop.treeData"
@@ -51,6 +54,7 @@
     (e: 'addEvent'): void;
     (e: 'addSubEvent', node: TreeItem): void;
     (e: 'deleteEvent', node: TreeItem): void;
+    (e: 'treeList', selected): void;
   }>();
   const rightMenuList: ContextMenuItem[] = [
     {
@@ -60,6 +64,11 @@
       },
     },
   ];
+  //单选树事件
+  const selectTree = (selected) => {
+    console.log('seleted', selected);
+    emits('treeList', selected);
+  };
   const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];

@@ -42,11 +42,13 @@
         <div style="width: 20%; margin: auto">是否删除？</div>
       </div>
       <template #footer>
-        <a-button key="submit" type="primary" :loading="false" @click="okDeleteGroup">提交</a-button>
+        <a-button key="submit" type="primary" :loading="false" @click="okDeleteGroup"
+          >提交</a-button
+        >
         <a-button :loading="false" @click="cancelDeleteGroup">取消</a-button>
       </template>
     </a-modal>
-    <splitpanes class="default-theme" style="padding: 15px; height: 100%">
+    <a-splitpanes class="default-theme" style="padding: 15px; height: 100%">
       <pane :size="paneSize">
         <ex-tree
           :toolbar="true"
@@ -57,20 +59,51 @@
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"
           @deleteEvent="deleteEvent"
+          @treeList="treeList"
         />
       </pane>
       <pane :size="100 - paneSize">
-        <div>哈哈哈</div>
-        <div>哈哈哈</div>
+        <Search @searchList="searchList" @getList="getList" @moreList="moreList" ref="searchRef" />
+        <ExTable
+          :columns="matColumns"
+          :data="tableData"
+          :buttons="buttons"
+          :gridOptions="AgridOptions"
+          ref="tableEvent"
+          @getList="getList"
+          @delMatOneEvent="delMatOneEvent"
+          @delMatBatchEvent="delMatBatchEvent"
+        />
+        <Pager
+          background
+          v-model:current-page="pages.currentPage"
+          v-model:page-size="pages.pageSize"
+          :total="pages.total"
+          :layouts="[
+            'PrevJump',
+            'PrevPage',
+            'JumpNumber',
+            'NextPage',
+            'NextJump',
+            'Sizes',
+            'FullJump',
+            'Total',
+          ]"
+          @page-change="handlePageChange"
+        />
       </pane>
-    </splitpanes>
+    </a-splitpanes>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { ExTree } from '/@/components/ExTree';
+  import { ExTable } from '/@/components/ExTable';
+  import { Search } from '/@/components/Search';
+  // import { nuitGridOptions, columns } from '/@/components/Amoresearch/data';
   import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { Pager } from 'vxe-table';
   import {
     addMatGroup,
     editMatGroup,
@@ -79,20 +112,67 @@
     treeMatGroup,
     MatGroupEntity,
   } from '/@/api/matgroup';
-  import { Layout, Button, Row, Col, Modal, Form, FormItem, Input } from 'ant-design-vue';
+  import {
+    getMatTable,
+    delMatTableById,
+    delMatTableBatch,
+    getMatTableUnit,
+  } from '/@/api/mattable';
+  import { Button, Modal, Form, FormItem, Input } from 'ant-design-vue';
   import { Splitpanes, Pane } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { gridOptions, matColumns } from '/@/components/ExTable/data';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AButton = Button;
+  const ASplitpanes = Splitpanes;
+  const AgridOptions = gridOptions;
   const visibleGroupModal = ref<boolean>(false);
   const visibleDeleteGroupModal = ref<boolean>(false);
   const paneSize = ref<number>(18);
   const installPaneSize = ref<number>(18);
   const formRef = ref();
+  //表格事件
+  const tableEvent: any = ref<String | null>(null);
+  //查询条件
+  const searchRef: any = ref<String | null>(null);
+  //初始化表格参数
+  const init = [
+    {
+      table: 'BdMaterial',
+      name: 'name',
+      column: 'name',
+      link: 'AND',
+      rule: 'LIKE',
+      type: 'string',
+      val: '',
+      startWith: '',
+      endWith: '',
+    },
+  ];
+  //分页信息
+  const pages = reactive({
+    currentPage: 0,
+    pageSize: 0,
+    total: 0,
+  });
+  //分页处理
+  const handlePageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    console.log('hand', currentPage, pageSize);
+    const res: any = await getMatTable({
+      params: init,
+      pageIndex: currentPage,
+      pageRows: pageSize,
+    });
+    let data = res.records;
+    tableEvent.value.init(data);
+  };
+  //树信息
   interface GroupFormData {
     id?: string;
     name?: string;
@@ -241,9 +321,196 @@
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };
+
+  //获取表格数据
+  const getList = async () => {
+    const res: any = await getMatTable({
+      params: init,
+    });
+    pages.currentPage = res.current;
+    pages.total = res.total;
+    pages.pageSize = res.size;
+    let data = res.records;
+    tableEvent.value.init(data);
+  };
+  //搜索功能
+  const searchList = async (keywords) => {
+    const res: any = await getMatTable({
+      params: [
+        {
+          table: 'BdMaterial',
+          name: 'number',
+          column: 'number',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: keywords[0],
+          startWith: '',
+          endWith: '',
+        },
+        {
+          table: 'BdMaterial',
+          name: 'name',
+          column: 'name',
+          link: 'OR',
+          rule: 'EQ',
+          type: 'string',
+          val: keywords[1],
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    let data = res.records;
+    console.log('111', data);
+    tableEvent.value.init(data);
+  };
+  //高级查询
+  const moreList = async (keywords) => {
+    let moreParams: any[] = [];
+    for (let i = 0; i < keywords.length; i++) {
+      moreParams.push({
+        table: 'BdMaterial',
+        name: JSON.parse(keywords[i].fieldName).propName,
+        column: JSON.parse(keywords[i].fieldName).fieldName,
+        link: keywords[i].link,
+        rule: keywords[i].rule,
+        type: keywords[i].type,
+        val: keywords[i].val,
+        startWith: keywords[i].startWith,
+        endWith: keywords[i].endWith,
+      });
+    }
+    console.log('get', moreParams);
+    try {
+      const res: any = await getMatTable({
+        params: moreParams,
+      });
+      let data = res.records;
+      console.log('222', data);
+      tableEvent.value.init(data);
+      searchRef.value.moreSearchClose();
+    } catch (e) {
+      console.log('查询失败', e);
+    }
+  };
+  //获取基本单位字段
+  const getTableUnit = async () => {
+    try {
+      const res = await getMatTableUnit('');
+      let data = res;
+      searchRef.value.init(data);
+      console.log('高级查询基本单位字段', data);
+    } catch (e) {
+      console.log('高级查询获取基本单位字段失败', e);
+    }
+  };
+  //基本单位搜索功能
+  // const searchUnitList = async (keywords) => {
+  //   const res = await getMatTableUnitList({
+  //     // params: JSON.parse(keywords),
+  //     params: [keywords],
+  //   });
+  //   let data = res;
+  //   console.log('高级查询-基本单位', res);
+  //   console.log('qqqqqq', keywords);
+  //   searchRef.value.searchUnit(data);
+  // };
+  getTableUnit();
+  // searchUnitList();
+  //树查询
+  const treeList = async (node) => {
+    try {
+      const res: any = await getMatTable({
+        params: [
+          {
+            table: 'BdMaterial',
+            name: 'groupId',
+            column: 'group_id',
+            link: 'AND',
+            rule: 'EQ',
+            type: 'string',
+            val: node[0],
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      });
+      if (node[0]) {
+        let data = res.records;
+        tableEvent.value.init(data);
+      } else {
+        await getList();
+      }
+    } catch (e) {
+      console.log('树失败', e);
+    }
+  };
+  //按钮
+  const buttons = [
+    {
+      status: 'warning',
+      label: '添加',
+      onClick: () => {
+        addTableEvent();
+      },
+    },
+    {
+      status: 'danger',
+      label: '批量删除',
+      onClick: () => {
+        delTableEvent();
+      },
+    },
+    {
+      status: 'success',
+      label: '导出',
+      onClick: () => {
+        expTableEvent();
+      },
+    },
+    // { status: 'primary', label: '审核' },
+    // { status: 'primary', label: '下推' },
+    // { status: 'primary', label: '业务查询' },
+  ];
+  //新增表格数据
+  const addTableEvent = () => {
+    tableEvent.value.addTable();
+  };
+  //删除表格单条数据
+  const delMatOneEvent = async (row) => {
+    try {
+      await delMatTableById({
+        params: row.id,
+      });
+    } catch (e) {
+      console.log('删除1失败', e);
+    }
+  };
+  //批量删除表格
+  const delTableEvent = () => {
+    tableEvent.value.delTable();
+  };
+  const delMatBatchEvent = async (row) => {
+    console.log('nnn', row);
+    try {
+      await delMatTableBatch({
+        params: row,
+      });
+    } catch (e) {
+      console.log('删除n失败', e);
+    }
+  };
+  //导出表格数据
+  const expTableEvent = () => {
+    tableEvent.value.expTable();
+  };
+  //编辑表格数据
+  // const editTableEvent = () => {};
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     refreshTree();
+    getList();
   });
 </script>
 
@@ -251,6 +518,7 @@
   :deep(.ant-card-body) {
     padding: inherit !important;
   }
+
   .tree-button {
     margin: auto;
     display: block;

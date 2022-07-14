@@ -1,5 +1,7 @@
 import '/@/design/index.less';
-import 'virtual:windi-base.css';
+import 'vxe-table/lib/style.css';
+import 'xe-utils';
+import 'virtual:windi-base.css'; //此文件与vxe-table中的样式文件冲突，导致点击排序或者筛选时，没有高亮显示。但如果去掉，会影响整体边距，或者更多。
 import 'virtual:windi-components.css';
 import 'virtual:windi-utilities.css';
 // Register icon sprite

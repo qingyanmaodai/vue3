@@ -6,21 +6,21 @@ import {
 
   // 表格功能
   Footer,
-  // Icon,
-  // Filter,
-  // Edit,
-  // Menu,
-  // Export,
-  // Keyboard,
-  // Validator,
+  Icon,
+  Filter,
+  Edit,
+  Menu,
+  Export,
+  Keyboard,
+  Validator,
 
   // 可选组件
   Column,
   // Colgroup,
-  // Grid,
+  Grid,
   // Tooltip,
-  // Toolbar,
-  // Pager,
+  Toolbar,
+  Pager,
   // Form,
   // FormItem,
   // FormGather,
@@ -30,13 +30,13 @@ import {
   // RadioGroup,
   // RadioButton,
   // Switch,
-  // Input,
-  // Select,
+  Input,
+  Select,
   // Optgroup,
   // Option,
   // Textarea,
-  // Button,
-  // Modal,
+  Button,
+  Modal,
   // List,
   // Pulldown,
 
@@ -52,21 +52,21 @@ export function setupVxeTable(app: App) {
   // 表格功能
   app
     .use(Footer)
-    // .use(Icon)
-    // .use(Filter)
-    // .use(Edit)
-    // .use(Menu)
-    // .use(Export)
-    // .use(Keyboard)
-    // .use(Validator)
+    .use(Icon)
+    .use(Filter)
+    .use(Edit)
+    .use(Menu)
+    .use(Export)
+    .use(Keyboard)
+    .use(Validator)
 
     // 可选组件
     .use(Column)
     // .use(Colgroup)
-    // .use(Grid)
+    .use(Grid)
     // .use(Tooltip)
-    // .use(Toolbar)
-    // .use(Pager)
+    .use(Toolbar)
+    .use(Pager)
     // .use(Form)
     // .use(FormItem)
     // .use(FormGather)
@@ -76,13 +76,13 @@ export function setupVxeTable(app: App) {
     // .use(RadioGroup)
     // .use(RadioButton)
     // .use(Switch)
-    // .use(Input)
-    // .use(Select)
+    .use(Input)
+    .use(Select)
     // .use(Optgroup)
     // .use(Option)
     // .use(Textarea)
-    // .use(Button)
-    // .use(Modal)
+    .use(Button)
+    .use(Modal)
     // .use(List)
     // .use(Pulldown)
 
