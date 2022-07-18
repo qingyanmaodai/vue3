@@ -356,7 +356,6 @@
       ],
     });
     let data = res.records;
-    console.log('111', data);
     tableEvent.value.init(data);
   };
   //高级查询
@@ -381,7 +380,6 @@
         params: moreParams,
       });
       let data = res.records;
-      console.log('222', data);
       tableEvent.value.init(data);
       searchRef.value.moreSearchClose();
     } catch (e) {

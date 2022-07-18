@@ -177,7 +177,7 @@
     InputSearch,
     Tag,
   } from 'ant-design-vue';
-  import { reactive, defineProps, ref, defineExpose, defineEmits } from 'vue';
+  import { reactive, ref, defineExpose, defineEmits } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
 
@@ -197,15 +197,9 @@
     (event: 'cellClickEvent', data: object): void;
     (event: 'getListUnitEvent', keywords: object): void;
     (event: 'searchUnitList', keywords: object): void;
-    // (event: 'searchListUnitEventList', keywords: object): void;
     (event: 'openSearch', keywords: object): void;
   };
-  //获取父组件的数据
-  const props = defineProps({
-    gridOptions: String,
-    tableCols: String,
-    tableData: String,
-  });
+
   //分页信息
   const pages = reactive({
     currentPage: 0,
@@ -220,10 +214,9 @@
   };
 
   const xGrid = ref<VxeGridInstance>();
-  // const router = useRouter();
   //详情页查询字段数据
   const init = (data) => {
-    console.log('详情页aaa', data);
+    console.log('详情页字段数据', data);
     optionsUnitFieldName.data = data;
   };
   //判断窗体是否显示搜索
@@ -241,21 +234,19 @@
   const tableCols = reactive<any>({ data: [] });
   const initCols = (data) => {
     tableCols.data = data;
-    console.log('kkk', data);
+    console.log('详情页基本单位表格数据', data);
   };
   const tableData = reactive<any>({ data: [] });
   const initList = (data) => {
     console.log('mmm', data);
     tableData.data = data.records;
-    console.log('详情页ccc', tableData.data);
-    console.log('详情页页码总数：', data.total);
     pages.currentPage = data.current;
     pages.total = data.total;
     pages.pageSize = data.size;
   };
   //高级查询字段数据
   const getListUnitEvent = (data) => {
-    console.log('高级查询bbb', data);
+    console.log('高级查询字段数据', data);
     optionsUnitFieldName.data = data;
     console.log(data.total);
   };
@@ -277,9 +268,6 @@
   };
   //双击单元格事件
   const emit = defineEmits<Emits>();
-  // const cellClickEvent = (row) => {
-  //   emit('cellClickEvent', row.row);
-  // };
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
     console.log('单元格内容：', row);
     emit('cellClickEvent', row.row);
@@ -329,7 +317,6 @@
 
   //选择事件
   const handleChange = (value: string) => {
-    // console.log('选择', val);
     console.log(`selected ${value}`);
   };
   //关闭

@@ -155,7 +155,7 @@
           <a-button
             style="font-size: 14px; font-weight: bolder; padding: 2px 8px; line-height: 0"
             @click="addSearch"
-            ><PlusOutlined
+            ><a-plus-outlined
           /></a-button>
           <a-button
             style="font-size: 14px; font-weight: bolder; padding: 2px 8px; line-height: 0"
@@ -204,8 +204,8 @@
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/mattable';
-  // import type { FormInstance } from 'ant-design-vue';
 
+  const APlusOutlined = PlusOutlined;
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
@@ -260,9 +260,8 @@
   };
   //打开基本信息弹框
   const openSearch = async (keywords) => {
-    console.log('kkk', keywords);
+    console.log('基本信息弹框kkk', keywords);
     const res = await publicEvent(keywords);
-    console.log('res', res);
     basicSearchRef.value.initList(res);
   };
   //基本信息表格双击事件
@@ -325,7 +324,6 @@
     column: string | undefined;
   }
 
-  // const formRef = ref<FormInstance>();
   const formRef: any = ref(null);
   const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
     searches: [
@@ -382,7 +380,7 @@
   //   basicSearchRef.value.searchListUnitEventList(data);
   // };
 
-  const cacheQueryArr = reactive({ data: [] });
+  const cacheQueryArr: any = reactive({ data: [] });
   const emit = defineEmits<Emits>();
   //查询按钮
   const moreSearch = (keywords) => {
@@ -426,6 +424,7 @@
       val: null,
       endWith: undefined,
       link: 'AND',
+      labelValue: '',
       type: 'string',
       key: Date.now(),
       name: undefined,

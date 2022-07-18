@@ -58,7 +58,6 @@
                     placeholder="请选择基本单位"
                     @search="onStock('baseUnit')"
                   />
-                  <!--                  @search="onUnitIdSearch(formState)"-->
                 </a-form-item>
               </Col>
               <Col :span="8">
@@ -443,14 +442,12 @@
   const router = useRouter();
   const activeKey = ref<string>('1');
   const visibleGroupModal: any = ref<boolean>(false);
-  // const visibleUnitModal: any = ref<boolean>(false);
   const onGroupSearch = () => {
     console.log('物料分组弹框');
     visibleGroupModal.value = true;
   };
   //基础信息
   const basicSearchRef: any = ref<any>(null); //基础信息查询组件ref
-  // const nowCheckData: any = reactive({ data: {} });
   //更新表头数据
   const getCurrentCols = (key: any) => {
     const colConfig = {
@@ -495,14 +492,12 @@
     );
     chosenModal = key;
     let dataCols = getCurrentCols(key);
-    console.log('datacols', dataCols);
     let dataList = res;
     basicSearchRef.value.bSearch(true);
     basicSearchRef.value.initCols(dataCols);
     basicSearchRef.value.initList(dataList);
     basicSearchRef.value.initSearch(key);
     console.log('获取基本单位表格数据0', dataList);
-    console.log('stock', dataCols);
     return res;
   };
   //双击单元格事件
@@ -514,7 +509,6 @@
   const hasSub = ref(false);
   const hasLocation = ref(false);
   const cellClickEvent = (row) => {
-    // console.log('基本单位内容：', row);
     console.log('所选', chosenModal);
     switch (chosenModal) {
       case 'baseUnit':
@@ -579,21 +573,6 @@
     treeData.value = cloneDeep(tree);
   };
   getGroup();
-  // const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
-  //   for (let i = 0; i < list.length; i++) {
-  //     const item = list[i];
-  //     if (item.key === key) {
-  //       return item;
-  //     }
-  //     if (item.children && item.children.length > 0) {
-  //       res = runNode(key, item.children, res);
-  //       if (res.key) {
-  //         return res;
-  //       }
-  //     }
-  //   }
-  //   return res;
-  // };
   const runTree = (tree: MatGroupEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
@@ -603,7 +582,6 @@
       console.log('key', item.key);
     });
   };
-  // const groupData = reactive({ data: {} });
   let groupValue = null;
   //物料分组弹框关
   const groupSelect = (value, node) => {
@@ -706,50 +684,57 @@
     groupId: string;
     groupName: string;
     attr: string;
-    weightUnitId: number;
+    weightUnitId: number | null;
     weightName: string;
-    netWeight: number;
-    model: string;
-    bsStatus: string;
-    oldMatNumber: number;
-    mark: string;
-    node: string;
-    stockId: string;
-    bdStock: string;
-    subStockId: string;
-    bdSubStock: string;
-    bdStockLocationId: string;
-    bdStockLocationName: string;
-    enableSn: number;
-    enableBatch: number;
-    storagePeriod: number;
-    minStockNum: number;
-    maxStockNum: number;
-    safeStockNum: number;
-    stockInExamine: number;
-    stockOutExamine: number;
-    produceExamine: number;
-    createTime: string;
-    createBy: string;
-    updateTime: string;
-    updateBy: string;
+    netWeight: number | null;
+    model: string | null;
+    bsStatus: string | null;
+    oldMatNumber: number | null;
+    mark: string | null;
+    node: string | null;
+    stockId: string | null;
+    bdStock: string | null;
+    subStockId: string | null;
+    bdSubStock: string | null;
+    bdStockLocationId: string | null;
+    bdStockLocationName: string | null;
+    enableSn: number | null;
+    enableBatch: number | null;
+    storagePeriod: number | null;
+    minStockNum: number | null;
+    maxStockNum: number | null;
+    safeStockNum: number | null;
+    stockInExamine: number | null;
+    stockOutExamine: number | null;
+    produceExamine: number | null;
+    createTime: string | null;
+    createBy: string | null;
+    updateTime: string | null;
+    updateBy: string | null;
   }
   const formState: UnwrapRef<FormState> = reactive({
     number: '',
     name: '',
     shortName: '',
+    baseUnitName: '',
     baseUnitId: unitId,
     groupId: '',
+    groupName: '',
     attr: 'A',
-    weightUnitId: '',
+    weightUnitId: null,
+    weightName: '',
     netWeight: null,
     model: '',
     bsStatus: '创建',
     oldMatNumber: null,
     mark: '',
+    node: '',
+    bdStock: '',
+    bdSubStock: '',
     stockId: stockId,
     subStockId: null,
     bdStockLocationId: null,
+    bdStockLocationName: null,
     enableSn: null,
     enableBatch: null,
     storagePeriod: null,
@@ -820,8 +805,6 @@
       params: [keywords],
     });
     let data = res;
-    console.log('1112222', res);
-    console.log('qqqqqq', keywords);
     basicSearchRef.value.initList(data);
   };
   // getTableUnitList();
@@ -873,7 +856,6 @@
           const addList = await addMatTable({
             params: newData,
           });
-          console.log("aaaa",addList);
           if (addList.id != null) {
             useMessage().createMessage.success('添加成功');
             back();

@@ -18,8 +18,7 @@
     </a-card>
   </div>
   <hr />
-  <!--    高级查询弹框     :tableData="dataUnit"      @searchUnitListEvent="searchUnitListEvent"
-   :gridOptions="nuitGridOptions"      :columns="columns"  -->
+  <!--    高级查询弹框     -->
   <MoreSearch
     style="top: 20px"
     :options="options.data"
@@ -107,7 +106,6 @@
     emit('getList');
   };
   const options = reactive({ data: [] });
-  // const dataUnit = reactive({ dataList: [] });
 </script>
 
 <style scoped>
