@@ -9,9 +9,13 @@
       :data="tableData.data"
     >
       <template #toolbar_buttons>
-        <vxe-button v-for="button in buttons" :status="button.status" @click="button.onClick()">{{
-          button.label
-        }}</vxe-button>
+        <vxe-button
+          v-for="(button, key) in buttons"
+          :status="button.status"
+          :key="key"
+          @click="button.onClick()"
+          >{{ button.label }}</vxe-button
+        >
       </template>
       <template #status="{ row }">
         <Tag :color="row.bsStatus == 'B' ? 'green' : 'warning'" v-if="row.bsStatus">{{
@@ -58,7 +62,7 @@
   const tableData = reactive<any>({ data: [] });
   const init = (data) => {
     tableData.data = data;
-    console.log('ccc', tableData.data[0].attr);
+    console.log('ccc', data);
   };
   //新增信息
   const addTable = () => {
@@ -75,6 +79,7 @@
       // name:'';
       query: {
         row: row.id,
+        status: row.bsStatus,
       },
     });
   };

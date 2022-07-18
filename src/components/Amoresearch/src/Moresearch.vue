@@ -240,6 +240,7 @@
         val: '',
       };
     }
+    console.log(keywords);
     const res = await getPublicList(
       {
         params: [keywords],
@@ -259,6 +260,7 @@
   };
   //打开基本信息弹框
   const openSearch = async (keywords) => {
+    console.log('基本信息弹框kkk', keywords);
     const res = await publicEvent(keywords);
     basicSearchRef.value.initList(res);
   };
@@ -305,6 +307,7 @@
     return optionsFieldName.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
   const init = (data) => {
+    console.log('aaa', data);
     optionsFieldName.data = cloneDeep(data);
   };
   interface Search {
@@ -349,6 +352,7 @@
     if (cacheQueryArr.data.length > 0) {
       dynamicValidateForm.searches = cloneDeep(cacheQueryArr.data);
     }
+    console.log('高级查询弹框：', data);
     setTimeout(() => {
       dragModal();
     }, 1000);
@@ -364,6 +368,7 @@
   //基本单位字段
   const getTableUnitEvent = (data) => {
     basicSearchRef.value.getListUnitEvent(data);
+    console.log('22222aaa', data);
   };
   //基本单位表格数据
   // const getTableUnitListEvent = (data) => {

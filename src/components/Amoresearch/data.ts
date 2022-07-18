@@ -89,3 +89,11 @@ export const stockColumns = [
   { field: 'mainBy', title: '仓库管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },
 ];
+export const planColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '方案编码', sortable: true },
+  { field: 'name', title: '方案名称', sortable: true },
+  { field: 'updateBy', title: '修改人员', sortable: true },
+  { field: 'updateTime', title: '修改时间', sortable: true },
+];

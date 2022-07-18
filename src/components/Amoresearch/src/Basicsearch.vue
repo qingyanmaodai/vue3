@@ -128,7 +128,7 @@
         <a-form-item style="margin: 16px">
           <vxe-grid
             ref="xGrid"
-            v-bind="gridOptions"
+            v-bind="props.gridOptions"
             :data="tableData.data"
             :columns="tableCols.data"
             :export-config="{}"
@@ -177,10 +177,9 @@
     InputSearch,
     Tag,
   } from 'ant-design-vue';
-  import { reactive, ref, defineExpose, defineEmits } from 'vue';
+  import { reactive, ref, defineExpose, defineProps, defineEmits } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
-
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
@@ -199,7 +198,12 @@
     (event: 'searchUnitList', keywords: object): void;
     (event: 'openSearch', keywords: object): void;
   };
-
+  //获取父组件的数据
+  const props = defineProps({
+    gridOptions: String,
+    tableCols: String,
+    tableData: String,
+  });
   //分页信息
   const pages = reactive({
     currentPage: 0,
@@ -223,11 +227,7 @@
   let isUnit = ref(true);
   const initSearch = (data) => {
     console.log('inits', data);
-    if (data == 'baseUnit' || data == 'weightUnit' || !data) {
-      isUnit.value = true;
-    } else {
-      isUnit.value = false;
-    }
+    isUnit.value = data == 'baseUnit' || data == 'weightUnit' || !data;
     return isUnit;
   };
   //详情页基本单位表格数据

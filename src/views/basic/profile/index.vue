@@ -5,8 +5,9 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit">保存</Button>
-        <Button type="warning" class="button" @click="onExam" v-if="rowId">审核</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-if="showSubmit">保存</Button>
+        <Button type="warning" class="button" @click="onExam" v-if="showExam">审核</Button>
+        <Button type="danger" class="button" @click="unExam" v-if="showUnExam">反审核</Button>
       </div>
     </LayoutHeader>
     <a-card class="content">
@@ -116,7 +117,7 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select v-model:value="formState.bsStatus" class="select" disabled="true">
+                  <Select v-model:value="formState.labelValue" class="select" disabled="true">
                     <SelectOption value="A">创建</SelectOption>
                     <SelectOption value="B">已审核</SelectOption>
                   </Select>
@@ -284,8 +285,13 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="检验方案" ref="isSn" name="isSn" class="item">
-                  <InputSearch class="input" readonly />
+                <a-form-item label="检验方案" ref="bdExamineId" name="bdExamineId" class="item">
+                  <InputSearch
+                    class="input"
+                    readonly
+                    v-model:value="formState.bdExamineId"
+                    @search="onStock('plan')"
+                  />
                 </a-form-item>
               </Col>
             </Row>
@@ -394,7 +400,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
   import {
     Button,
     Card,
@@ -418,7 +424,12 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
-  import { nuitGridOptions, stockColumns, unitColumns } from '/@/components/Amoresearch/data';
+  import {
+    nuitGridOptions,
+    stockColumns,
+    unitColumns,
+    planColumns,
+  } from '/@/components/Amoresearch/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
@@ -430,9 +441,11 @@
     getMatTableUnit,
     getMatTableUnitList,
     getPublicList,
+    unauditMatTable,
     updateMatTable,
   } from '/@/api/mattable';
   import { cloneDeep } from 'lodash-es';
+  import { VXETable } from 'vxe-table';
 
   const AModal = Modal;
   const AForm = Form;
@@ -444,6 +457,7 @@
   const activeKey = ref<string>('1');
   const visibleGroupModal: any = ref<boolean>(false);
   const onGroupSearch = () => {
+    console.log('物料分组弹框');
     visibleGroupModal.value = true;
   };
   //基础信息
@@ -456,6 +470,7 @@
       stock: stockColumns,
       sub: stockColumns,
       location: stockColumns,
+      plan: planColumns,
     };
     return colConfig[key];
   };
@@ -466,7 +481,7 @@
     stock: '/stock/bd-stock/list',
     sub: '/stock/bd-sub-stock/list',
     location: '/stock/bd-stock-location/list',
-    plan: '',
+    plan: '/stock/bd-examine/list',
   };
   //所选框
   let chosenModal: String = '';
@@ -506,6 +521,7 @@
   let stockId = '';
   let subStockId = '';
   let locationId = '';
+  let planId = '';
   const hasSub = ref(false);
   const hasLocation = ref(false);
   const cellClickEvent = (row) => {
@@ -534,6 +550,10 @@
         formState.bdStockLocationId = row.name;
         locationId = row.id;
         getNextStock('location', 'bdStockLocationId', locationId);
+        break;
+      case 'plan':
+        formState.bdExamineId = row.name;
+        planId = row.id;
         break;
     }
     basicSearchRef.value.bSearch(false);
@@ -568,6 +588,7 @@
   const getGroup = async () => {
     const tree = await treeMatGroup({ params: '0' });
     runTree(tree);
+    console.log('tree1111:', tree);
     // treeData.value = JSON.parse(JSON.stringify(tree));   //两种方式
     treeData.value = cloneDeep(tree);
   };
@@ -588,6 +609,7 @@
     groupValue = value;
     console.log('物料分组弹框node', value, node);
     formState.groupId = formState.node;
+    console.log('物料分组弹框groupId', formState.groupId);
     visibleGroupModal.value = false;
   };
   let getParams = () => {
@@ -618,6 +640,9 @@
     if (res.safeStockNum == 0) {
       res.safeStockNum = null;
     }
+    if (res.netWeight == 0) {
+      res.netWeight = null;
+    }
     formState.number = res.number;
     formState.name = res.name;
     formState.shortName = res.shortName;
@@ -635,9 +660,9 @@
     formState.model = res.model;
     formState.bsStatus = res.bsStatus;
     if (formState.bsStatus === 'A') {
-      formState.bsStatus = '创建';
+      formState.labelValue = '创建';
     } else {
-      formState.bsStatus = '已审核';
+      formState.labelValue = '已审核';
     }
     formState.oldMatNumber = res.oldMatNumber;
     formState.mark = res.mark;
@@ -662,6 +687,11 @@
     formState.minStockNum = res.minStockNum;
     formState.maxStockNum = res.minStockNum;
     formState.safeStockNum = res.safeStockNum;
+    formState.bdExamineId = res.bdExamine.id;
+    if (res.bdExamine.id) {
+      formState.bdExamineId = res.bdExamine.name;
+    }
+    formState.bdExamineName = res.bdExamine.name;
     formState.stockInExamine = res.stockInExamine;
     formState.stockOutExamine = res.stockOutExamine;
     formState.produceExamine = res.produceExamine;
@@ -679,7 +709,7 @@
     shortName: string;
     baseUnitName: string;
     baseUnitId: string;
-    groupId: string;
+    groupId: string | null;
     groupName: string;
     attr: string;
     weightUnitId: number | null;
@@ -687,6 +717,7 @@
     netWeight: number | null;
     model: string | null;
     bsStatus: string | null;
+    labelValue: string | null;
     oldMatNumber: number | null;
     mark: string | null;
     node: string | null;
@@ -702,6 +733,8 @@
     minStockNum: number | null;
     maxStockNum: number | null;
     safeStockNum: number | null;
+    bdExamineId: number | null;
+    bdExamineName: string | null;
     stockInExamine: number | null;
     stockOutExamine: number | null;
     produceExamine: number | null;
@@ -723,7 +756,8 @@
     weightName: '',
     netWeight: null,
     model: '',
-    bsStatus: '创建',
+    bsStatus: 'A',
+    labelValue: '',
     oldMatNumber: null,
     mark: '',
     node: '',
@@ -739,6 +773,8 @@
     minStockNum: null,
     maxStockNum: null,
     safeStockNum: null,
+    bdExamineId: null,
+    bdExamineName: null,
     stockInExamine: null,
     stockOutExamine: null,
     produceExamine: null,
@@ -771,31 +807,6 @@
     }
   };
   getTableUnit();
-  //获取基本单位表格
-  // const getTableUnitList = async () => {
-  //   try {
-  //     const res = await getMatTableUnitList({
-  //       params: [
-  //         {
-  //           table: '',
-  //           name: 'name',
-  //           column: 'name',
-  //           link: 'AND',
-  //           rule: 'LIKE',
-  //           type: 'string',
-  //           val: '',
-  //           startWith: '',
-  //           endWith: '',
-  //         },
-  //       ],
-  //     });
-  //     let dataList = res;
-  //     basicSearchRef.value.initList(dataList);
-  //     console.log('获取基本单位表格数据0', dataList);
-  //   } catch (e) {
-  //     console.log('获取基本单位表格失败', e);
-  //   }
-  // };
   //基本单位搜索功能
   const searchUnitList = async (keywords) => {
     const res = await getMatTableUnitList({
@@ -805,7 +816,6 @@
     let data = res;
     basicSearchRef.value.initList(data);
   };
-  // getTableUnitList();
   getTableUnit();
   //保存事件
   const onSubmit = async () => {
@@ -832,6 +842,7 @@
         minStockNum: formState.minStockNum,
         maxStockNum: formState.maxStockNum,
         safeStockNum: formState.safeStockNum,
+        bdExamineId: planId,
         stockInExamine: formState.stockInExamine,
         stockOutExamine: formState.stockOutExamine,
         produceExamine: formState.produceExamine,
@@ -840,6 +851,7 @@
         updateTime: formState.updateTime,
         updateBy: formState.updateBy,
       };
+      console.log(newData);
       if (
         !formState.name ||
         !formState.number ||
@@ -884,6 +896,7 @@
         minStockNum: formState.minStockNum,
         maxStockNum: formState.maxStockNum,
         safeStockNum: formState.safeStockNum,
+        bdExamineId: planId,
         stockInExamine: formState.stockInExamine,
         stockOutExamine: formState.stockOutExamine,
         produceExamine: formState.produceExamine,
@@ -916,30 +929,86 @@
       }
     }
   };
-  const onExam = () => {
-    if (formState.bsStatus === 'A' || formState.bsStatus === '创建') {
-      try {
-        const aduitEvent = async () => {
-          await auditMatTable({
-            params: {
-              id: rowId,
-            },
-          });
-        };
-        aduitEvent();
-        useMessage().createMessage.success('审核成功');
-        back();
-      } catch (e) {
-        console.log('失败', e);
+  //审核状态
+  let rowStatus = useRoute().query.status;
+  const showUnExam = ref<boolean>(false);
+  const showExam = ref<boolean>(false);
+  const showSubmit = ref<boolean>(true);
+  //控制审核与反审核按钮显示
+  const btnChecking = () => {
+    console.log('0', rowStatus, rowId);
+    if (!rowId) {
+      showExam.value = false;
+      showUnExam.value = false;
+      console.log('1');
+    } else if (rowId && rowStatus === 'A') {
+      showExam.value = true;
+      showUnExam.value = false;
+      console.log('2');
+    } else if (rowId && rowStatus === 'B') {
+      showExam.value = false;
+      showUnExam.value = true;
+      showSubmit.value = false;
+      console.log('3');
+    }
+  };
+  //审核功能
+  const onExam = async () => {
+    const type = await VXETable.modal.confirm('您确定要审核当前物料吗?');
+    if (type == 'confirm') {
+      if (formState.labelValue === 'A' || formState.labelValue === '创建') {
+        try {
+          const aduitEvent = async () => {
+            await auditMatTable({
+              params: {
+                id: rowId,
+              },
+            });
+          };
+          await aduitEvent();
+          useMessage().createMessage.success('审核成功');
+          back();
+        } catch (e) {
+          console.log('失败', e);
+        }
       }
     } else {
       useMessage().createMessage.error('该物料已审核，无需再次审核');
       back();
     }
   };
+  //反审核功能
+  const unExam = async () => {
+    const type = await VXETable.modal.confirm('您确定要反审核当前物料吗?');
+    if (type == 'confirm') {
+      if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
+        try {
+          const unAduitEvent = async () => {
+            await unauditMatTable({
+              params: {
+                id: rowId,
+              },
+            });
+          };
+          unAduitEvent();
+          useMessage().createMessage.success('反审核成功');
+          back();
+        } catch (e) {
+          console.log('失败', e);
+        }
+      } else {
+        useMessage().createMessage.error('该物料已反审核，无需再次反审核');
+        back();
+      }
+    }
+  };
+  //返回上一页
   const back = () => {
     router.push({ path: '../material/index' });
   };
+  onMounted(() => {
+    btnChecking();
+  });
 </script>
 <style scoped>
   .item {

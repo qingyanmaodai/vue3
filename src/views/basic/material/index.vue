@@ -324,6 +324,7 @@
     pages.currentPage = res.current;
     pages.total = res.total;
     pages.pageSize = res.size;
+    console.log('getting', pages.currentPage, pages.total, pages.pageSize);
     let data = res.records;
     tableEvent.value.init(data);
   };
@@ -397,19 +398,7 @@
       console.log('高级查询获取基本单位字段失败', e);
     }
   };
-  //基本单位搜索功能
-  // const searchUnitList = async (keywords) => {
-  //   const res = await getMatTableUnitList({
-  //     // params: JSON.parse(keywords),
-  //     params: [keywords],
-  //   });
-  //   let data = res;
-  //   console.log('高级查询-基本单位', res);
-  //   console.log('qqqqqq', keywords);
-  //   searchRef.value.searchUnit(data);
-  // };
   getTableUnit();
-  // searchUnitList();
   //树查询
   const treeList = async (node) => {
     try {
@@ -431,6 +420,9 @@
       if (node[0]) {
         let data = res.records;
         tableEvent.value.init(data);
+        pages.currentPage = res.currentPage;
+        pages.pageSize = res.pageSize;
+        pages.total = res.total;
       } else {
         await getList();
       }
@@ -484,6 +476,7 @@
     tableEvent.value.delTable();
   };
   const delMatBatchEvent = async (row) => {
+    console.log('nnn', row);
     try {
       await delMatTableBatch({
         params: row,

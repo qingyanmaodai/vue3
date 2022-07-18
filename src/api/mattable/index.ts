@@ -157,6 +157,21 @@ export function auditMatTable(json: RequestData<any>, mode: ErrorMessageMode = '
   );
 }
 /**
+ * 反审核物料信息
+ */
+export function unauditMatTable(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UNAUDIT_TABLE_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
  * 查询单条
  */
 export function getMatTableById(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
