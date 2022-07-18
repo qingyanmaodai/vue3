@@ -11,6 +11,7 @@ export enum Url {
   GET_OPTIONS_LIST = '/stock/bd-material/query-dto',
   ADD_TABLE_LIST = '/stock/bd-material/save',
   AUDIT_TABLE_LIST = '/stock/bd-material/audit',
+  UNAUDIT_TABLE_LIST = '/stock/bd-material/un-audit',
   UPDATE_TABLE_LIST = '/stock/bd-material/update',
   GET_TABLE_BY_ID = '/stock/bd-material/getOneMaterial',
   DEL_TABLE_LIST = '/stock/bd-material/delete',
