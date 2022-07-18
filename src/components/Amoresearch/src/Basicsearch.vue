@@ -10,125 +10,127 @@
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
-        <a-space
-          v-for="(search, index) in dynamicValidateForm.searches"
-          :key="search.key"
-          style="display: flex; margin: 10px 10px"
-        >
-          <span style="font-weight: bolder">查询条件</span>
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'fieldName']">
-            <a-select
-              v-model:value="search.fieldName"
-              show-search
-              placeholder="请输入或选择关键字"
-              style="width: 200px"
-              :filterOption="filterOption"
-              @focus="handleFocus"
-              @change="handleChange"
-            >
-              <a-select-option
-                v-for="(item, v) in optionsUnitFieldName.data"
-                :value="JSON.stringify(item)"
-                :label="item.displayName"
-                :key="v"
-                >{{ item.displayName }}</a-select-option
-              >
-            </a-select>
-          </a-form-item>
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
-            <a-select
-              v-model:value="search.rule"
-              placeholder="等于"
-              :options="optionsRule"
-              style="width: 100px"
-              :filterOption="filterOption"
-              @focus="handleFocus"
-            />
-          </a-form-item>
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'val']">
-            <a-input v-show="search.fieldName == '请选择'" style="width: 200px" disabled />
-            <a-select
-              v-show="
-                search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'select'
-                  : false
-              "
-              v-model:value="search.val"
-              placeholder="请选择..."
-              style="width: 200px"
-              :filterOption="filterOption"
-            >
-              <a-select-option value="A">创建</a-select-option>
-              <a-select-option value="B">已审核</a-select-option>
-            </a-select>
-            <a-input
-              v-show="
-                search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'input'
-                  : false
-              "
-              style="width: 200px"
-              placeholder="请输入..."
-              v-model:value="search.val"
-              :filterOption="filterOption"
-            />
-            <a-input-search
-              v-show="
-                search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'inputsearch'
-                  : false
-              "
-              style="width: 200px"
-              readonly
-              placeholder="请选择输入..."
-              v-model:value="search.val"
-              :filterOption="filterOption"
-              @search="onSearch(search)"
-            />
-            <a-space
-              direction="vertical"
-              :size="12"
-              v-show="
-                search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'date'
-                  : false
-              "
-            >
-              <a-date-picker
+        <div v-show="isUnit">
+          <a-space
+            v-for="(search, index) in dynamicValidateForm.searches"
+            :key="search.key"
+            style="display: flex; margin: 10px 10px"
+          >
+            <span style="font-weight: bolder">查询条件</span>
+            <a-form-item style="margin: 5px 5px" :name="['searches', index, 'fieldName']">
+              <a-select
+                v-model:value="search.fieldName"
+                show-search
+                placeholder="请输入或选择关键字"
                 style="width: 200px"
-                v-model="search.val"
-                show-time
-                placeholder="请选择时间..."
+                :filterOption="filterOption"
+                @focus="handleFocus"
+                @change="handleChange"
+              >
+                <a-select-option
+                  v-for="(item, v) in optionsUnitFieldName.data"
+                  :value="JSON.stringify(item)"
+                  :label="item.displayName"
+                  :key="v"
+                  >{{ item.displayName }}</a-select-option
+                >
+              </a-select>
+            </a-form-item>
+            <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
+              <a-select
+                v-model:value="search.rule"
+                placeholder="等于"
+                :options="optionsRule"
+                style="width: 100px"
+                :filterOption="filterOption"
+                @focus="handleFocus"
               />
-            </a-space>
-            <a-select
-              v-show="
-                search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'checkbox'
-                  : false
-              "
-              mode="multiple"
-              showSearch
-              style="width: 200px"
-              :allowClear="true"
-              :showArrow="true"
-              v-model:value="search.val"
-              :filterOption="filterOption"
-              placeholder="请选择...多选。。"
-            />
-          </a-form-item>
-          <span style="margin-left: 10px">
-            <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
-            <a-button type="primary" class="x-button" @click="basicSearch">查询</a-button>
-          </span>
-        </a-space>
+            </a-form-item>
+            <a-form-item style="margin: 5px 5px" :name="['searches', index, 'val']">
+              <a-input v-show="search.fieldName == '请选择'" style="width: 200px" disabled />
+              <a-select
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'select'
+                    : false
+                "
+                v-model:value="search.val"
+                placeholder="请选择..."
+                style="width: 200px"
+                :filterOption="filterOption"
+              >
+                <a-select-option value="A">创建</a-select-option>
+                <a-select-option value="B">已审核</a-select-option>
+              </a-select>
+              <a-input
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'input'
+                    : false
+                "
+                style="width: 200px"
+                placeholder="请输入..."
+                v-model:value="search.val"
+                :filterOption="filterOption"
+              />
+              <a-input-search
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'inputsearch'
+                    : false
+                "
+                style="width: 200px"
+                readonly
+                placeholder="请选择输入..."
+                v-model:value="search.val"
+                :filterOption="filterOption"
+                @search="onSearch(search)"
+              />
+              <a-space
+                direction="vertical"
+                :size="12"
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'date'
+                    : false
+                "
+              >
+                <a-date-picker
+                  style="width: 200px"
+                  v-model="search.val"
+                  show-time
+                  placeholder="请选择时间..."
+                />
+              </a-space>
+              <a-select
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'checkbox'
+                    : false
+                "
+                mode="multiple"
+                showSearch
+                style="width: 200px"
+                :allowClear="true"
+                :showArrow="true"
+                v-model:value="search.val"
+                :filterOption="filterOption"
+                placeholder="请选择...多选。。"
+              />
+            </a-form-item>
+            <span style="margin-left: 10px">
+              <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
+              <a-button type="primary" class="x-button" @click="basicSearch">查询</a-button>
+            </span>
+          </a-space>
+        </div>
         <!--          table表单                  -->
-        <a-form-item style="margin: 10px 10px">
+        <a-form-item style="margin: 16px">
           <vxe-grid
             ref="xGrid"
             v-bind="gridOptions"
             :data="tableData.data"
-            :columns="props.columns"
+            :columns="tableCols.data"
             :export-config="{}"
             @cell-dblclick="cellClickEvent"
           >
@@ -178,10 +180,6 @@
   import { reactive, defineProps, ref, defineExpose, defineEmits } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
-  // import type { FormInstance, SelectProps } from 'ant-design-vue';
-  // import { cloneDeep } from 'lodash-es';
-  // import dragModal from '/@/utils/dragModal';
-  // import { getMatTableUnitList } from '/@/api/mattable';
 
   const AModal = Modal;
   const AForm = Form;
@@ -205,7 +203,7 @@
   //获取父组件的数据
   const props = defineProps({
     gridOptions: String,
-    columns: String,
+    tableCols: String,
     tableData: String,
   });
   //分页信息
@@ -228,7 +226,23 @@
     console.log('详情页aaa', data);
     optionsUnitFieldName.data = data;
   };
+  //判断窗体是否显示搜索
+  let isUnit = ref(true);
+  const initSearch = (data) => {
+    console.log('inits', data);
+    if (data == 'baseUnit' || data == 'weightUnit' || !data) {
+      isUnit.value = true;
+    } else {
+      isUnit.value = false;
+    }
+    return isUnit;
+  };
   //详情页基本单位表格数据
+  const tableCols = reactive<any>({ data: [] });
+  const initCols = (data) => {
+    tableCols.data = data;
+    console.log('kkk', data);
+  };
   const tableData = reactive<any>({ data: [] });
   const initList = (data) => {
     console.log('mmm', data);
@@ -354,7 +368,7 @@
     formRef.value.resetFields();
     // nowCheckData.data = '';
   };
-  defineExpose({ init, bSearch, basicSearch, initList, getListUnitEvent }); //getListUnitEventList,
+  defineExpose({ init, bSearch, basicSearch, initList, initCols, initSearch, getListUnitEvent }); //getListUnitEventList,
 </script>
 <style scoped>
   .x-button {

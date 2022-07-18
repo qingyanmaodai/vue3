@@ -33,24 +33,9 @@ export const gridOptions = reactive<VxeGridProps>({
   columnConfig: {
     resizable: true,
   },
-  // //分页设置
-  // pagerConfig: {
-  //   // total: data.value.length,
-  //   currentPage: 1,
-  //   pageSize: 10,
-  //   pageSizes: [10, 20, 50, 100, 200, 500],
-  //   layouts: [
-  //     'Sizes',
-  //     'PrevJump',
-  //     'PrevPage',
-  //     'Number',
-  //     'NextPage',
-  //     'NextJump',
-  //     'FullJump',
-  //     'Total',
-  //   ],
-  //   perfect: true,
-  // },
+  rowConfig: {
+    isHover: true,
+  },
   //操作按钮
   toolbarConfig: {
     slots: {
@@ -82,6 +67,6 @@ export const matColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' } },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 // export const count = getData().value.length;

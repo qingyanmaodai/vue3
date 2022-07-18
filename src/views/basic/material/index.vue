@@ -101,7 +101,6 @@
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  // import { nuitGridOptions, columns } from '/@/components/Amoresearch/data';
   import { onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Pager } from 'vxe-table';
   import {
@@ -112,12 +111,7 @@
     treeMatGroup,
     MatGroupEntity,
   } from '/@/api/matgroup';
-  import {
-    getMatTable,
-    delMatTableById,
-    delMatTableBatch,
-    getMatTableUnit,
-  } from '/@/api/mattable';
+  import { getMatTable, delMatTableById, delMatTableBatch, getMatTableUnit } from '/@/api/mattable';
   import { Button, Modal, Form, FormItem, Input } from 'ant-design-vue';
   import { Splitpanes, Pane } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';

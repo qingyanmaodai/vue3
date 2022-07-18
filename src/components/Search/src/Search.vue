@@ -34,9 +34,6 @@
   import { reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { getMatOption } from '/@/api/mattable';
-  // import { nuitGridOptions, columns } from '/@/components/Amoresearch/data';
-  // import { gridOptions } from '/@/components/ExTable/data';
-  // import { VxeGridInstance } from 'vxe-table';
 
   const AButton = Button;
   const AForm = Form;
@@ -102,7 +99,7 @@
   const moreSearchClose = () => {
     moreSearchRef.value.handleClose();
   };
-  defineExpose({ moreSearchClose, init}); //initList,searchUnit
+  defineExpose({ moreSearchClose, init }); //initList,searchUnit
   //重置
   const resetEvent = () => {
     formState.wlNo = '';

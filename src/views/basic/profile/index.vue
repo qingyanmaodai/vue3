@@ -9,10 +9,10 @@
         <Button type="warning" class="button" @click="onExam" v-if="rowId">审核</Button>
       </div>
     </LayoutHeader>
-    <Card class="content">
+    <a-card class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
-          <Form
+          <a-form
             :model="formState"
             :rules="formRules"
             @finish="handleFinish"
@@ -20,48 +20,49 @@
           >
             <Row>
               <Col :span="8">
-                <FormItem label="物料编码：" ref="number" name="number" class="item">
+                <a-form-item label="物料编码：" ref="number" name="number" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.number"
                     placeholder="请输入物料编码"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="物料名称：" ref="name" name="name" class="item">
+                <a-form-item label="物料名称：" ref="name" name="name" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入物料名称"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="简称：" ref="shortName" name="shortName" class="item">
+                <a-form-item label="简称：" ref="shortName" name="shortName" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.shortName"
                     placeholder="请输入简称"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <FormItem label="基本单位：" ref="baseUnitId" name="baseUnitId" class="item">
+                <a-form-item label="基本单位：" ref="baseUnitId" name="baseUnitId" class="item">
                   <InputSearch
                     readonly
                     v-model:value="formState.baseUnitId"
                     class="input"
                     placeholder="请选择基本单位"
-                    @search="onUnitIdSearch(formState)"
+                    @search="onStock('baseUnit')"
                   />
-                </FormItem>
+                  <!--                  @search="onUnitIdSearch(formState)"-->
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="物料分组：" ref="groupId" name="groupId" class="item">
+                <a-form-item label="物料分组：" ref="groupId" name="groupId" class="item">
                   <InputSearch
                     readonly
                     v-model:value="formState.groupId"
@@ -69,86 +70,99 @@
                     placeholder="请选择物料分组"
                     @search="onGroupSearch(formState)"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="物料属性：" ref="attr" name="attr" class="item">
+                <a-form-item label="物料属性：" ref="attr" name="attr" class="item">
                   <Select v-model:value="formState.attr" class="select">
                     <SelectOption value="A">自制</SelectOption>
                     <SelectOption value="B">外购</SelectOption>
                     <SelectOption value="C">委外</SelectOption>
                     <SelectOption value="D">虚拟</SelectOption>
                   </Select>
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <FormItem label="重量单位：" ref="weightUnitId" name="weightUnitId" class="item">
+                <a-form-item label="重量单位：" ref="weightUnitId" name="weightUnitId" class="item">
                   <InputSearch
                     readonly
                     v-model:value="formState.weightUnitId"
                     class="input"
                     placeholder="请选择重量单位"
-                    @search="onUnitIdSearch(formState)"
+                    @search="onStock('weightUnit')"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="净重：" ref="netWeight" name="netWeight" class="item">
-                  <Input class="input" v-model="formState.netWeight" />
-                </FormItem>
+                <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.netWeight"
+                    :min="0"
+                    :step="0.1"
+                  />
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="规格型号：" ref="model" name="model" class="item">
+                <a-form-item label="规格型号：" ref="model" name="model" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.model"
                     placeholder="请输入规格型号"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
+                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Select v-model:value="formState.bsStatus" class="select" disabled="true">
                     <SelectOption value="A">创建</SelectOption>
                     <SelectOption value="B">已审核</SelectOption>
                   </Select>
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="旧物料编码：" ref="oldMatNumber" name="oldMatNumber" class="item">
+                <a-form-item
+                  label="旧物料编码："
+                  ref="oldMatNumber"
+                  name="oldMatNumber"
+                  class="item"
+                >
                   <Input
                     class="input"
                     v-model:value="formState.oldMatNumber"
                     placeholder="请输入旧物料编码"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <FormItem label="仓库：" ref="stockId" name="stockId" class="item">
+                <a-form-item label="仓库：" ref="stockId" name="stockId" class="item">
                   <InputSearch
                     readonly
                     class="input"
                     v-model:value="formState.stockId"
                     placeholder="请选择仓库"
+                    @search="onStock('stock')"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="分仓：" ref="subStockId" name="subStockId" class="item">
+                <a-form-item label="分仓：" ref="subStockId" name="subStockId" class="item">
                   <InputSearch
                     readonly
                     class="input"
+                    :disabled="hasSub"
                     v-model:value="formState.subStockId"
                     placeholder="请选择分仓"
+                    @search="onStock('sub')"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem
+                <a-form-item
                   readonly
                   label="仓位："
                   ref="bdStockLocationId"
@@ -159,97 +173,31 @@
                     class="input"
                     v-model:value="formState.bdStockLocationId"
                     placeholder="请选择仓位"
+                    :disabled="hasLocation"
+                    @search="onStock('location')"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
-              <Col>
-                <FormItem label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea v-model:value="formState.mark" placeholder="请添加描述" :rows="3" />
-                </FormItem>
+              <Col :span="8">
+                <a-form-item label="备注：" ref="mark" name="mark" class="item">
+                  <Textarea
+                    v-model:value="formState.mark"
+                    placeholder="请添加描述"
+                    :rows="3"
+                    class="textArea"
+                  />
+                </a-form-item>
               </Col>
             </Row>
-          </Form>
+          </a-form>
         </TabPane>
-        <TabPane key="2" tab="控制信息">
-          <Form :model="formState" :rules="formRules">
+        <TabPane key="2" tab="质量信息">
+          <a-form :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
-                <FormItem
-                  label="启用SN："
-                  ref="enableSn"
-                  name="enableSn"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.enableSn"
-                  />
-                </FormItem>
-              </Col>
-              <Col :span="8">
-                <FormItem
-                  label="批次管理："
-                  ref="enableBatch"
-                  name="enableBatch"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.enableBatch"
-                  />
-                </FormItem>
-              </Col>
-              <Col :span="8">
-                <FormItem
-                  label="存储期（天）："
-                  ref="storagePeriod"
-                  name="storagePeriod"
-                  class="item"
-                >
-                  <InputNumber class="input" v-model="formState.storagePeriod" :min="0" />
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <FormItem label="最小库存：" ref="minSize" name="minSize" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.minStockNum"
-                    :min="0" /></FormItem
-              ></Col>
-              <Col :span="8">
-                <FormItem label="最大库存：" ref="maxSize" name="maxSize" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.maxStockNum"
-                    :min="0" /></FormItem
-              ></Col>
-              <Col :span="8">
-                <FormItem label="安全库存：" ref="safeStockNum" name="safeStockNum" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.safeStockNum"
-                    :min="0" /></FormItem
-              ></Col>
-            </Row>
-          </Form>
-        </TabPane>
-        <TabPane key="3" tab="质量信息">
-          <Form :model="formState" :rules="formRules">
-            <Row type="flex" justify="center">
-              <Col :span="8">
-                <FormItem
+                <a-form-item
                   label="来料检验"
                   ref="stockInExamine"
                   name="stockInExamine"
@@ -263,10 +211,10 @@
                     :unCheckedValue="0"
                     v-model:checked="formState.stockInExamine"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem
+                <a-form-item
                   label="生产检验"
                   ref="produceExamine"
                   name="produceExamine"
@@ -280,10 +228,10 @@
                     :unCheckedValue="0"
                     v-model:checked="formState.produceExamine"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem
+                <a-form-item
                   label="发货检验"
                   ref="stockOutExamine"
                   name="stockOutExamine"
@@ -297,62 +245,131 @@
                     :unCheckedValue="0"
                     v-model:checked="formState.stockOutExamine"
                   />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <FormItem label="检验方案" ref="isSn" name="isSn" class="item">
+                <a-form-item
+                  label="启用SN："
+                  ref="enableSn"
+                  name="enableSn"
+                  class="item"
+                  style="width: 33%"
+                >
+                  <Switch
+                    checked-children="开"
+                    un-checked-children="关"
+                    :checkedValue="1"
+                    :unCheckedValue="0"
+                    v-model:checked="formState.enableSn"
+                  />
+                </a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item
+                  label="批次管理："
+                  ref="enableBatch"
+                  name="enableBatch"
+                  class="item"
+                  style="width: 33%"
+                >
+                  <Switch
+                    checked-children="开"
+                    un-checked-children="关"
+                    :checkedValue="1"
+                    :unCheckedValue="0"
+                    v-model:checked="formState.enableBatch"
+                  />
+                </a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item label="检验方案" ref="isSn" name="isSn" class="item">
                   <InputSearch class="input" readonly />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
-          </Form>
+            <Row>
+              <Col :span="8">
+                <a-form-item label="最小库存：" ref="minSize" name="minSize" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.minStockNum"
+                    :min="0" /></a-form-item
+              ></Col>
+              <Col :span="8">
+                <a-form-item label="最大库存：" ref="maxSize" name="maxSize" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.maxStockNum"
+                    :min="0" /></a-form-item
+              ></Col>
+              <Col :span="8">
+                <a-form-item label="安全库存：" ref="safeStockNum" name="safeStockNum" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.safeStockNum"
+                    :min="0" /></a-form-item
+              ></Col>
+            </Row>
+            <Row>
+              <Col :span="8">
+                <a-form-item
+                  label="存储期（天）："
+                  ref="storagePeriod"
+                  name="storagePeriod"
+                  class="item"
+                >
+                  <InputNumber class="input" v-model:value="formState.storagePeriod" :min="0" />
+                </a-form-item>
+              </Col>
+            </Row>
+          </a-form>
         </TabPane>
-        <TabPane key="4" tab="其他信息">
-          <Form :model="formState" :rules="formRules">
+        <TabPane key="3" tab="其他信息">
+          <a-form :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
-                <FormItem label="创建时间：" ref="createTime" name="createTime" class="item">
+                <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
                   <Input class="input" v-model:value="formState.createTime" disabled="true" />
-                </FormItem>
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <FormItem label="创建人：" ref="createBy" name="createBy" class="item">
+                <a-form-item label="创建人：" ref="createBy" name="createBy" class="item">
                   <Input class="input" v-model:value="formState.createBy" disabled="true" />
-                </FormItem>
+                </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <FormItem label="修改时间：" ref="updateTime" name="updateTime" class="item">
+                <a-form-item label="修改时间：" ref="updateTime" name="updateTime" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.updateTime"
                     disabled="true"
-                  /> </FormItem
+                  /> </a-form-item
               ></Col>
               <Col :span="8">
-                <FormItem label="修改人：" ref="updateBy" name="updateBy" class="item">
+                <a-form-item label="修改人：" ref="updateBy" name="updateBy" class="item">
                   <Input
                     class="input"
                     v-model:value="formState.updateBy"
                     disabled="true"
-                  /> </FormItem
+                  /> </a-form-item
               ></Col>
             </Row>
-          </Form>
+          </a-form>
         </TabPane>
       </Tabs>
-    </Card>
-    <Modal
+    </a-card>
+    <a-modal
       v-model:visible="visibleGroupModal"
       title="物料分组"
       ref="node"
       @ok="groupModalOK"
       @cancel="groupModalCancel"
     >
-      <TreeSelect
+      <a-tree-select
         show-search
         v-model="formState.node"
         style="width: 100%"
@@ -364,16 +381,15 @@
         :treeData="treeData"
         @change="groupSelect"
       />
-    </Modal>
+    </a-modal>
     <BasicSearch
       style="top: 20px"
       @cellClickEvent="cellClickEvent"
       @searchUnitList="searchUnitList"
-      :data="dataList"
-      :columns="columns"
       title="基础信息查询"
       ref="basicSearchRef"
       :gridOptions="nuitGridOptions"
+      :isUnit="isUnit"
     />
   </div>
 </template>
@@ -382,38 +398,38 @@
   import {
     Button,
     Card,
-    Input,
-    Tabs,
-    TabPane,
+    Col,
     Form,
     FormItem,
-    Textarea,
-    LayoutHeader,
-    InputSearch,
-    Select,
-    TreeSelect,
-    Modal,
-    SelectOption,
-    Row,
-    Col,
-    Switch,
+    Input,
     InputNumber,
+    InputSearch,
+    LayoutHeader,
+    Modal,
+    Row,
+    Select,
+    SelectOption,
+    Switch,
+    TabPane,
+    Tabs,
+    Textarea,
+    TreeSelect,
   } from 'ant-design-vue';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { VxeGridEvents, VxeGridProps } from 'vxe-table';
   import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
-  import { nuitGridOptions, columns } from '/@/components/Amoresearch/data';
+  import { nuitGridOptions, stockColumns, unitColumns } from '/@/components/Amoresearch/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
-  import { treeMatGroup, MatGroupEntity } from '/@/api/matgroup';
+  import { MatGroupEntity, treeMatGroup } from '/@/api/matgroup';
   import {
     addMatTable,
     auditMatTable,
     getMatTableById,
     getMatTableUnit,
     getMatTableUnitList,
+    getPublicList,
     updateMatTable,
   } from '/@/api/mattable';
   import { cloneDeep } from 'lodash-es';
@@ -421,43 +437,138 @@
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
-  const ACol = Col;
-  const ARow = Row;
-  const ASelect = Select;
-  const AButton = Button;
-  const AInput = Input;
-  const AInputSearch = InputSearch;
-  const ASelectOption = SelectOption;
+  const ATreeSelect = TreeSelect;
+  const ACard = Card;
 
   const router = useRouter();
   const activeKey = ref<string>('1');
-  const labelCol = { span: 4 };
-  const wrapperCol = { span: 18 };
-  const visibleGroupModal = ref<boolean>(false);
-  const visibleUnitModal = ref<boolean>(false);
+  const visibleGroupModal: any = ref<boolean>(false);
+  // const visibleUnitModal: any = ref<boolean>(false);
   const onGroupSearch = () => {
     console.log('物料分组弹框');
     visibleGroupModal.value = true;
   };
   //基础信息
-  const basicSearchRef = ref(null); //基础信息查询组件ref
-  const nowCheckData = reactive({ data: {} });
-  //基础信息弹框
-  const onUnitIdSearch = (data) => {
-    nowCheckData.data = data;
-    console.log('基础信息弹框');
+  const basicSearchRef: any = ref<any>(null); //基础信息查询组件ref
+  // const nowCheckData: any = reactive({ data: {} });
+  //更新表头数据
+  const getCurrentCols = (key: any) => {
+    const colConfig = {
+      baseUnit: unitColumns,
+      weightUnit: unitColumns,
+      stock: stockColumns,
+      sub: stockColumns,
+      location: stockColumns,
+    };
+    return colConfig[key];
+  };
+  //待用URL
+  let urlConfig = {
+    baseUnit: '/stock/bd-unit/list',
+    weightUnit: '/stock/bd-unit/list',
+    stock: '/stock/bd-stock/list',
+    sub: '/stock/bd-sub-stock/list',
+    location: '/stock/bd-stock-location/list',
+    plan: '',
+  };
+  //所选框
+  let chosenModal: String = '';
+  //点击放大镜事件
+  const onStock: any = async (key) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'name',
+            column: 'name',
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'string',
+            val: '',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      urlConfig[key],
+    );
+    chosenModal = key;
+    let dataCols = getCurrentCols(key);
+    console.log('datacols', dataCols);
+    let dataList = res;
     basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
+    basicSearchRef.value.initSearch(key);
+    console.log('获取基本单位表格数据0', dataList);
+    console.log('stock', dataCols);
+    return res;
   };
   //双击单元格事件
-  let unitId = null;
+  let unitId = '';
+  let weightId = '';
+  let stockId = '';
+  let subStockId = '';
+  let locationId = '';
+  const hasSub = ref(false);
+  const hasLocation = ref(false);
   const cellClickEvent = (row) => {
-    unitId = row.id;
-    console.log('基本单位内容：', row);
-    nowCheckData.data.baseUnitId = row.name;
-    console.log('xuanze基本单位', row.name);
+    // console.log('基本单位内容：', row);
+    console.log('所选', chosenModal);
+    switch (chosenModal) {
+      case 'baseUnit':
+        formState.baseUnitId = row.name;
+        unitId = row.id;
+        break;
+      case 'weightUnit':
+        formState.weightUnitId = row.name;
+        weightId = row.id;
+        break;
+      case 'stock':
+        formState.stockId = row.name;
+        stockId = row.id;
+        console.log(stockId);
+        getNextStock('stock', 'stockId', stockId);
+        break;
+      case 'sub':
+        formState.subStockId = row.name;
+        subStockId = row.id;
+        getNextStock('sub', 'subStockId', subStockId);
+        break;
+      case 'location':
+        formState.bdStockLocationId = row.name;
+        locationId = row.id;
+        getNextStock('location', 'bdStockLocationId', locationId);
+        break;
+    }
     basicSearchRef.value.bSearch(false);
   };
-  let weightId = null;
+  //选择仓库后查询
+  const getNextStock = async (key, colName, id) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: colName,
+            column: colName,
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'number',
+            val: id,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      urlConfig[key],
+    );
+    if (res.records) {
+      hasSub.value = true;
+      hasLocation.value = true;
+    }
+  };
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
   const getGroup = async () => {
@@ -468,21 +579,21 @@
     treeData.value = cloneDeep(tree);
   };
   getGroup();
-  const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
-    for (let i = 0; i < list.length; i++) {
-      const item = list[i];
-      if (item.key === key) {
-        return item;
-      }
-      if (item.children && item.children.length > 0) {
-        res = runNode(key, item.children, res);
-        if (res.key) {
-          return res;
-        }
-      }
-    }
-    return res;
-  };
+  // const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
+  //   for (let i = 0; i < list.length; i++) {
+  //     const item = list[i];
+  //     if (item.key === key) {
+  //       return item;
+  //     }
+  //     if (item.children && item.children.length > 0) {
+  //       res = runNode(key, item.children, res);
+  //       if (res.key) {
+  //         return res;
+  //       }
+  //     }
+  //   }
+  //   return res;
+  // };
   const runTree = (tree: MatGroupEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
@@ -503,11 +614,6 @@
     console.log('物料分组弹框groupId', formState.groupId);
     visibleGroupModal.value = false;
   };
-  // const unitModal = () => {
-  //   console.log('unitModal');
-  //   visibleUnitModal.value = false;
-  // };
-
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('currentRoute.value', router.currentRoute.value);
@@ -518,10 +624,24 @@
   let rowId = useRoute().query.row;
   console.log('编辑id', rowId);
   const getListById = async () => {
-    const res = await getMatTableById({
+    const res: any = await getMatTableById({
       params: rowId,
     });
-    console.log('id', res);
+    if (res.weightUnitId == 0) {
+      res.weightUnitId = null;
+    }
+    if (res.storagePeriod == 0) {
+      res.storagePeriod = null;
+    }
+    if (res.minStockNum == 0) {
+      res.minStockNum = null;
+    }
+    if (res.maxStockNum == 0) {
+      res.maxStockNum = null;
+    }
+    if (res.safeStockNum == 0) {
+      res.safeStockNum = null;
+    }
     formState.number = res.number;
     formState.name = res.name;
     formState.shortName = res.shortName;
@@ -545,9 +665,21 @@
     }
     formState.oldMatNumber = res.oldMatNumber;
     formState.mark = res.mark;
-    formState.stockId = res.stockId;
+    formState.stockId = res.bdStock;
+    if (formState.stockId) {
+      formState.stockId = res.bdStock.name;
+    }
+    formState.bdStock = res.bdStock;
     formState.subStockId = res.subStockId;
+    if (formState.subStockId) {
+      formState.subStockId = res.bdSubStock.name;
+    }
+    formState.bdSubStock = res.bdSubStock;
     formState.bdStockLocationId = res.bdStockLocationId;
+    if (formState.bdStockLocationId) {
+      formState.bdStockLocationId = res.bdStockLocation.name;
+    }
+    formState.bdStockLocationName = res.bdStockLocation;
     formState.enableSn = res.enableSn;
     formState.enableBatch = res.enableBatch;
     formState.storagePeriod = res.storagePeriod;
@@ -583,14 +715,17 @@
     mark: string;
     node: string;
     stockId: string;
+    bdStock: string;
     subStockId: string;
+    bdSubStock: string;
     bdStockLocationId: string;
+    bdStockLocationName: string;
     enableSn: number;
     enableBatch: number;
-    storagePeriod: string;
-    minStockNum: string;
-    maxStockNum: string;
-    safeStockNum: string;
+    storagePeriod: number;
+    minStockNum: number;
+    maxStockNum: number;
+    safeStockNum: number;
     stockInExamine: number;
     stockOutExamine: number;
     produceExamine: number;
@@ -606,21 +741,21 @@
     baseUnitId: unitId,
     groupId: '',
     attr: 'A',
-    weightUnitId: weightId,
+    weightUnitId: '',
     netWeight: null,
     model: '',
     bsStatus: '创建',
     oldMatNumber: null,
     mark: '',
-    stockId: null,
+    stockId: stockId,
     subStockId: null,
     bdStockLocationId: null,
     enableSn: null,
     enableBatch: null,
-    storagePeriod: 0,
-    minStockNum: 0,
-    maxStockNum: 0,
-    safeStockNum: 0,
+    storagePeriod: null,
+    minStockNum: null,
+    maxStockNum: null,
+    safeStockNum: null,
     stockInExamine: null,
     stockOutExamine: null,
     produceExamine: null,
@@ -645,8 +780,7 @@
   //获取基本单位字段
   const getTableUnit = async () => {
     try {
-      const res = await getMatTableUnit({});
-      let data = res;
+      let data = await getMatTableUnit({});
       basicSearchRef.value.init(data);
       console.log('详情页基本单位字段', data);
     } catch (e) {
@@ -655,30 +789,30 @@
   };
   getTableUnit();
   //获取基本单位表格
-  const getTableUnitList = async () => {
-    try {
-      const res = await getMatTableUnitList({
-        params: [
-          {
-            table: '',
-            name: 'name',
-            column: 'name',
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'string',
-            val: '',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      });
-      let dataList = res;
-      basicSearchRef.value.initList(dataList);
-      console.log('获取基本单位表格数据0', dataList);
-    } catch (e) {
-      console.log('获取基本单位表格失败', e);
-    }
-  };
+  // const getTableUnitList = async () => {
+  //   try {
+  //     const res = await getMatTableUnitList({
+  //       params: [
+  //         {
+  //           table: '',
+  //           name: 'name',
+  //           column: 'name',
+  //           link: 'AND',
+  //           rule: 'LIKE',
+  //           type: 'string',
+  //           val: '',
+  //           startWith: '',
+  //           endWith: '',
+  //         },
+  //       ],
+  //     });
+  //     let dataList = res;
+  //     basicSearchRef.value.initList(dataList);
+  //     console.log('获取基本单位表格数据0', dataList);
+  //   } catch (e) {
+  //     console.log('获取基本单位表格失败', e);
+  //   }
+  // };
   //基本单位搜索功能
   const searchUnitList = async (keywords) => {
     const res = await getMatTableUnitList({
@@ -690,10 +824,10 @@
     console.log('qqqqqq', keywords);
     basicSearchRef.value.initList(data);
   };
-  getTableUnitList();
+  // getTableUnitList();
   getTableUnit();
   //保存事件
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!rowId) {
       const newData = {
         number: formState.number,
@@ -708,9 +842,9 @@
         bsStatus: formState.bsStatus,
         oldMatNumber: formState.oldMatNumber,
         mark: formState.mark,
-        stockId: formState.stockId,
-        subStockId: formState.subStockId,
-        bdStockLocationId: formState.bdStockLocationId,
+        stockId: stockId,
+        subStockId: subStockId,
+        bdStockLocationId: locationId,
         enableSn: formState.enableSn,
         enableBatch: formState.enableBatch,
         storagePeriod: formState.storagePeriod,
@@ -736,16 +870,11 @@
         useMessage().createMessage.error('必填字段不能为空');
       } else {
         try {
-          const addList = async () => {
-            await addMatTable({
-              params: newData,
-            });
-          };
-          addList();
-          // useMessage().createMessage.success('添加成功');
-          // back();
-          addList();
-          if (addList.code == 200) {
+          const addList = await addMatTable({
+            params: newData,
+          });
+          console.log("aaaa",addList);
+          if (addList.id != null) {
             useMessage().createMessage.success('添加成功');
             back();
           }
@@ -767,9 +896,9 @@
         model: formState.model,
         oldMatNumber: formState.oldMatNumber,
         mark: formState.mark,
-        stockId: formState.stockId,
-        subStockId: formState.subStockId,
-        bdStockLocationId: formState.bdStockLocationId,
+        stockId: stockId,
+        subStockId: subStockId,
+        bdStockLocationId: locationId,
         enableSn: formState.enableSn,
         enableBatch: formState.enableBatch,
         storagePeriod: formState.storagePeriod,
@@ -799,14 +928,9 @@
               params: newData,
             });
           };
-          // updateList();
-          // useMessage().createMessage.success('修改成功');
-          // back();
           updateList();
-          if (updateList.code == 200) {
-            useMessage().createMessage.success('修改成功');
-            back();
-          }
+          useMessage().createMessage.success('修改成功');
+          back();
         } catch (e) {
           console.log('失败', e);
         }
@@ -843,12 +967,17 @@
     flex-flow: nowrap;
   }
   .input {
-    width: 320px;
-    height: 32px;
+    width: 20rem;
+    height: 2rem;
+    margin: 0 60px 0 10px;
+  }
+  .textArea {
+    width: 20rem;
+    height: 2rem;
     margin: 0 60px 0 10px;
   }
   .select {
-    width: 320px;
+    width: 20rem;
     margin: 0 60px 0 10px;
   }
   .content {

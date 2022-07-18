@@ -97,7 +97,7 @@
               style="width: 200px"
               readonly
               placeholder="请选择输入..."
-              v-model:value="search.val"
+              v-model:value="search.labelValue"
               :filterOption="filterOption"
               @search="onSearch(search)"
             />
@@ -128,7 +128,7 @@
               style="width: 200px"
               :allowClear="true"
               :showArrow="true"
-              v-model:value="search.val"
+              v-model:value="search.labelValue"
               :filterOption="filterOption"
               placeholder="请选择...多选。。"
             />
@@ -165,27 +165,20 @@
             ><MinusOutlined
           /></a-button> </a-space
         ><br /><hr />
-
         <a-form-item>
           <span style="display: flex; float: right">
             <!--            <a-button type="primary" class="x-button" @click="resetSearch">重置</Button>-->
             <a-button class="x-button" @click="handleCel">取消</a-button>
             <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
           </span>
-          <!--          <a-button style="display: flex; float: right; margin: 10px 15px" @click="handleCel"-->
-          <!--            >取消</Button-->
-          <!--          >-->
         </a-form-item>
       </a-form>
     </a-modal>
-    <!--    基础信息查询          :options="optionsFieldName.data"    @searchUnitList="searchUnitListEvent"   -->
     <BasicSearch
       style="top: 20px"
       @openSearch="openSearch"
       @cellClickEvent="cellClickEvent"
       :gridOptions="nuitGridOptions"
-      :tableData="tableData"
-      :columns="columns"
       title="基础信息查询"
       ref="basicSearchRef"
     />
@@ -206,7 +199,7 @@
   } from 'ant-design-vue';
   import { defineExpose, reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { nuitGridOptions, columns } from '/@/components/Amoresearch/data';
+  import { nuitGridOptions, unitColumns } from '/@/components/Amoresearch/data';
   import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
@@ -226,7 +219,6 @@
   //选择事件
   const selectOption: any = reactive({ data: {} });
   const handleChange = (value: string) => {
-    // console.log('选择', val);
     console.log(`selected ${value}`);
     selectOption.data = JSON.parse(value);
   };
@@ -263,6 +255,7 @@
     const res = await publicEvent(data);
     console.log('基础信息弹框', res);
     basicSearchRef.value.initList(res);
+    basicSearchRef.value.initCols(unitColumns);
     basicSearchRef.value.bSearch(true);
   };
   //打开基本信息弹框
@@ -275,7 +268,8 @@
   //基本信息表格双击事件
   const cellClickEvent = (row) => {
     console.log('基本单位内容：', row);
-    nowCheckData.data.val = row.name;
+    nowCheckData.data.val = row.id;
+    nowCheckData.data.labelValue = row.name;
     console.log('xuanze基本单位', row.name);
     basicSearchRef.value.bSearch(false);
   };
@@ -323,6 +317,7 @@
     fieldName: string | undefined;
     rule: string | undefined;
     val: string | null;
+    labelValue: string | null;
     link: string | undefined;
     type: string | undefined;
     key: number;
@@ -340,6 +335,7 @@
         fieldName: '请选择',
         rule: 'EQ',
         val: null,
+        labelValue: '',
         link: 'AND',
         type: 'string',
         key: Date.now(),

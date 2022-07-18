@@ -19,6 +19,7 @@ export interface MatGroupEntity {
   children?: MatGroupEntity[];
   title?: string;
   key?: string;
+  value?:string;
 }
 /**
  * 新增物料分组
@@ -68,9 +69,8 @@ export function deleteMatGroup(json: RequestData<string>, mode: ErrorMessageMode
     },
   );
 }
-
 /**
- * 删除物料分组
+ * 查询物料分组
  */
 export function queryOneMatGroup(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<MatGroupEntity>(

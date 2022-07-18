@@ -25,7 +25,7 @@ export const nuitGridOptions = reactive<VxeGridProps>({
   columnConfig: {
     resizable: true,
   },
-  // //分页设置
+  // 分页设置
   // pagerConfig: {
   //   // total: data.value.length,
   //   currentPage: 1,
@@ -48,8 +48,7 @@ export const nuitGridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
-
-export const columns = [
+export const unitColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单位编码', sortable: true },
@@ -80,4 +79,13 @@ export const columns = [
     sortable: true,
     slots: { default: 'status' },
   },
+];
+export const stockColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '仓库编码', sortable: true },
+  { field: 'name', title: '仓库名称', sortable: true },
+  { field: 'address', title: '仓库地址', sortable: true },
+  { field: 'mainBy', title: '仓库管理员', sortable: true },
+  { field: 'phone', title: '联系电话', sortable: true },
 ];
