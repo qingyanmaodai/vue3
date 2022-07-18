@@ -25,6 +25,7 @@
                     class="input"
                     v-model:value="formState.number"
                     placeholder="请输入物料编码"
+                    :disabled="rowId"
                   />
                 </a-form-item>
               </Col>
@@ -443,7 +444,6 @@
   const activeKey = ref<string>('1');
   const visibleGroupModal: any = ref<boolean>(false);
   const onGroupSearch = () => {
-    console.log('物料分组弹框');
     visibleGroupModal.value = true;
   };
   //基础信息
@@ -568,7 +568,6 @@
   const getGroup = async () => {
     const tree = await treeMatGroup({ params: '0' });
     runTree(tree);
-    console.log('tree1111:', tree);
     // treeData.value = JSON.parse(JSON.stringify(tree));   //两种方式
     treeData.value = cloneDeep(tree);
   };
@@ -589,7 +588,6 @@
     groupValue = value;
     console.log('物料分组弹框node', value, node);
     formState.groupId = formState.node;
-    console.log('物料分组弹框groupId', formState.groupId);
     visibleGroupModal.value = false;
   };
   let getParams = () => {
@@ -842,7 +840,6 @@
         updateTime: formState.updateTime,
         updateBy: formState.updateBy,
       };
-      console.log(newData);
       if (
         !formState.name ||
         !formState.number ||

@@ -484,7 +484,6 @@
     tableEvent.value.delTable();
   };
   const delMatBatchEvent = async (row) => {
-    console.log('nnn', row);
     try {
       await delMatTableBatch({
         params: row,
