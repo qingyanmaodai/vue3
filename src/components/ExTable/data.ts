@@ -27,7 +27,6 @@ export interface DataItem {
 }
 export const gridOptions = reactive<VxeGridProps>({
   border: true,
-  height: 790,
   align: 'center',
   loading: false,
   columnConfig: {
@@ -50,10 +49,11 @@ export const gridOptions = reactive<VxeGridProps>({
 export const matColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '物料编码', sortable: true },
+  { field: 'number', title: '物料编码', slots: { default: 'number' }, sortable: true },
   { field: 'name', title: '物料名称', sortable: true },
   { field: 'model', title: '规格型号', sortable: true },
   { field: 'baseUnit.name', title: '基本单位', sortable: true },
+  { field: 'weightUnit.name', title: '重量单位', sortable: true },
   { field: 'bdMaterialGroup.name', title: '物料分组', sortable: true },
   {
     field: 'attr',

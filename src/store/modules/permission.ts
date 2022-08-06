@@ -23,10 +23,11 @@ import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
-import { cloneDeep, forEach, remove } from 'lodash-es';
-import { list } from 'postcss';
-import { RouteMeta } from 'vue-router';
-import { REDIRECT_NAME } from '/@/router/constant';
+import { remove } from 'lodash-es';
+// import { cloneDeep, forEach, remove } from 'lodash-es';
+// import { list } from 'postcss';
+// import { RouteMeta } from 'vue-router';
+// import { REDIRECT_NAME } from '/@/router/constant';
 
 interface PermissionState {
   // Permission code list
@@ -206,6 +207,7 @@ export const usePermissionStore = defineStore({
                   name: 'Analysis',
                   component: '/dashboard/analysis/index',
                   meta: {
+                    ignoreKeepAlive: false,
                     title: 'routes.dashboard.analysis',
                     icon: 'bx:bx-home',
                     currentActiveMenu: '/dashboard',
@@ -225,6 +227,7 @@ export const usePermissionStore = defineStore({
               menu.meta.orderNo = 3;
               routeList.push(menu);
             });
+            // console.log('kkkk', routeList2);
             // dashboardRoute.redirect = dashboardRoute.path + '/' + dashboardRoute.children[0].path;
             // routeList = [dashboardRoute];
           } catch (error) {

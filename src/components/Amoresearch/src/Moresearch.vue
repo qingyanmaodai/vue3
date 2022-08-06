@@ -5,18 +5,12 @@
       title="高级查询"
       close-on-click-modal="false"
       center="true"
-      v-model:visible.sync="moreSearchDialog"
+      v-model:visible="moreSearchDialog"
       width="65%"
       :footer="null"
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
-        <!--        <FormItem style="margin: 5px 5px">-->
-        <!--          <Button style="margin-left: 5px" @click="addSearch">新增行</Button>-->
-        <!--          <Button style="margin-left: 5px" @click="delSearch">删除行</Button>-->
-        <!--          <Button style="margin-left: 5px" @click="deloweSearch">全部删除</Button>-->
-        <!--        </FormItem>-->
-        <!--        <hr />-->
         <a-space
           v-for="(search, index) in dynamicValidateForm.searches"
           :key="search.key"
@@ -29,18 +23,18 @@
               :options="optionsStartWith"
               style="width: 70px"
               :filterOption="filterOption"
-              @focus="handleFocus"
             />
           </a-form-item>
           <a-form-item style="margin: 5px 5px" :name="['searches', index, 'fieldName']">
             <a-select
               v-model:value="search.fieldName"
+              onfocus="this.blur();"
               show-search
               placeholder="请输入或选择关键字"
               style="width: 200px"
               :filterOption="filterOption"
-              @focus="handleFocus"
               @change="handleChange"
+              @select="selectOne(search)"
             >
               <a-select-option
                 v-for="(item, v) in optionsFieldName.data"
@@ -53,19 +47,39 @@
           </a-form-item>
           <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
             <a-select
+              v-show="
+                search.fieldName != '请选择'
+                  ? JSON.parse(search.fieldName).controlType === 'date'
+                  : false
+              "
               v-model:value="search.rule"
               placeholder="等于"
-              :options="optionsRule"
+              :options="optionsTime"
               style="width: 100px"
               :filterOption="filterOption"
-              @focus="handleFocus"
             />
-          </a-form-item>
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'val']">
-            <a-input v-show="search.fieldName == '请选择'" style="width: 200px" disabled />
             <a-select
               v-show="
                 search.fieldName != '请选择'
+                  ? JSON.parse(search.fieldName).controlType !== 'date'
+                  : true
+              "
+              v-model:value="search.rule"
+              placeholder="包含"
+              :options="optionsRule"
+              style="width: 100px"
+              :filterOption="filterOption"
+            />
+          </a-form-item>
+          <a-form-item
+            style="margin: 5px 5px"
+            :name="['searches', index, 'val']"
+            v-model:value="search.val"
+          >
+            <a-input v-show="search.fieldName === '请选择'" style="width: 200px" disabled />
+            <a-select
+              v-show="
+                search.fieldName !== '请选择'
                   ? JSON.parse(search.fieldName).controlType === 'select'
                   : false
               "
@@ -95,10 +109,11 @@
                   : false
               "
               style="width: 200px"
-              readonly
+              onfocus="this.blur();"
               placeholder="请选择输入..."
               v-model:value="search.labelValue"
               :filterOption="filterOption"
+              @click="onSearch(search)"
               @search="onSearch(search)"
             />
             <a-space
@@ -112,21 +127,19 @@
             >
               <a-date-picker
                 style="width: 200px"
-                v-model="search.val"
-                show-time
+                v-model:value="search.date"
                 placeholder="请选择时间..."
               />
             </a-space>
             <a-select
               v-show="
-                search.fieldName != '请选择'
+                search.fieldName !== '请选择'
                   ? JSON.parse(search.fieldName).controlType === 'checkbox'
                   : false
               "
               mode="multiple"
               showSearch
               style="width: 200px"
-              :allowClear="true"
               :showArrow="true"
               v-model:value="search.labelValue"
               :filterOption="filterOption"
@@ -167,7 +180,6 @@
         ><br /><hr />
         <a-form-item>
           <span style="display: flex; float: right">
-            <!--            <a-button type="primary" class="x-button" @click="resetSearch">重置</Button>-->
             <a-button class="x-button" @click="handleCel">取消</a-button>
             <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
           </span>
@@ -197,13 +209,14 @@
     SelectOption,
     Space,
   } from 'ant-design-vue';
-  import { defineExpose, reactive, ref, UnwrapRef } from 'vue';
+  import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { nuitGridOptions, unitColumns } from '/@/components/Amoresearch/data';
   import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/mattable';
+  import dayjs, { Dayjs } from 'dayjs';
 
   const APlusOutlined = PlusOutlined;
   const AModal = Modal;
@@ -221,6 +234,12 @@
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
     selectOption.data = JSON.parse(value);
+  };
+  const selectOne = (data: any) => {
+    data.val = '';
+    if (data.labelValue) {
+      data.labelValue = '';
+    }
   };
   //基础信息
   const basicSearchRef: any = ref(null); //基础信息查询组件ref
@@ -241,13 +260,12 @@
       };
     }
     console.log(keywords);
-    const res = await getPublicList(
+    return await getPublicList(
       {
         params: [keywords],
       },
       selectOption.data.requestUrl,
     );
-    return res;
   };
   //基础信息弹框
   const onSearch = async (data) => {
@@ -272,9 +290,17 @@
     console.log('xuanze基本单位', row.name);
     basicSearchRef.value.bSearch(false);
   };
-
   const optionsFieldName = reactive<any>({ data: [] });
   const optionsRule = reactive<any>([
+    { value: 'LIKE', label: '包含' },
+    { value: 'EQ', label: '等于' },
+    { value: 'GE', label: '大于等于' },
+    { value: 'LE', label: '小于等于' },
+    { value: 'NE', label: '不等于' },
+    { value: 'GT', label: '大于' },
+    { value: 'LT', label: '小于' },
+  ]);
+  const optionsTime = reactive<any>([
     { value: 'EQ', label: '等于' },
     { value: 'GE', label: '大于等于' },
     { value: 'LE', label: '小于等于' },
@@ -294,15 +320,6 @@
     { value: 'AND', label: '并且' },
     { value: 'OR', label: '或者' },
   ]);
-  // const handleChange = (value: string) => {
-  //   console.log(`selected ${value}`);
-  // };
-  // const handleBlur = () => {
-  //   console.log('blur');
-  // };
-  // const handleFocus = () => {
-  //   console.log('focus');
-  // };
   const filterOption = (input: string) => {
     return optionsFieldName.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
@@ -315,24 +332,25 @@
     endWith: string | undefined;
     fieldName: string | undefined;
     rule: string | undefined;
-    val: string | null;
-    labelValue: string | null;
+    date?: Dayjs;
+    val: string | undefined;
+    labelValue: string | undefined;
     link: string | undefined;
     type: string | undefined;
     key: number;
     name: string | undefined;
     column: string | undefined;
   }
-
-  const formRef: any = ref(null);
+  const formRef = ref<any>(undefined);
   const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
     searches: [
       {
         startWith: undefined,
         endWith: undefined,
         fieldName: '请选择',
-        rule: 'EQ',
-        val: null,
+        rule: undefined,
+        date: undefined,
+        val: '',
         labelValue: '',
         link: 'AND',
         type: 'string',
@@ -342,10 +360,8 @@
       },
     ],
   });
-
   //高级查询弹框
   const moreSearchDialog = ref(false);
-
   //打开高级查询弹框事件
   const mSearch = (data) => {
     moreSearchDialog.value = data;
@@ -363,6 +379,7 @@
     (event: 'moreListEvent', keywords: object): void;
     (event: 'getTableUnitEvent', keywords: object): void;
     (event: 'getTableUnitListEvent', keywords: object): void;
+    (event: 'resetEvent'): void;
     // (event: 'searchUnitListEvent', keywords: object): void;
   };
   //基本单位字段
@@ -370,32 +387,40 @@
     basicSearchRef.value.getListUnitEvent(data);
     console.log('22222aaa', data);
   };
-  //基本单位表格数据
-  // const getTableUnitListEvent = (data) => {
-  //   basicSearchRef.value.getListUnitEventList(data);
-  // };
-  //基本单位查询
-  // const searchUnitListEvent = (data) => {
-  //   console.log('sss', data);
-  //   basicSearchRef.value.searchListUnitEventList(data);
-  // };
 
   const cacheQueryArr: any = reactive({ data: [] });
   const emit = defineEmits<Emits>();
   //查询按钮
   const moreSearch = (keywords) => {
-    console.log('iii', dynamicValidateForm.searches);
+    dynamicValidateForm.searches.map((r) => {
+      if (r.date) {
+        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD 00:00:00');
+      }
+    });
     cacheQueryArr.data = cloneDeep(dynamicValidateForm.searches);
     keywords = dynamicValidateForm.searches;
     emit('moreListEvent', keywords);
   };
-  //重置查询条件
-  // const resetSearch = () => {
-  //   formRef.value.resetFields();
-  //   nowCheckData.data = '';
-  //   dynamicValidateForm.searches.length = 1;
-  // };
-
+  //重置方法
+  const reset = () => {
+    console.log('rest');
+    cacheQueryArr.data = [
+      {
+        startWith: undefined,
+        endWith: undefined,
+        fieldName: '请选择',
+        rule: undefined,
+        date: undefined,
+        val: undefined,
+        labelValue: '',
+        link: 'AND',
+        type: 'string',
+        key: Date.now(),
+        name: undefined,
+        column: undefined,
+      },
+    ];
+  };
   //取消查询
   const handleCel = () => {
     formRef.value.resetFields();
@@ -403,6 +428,7 @@
     dynamicValidateForm.searches.length = 1;
     cacheQueryArr.data = [];
     moreSearchDialog.value = false;
+    emit('resetEvent');
   };
   //关闭查询弹框--X
   const handleClose = () => {
@@ -412,7 +438,7 @@
   };
   //移除
   const removeSearch = (i) => {
-    dynamicValidateForm.searches[i].val = null;
+    dynamicValidateForm.searches[i].val = '';
     dynamicValidateForm.searches.splice(i, 1);
   };
   //新增行
@@ -420,8 +446,9 @@
     dynamicValidateForm.searches.push({
       startWith: undefined,
       fieldName: '请选择',
-      rule: 'EQ',
-      val: null,
+      rule: undefined,
+      val: '',
+      date: undefined,
       endWith: undefined,
       link: 'AND',
       labelValue: '',
@@ -435,12 +462,10 @@
   defineExpose({
     mSearch,
     init,
-    // cellClickEvent,
     handleClose,
-    // getTableUnitListEvent,
     getTableUnitEvent,
-    // searchUnitListEvent,
     publicEvent,
+    reset,
   });
 </script>
 <style scoped>

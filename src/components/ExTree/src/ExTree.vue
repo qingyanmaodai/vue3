@@ -19,6 +19,7 @@
           >
         </a-col>
         <a-col :span="8">
+          <!--          <a-button danger class="tree-button" @click="resetSelect">删除分组</a-button>-->
           <a-button danger class="tree-button" @click="deleteEvent">删除分组</a-button>
         </a-col>
       </a-row>
@@ -26,6 +27,7 @@
     <basic-tree
       ref="tree"
       @select="selectTree"
+      v-model:selectedKeys="selectedKeys"
       :search="prop.search"
       :toolbar="prop.toolbar"
       :tree-data="prop.treeData"
@@ -47,14 +49,18 @@
   const ARow = Row;
   const ACol = Col;
   const tree = ref<any>(null);
+  const selectedKeys = ref<string[]>([]);
   let rightClickNode: TreeItem = {};
   const prop = defineProps(basicProps);
   const emits = defineEmits<{
+    (e: 'getList', keywords, selected?): void;
+    (e: 'getTreeKey', selected): void;
     (e: 'editEvent', node: TreeItem): void;
     (e: 'addEvent'): void;
     (e: 'addSubEvent', node: TreeItem): void;
     (e: 'deleteEvent', node: TreeItem): void;
-    (e: 'treeList', selected): void;
+    (e: 'resetTable'): void;
+    (e: 'selectTree', selected, selectedKeys): void;
   }>();
   const rightMenuList: ContextMenuItem[] = [
     {
@@ -65,10 +71,21 @@
     },
   ];
   //单选树事件
-  const selectTree = (selected) => {
-    console.log('seleted', selected);
-    emits('treeList', selected);
+  const selectTree = (selected, selectedKeys) => {
+    if (selected.length == 0) {
+      console.log('shushu', selected);
+      emits('resetTable');
+    } else {
+      console.log(tree);
+      selectedKeys = selectedKeys.selectedNodes[0].props.name;
+      console.log('selected', selected, selectedKeys);
+      emits('selectTree', selected, selectedKeys);
+      emits('getTreeKey', selected);
+      emits('getList', null, selected);
+    }
   };
+  //重置树选择
+  const resetSelect = () => {};
   const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
@@ -119,6 +136,7 @@
     const node = findNode(key);
     emits('deleteEvent', node);
   };
+  defineExpose({ resetSelect });
 </script>
 
 <style scoped lang="less">

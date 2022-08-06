@@ -1,13 +1,13 @@
 <template>
   <div style="height: 100%">
-    <a-modal
+    <AModal
       :visible="visibleGroupModal"
       title="物料分组"
       :maskClosable="false"
       :cancelText="false"
       :closable="false"
     >
-      <div style="width: 100%">
+      <div>
         <Form
           ref="formRef"
           :model="groupFormData"
@@ -30,8 +30,8 @@
         <a-button key="submit" type="primary" :loading="false" @click="submitGroup">提交</a-button>
         <a-button :loading="false" @click="cancelGroup">取消</a-button>
       </template>
-    </a-modal>
-    <a-modal
+    </AModal>
+    <AModal
       :visible="visibleDeleteGroupModal"
       title="删除物料分组"
       :maskClosable="false"
@@ -47,78 +47,164 @@
         >
         <a-button :loading="false" @click="cancelDeleteGroup">取消</a-button>
       </template>
-    </a-modal>
+    </AModal>
     <a-splitpanes class="default-theme" style="padding: 15px; height: 100%">
       <pane :size="paneSize">
         <ex-tree
           :toolbar="true"
           :search="true"
           :tree-data="treeData"
+          ref="treeRef"
           title="物料分组"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"
           @deleteEvent="deleteEvent"
-          @treeList="treeList"
+          @getTreeKey="getTreeKey"
+          @getList="getList"
+          @refreshTable="refreshTable"
+          @selectTree="selectTree"
+          @resetTable="resetTable"
         />
       </pane>
       <pane :size="100 - paneSize">
-        <Search @searchList="searchList" @getList="getList" @moreList="moreList" ref="searchRef" />
-        <ExTable
-          :columns="matColumns"
-          :data="tableData"
-          :buttons="buttons"
-          :gridOptions="AgridOptions"
-          ref="tableEvent"
-          @getList="getList"
-          @delMatOneEvent="delMatOneEvent"
-          @delMatBatchEvent="delMatBatchEvent"
-        />
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="handlePageChange"
-        />
+        <div style="background-color: #fff; height: 100%">
+          <Search
+            @getList="getList"
+            @getTreeKey="getTreeKey"
+            @getMoreKey="getMoreKey"
+            @refreshTable="refreshTable"
+            @getKeyword="getKeyword"
+            @resetTable="resetTable"
+            ref="searchRef"
+          />
+          <ExTable
+            :columns="matColumns"
+            :buttons="buttons"
+            :gridOptions="AgridOptions"
+            :treeSelectData="treeSelectData"
+            ref="tableEvent"
+            @getList="getList"
+            @refreshTable="refreshTable"
+            @delMatOneEvent="delMatOneEvent"
+            @delMatBatchEvent="delMatBatchEvent"
+            @auditRowEvent="auditRowEvent"
+            @auditBatchEvent="auditBatchEvent"
+            @unAuditRowEvent="unAuditRowEvent"
+            @unAuditBatchEvent="unAuditBatchEvent"
+          />
+          <div>
+            <Pager
+              background
+              v-model:current-page="pages.currentPage"
+              v-model:page-size="pages.pageSize"
+              :total="pages.total"
+              :layouts="[
+                'PrevJump',
+                'PrevPage',
+                'JumpNumber',
+                'NextPage',
+                'NextJump',
+                'Sizes',
+                'FullJump',
+                'Total',
+              ]"
+              @page-change="getList"
+              style="width: calc(100% - 5px); height: 42px; margin: 4px"
+            />
+          </div>
+        </div>
+        <AModal
+          v-model:visible="auditModal"
+          title="操作结果"
+          :footer="null"
+          width="800px"
+          @cancel="closeRes"
+        >
+          <div v-if="isAudit"
+            >审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
+          >
+          <div v-if="unAudit"
+            >反审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{
+              resF
+            }}条。</div
+          >
+          <vxe-table
+            border
+            show-overflow
+            :row-style="rowStyle"
+            :row-config="{ isHover: true }"
+            :data="adResult.data"
+          >
+            <vxe-column type="seq" title="序号" width="60" />
+            <vxe-column field="info.title" title="关键字" width="180" />
+            <vxe-column field="info.status" title="状态" width="80">
+              <template #default="{ row }">
+                <Tag
+                  :color="row.info.status === 'Y' ? 'success' : 'error'"
+                  v-if="row.info.status"
+                  >{{ row.info.status === 'Y' ? '成功' : '失败' }}</Tag
+                >
+              </template>
+            </vxe-column>
+            <vxe-column field="info.msg" title="信息" />
+            <vxe-column field="info.type" title="信息类型" width="80" />
+          </vxe-table>
+          <vxe-pager
+            background
+            :total="adResult.data.length"
+            :layouts="[
+              'PrevJump',
+              'PrevPage',
+              'JumpNumber',
+              'NextPage',
+              'NextJump',
+              'Sizes',
+              'FullJump',
+              'Total',
+            ]"
+          />
+        </AModal>
       </pane>
     </a-splitpanes>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="basic-material-index">
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import { Tag } from 'ant-design-vue';
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Pager } from 'vxe-table';
+  import { onActivated, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { Pager, VxeTablePropTypes } from 'vxe-table';
   import {
     addMatGroup,
-    editMatGroup,
     deleteMatGroup,
+    editMatGroup,
+    MatGroupEntity,
     queryOneMatGroup,
     treeMatGroup,
-    MatGroupEntity,
   } from '/@/api/matgroup';
-  import { getMatTable, delMatTableById, delMatTableBatch, getMatTableUnit } from '/@/api/mattable';
-  import { Button, Modal, Form, FormItem, Input } from 'ant-design-vue';
-  import { Splitpanes, Pane } from 'splitpanes';
+  import {
+    auditMatTableBatch,
+    unAuditMatTableBatch,
+    delMatTableBatch,
+    delMatTableById,
+    getMatTable,
+    getMatTableUnit,
+    auditMatTable,
+    unAuditMatTable,
+  } from '/@/api/mattable';
+  import { Button, Form, FormItem, Input, Modal } from 'ant-design-vue';
+  import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
+  import dayjs from 'dayjs';
+
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AButton = Button;
@@ -133,39 +219,8 @@
   const tableEvent: any = ref<String | null>(null);
   //查询条件
   const searchRef: any = ref<String | null>(null);
-  //初始化表格参数
-  const init = [
-    {
-      table: 'BdMaterial',
-      name: 'name',
-      column: 'name',
-      link: 'AND',
-      rule: 'LIKE',
-      type: 'string',
-      val: '',
-      startWith: '',
-      endWith: '',
-    },
-  ];
-  //分页信息
-  const pages = reactive({
-    currentPage: 0,
-    pageSize: 0,
-    total: 0,
-  });
-  //分页处理
-  const handlePageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    console.log('hand', currentPage, pageSize);
-    const res: any = await getMatTable({
-      params: init,
-      pageIndex: currentPage,
-      pageRows: pageSize,
-    });
-    let data = res.records;
-    tableEvent.value.init(data);
-  };
+  //物料分组事件
+  const treeRef: any = ref<String | null>(null);
   //树信息
   interface GroupFormData {
     id?: string;
@@ -209,7 +264,7 @@
   const refreshTree = async () => {
     const tree = await treeMatGroup({ params: '0' });
     runTree(tree);
-    console.log(tree);
+    console.log('tree', tree);
     treeData.value = tree;
   };
   const runTree = (tree: MatGroupEntity[]) => {
@@ -237,7 +292,7 @@
     optGroupCallBack = async () => {
       await deleteMatGroup({ params: node.key ? node.key.toString() : '' });
       visibleDeleteGroupModal.value = false;
-      refreshTree();
+      await refreshTree();
     };
   };
   //分组提交回调
@@ -315,11 +370,27 @@
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };
-
-  //获取表格数据
-  const getList = async () => {
+  //初始化表格参数
+  const init = {
+    table: 'BdMaterial',
+    name: 'name',
+    column: 'name',
+    link: 'AND',
+    rule: 'LIKE',
+    type: 'string',
+    val: '',
+    startWith: '',
+    endWith: '',
+  };
+  const refreshTable = async () => {
+    console.log('重新加载');
     const res: any = await getMatTable({
-      params: init,
+      params: [init],
+      orderByBean: {
+        descList: ['BdMaterial.create_time'],
+      },
+      pageIndex: 1,
+      pageRows: 10,
     });
     pages.currentPage = res.current;
     pages.total = res.total;
@@ -328,70 +399,118 @@
     let data = res.records;
     tableEvent.value.init(data);
   };
-  //搜索功能
-  const searchList = async (keywords) => {
+  //分页信息
+  const pages = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  let wlNo = undefined;
+  let wlName = undefined;
+  let moreKeys: any = undefined;
+  let selectedKeys = undefined;
+  //从组件获取搜素关键字
+  const getTreeKey = (selected) => {
+    selectedKeys = selected;
+  };
+  const getKeyword = (num, name) => {
+    wlNo = num;
+    wlName = name;
+  };
+  const getMoreKey = (keys) => {
+    moreKeys = keys;
+    console.log(moreKeys, 'sasas');
+  };
+  //表格查询
+  const getList = async () => {
+    let getParams: any[] = [];
+    if ('') {
+      resetTable();
+    }
+    if (wlNo) {
+      getParams.push({
+        table: 'BdMaterial',
+        name: 'number',
+        column: 'number',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: wlNo,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (wlName) {
+      getParams.push({
+        table: 'BdMaterial',
+        name: 'name',
+        column: 'name',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: wlName,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (selectedKeys) {
+      getParams.push({
+        table: 'BdMaterial',
+        name: 'groupId',
+        column: 'group_id',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: selectedKeys[0],
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (moreKeys && moreKeys.length > 0) {
+      for (let i = 0; i < moreKeys.length; i++) {
+        getParams.push({
+          table: 'BdMaterial',
+          name: JSON.parse(moreKeys[i].fieldName).propName,
+          column: JSON.parse(moreKeys[i].fieldName).fieldName,
+          link: moreKeys[i].link,
+          rule: moreKeys[i].rule,
+          type: moreKeys[i].type,
+          date: dayjs(dayjs(moreKeys[i].date).valueOf()).format('YYYY-MM-DD HH:mm:ss'),
+          val: moreKeys[i].val,
+          startWith: moreKeys[i].startWith,
+          endWith: moreKeys[i].endWith,
+        });
+      }
+      console.log(getParams[0], 'sasas');
+    }
     const res: any = await getMatTable({
-      params: [
-        {
-          table: 'BdMaterial',
-          name: 'number',
-          column: 'number',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: keywords[0],
-          startWith: '',
-          endWith: '',
-        },
-        {
-          table: 'BdMaterial',
-          name: 'name',
-          column: 'name',
-          link: 'OR',
-          rule: 'EQ',
-          type: 'string',
-          val: keywords[1],
-          startWith: '',
-          endWith: '',
-        },
-      ],
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: pages.currentPage,
+      pageRows: pages.pageSize,
     });
+    pages.total = res.total;
     let data = res.records;
     tableEvent.value.init(data);
+    searchRef.value.moreSearchClose();
   };
-  //高级查询
-  const moreList = async (keywords) => {
-    let moreParams: any[] = [];
-    for (let i = 0; i < keywords.length; i++) {
-      moreParams.push({
-        table: 'BdMaterial',
-        name: JSON.parse(keywords[i].fieldName).propName,
-        column: JSON.parse(keywords[i].fieldName).fieldName,
-        link: keywords[i].link,
-        rule: keywords[i].rule,
-        type: keywords[i].type,
-        val: keywords[i].val,
-        startWith: keywords[i].startWith,
-        endWith: keywords[i].endWith,
-      });
-    }
-    console.log('get', moreParams);
-    try {
-      const res: any = await getMatTable({
-        params: moreParams,
-      });
-      let data = res.records;
-      tableEvent.value.init(data);
-      searchRef.value.moreSearchClose();
-    } catch (e) {
-      console.log('查询失败', e);
-    }
+  //空参数
+  const np = { params: '' };
+  //重置
+  const resetTable = () => {
+    treeRef.value.resetSelect();
+    selectedKeys = undefined;
+    moreKeys = undefined;
+    wlNo = undefined;
+    wlName = undefined;
+    refreshTable();
   };
   //获取基本单位字段
   const getTableUnit = async () => {
     try {
-      const res = await getMatTableUnit('');
-      let data = res;
+      let data = await getMatTableUnit(np);
       searchRef.value.init(data);
       console.log('高级查询基本单位字段', data);
     } catch (e) {
@@ -399,67 +518,46 @@
     }
   };
   getTableUnit();
-  //树查询
-  const treeList = async (node) => {
-    try {
-      const res: any = await getMatTable({
-        params: [
-          {
-            table: 'BdMaterial',
-            name: 'groupId',
-            column: 'group_id',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
-            val: node[0],
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      });
-      if (node[0]) {
-        let data = res.records;
-        tableEvent.value.init(data);
-        pages.currentPage = res.currentPage;
-        pages.pageSize = res.pageSize;
-        pages.total = res.total;
-      } else {
-        await getList();
-      }
-    } catch (e) {
-      console.log('树失败', e);
-    }
-  };
   //按钮
   const buttons = [
     {
-      status: 'warning',
+      type: 'primary',
       label: '添加',
       onClick: () => {
         addTableEvent();
       },
     },
     {
-      status: 'danger',
+      type: 'primary',
+      label: '审核',
+      onClick: () => {
+        auditEvent();
+      },
+    },
+    {
+      type: 'default',
+      label: '反审核',
+      onClick: () => {
+        unAuditEvent();
+      },
+    },
+    {
+      type: 'danger',
       label: '批量删除',
       onClick: () => {
         delTableEvent();
       },
     },
-    {
-      status: 'success',
-      label: '导出',
-      onClick: () => {
-        expTableEvent();
-      },
-    },
-    // { status: 'primary', label: '审核' },
-    // { status: 'primary', label: '下推' },
-    // { status: 'primary', label: '业务查询' },
   ];
+  let treeSelectData = null;
+  const selectTree = (selected, selectedKeys) => {
+    treeSelectData = selected;
+    tableEvent.value.setGroupId(selected[0], selectedKeys);
+  };
   //新增表格数据
   const addTableEvent = () => {
     tableEvent.value.addTable();
+    console.log('treeSelectData:', treeSelectData);
   };
   //删除表格单条数据
   const delMatOneEvent = async (row) => {
@@ -485,15 +583,109 @@
       console.log('删除n失败', e);
     }
   };
-  //导出表格数据
-  const expTableEvent = () => {
-    tableEvent.value.expTable();
+  //审核单条
+  const auditRowEvent = async (row) => {
+    try {
+      await auditMatTable({
+        params: {
+          id: row.id,
+        },
+      });
+    } catch (e) {
+      console.log('审核1失败');
+    }
   };
-  //编辑表格数据
-  // const editTableEvent = () => {};
+  //批量审核表格
+  const isAudit = ref(false);
+  const unAudit = ref(false);
+  let adResult = reactive({ data: {} });
+  const auditModal = ref(false);
+  const auditEvent = () => {
+    tableEvent.value.auditTable();
+  };
+  let resY = ref(0);
+  let resF = ref(0);
+  const auditBatchEvent = async (row) => {
+    try {
+      const res = await auditMatTableBatch({
+        params: row,
+      });
+      if (res) {
+        adResult.data = res;
+        let arr = res;
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].info.status == 'Y') {
+            resY.value += 1;
+          } else {
+            resF.value += 1;
+          }
+        }
+        auditModal.value = true;
+        isAudit.value = true;
+      }
+    } catch (e) {
+      console.log('审核n失败', e);
+    }
+  };
+  //单条反审核
+  const unAuditRowEvent = async (row) => {
+    try {
+      await unAuditMatTable({
+        params: {
+          id: row.id,
+        },
+      });
+    } catch (e) {
+      console.log('反审核1失败');
+    }
+  };
+  //批量反审核
+  const unAuditEvent = () => {
+    tableEvent.value.unAuditTable();
+  };
+  const unAuditBatchEvent = async (row) => {
+    try {
+      const res = await unAuditMatTableBatch({
+        params: row,
+      });
+      if (res) {
+        adResult.data = res;
+        let arr = res;
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].info.status == 'Y') {
+            resY.value += 1;
+          } else {
+            resF.value += 1;
+          }
+        }
+        auditModal.value = true;
+        isAudit.value = true;
+      }
+    } catch (e) {
+      console.log('审核n失败', e);
+    }
+  };
+  const closeRes = () => {
+    unAudit.value = false;
+    isAudit.value = false;
+    resY.value = 0;
+    resF.value = 0;
+  };
+  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
+    if (row.info.status == 'F') {
+      return {
+        backgroundColor: '#f5f7fa',
+        color: 'red',
+      };
+    }
+  };
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     refreshTree();
+    getList();
+  });
+  onActivated(() => {
+    // refreshTable();
     getList();
   });
 </script>
@@ -502,7 +694,6 @@
   :deep(.ant-card-body) {
     padding: inherit !important;
   }
-
   .tree-button {
     margin: auto;
     display: block;

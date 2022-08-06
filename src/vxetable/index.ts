@@ -42,6 +42,7 @@ import {
 
   // 表格
   Table,
+  Tooltip,
 } from 'vxe-table';
 import zhCN from 'vxe-table/es/locale/lang/zh-CN';
 
@@ -85,6 +86,7 @@ export function setupVxeTable(app: App) {
     .use(Modal)
     // .use(List)
     // .use(Pulldown)
+    .use(Tooltip)
 
     // 安装表格
     .use(Table);

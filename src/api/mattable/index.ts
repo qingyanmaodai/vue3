@@ -15,62 +15,43 @@ export interface MatTableEntity {
   endWith?: string;
 }
 export interface MatProfileEntity {
-  // mark?: string | null; //备注
-  // number?: string; //物料编码
-  // erpCode?: string;
-  // bsStatus?: string; //业务状态A创建B审核
-  // isDelete?: boolean; //是否删除
-  // createTime?: string; //创建时间
-  // updateTime?: string; //修改时间
-  // createBy?: string; //创建人员
-  // updateBy?: string; //更新人员
-  // tenantId?: number; //租户ID
-  // name?: string; //物料名称
-  // model?: string; //规格型号
-  // baseUnitId?: number; //基本单位ID
-  // weightUnitId?: number; //重量单位
-  // groupId?: string; //物料分组编码
-  // attr?: string; //物料属性：A自制，B外购，C委外，D虚拟
-  // packId?: string; //包装容器ID
-  // examinSet?: string; //检验设置A采购检验B生产检验 可组合用，隔开
-  // examineType?: string; //检验类型A免检，B质检，C全检
-  // examineProjectId?: number; //检验方案id
-  // examineRuleId?: number; //抽检规则
+  id?: string;
   number?: string;
   name?: string;
   shortName?: string;
   baseUnitName?: string;
   baseUnitId?: string;
-  groupId?: number | null;
+  groupId?: string | undefined;
   groupName?: string;
   attr?: string;
   weightUnitId?: string;
   weightName?: string;
-  netWeight?: number | null;
-  model?: string | null;
-  bsStatus?: string | null;
-  oldMatNumber?: number | null;
-  mark?: string | null;
-  node?: string | null;
-  stockId?: string | null;
-  bdStock?: string | null;
-  subStockId?: string | null;
-  bdSubStock?: string | null;
-  bdStockLocationId?: string | null;
-  bdStockLocationName?: string | null;
-  enableSn?: number | null;
-  enableBatch?: number | null;
-  storagePeriod?: number | null;
-  minStockNum?: number | null;
-  maxStockNum?: number | null;
-  safeStockNum?: number | null;
-  stockInExamine?: number | null;
-  stockOutExamine?: number | null;
-  produceExamine?: number | null;
-  createTime?: string | null;
-  createBy?: string | null;
-  updateTime?: string | null;
-  updateBy?: string | null;
+  netWeight?: number;
+  model?: string;
+  bsStatus?: string;
+  oldMatNumber?: number;
+  mark?: string;
+  node?: string;
+  stockId?: string;
+  bdStock?: string;
+  subStockId?: string;
+  bdSubStock?: string;
+  bdStockLocationId?: string;
+  bdStockLocationName?: string;
+  enableSn?: number;
+  enableBatch?: number;
+  storagePeriod?: number;
+  minStockNum?: number;
+  maxStockNum?: number;
+  safeStockNum?: number;
+  stockInExamine?: number;
+  stockOutExamine?: number;
+  produceExamine?: number;
+  createTime?: string;
+  createBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  examineId?: string;
 }
 /**
  * 获取表格信息
@@ -97,6 +78,51 @@ export function getMatOption(json: RequestData<string>, mode: ErrorMessageMode =
   return defHttp.post<Result>(
     {
       url: Url.GET_OPTIONS_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 获取仓库选项
+ */
+export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_STOCK_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 获取分仓选项
+ */
+export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_SUB_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 获取仓位选项
+ */
+export function getLocationOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_LOCATION_LIST,
       data: json,
     },
     {
@@ -144,7 +170,7 @@ export function updateMatTable(
 /**
  * 审核物料信息
  */
-export function auditMatTable(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function auditMatTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.AUDIT_TABLE_LIST,
@@ -157,9 +183,24 @@ export function auditMatTable(json: RequestData<any>, mode: ErrorMessageMode = '
   );
 }
 /**
+ * 批量审核物料信息
+ */
+export function auditMatTableBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.BATCH_AUDIT_TABLE_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
  * 反审核物料信息
  */
-export function unauditMatTable(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function unAuditMatTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.UNAUDIT_TABLE_LIST,
@@ -172,9 +213,27 @@ export function unauditMatTable(json: RequestData<any>, mode: ErrorMessageMode =
   );
 }
 /**
+ * 批量反审核物料信息
+ */
+export function unAuditMatTableBatch(
+  json: RequestData<object>,
+  mode: ErrorMessageMode = 'message',
+) {
+  return defHttp.post<Result>(
+    {
+      url: Url.BATCH_UNAUDIT_TABLE_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
  * 查询单条
  */
-export function getMatTableById(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function getMatTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.GET_TABLE_BY_ID,
@@ -186,24 +245,6 @@ export function getMatTableById(json: RequestData<any>, mode: ErrorMessageMode =
     },
   );
 }
-/**
- * 高级查询
- */
-// export function getMatTableMore(
-//   json: RequestData<MatMoreEntity[]>,
-//   mode: ErrorMessageMode = 'message',
-// ) {
-//   return defHttp.post<Result>(
-//     {
-//       url: Url.GET_TABLE_MORE,
-//       data: json,
-//     },
-//     {
-//       errorMessageMode: mode,
-//       isTransformResponse: true,
-//     },
-//   );
-// }
 /**
  * 删除单条
  */
@@ -255,7 +296,7 @@ export function getMatTableUnit(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 基本单位查询
  */
-export function getMatTableUnitList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function getMatTableUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.GET_TABLE_UNIT_LIST,

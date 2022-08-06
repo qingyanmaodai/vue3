@@ -25,24 +25,9 @@ export const nuitGridOptions = reactive<VxeGridProps>({
   columnConfig: {
     resizable: true,
   },
-  // 分页设置
-  // pagerConfig: {
-  //   // total: data.value.length,
-  //   currentPage: 1,
-  //   pageSize: 10,
-  //   pageSizes: [10, 20, 50, 100, 200, 500],
-  //   layouts: [
-  //     'Sizes',
-  //     'PrevJump',
-  //     'PrevPage',
-  //     'Number',
-  //     'NextPage',
-  //     'NextJump',
-  //     'FullJump',
-  //     'Total',
-  //   ],
-  //   perfect: true,
-  // },
+  rowConfig: {
+    isHover: true,
+  },
   //表头数据
   columns: [],
   //表格数据
@@ -88,6 +73,44 @@ export const stockColumns = [
   { field: 'address', title: '仓库地址', sortable: true },
   { field: 'mainBy', title: '仓库管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+];
+export const subStockColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '分仓编码', sortable: true },
+  { field: 'name', title: '分仓名称', sortable: true },
+  { field: 'address', title: '仓库地址', sortable: true },
+  { field: 'mainBy', title: '仓库管理员', sortable: true },
+  { field: 'phone', title: '联系电话', sortable: true },
+  { field: 'stock_name', title: '所属仓库', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+];
+export const locationColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '仓位编码', sortable: true },
+  { field: 'name', title: '仓位名称', sortable: true },
+  { field: 'sub_stock_id', title: '所属分仓', sortable: true },
+  { field: 'address', title: '仓位地址', sortable: true },
+  { field: 'mainBy', title: '仓位管理员', sortable: true },
+  { field: 'phone', title: '联系电话', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
 ];
 export const planColumns = [
   { type: 'checkbox', width: 50 },
@@ -96,4 +119,10 @@ export const planColumns = [
   { field: 'name', title: '方案名称', sortable: true },
   { field: 'updateBy', title: '修改人员', sortable: true },
   { field: 'updateTime', title: '修改时间', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
 ];

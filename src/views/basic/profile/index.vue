@@ -23,76 +23,111 @@
               <Col :span="8">
                 <a-form-item label="物料编码：" ref="number" name="number" class="item">
                   <Input
+                    allowClear
                     class="input"
+                    autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入物料编码"
-                    :disabled="rowId"
+                    :disabled="hasId"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="物料名称：" ref="name" name="name" class="item">
                   <Input
+                    allowClear
                     class="input"
+                    autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入物料名称"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="简称：" ref="shortName" name="shortName" class="item">
                   <Input
+                    allowClear
                     class="input"
                     v-model:value="formState.shortName"
                     placeholder="请输入简称"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="基本单位：" ref="baseUnitId" name="baseUnitId" class="item">
-                  <InputSearch
-                    readonly
-                    v-model:value="formState.baseUnitId"
+                <a-form-item
+                  label="基本单位:"
+                  v-model:value="formState.baseUnitId"
+                  ref="baseUnitId"
+                  name="baseUnitId"
+                  class="item"
+                >
+                  <ExInput
+                    :show="showUnExam"
+                    autocomplete="off"
                     class="input"
                     placeholder="请选择基本单位"
+                    v-model:value="formState.baseUnitName"
+                    :disabled="showUnExam"
                     @search="onStock('baseUnit')"
+                    @clear="onClear('baseUnit')"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="物料分组：" ref="groupId" name="groupId" class="item">
-                  <InputSearch
-                    readonly
-                    v-model:value="formState.groupId"
+                <a-form-item
+                  label="物料分组："
+                  v-model:value="formState.groupId"
+                  ref="groupId"
+                  name="groupId"
+                  class="item"
+                >
+                  <ExInput
+                    autocomplete="off"
                     class="input"
                     placeholder="请选择物料分组"
-                    @search="onGroupSearch(formState)"
+                    label="物料分组"
+                    :show="showUnExam"
+                    v-model:value="formState.groupName"
+                    :disabled="showUnExam"
+                    @search="onGroupSearch(formState.groupName)"
+                    @clear="onClear('group')"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="物料属性：" ref="attr" name="attr" class="item">
-                  <Select v-model:value="formState.attr" class="select">
+                  <Select v-model:value="formState.attr" class="select" :disabled="showUnExam">
                     <SelectOption value="A">自制</SelectOption>
-                    <SelectOption value="B">外购</SelectOption>
-                    <SelectOption value="C">委外</SelectOption>
-                    <SelectOption value="D">虚拟</SelectOption>
+                    <SelectOption value="B">委外</SelectOption>
+                    <SelectOption value="C">虚拟</SelectOption>
                   </Select>
                 </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="重量单位：" ref="weightUnitId" name="weightUnitId" class="item">
-                  <InputSearch
-                    readonly
-                    v-model:value="formState.weightUnitId"
+                <a-form-item
+                  label="重量单位："
+                  ref="weightUnitId"
+                  name="weightUnitId"
+                  class="item"
+                  v-model:value="formState.weightUnitId"
+                >
+                  <ExInput
                     class="input"
+                    autocomplete="off"
                     placeholder="请选择重量单位"
+                    label="重量单位"
+                    :show="showUnExam"
+                    v-model:value="formState.weightName"
+                    :disabled="showUnExam"
                     @search="onStock('weightUnit')"
+                    @clear="onClear('weightUnit')"
                   />
                 </a-form-item>
               </Col>
@@ -103,6 +138,7 @@
                     v-model:value="formState.netWeight"
                     :min="0"
                     :step="0.1"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
@@ -112,12 +148,13 @@
                     class="input"
                     v-model:value="formState.model"
                     placeholder="请输入规格型号"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select v-model:value="formState.labelValue" class="select" disabled="true">
+                  <Select v-model:value="formState.bsStatus" class="select" disabled="true">
                     <SelectOption value="A">创建</SelectOption>
                     <SelectOption value="B">已审核</SelectOption>
                   </Select>
@@ -134,48 +171,72 @@
                     class="input"
                     v-model:value="formState.oldMatNumber"
                     placeholder="请输入旧物料编码"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="仓库：" ref="stockId" name="stockId" class="item">
-                  <InputSearch
-                    readonly
+                <a-form-item
+                  label="仓库："
+                  ref="stockId"
+                  name="stockId"
+                  class="item"
+                  v-model:value="formState.stockId"
+                >
+                  <ExInput
+                    autocomplete="off"
                     class="input"
-                    v-model:value="formState.stockId"
                     placeholder="请选择仓库"
+                    label="仓库"
+                    :show="showUnExam"
+                    v-model:value="formState.stockName"
+                    :disabled="showUnExam"
                     @search="onStock('stock')"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="分仓：" ref="subStockId" name="subStockId" class="item">
-                  <InputSearch
-                    readonly
-                    class="input"
-                    :disabled="hasSub"
-                    v-model:value="formState.subStockId"
-                    placeholder="请选择分仓"
-                    @search="onStock('sub')"
+                    @clear="onClear('stock')"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item
-                  readonly
+                  v-model:value="formState.subStockId"
+                  label="分仓："
+                  ref="subStockId"
+                  name="subStockId"
+                  class="item"
+                >
+                  <ExInput
+                    autocomplete="off"
+                    class="input"
+                    placeholder="请选择分仓"
+                    label="分仓"
+                    :show="showUnExam"
+                    v-model:value="formState.subStockName"
+                    :disabled="hasLocation"
+                    @search="onStock('sub')"
+                    @clear="onClear('sub')"
+                  />
+                </a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item
+                  v-model:value="formState.bdStockLocationId"
                   label="仓位："
                   ref="bdStockLocationId"
                   name="bdStockLocationId"
                   class="item"
                 >
-                  <InputSearch
+                  <ExInput
+                    autocomplete="off"
                     class="input"
-                    v-model:value="formState.bdStockLocationId"
                     placeholder="请选择仓位"
+                    label="仓位"
+                    :show="showUnExam"
+                    v-model:value="formState.bdStockLocationName"
                     :disabled="hasLocation"
                     @search="onStock('location')"
+                    @clear="onClear('location')"
                   />
                 </a-form-item>
               </Col>
@@ -188,6 +249,7 @@
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
+                    :disabled="showUnExam"
                   />
                 </a-form-item>
               </Col>
@@ -196,140 +258,172 @@
         </TabPane>
         <TabPane key="2" tab="质量信息">
           <a-form :model="formState" :rules="formRules">
-            <Row>
-              <Col :span="8">
-                <a-form-item
-                  label="来料检验"
-                  ref="stockInExamine"
-                  name="stockInExamine"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.stockInExamine"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item
-                  label="生产检验"
-                  ref="produceExamine"
-                  name="produceExamine"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.produceExamine"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item
-                  label="发货检验"
-                  ref="stockOutExamine"
-                  name="stockOutExamine"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.stockOutExamine"
-                  />
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item
-                  label="启用SN："
-                  ref="enableSn"
-                  name="enableSn"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.enableSn"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item
-                  label="批次管理："
-                  ref="enableBatch"
-                  name="enableBatch"
-                  class="item"
-                  style="width: 33%"
-                >
-                  <Switch
-                    checked-children="开"
-                    un-checked-children="关"
-                    :checkedValue="1"
-                    :unCheckedValue="0"
-                    v-model:checked="formState.enableBatch"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="检验方案" ref="bdExamineId" name="bdExamineId" class="item">
-                  <InputSearch
-                    class="input"
-                    readonly
-                    v-model:value="formState.bdExamineId"
-                    @search="onStock('plan')"
-                  />
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item label="最小库存：" ref="minSize" name="minSize" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.minStockNum"
-                    :min="0" /></a-form-item
-              ></Col>
-              <Col :span="8">
-                <a-form-item label="最大库存：" ref="maxSize" name="maxSize" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.maxStockNum"
-                    :min="0" /></a-form-item
-              ></Col>
-              <Col :span="8">
-                <a-form-item label="安全库存：" ref="safeStockNum" name="safeStockNum" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.safeStockNum"
-                    :min="0" /></a-form-item
-              ></Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item
-                  label="存储期（天）："
-                  ref="storagePeriod"
-                  name="storagePeriod"
-                  class="item"
-                >
-                  <InputNumber class="input" v-model:value="formState.storagePeriod" :min="0" />
-                </a-form-item>
-              </Col>
-            </Row>
+            <div class="keytwo">
+              <Row>
+                <Col :span="8">
+                  <a-form-item
+                    label="来料检验"
+                    ref="stockInExamine"
+                    name="stockInExamine"
+                    class="switch"
+                  >
+                    <div class="swithdiv">
+                      <Switch
+                        checked-children="开"
+                        un-checked-children="关"
+                        :checkedValue="1"
+                        :unCheckedValue="0"
+                        v-model:checked="formState.stockInExamine"
+                        :disabled="showUnExam"
+                      />
+                    </div>
+                  </a-form-item>
+                </Col>
+                <Col :span="8">
+                  <a-form-item
+                    label="生产检验"
+                    ref="produceExamine"
+                    name="produceExamine"
+                    class="switch"
+                  >
+                    <div class="swithdiv">
+                      <Switch
+                        checked-children="开"
+                        un-checked-children="关"
+                        :checkedValue="1"
+                        :unCheckedValue="0"
+                        v-model:checked="formState.produceExamine"
+                        :disabled="showUnExam"
+                      />
+                    </div>
+                  </a-form-item>
+                </Col>
+                <Col :span="8">
+                  <a-form-item
+                    label="发货检验"
+                    ref="stockOutExamine"
+                    name="stockOutExamine"
+                    class="switch"
+                  >
+                    <div class="swithdiv">
+                      <Switch
+                        checked-children="开"
+                        un-checked-children="关"
+                        :checkedValue="1"
+                        :unCheckedValue="0"
+                        v-model:checked="formState.stockOutExamine"
+                        :disabled="showUnExam"
+                      />
+                    </div>
+                  </a-form-item>
+                </Col>
+              </Row>
+              <Row>
+                <Col :span="8">
+                  <a-form-item label="启用SN：" ref="enableSn" name="enableSn" class="switch">
+                    <div class="swithdiv">
+                      <Switch
+                        checked-children="开"
+                        un-checked-children="关"
+                        :checkedValue="1"
+                        :unCheckedValue="0"
+                        v-model:checked="formState.enableSn"
+                        :disabled="showUnExam"
+                      />
+                    </div>
+                  </a-form-item>
+                </Col>
+                <Col :span="8">
+                  <a-form-item
+                    label="批次管理："
+                    ref="enableBatch"
+                    name="enableBatch"
+                    class="switch"
+                  >
+                    <div class="swithdiv">
+                      <Switch
+                        checked-children="开"
+                        un-checked-children="关"
+                        :checkedValue="1"
+                        :unCheckedValue="0"
+                        v-model:checked="formState.enableBatch"
+                        :disabled="showUnExam"
+                      />
+                    </div>
+                  </a-form-item>
+                </Col>
+                <Col :span="8">
+                  <a-form-item
+                    v-model:value="formState.examineId"
+                    label="检验方案"
+                    ref="bdExamineId"
+                    name="bdExamineId"
+                    class="item"
+                    @clear="onClear"
+                  >
+                    <ExInput
+                      autocomplete="off"
+                      class="input"
+                      placeholder="请选择检验方案"
+                      label="检验方案"
+                      :show="showUnExam"
+                      v-model:value="formState.bdExamineName"
+                      :disabled="showUnExam"
+                      @search="onStock('plan')"
+                      @clear="onClear('plan')"
+                    />
+                  </a-form-item>
+                </Col>
+              </Row>
+              <Row>
+                <Col :span="8">
+                  <a-form-item label="最小库存：" ref="minSize" name="minSize" class="item">
+                    <InputNumber
+                      class="input"
+                      v-model:value="formState.minStockNum"
+                      :disabled="showUnExam"
+                      :min="0" /></a-form-item
+                ></Col>
+                <Col :span="8">
+                  <a-form-item label="最大库存：" ref="maxSize" name="maxSize" class="item">
+                    <InputNumber
+                      class="input"
+                      v-model:value="formState.maxStockNum"
+                      :disabled="showUnExam"
+                      :min="0" /></a-form-item
+                ></Col>
+                <Col :span="8">
+                  <a-form-item
+                    label="安全库存："
+                    ref="safeStockNum"
+                    name="safeStockNum"
+                    class="item"
+                  >
+                    <InputNumber
+                      class="input"
+                      v-model:value="formState.safeStockNum"
+                      :disabled="showUnExam"
+                      :min="0" /></a-form-item
+                ></Col>
+              </Row>
+              <Row>
+                <Col :span="8">
+                  <a-form-item
+                    label="存储期（天）："
+                    ref="storagePeriod"
+                    name="storagePeriod"
+                    class="item"
+                  >
+                    <InputNumber
+                      class="input"
+                      v-model:value="formState.storagePeriod"
+                      :min="0"
+                      :disabled="showUnExam"
+                    />
+                  </a-form-item>
+                </Col>
+              </Row>
+            </div>
           </a-form>
         </TabPane>
         <TabPane key="3" tab="其他信息">
@@ -368,21 +462,16 @@
         </TabPane>
       </Tabs>
     </a-card>
-    <a-modal
-      v-model:visible="visibleGroupModal"
-      title="物料分组"
-      ref="node"
-      @ok="groupModalOK"
-      @cancel="groupModalCancel"
-    >
+    <!--  点击物料分组弹框  -->
+    <a-modal v-model:visible="visibleGroupModal" title="物料分组" ref="node">
       <a-tree-select
+        loading
         show-search
-        v-model="formState.node"
+        v-model:value="formState.node"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
         placeholder="请选择物料分组"
         treeNodeFilterProp="title"
-        allow-clear
         tree-default-expand-all
         :treeData="treeData"
         @change="groupSelect"
@@ -390,12 +479,12 @@
     </a-modal>
     <BasicSearch
       style="top: 20px"
+      :modalType="modalType"
       @cellClickEvent="cellClickEvent"
-      @searchUnitList="searchUnitList"
+      @searchList="searchList"
       title="基础信息查询"
       ref="basicSearchRef"
       :gridOptions="nuitGridOptions"
-      :isUnit="isUnit"
     />
   </div>
 </template>
@@ -409,7 +498,6 @@
     FormItem,
     Input,
     InputNumber,
-    InputSearch,
     LayoutHeader,
     Modal,
     Row,
@@ -421,14 +509,17 @@
     Textarea,
     TreeSelect,
   } from 'ant-design-vue';
+  import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
   import {
     nuitGridOptions,
-    stockColumns,
-    unitColumns,
     planColumns,
+    stockColumns,
+    subStockColumns,
+    locationColumns,
+    unitColumns,
   } from '/@/components/Amoresearch/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
@@ -437,11 +528,14 @@
   import {
     addMatTable,
     auditMatTable,
+    getLocationOption,
     getMatTableById,
     getMatTableUnit,
-    getMatTableUnitList,
+    // getMatTableUnitList,
     getPublicList,
-    unauditMatTable,
+    getStockOption,
+    getSubOption,
+    unAuditMatTable,
     updateMatTable,
   } from '/@/api/mattable';
   import { cloneDeep } from 'lodash-es';
@@ -456,20 +550,25 @@
   const router = useRouter();
   const activeKey = ref<string>('1');
   const visibleGroupModal: any = ref<boolean>(false);
-  const onGroupSearch = () => {
-    console.log('物料分组弹框');
+  const onGroupSearch = (name) => {
+    console.log('物料分组弹框', name);
     visibleGroupModal.value = true;
+    formState.node = name;
+    if (formState.node == '') {
+      formState.node = undefined;
+    }
   };
+
   //基础信息
-  const basicSearchRef: any = ref<any>(null); //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined); //基础信息查询组件ref
   //更新表头数据
   const getCurrentCols = (key: any) => {
     const colConfig = {
       baseUnit: unitColumns,
       weightUnit: unitColumns,
       stock: stockColumns,
-      sub: stockColumns,
-      location: stockColumns,
+      sub: subStockColumns,
+      location: locationColumns,
       plan: planColumns,
     };
     return colConfig[key];
@@ -485,8 +584,87 @@
   };
   //所选框
   let chosenModal: String = '';
+  //点击清空事件
+  const onClear = (key: string) => {
+    switch (key) {
+      case 'baseUnit':
+        formState.baseUnitName = '';
+        formState.baseUnitId = '';
+        break;
+      case 'weightUnit':
+        formState.weightName = '';
+        formState.weightUnitId = '';
+        break;
+      case 'group':
+        formState.groupId = '';
+        formState.groupName = '';
+        break;
+      case 'stock':
+        formState.stockId = '';
+        formState.stockName = '';
+        formState.subStockId = '';
+        formState.subStockName = '';
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        break;
+      case 'sub':
+        formState.subStockId = '';
+        formState.subStockName = '';
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        break;
+      case 'location':
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        break;
+      case 'plan':
+        formState.examineId = '';
+        formState.bdExamineName = '';
+        break;
+    }
+  };
+  //获取仓库字段
+  const getStcokOps = async (key) => {
+    if (key == 'stock') {
+      try {
+        let data = await getStockOption(np);
+        basicSearchRef.value.init(data);
+        console.log('仓库选项', data);
+      } catch (e) {
+        console.log('获取仓库选项字段失败', e);
+      }
+    } else if (key == 'sub') {
+      try {
+        let data = await getSubOption(np);
+        basicSearchRef.value.init(data);
+        console.log('分仓选项', data);
+      } catch (e) {
+        console.log('获取分仓选项字段失败', e);
+      }
+    } else if (key == 'location') {
+      try {
+        let data = await getLocationOption(np);
+        basicSearchRef.value.init(data);
+        console.log('分仓选项', data);
+      } catch (e) {
+        console.log('获取分仓选项字段失败', e);
+      }
+    } else {
+      try {
+        let data = await getMatTableUnit(np);
+        basicSearchRef.value.init(data);
+        console.log('详情页基本单位字段', data);
+      } catch (e) {
+        console.log('详情页获取基本单位字段失败', e);
+      }
+    }
+  };
+  //弹窗类型
+  let modalType = ref<string>('');
   //点击放大镜事件
   const onStock: any = async (key) => {
+    await getStcokOps(key);
+    modalType.value = key;
     const res: any = await getPublicList(
       {
         params: [
@@ -512,48 +690,47 @@
     basicSearchRef.value.initCols(dataCols);
     basicSearchRef.value.initList(dataList);
     basicSearchRef.value.initSearch(key);
-    console.log('获取基本单位表格数据0', dataList);
+    console.log('获取基本单位表格数据1', dataList);
     return res;
   };
   //双击单元格事件
-  let unitId = '';
-  let weightId = '';
   let stockId = '';
   let subStockId = '';
   let locationId = '';
-  let planId = '';
-  const hasSub = ref(false);
-  const hasLocation = ref(false);
+
   const cellClickEvent = (row) => {
     console.log('所选', chosenModal);
     switch (chosenModal) {
       case 'baseUnit':
-        formState.baseUnitId = row.name;
-        unitId = row.id;
+        formState.baseUnitId = row.id;
+        formState.baseUnitName = row.name;
         break;
       case 'weightUnit':
-        formState.weightUnitId = row.name;
-        weightId = row.id;
+        formState.weightName = row.name;
+        formState.bdStockLocationName = '';
+        formState.weightUnitId = row.id;
         break;
       case 'stock':
-        formState.stockId = row.name;
+        formState.stockId = row.id;
+        formState.stockName = row.name;
         stockId = row.id;
-        console.log(stockId);
         getNextStock('stock', 'stockId', stockId);
         break;
       case 'sub':
-        formState.subStockId = row.name;
+        formState.subStockId = row.id;
+        formState.subStockName = row.name;
         subStockId = row.id;
         getNextStock('sub', 'subStockId', subStockId);
         break;
       case 'location':
-        formState.bdStockLocationId = row.name;
+        formState.bdStockLocationId = row.id;
+        formState.bdStockLocationName = row.name;
         locationId = row.id;
         getNextStock('location', 'bdStockLocationId', locationId);
         break;
       case 'plan':
-        formState.bdExamineId = row.name;
-        planId = row.id;
+        formState.examineId = row.id;
+        formState.bdExamineName = row.name;
         break;
     }
     basicSearchRef.value.bSearch(false);
@@ -578,10 +755,7 @@
       },
       urlConfig[key],
     );
-    if (res.records) {
-      hasSub.value = true;
-      hasLocation.value = true;
-    }
+    console.log(res);
   };
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
@@ -602,63 +776,60 @@
       console.log('key', item.key);
     });
   };
-  let groupValue = null;
   //物料分组弹框关
   const groupSelect = (value, node) => {
     formState.node = node;
-    groupValue = value;
+    // groupValue = value;
     console.log('物料分组弹框node', value, node);
-    formState.groupId = formState.node;
-    console.log('物料分组弹框groupId', formState.groupId);
+    formState.groupName = formState.node;
+    formState.groupId = value;
     visibleGroupModal.value = false;
   };
   let getParams = () => {
     let query = router.currentRoute.value.query;
-    console.log('currentRoute.value', router.currentRoute.value);
     console.log('query', query);
   };
   getParams();
+  //空参数
+  const np = { params: '' };
   //接受参数
-  let rowId = useRoute().query.row;
+  let rowId = useRoute().query.row?.toString();
+  let hasId = ref<boolean>(false);
   console.log('编辑id', rowId);
-  const getListById = async () => {
+  const getListById = async (id) => {
+    if (rowId) {
+      id = rowId;
+      hasId.value = true;
+    }
     const res: any = await getMatTableById({
-      params: rowId,
+      params: id,
     });
-    if (res.weightUnitId == 0) {
-      res.weightUnitId = null;
-    }
-    if (res.storagePeriod == 0) {
-      res.storagePeriod = null;
-    }
-    if (res.minStockNum == 0) {
-      res.minStockNum = null;
-    }
-    if (res.maxStockNum == 0) {
-      res.maxStockNum = null;
-    }
-    if (res.safeStockNum == 0) {
-      res.safeStockNum = null;
-    }
-    if (res.netWeight == 0) {
-      res.netWeight = null;
-    }
+    console.log('res的值', res);
     formState.number = res.number;
     formState.name = res.name;
     formState.shortName = res.shortName;
-    formState.baseUnitId = res.baseUnit.name;
+    formState.baseUnitId = res.baseUnit.id;
     formState.baseUnitName = res.baseUnit.name;
-    formState.groupId = res.bdMaterialGroup.name;
+    formState.groupId = res.bdMaterialGroup.id;
     formState.groupName = res.bdMaterialGroup.name;
     formState.attr = res.attr;
-    formState.weightUnitId = res.weightUnitId;
-    if (formState.weightUnitId) {
-      formState.weightUnitId = res.weightUnit.name;
-    }
-    formState.weightName = res.weightUnit.name;
     formState.netWeight = res.netWeight;
     formState.model = res.model;
     formState.bsStatus = res.bsStatus;
+    if (rowId && res.bsStatus === 'A') {
+      showExam.value = true;
+      showUnExam.value = false;
+      hasSub.value = false;
+      hasLocation.value = false;
+      console.log('2');
+    } else if (rowId && res.bsStatus === 'B') {
+      showExam.value = false;
+      showUnExam.value = true;
+      hasSub.value = true;
+      hasLocation.value = true;
+      showSubmit.value = false;
+      console.log('3');
+    }
     if (formState.bsStatus === 'A') {
       formState.labelValue = '创建';
     } else {
@@ -666,32 +837,34 @@
     }
     formState.oldMatNumber = res.oldMatNumber;
     formState.mark = res.mark;
-    formState.stockId = res.bdStock;
+    formState.stockId = res.stockId;
     if (formState.stockId) {
-      formState.stockId = res.bdStock.name;
+      formState.stockId = res.bdStock.id;
+      formState.stockName = res.bdStock.name;
     }
     formState.bdStock = res.bdStock;
     formState.subStockId = res.subStockId;
     if (formState.subStockId) {
-      formState.subStockId = res.bdSubStock.name;
+      formState.subStockId = res.bdSubStock.id;
+      formState.subStockName = res.bdSubStock.name;
     }
     formState.bdSubStock = res.bdSubStock;
     formState.bdStockLocationId = res.bdStockLocationId;
     if (formState.bdStockLocationId) {
-      formState.bdStockLocationId = res.bdStockLocation.name;
+      formState.bdStockLocationId = res.bdStockLocation.id;
+      formState.bdStockLocationName = res.bdStockLocation.name;
     }
-    formState.bdStockLocationName = res.bdStockLocation;
+    formState.bdStockLocation = res.bdStockLocation;
     formState.enableSn = res.enableSn;
     formState.enableBatch = res.enableBatch;
     formState.storagePeriod = res.storagePeriod;
     formState.minStockNum = res.minStockNum;
     formState.maxStockNum = res.minStockNum;
     formState.safeStockNum = res.safeStockNum;
-    formState.bdExamineId = res.bdExamine.id;
-    if (res.bdExamine.id) {
-      formState.bdExamineId = res.bdExamine.name;
+    if (res.bdExamine != undefined && res.bdExamine.id) {
+      formState.examineId = res.bdExamine.id;
+      formState.bdExamineName = res.bdExamine.name;
     }
-    formState.bdExamineName = res.bdExamine.name;
     formState.stockInExamine = res.stockInExamine;
     formState.stockOutExamine = res.stockOutExamine;
     formState.produceExamine = res.produceExamine;
@@ -699,96 +872,111 @@
     formState.createBy = res.createBy;
     formState.updateTime = res.updateTime;
     formState.updateBy = res.updateBy;
+    formState.weightUnitId = res.weightUnitId;
+    if (formState.weightUnitId) {
+      // formState.weightName = res.weightUnit.name;
+      formState.weightUnitId = res.weightUnit.id;
+    }
+    formState.weightName = res.weightUnit.name;
   };
   if (rowId) {
-    getListById();
+    getListById(rowId);
   }
   interface FormState {
-    number: string;
-    name: string;
-    shortName: string;
-    baseUnitName: string;
-    baseUnitId: string;
-    groupId: string | null;
-    groupName: string;
-    attr: string;
-    weightUnitId: number | null;
-    weightName: string;
-    netWeight: number | null;
-    model: string | null;
-    bsStatus: string | null;
-    labelValue: string | null;
-    oldMatNumber: number | null;
-    mark: string | null;
-    node: string | null;
-    stockId: string | null;
-    bdStock: string | null;
-    subStockId: string | null;
-    bdSubStock: string | null;
-    bdStockLocationId: string | null;
-    bdStockLocationName: string | null;
-    enableSn: number | null;
-    enableBatch: number | null;
-    storagePeriod: number | null;
-    minStockNum: number | null;
-    maxStockNum: number | null;
-    safeStockNum: number | null;
-    bdExamineId: number | null;
-    bdExamineName: string | null;
-    stockInExamine: number | null;
-    stockOutExamine: number | null;
-    produceExamine: number | null;
-    createTime: string | null;
-    createBy: string | null;
-    updateTime: string | null;
-    updateBy: string | null;
+    id?: string | undefined;
+    number: string | undefined;
+    name: string | undefined;
+    shortName: string | undefined;
+    baseUnitName: string | undefined;
+    baseUnitId: string | undefined;
+    groupId: string | undefined;
+    groupName: string | undefined;
+    attr: string | undefined;
+    weightUnitId: string | undefined;
+    weightName: string | undefined;
+    netWeight: number | undefined;
+    model: string | undefined;
+    bsStatus: string | undefined;
+    labelValue: string | undefined;
+    oldMatNumber: number | undefined;
+    mark: string | undefined;
+    node: string | undefined;
+    stockId: string | undefined;
+    stockName: string | undefined;
+    bdStock: string | undefined;
+    subStockId: string | undefined;
+    subStockName: string | undefined;
+    bdSubStock: string | undefined;
+    bdStockLocation: string | undefined;
+    bdStockLocationId: string | undefined;
+    bdStockLocationName: string | undefined;
+    enableSn: number | undefined;
+    enableBatch: number | undefined;
+    storagePeriod: number | undefined;
+    minStockNum: number | undefined;
+    maxStockNum: number | undefined;
+    safeStockNum: number | undefined;
+    examineId: string | undefined;
+    bdExamineName: string | undefined;
+    stockInExamine: number | undefined;
+    stockOutExamine: number | undefined;
+    produceExamine: number | undefined;
+    createTime: string | undefined;
+    createBy: string | undefined;
+    updateTime: string | undefined;
+    updateBy: string | undefined;
   }
   const formState: UnwrapRef<FormState> = reactive({
-    number: '',
-    name: '',
-    shortName: '',
-    baseUnitName: '',
-    baseUnitId: unitId,
-    groupId: '',
-    groupName: '',
+    id: undefined,
+    number: undefined,
+    name: undefined,
+    shortName: undefined,
+    baseUnitName: undefined,
+    baseUnitId: undefined,
+    groupId: router.currentRoute.value.query.groupId?.toString(),
+    groupName: router.currentRoute.value.query.groupName?.toString(),
     attr: 'A',
-    weightUnitId: null,
-    weightName: '',
-    netWeight: null,
-    model: '',
+    weightUnitId: undefined,
+    weightName: undefined,
+    netWeight: undefined,
+    model: undefined,
     bsStatus: 'A',
-    labelValue: '',
-    oldMatNumber: null,
-    mark: '',
-    node: '',
-    bdStock: '',
-    bdSubStock: '',
-    stockId: stockId,
-    subStockId: null,
-    bdStockLocationId: null,
-    bdStockLocationName: null,
-    enableSn: null,
-    enableBatch: null,
-    storagePeriod: null,
-    minStockNum: null,
-    maxStockNum: null,
-    safeStockNum: null,
-    bdExamineId: null,
-    bdExamineName: null,
-    stockInExamine: null,
-    stockOutExamine: null,
-    produceExamine: null,
-    updateBy: '',
-    updateTime: '',
-    createBy: '',
-    createTime: '',
+    labelValue: undefined,
+    oldMatNumber: undefined,
+    mark: undefined,
+    node: undefined,
+    bdStock: undefined,
+    bdSubStock: undefined,
+    stockId: undefined,
+    stockName: undefined,
+    subStockId: undefined,
+    subStockName: undefined,
+    bdStockLocation: undefined,
+    bdStockLocationId: undefined,
+    bdStockLocationName: undefined,
+    enableSn: undefined,
+    enableBatch: undefined,
+    storagePeriod: undefined,
+    minStockNum: undefined,
+    maxStockNum: undefined,
+    safeStockNum: undefined,
+    examineId: undefined,
+    bdExamineName: undefined,
+    stockInExamine: undefined,
+    stockOutExamine: undefined,
+    produceExamine: undefined,
+    updateBy: undefined,
+    updateTime: undefined,
+    createBy: undefined,
+    createTime: undefined,
   });
+
   const formRules = reactive({
-    name: [{ required: true, message: '请输入物料名称', trigger: 'blur' }],
-    number: [{ required: true, message: '请输入物料编码', trigger: 'blur' }],
-    groupId: [{ required: true, message: '请输入物料分组', trigger: 'blur', type: 'array' }],
-    baseUnitId: [{ required: true, message: '请输入基本单位', trigger: 'blur' }],
-    attr: [{ required: true, message: '请输入物料属性', trigger: 'blur' }],
+    name: [{ required: true, message: '请输入物料名称', trigger: 'change' }],
+    number: [{ required: true, message: '请输入物料编码', trigger: 'change' }],
+    groupId: [{ required: true, message: '请输入物料分组', trigger: 'change' }],
+    baseUnitId: [{ required: true, message: '请选择基本单位', trigger: 'change' }],
+    attr: [{ required: true, message: '请输入物料属性', trigger: 'change' }],
   });
   const handleFinish = (values: FormState) => {
     console.log(values, formState);
@@ -796,62 +984,59 @@
   const handleFinishFailed = (errors: ValidateErrorEntity<FormState>) => {
     console.log(errors);
   };
-  //获取基本单位字段
-  const getTableUnit = async () => {
-    try {
-      let data = await getMatTableUnit({});
-      basicSearchRef.value.init(data);
-      console.log('详情页基本单位字段', data);
-    } catch (e) {
-      console.log('详情页获取基本单位字段失败', e);
-    }
+  //搜索功能
+  const searchList = async (type, keywords) => {
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: [keywords],
+        },
+        urlConfig[type],
+      ),
+    );
   };
-  getTableUnit();
-  //基本单位搜索功能
-  const searchUnitList = async (keywords) => {
-    const res = await getMatTableUnitList({
-      // params: JSON.parse(keywords),
-      params: [keywords],
-    });
-    let data = res;
-    basicSearchRef.value.initList(data);
-  };
-  getTableUnit();
   //保存事件
   const onSubmit = async () => {
+    let newData = {
+      id: rowId,
+      number: formState.number,
+      name: formState.name,
+      shortName: formState.shortName,
+      baseUnitName: formState.baseUnitName,
+      baseUnitId: formState.baseUnitId,
+      // groupName: formState.groupName,
+      groupId: formState.groupId,
+      attr: formState.attr,
+      netWeight: formState.netWeight,
+      model: formState.model,
+      bsStatus: formState.bsStatus,
+      oldMatNumber: formState.oldMatNumber,
+      mark: formState.mark,
+      stockName: formState.stockName,
+      stockId: formState.stockId,
+      subStockId: formState.subStockId,
+      subStockName: formState.subStockName,
+      bdStockLocationId: formState.bdStockLocationId,
+      bdStockLocationName: formState.bdStockLocationName,
+      enableSn: formState.enableSn,
+      enableBatch: formState.enableBatch,
+      storagePeriod: formState.storagePeriod,
+      minStockNum: formState.minStockNum,
+      maxStockNum: formState.maxStockNum,
+      safeStockNum: formState.safeStockNum,
+      examineId: formState.examineId,
+      bdExamineName: formState.bdExamineName,
+      stockInExamine: formState.stockInExamine,
+      stockOutExamine: formState.stockOutExamine,
+      produceExamine: formState.produceExamine,
+      createTime: formState.createTime,
+      createBy: formState.createBy,
+      updateTime: formState.updateTime,
+      updateBy: formState.updateBy,
+      weightUnitId: formState.weightUnitId,
+    };
     if (!rowId) {
-      const newData = {
-        number: formState.number,
-        name: formState.name,
-        shortName: formState.shortName,
-        baseUnitId: unitId,
-        groupId: groupValue,
-        attr: formState.attr,
-        weightUnitId: weightId,
-        netWeight: formState.netWeight,
-        model: formState.model,
-        bsStatus: formState.bsStatus,
-        oldMatNumber: formState.oldMatNumber,
-        mark: formState.mark,
-        stockId: stockId,
-        subStockId: subStockId,
-        bdStockLocationId: locationId,
-        enableSn: formState.enableSn,
-        enableBatch: formState.enableBatch,
-        storagePeriod: formState.storagePeriod,
-        minStockNum: formState.minStockNum,
-        maxStockNum: formState.maxStockNum,
-        safeStockNum: formState.safeStockNum,
-        bdExamineId: planId,
-        stockInExamine: formState.stockInExamine,
-        stockOutExamine: formState.stockOutExamine,
-        produceExamine: formState.produceExamine,
-        createTime: formState.createTime,
-        createBy: formState.createBy,
-        updateTime: formState.updateTime,
-        updateBy: formState.updateBy,
-      };
-      console.log(newData);
+      console.log('newData', newData);
       if (
         !formState.name ||
         !formState.number ||
@@ -865,46 +1050,21 @@
           const addList = await addMatTable({
             params: newData,
           });
+          console.log('addList', addList);
           if (addList.id != null) {
             useMessage().createMessage.success('添加成功');
-            back();
+            // back();
+            showExam.value = true;
+            rowId = addList.id;
+            getListById(rowId);
           }
         } catch (e) {
           console.log('失败', e);
         }
       }
     } else {
-      const newData = {
-        id: rowId,
-        number: formState.number,
-        name: formState.name,
-        shortName: formState.shortName,
-        baseUnitId: unitId,
-        groupId: groupValue,
-        attr: formState.attr,
-        weightUnitId: weightId,
-        netWeight: formState.netWeight,
-        model: formState.model,
-        oldMatNumber: formState.oldMatNumber,
-        mark: formState.mark,
-        stockId: stockId,
-        subStockId: subStockId,
-        bdStockLocationId: locationId,
-        enableSn: formState.enableSn,
-        enableBatch: formState.enableBatch,
-        storagePeriod: formState.storagePeriod,
-        minStockNum: formState.minStockNum,
-        maxStockNum: formState.maxStockNum,
-        safeStockNum: formState.safeStockNum,
-        bdExamineId: planId,
-        stockInExamine: formState.stockInExamine,
-        stockOutExamine: formState.stockOutExamine,
-        produceExamine: formState.produceExamine,
-        createTime: formState.createTime,
-        createBy: formState.createBy,
-        updateTime: formState.updateTime,
-        updateBy: formState.updateBy,
-      };
+      newData.id = rowId;
+      console.log('newData', newData);
       if (
         !formState.name ||
         !formState.number ||
@@ -922,7 +1082,7 @@
           };
           updateList();
           useMessage().createMessage.success('修改成功');
-          back();
+          // back();
         } catch (e) {
           console.log('失败', e);
         }
@@ -930,26 +1090,18 @@
     }
   };
   //审核状态
-  let rowStatus = useRoute().query.status;
+  const hasSub = ref<boolean>(false);
+  const hasLocation = ref<boolean>(false);
   const showUnExam = ref<boolean>(false);
   const showExam = ref<boolean>(false);
   const showSubmit = ref<boolean>(true);
   //控制审核与反审核按钮显示
   const btnChecking = () => {
-    console.log('0', rowStatus, rowId);
+    console.log('0', rowId);
     if (!rowId) {
       showExam.value = false;
       showUnExam.value = false;
       console.log('1');
-    } else if (rowId && rowStatus === 'A') {
-      showExam.value = true;
-      showUnExam.value = false;
-      console.log('2');
-    } else if (rowId && rowStatus === 'B') {
-      showExam.value = false;
-      showUnExam.value = true;
-      showSubmit.value = false;
-      console.log('3');
     }
   };
   //审核功能
@@ -966,15 +1118,19 @@
             });
           };
           await aduitEvent();
+          showSubmit.value = false;
+          showExam.value = false;
+          showUnExam.value = true;
           useMessage().createMessage.success('审核成功');
-          back();
+          getListById(rowId);
+          // back();
         } catch (e) {
           console.log('失败', e);
         }
       }
     } else {
       useMessage().createMessage.error('该物料已审核，无需再次审核');
-      back();
+      // back();
     }
   };
   //反审核功能
@@ -984,62 +1140,64 @@
       if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
         try {
           const unAduitEvent = async () => {
-            await unauditMatTable({
+            await unAuditMatTable({
               params: {
                 id: rowId,
               },
             });
           };
-          unAduitEvent();
+          await unAduitEvent();
+          showSubmit.value = true;
+          showExam.value = true;
+          showUnExam.value = false;
           useMessage().createMessage.success('反审核成功');
-          back();
+          getListById(rowId);
+          // back();
         } catch (e) {
           console.log('失败', e);
         }
       } else {
         useMessage().createMessage.error('该物料已反审核，无需再次反审核');
-        back();
+        // back();
       }
     }
   };
   //返回上一页
   const back = () => {
-    router.push({ path: '../material/index' });
+    router.go(-1);
   };
   onMounted(() => {
     btnChecking();
   });
 </script>
-<style scoped>
+<style scoped lang="less">
+  .swithdiv {
+    width: 318px;
+  }
   .item {
     flex-flow: nowrap;
   }
+  .switch {
+    flex-flow: nowrap;
+  }
   .input {
-    width: 20rem;
+    width: 16rem;
     height: 2rem;
-    margin: 0 60px 0 10px;
+    margin: 0 60px 0 2px;
   }
   .textArea {
-    width: 20rem;
+    width: 16rem;
     height: 2rem;
-    margin: 0 60px 0 10px;
+    margin: 0 60px 0 2px;
   }
   .select {
-    width: 20rem;
-    margin: 0 60px 0 10px;
+    width: 16rem;
+    margin: 0 60px 0 2px;
   }
   .content {
     border: 1px solid #e5e7eb;
     margin: 10px;
     height: 80vh;
-  }
-  .span {
-    width: 56px;
-    text-align: justify;
-  }
-  .span span {
-    display: inline-block;
-    width: 100%;
   }
   .button {
     margin: 15px;

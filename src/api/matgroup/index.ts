@@ -19,7 +19,7 @@ export interface MatGroupEntity {
   children?: MatGroupEntity[];
   title?: string;
   key?: string;
-  value?:string;
+  value?: string;
 }
 /**
  * 新增物料分组

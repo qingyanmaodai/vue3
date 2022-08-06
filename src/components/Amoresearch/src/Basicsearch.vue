@@ -2,7 +2,7 @@
   <div>
     <a-modal
       style="top: 20px"
-      v-model:visible.sync="basicSearchDialog"
+      v-model:visible="basicSearchDialog"
       width="70%"
       centered
       :footer="null"
@@ -10,7 +10,8 @@
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
-        <div v-show="isUnit">
+        <!--v-show="isUnit"-->
+        <div>
           <a-space
             v-for="(search, index) in dynamicValidateForm.searches"
             :key="search.key"
@@ -26,6 +27,7 @@
                 :filterOption="filterOption"
                 @focus="handleFocus"
                 @change="handleChange"
+                @select="selectOne(search)"
               >
                 <a-select-option
                   v-for="(item, v) in optionsUnitFieldName.data"
@@ -38,19 +40,35 @@
             </a-form-item>
             <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
               <a-select
+                v-show="
+                  search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'date'
+                    : false
+                "
                 v-model:value="search.rule"
                 placeholder="等于"
-                :options="optionsRule"
+                :options="optionsTime"
                 style="width: 100px"
                 :filterOption="filterOption"
-                @focus="handleFocus"
               />
-            </a-form-item>
-            <a-form-item style="margin: 5px 5px" :name="['searches', index, 'val']">
-              <a-input v-show="search.fieldName == '请选择'" style="width: 200px" disabled />
               <a-select
                 v-show="
                   search.fieldName != '请选择'
+                    ? JSON.parse(search.fieldName).controlType !== 'date'
+                    : true
+                "
+                v-model:value="search.rule"
+                placeholder="包含"
+                :options="optionsRule"
+                style="width: 100px"
+                :filterOption="filterOption"
+              />
+            </a-form-item>
+            <a-form-item style="margin: 5px 5px" :name="['searches', index, 'val']">
+              <a-input v-show="search.fieldName === '请选择'" style="width: 200px" disabled />
+              <a-select
+                v-show="
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'select'
                     : false
                 "
@@ -64,7 +82,7 @@
               </a-select>
               <a-input
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'input'
                     : false
                 "
@@ -73,38 +91,37 @@
                 v-model:value="search.val"
                 :filterOption="filterOption"
               />
+              <!--@click="onSearch(search)" -->
               <a-input-search
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'inputsearch'
                     : false
                 "
                 style="width: 200px"
-                readonly
+                onfocus="this.blur();"
                 placeholder="请选择输入..."
                 v-model:value="search.val"
                 :filterOption="filterOption"
-                @search="onSearch(search)"
               />
               <a-space
                 direction="vertical"
                 :size="12"
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'date'
                     : false
                 "
               >
                 <a-date-picker
                   style="width: 200px"
-                  v-model="search.val"
-                  show-time
+                  v-model:value="search.date"
                   placeholder="请选择时间..."
                 />
               </a-space>
               <a-select
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'checkbox'
                     : false
                 "
@@ -135,11 +152,9 @@
             @cell-dblclick="cellClickEvent"
           >
             <template #status="{ row }">
-              <a-tag
-                :color="row.bsStatus.label === '已审核' ? 'success' : 'warning'"
-                v-if="row.bsStatus"
-                >{{ row.bsStatus == 'B' ? '已审核' : '创建' }}</a-tag
-              >
+              <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
+                row.bsStatus === 'A' ? '创建' : '已审核'
+              }}</Tag>
             </template>
           </vxe-grid>
         </a-form-item>
@@ -177,15 +192,16 @@
     InputSearch,
     Tag,
   } from 'ant-design-vue';
-  import { reactive, ref, defineExpose, defineProps, defineEmits } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { reactive, ref } from 'vue';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import dayjs, { Dayjs } from 'dayjs';
+  const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
   const ASpace = Space;
   const ASelect = Select;
-  const ATag = Tag;
   const AButton = Button;
   const AInput = Input;
   const AInputSearch = InputSearch;
@@ -195,14 +211,16 @@
   type Emits = {
     (event: 'cellClickEvent', data: object): void;
     (event: 'getListUnitEvent', keywords: object): void;
-    (event: 'searchUnitList', keywords: object): void;
+    // (event: 'searchUnitList', keywords: object): void;
     (event: 'openSearch', keywords: object): void;
+    (event: 'searchList', type: string, keywords: object): void;
   };
   //获取父组件的数据
   const props = defineProps({
     gridOptions: String,
     tableCols: String,
     tableData: String,
+    modalType: String,
   });
   //分页信息
   const pages = reactive({
@@ -223,11 +241,12 @@
     console.log('详情页字段数据', data);
     optionsUnitFieldName.data = data;
   };
-  //判断窗体是否显示搜索
-  let isUnit = ref(true);
+  //判断窗体类型
+  let isUnit = ref<string>();
   const initSearch = (data) => {
     console.log('inits', data);
-    isUnit.value = data == 'baseUnit' || data == 'weightUnit' || !data;
+    // isUnit.value = data == 'baseUnit' || data == 'weightUnit' || !data;
+    isUnit.value = data;
     return isUnit;
   };
   //详情页基本单位表格数据
@@ -250,15 +269,6 @@
     optionsUnitFieldName.data = data;
     console.log(data.total);
   };
-  //高级查询基本单位表格数据
-  // const getListUnitEventList = (data) => {
-  //   tableData.data = data.records;
-  //   console.log('高级查询ccc', tableData.data);
-  //   console.log('高级查询页码：', data.total);
-  //   pages.currentPage = data.current;
-  //   pages.total = data.total;
-  //   pages.pageSize = data.size;
-  // };
   //弹框
   const basicSearchDialog = ref(false);
   //显示弹框
@@ -274,6 +284,15 @@
   };
   const optionsUnitFieldName = reactive<any>({ data: [] });
   const optionsRule = reactive<any>([
+    { value: 'LIKE', label: '包含' },
+    { value: 'EQ', label: '等于' },
+    { value: 'GE', label: '大于等于' },
+    { value: 'LE', label: '小于等于' },
+    { value: 'NE', label: '不等于' },
+    { value: 'GT', label: '大于' },
+    { value: 'LT', label: '小于' },
+  ]);
+  const optionsTime = reactive<any>([
     { value: 'EQ', label: '等于' },
     { value: 'GE', label: '大于等于' },
     { value: 'LE', label: '小于等于' },
@@ -286,20 +305,21 @@
     fieldName: string | undefined;
     rule: string | undefined;
     val: string | undefined;
+    date?: Dayjs;
     endWith: string | undefined;
     link: string | undefined;
     controlType: string | undefined;
     key: number;
   }
-  // const formRef = ref<FormInstance>();
   const formRef: any = ref(null);
   const dynamicValidateForm = reactive<{ searches: Search[] }>({
     searches: [
       {
         startWith: undefined,
         fieldName: '请选择',
-        rule: 'EQ',
+        rule: undefined,
         val: undefined,
+        date: undefined,
         controlType: 'string',
         endWith: undefined,
         link: undefined,
@@ -307,7 +327,6 @@
       },
     ],
   });
-
   const handleFocus = () => {
     console.log('focus');
   };
@@ -319,19 +338,28 @@
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
+  const selectOne = (data: any) => {
+    data.val = '';
+    if (data.labelValue) {
+      data.labelValue = '';
+    }
+  };
   //关闭
   const handleClose = () => {
     formRef.value.resetFields();
-    // nowCheckData.data = '';
-    // moreSearchDialog.value = false;
     dynamicValidateForm.searches.length = 1;
   };
   //查询
-  const basicSearch = (keywords) => {
+  const basicSearch = (type, keywords) => {
+    type = props.modalType;
+    dynamicValidateForm.searches.map((r) => {
+      if (r.date) {
+        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD 00:00:00');
+      }
+    });
     if (dynamicValidateForm.searches) {
       console.log('基础查询里面的查询按钮：', dynamicValidateForm.searches);
       keywords = dynamicValidateForm.searches;
-      console.log(keywords);
       keywords = {
         table: '',
         name: JSON.parse(keywords[0].fieldName).propName,
@@ -341,24 +369,37 @@
         type: keywords[0].controlType,
         link: 'AND',
         rule: keywords[0].rule,
+        date: keywords[0].date,
         val: keywords[0].val,
       };
       console.log('参数', keywords);
-      emit('searchUnitList', keywords);
+      // emit('searchUnitList', keywords);
+      emit('searchList', type, keywords);
       emit('openSearch', keywords);
     } else {
-      useMessage().createMessage.error('输入不可为空');
+      createMessage.error('输入不可为空');
     }
   };
   //重置
-  const resetSearch = () => {
+  const resetSearch = (type, keywords) => {
+    type = props.modalType;
     formRef.value.resetFields();
-    // nowCheckData.data = '';
+    // emit('searchUnitList', type);
+    emit('searchList', type, keywords);
+    emit('openSearch', keywords);
   };
   defineExpose({ init, bSearch, basicSearch, initList, initCols, initSearch, getListUnitEvent }); //getListUnitEventList,
 </script>
-<style scoped>
+<style scoped lang="less">
   .x-button {
     margin: 10px 5px;
+  }
+  :deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
+    color: #409eff;
+    border-color: #409eff;
+  }
+  :deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
+    color: #409eff;
+    border-color: #409eff;
   }
 </style>

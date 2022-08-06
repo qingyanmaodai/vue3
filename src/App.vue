@@ -1,7 +1,13 @@
 <template>
   <ConfigProvider :locale="getAntdLocale">
     <AppProvider>
-      <RouterView />
+      <router-view v-slot="{ Component }">
+        <transition>
+          <keep-alive include="Material">
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </router-view>
     </AppProvider>
   </ConfigProvider>
 </template>
