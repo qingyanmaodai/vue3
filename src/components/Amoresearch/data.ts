@@ -88,7 +88,6 @@ export const subStockColumns = [
   { field: 'address', title: '仓库地址', sortable: true },
   { field: 'mainBy', title: '仓库管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },
-  { field: 'stock_name', title: '所属仓库', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',
@@ -101,7 +100,6 @@ export const locationColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '仓位编码', sortable: true },
   { field: 'name', title: '仓位名称', sortable: true },
-  { field: 'sub_stock_id', title: '所属分仓', sortable: true },
   { field: 'address', title: '仓位地址', sortable: true },
   { field: 'mainBy', title: '仓位管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },

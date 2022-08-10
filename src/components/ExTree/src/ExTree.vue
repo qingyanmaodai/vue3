@@ -19,7 +19,6 @@
           >
         </a-col>
         <a-col :span="8">
-          <!--          <a-button danger class="tree-button" @click="resetSelect">删除分组</a-button>-->
           <a-button danger class="tree-button" @click="deleteEvent">删除分组</a-button>
         </a-col>
       </a-row>
@@ -73,10 +72,9 @@
   //单选树事件
   const selectTree = (selected, selectedKeys) => {
     if (selected.length == 0) {
-      console.log('shushu', selected);
+      //单击树后的表格刷新
       emits('resetTable');
     } else {
-      console.log(tree);
       selectedKeys = selectedKeys.selectedNodes[0].props.name;
       console.log('selected', selected, selectedKeys);
       emits('selectTree', selected, selectedKeys);
@@ -85,7 +83,10 @@
     }
   };
   //重置树选择
-  const resetSelect = () => {};
+  const resetSelect = () => {
+    selectedKeys.value = [];
+  };
+
   const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];

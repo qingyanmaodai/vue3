@@ -114,6 +114,7 @@
     console.log('新增groupId', groupId);
     router.push({
       path: '../profile/index',
+      //需要带到详情页的参数
       query: {
         groupId: groupId.value == '' ? '' : groupId.value,
         groupName: groupName.value == '' ? '' : groupName.value,
@@ -172,6 +173,7 @@
   };
   //删除单条
   const removeRowEvent = async (row: any) => {
+    //删除确认窗口
     const type = await VXETable.modal.confirm('您确定要删除该数据?');
     const $grid = xGrid.value;
     if ($grid) {
@@ -179,7 +181,9 @@
         if (row.bsStatus == 'A') {
           try {
             emit('delMatOneEvent', row);
+            //前端删除更新
             await $grid.remove(row);
+            //重新查询数据
             emit('getList');
             useMessage().createMessage.success('删除成功');
           } catch (e) {

@@ -61,15 +61,7 @@
   };
   getOptions();
   //查询功能
-  // const searchEvent = (keywords) => {
-  //   if (formState.wlNo || formState.wlName) {
-  //     keywords = [formState.wlNo, formState.wlName];
-  //     // emit('searchList', keywords);
-  //     emit('getList', keywords);
-  //   } else {
-  //     useMessage().createMessage.warning('输入不能为空');
-  //   }
-  // };
+
   const searchEvent = (num, name) => {
     // if (formState.wlNo || formState.wlName) {
     num = formState.wlNo;

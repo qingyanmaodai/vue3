@@ -16,15 +16,16 @@
           :key="search.key"
           style="display: flex; margin: 5px 10px"
         >
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'startWith']">
-            <a-select
-              v-model:value="search.startWith"
-              placeholder="括号"
-              :options="optionsStartWith"
-              style="width: 70px"
-              :filterOption="filterOption"
-            />
-          </a-form-item>
+          <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'startWith']">-->
+          <!--            <a-select-->
+          <!--              allowClear-->
+          <!--              v-model:value="search.startWith"-->
+          <!--              placeholder="括号"-->
+          <!--              :options="optionsStartWith"-->
+          <!--              style="width: 70px"-->
+          <!--              :filterOption="filterOption"-->
+          <!--            />-->
+          <!--          </a-form-item>-->
           <a-form-item style="margin: 5px 5px" :name="['searches', index, 'fieldName']">
             <a-select
               v-model:value="search.fieldName"
@@ -105,7 +106,7 @@
             <a-input-search
               v-show="
                 search.fieldName != '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'inputsearch'
+                  ? JSON.parse(search.fieldName).controlType === 'inputSearch'
                   : false
               "
               style="width: 200px"
@@ -134,7 +135,7 @@
             <a-select
               v-show="
                 search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'checkbox'
+                  ? JSON.parse(search.fieldName).controlType === 'checkBox'
                   : false
               "
               mode="multiple"
@@ -147,15 +148,16 @@
             />
           </a-form-item>
 
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'endWith']">
-            <a-select
-              v-model:value="search.endWith"
-              placeholder="括号"
-              :options="optionsEndWith"
-              style="width: 70px"
-              :filterOption="filterOption"
-            />
-          </a-form-item>
+          <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'endWith']">-->
+          <!--            <a-select-->
+          <!--              allowClear-->
+          <!--              v-model:value="search.endWith"-->
+          <!--              placeholder="括号"-->
+          <!--              :options="optionsEndWith"-->
+          <!--              style="width: 70px"-->
+          <!--              :filterOption="filterOption"-->
+          <!--            />-->
+          <!--          </a-form-item>-->
           <a-form-item style="margin: 5px 5px" :name="['searches', index, 'link']">
             <a-select
               v-model:value="search.link"
@@ -180,7 +182,8 @@
         ><br /><hr />
         <a-form-item>
           <span style="display: flex; float: right">
-            <a-button class="x-button" @click="handleCel">取消</a-button>
+            <a-button class="x-button" @click="handleReset">重置</a-button>
+            <a-button type="primary" class="x-button" @click="handleCel">取消</a-button>
             <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
           </span>
         </a-form-item>
@@ -235,10 +238,12 @@
     console.log(`selected ${value}`);
     selectOption.data = JSON.parse(value);
   };
+  //判断输入框controlType类型，改变rule的默认值
   const selectOne = (data: any) => {
     data.val = '';
-    if (data.labelValue) {
+    if (data.labelValue || data.date) {
       data.labelValue = '';
+      data.date = '';
     }
   };
   //基础信息
@@ -264,6 +269,7 @@
       {
         params: [keywords],
       },
+      //选择分类的接口地址，如基本单位。。
       selectOption.data.requestUrl,
     );
   };
@@ -301,21 +307,15 @@
     { value: 'LT', label: '小于' },
   ]);
   const optionsTime = reactive<any>([
-    { value: 'EQ', label: '等于' },
+    { value: 'LIKE', label: '等于' },
     { value: 'GE', label: '大于等于' },
     { value: 'LE', label: '小于等于' },
     { value: 'NE', label: '不等于' },
     { value: 'GT', label: '大于' },
     { value: 'LT', label: '小于' },
   ]);
-  const optionsStartWith = reactive<any>([
-    // { value: 'S1', label: ' ' },
-    { value: 'S2', label: '(' },
-  ]);
-  const optionsEndWith = reactive<any>([
-    // { value: 'E1', label: ' ' },
-    { value: 'E2', label: ')' },
-  ]);
+  // const optionsStartWith = reactive<any>([{ value: 'start', label: '(' }]);
+  // const optionsEndWith = reactive<any>([{ value: 'end', label: ')' }]);
   const optionsLink = reactive<any>([
     { value: 'AND', label: '并且' },
     { value: 'OR', label: '或者' },
@@ -348,7 +348,7 @@
         startWith: undefined,
         endWith: undefined,
         fieldName: '请选择',
-        rule: undefined,
+        rule: 'LIKE',
         date: undefined,
         val: '',
         labelValue: '',
@@ -380,12 +380,10 @@
     (event: 'getTableUnitEvent', keywords: object): void;
     (event: 'getTableUnitListEvent', keywords: object): void;
     (event: 'resetEvent'): void;
-    // (event: 'searchUnitListEvent', keywords: object): void;
   };
   //基本单位字段
   const getTableUnitEvent = (data) => {
     basicSearchRef.value.getListUnitEvent(data);
-    console.log('22222aaa', data);
   };
 
   const cacheQueryArr: any = reactive({ data: [] });
@@ -394,7 +392,8 @@
   const moreSearch = (keywords) => {
     dynamicValidateForm.searches.map((r) => {
       if (r.date) {
-        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD 00:00:00');
+        //获取的时间格式转换
+        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD');
       }
     });
     cacheQueryArr.data = cloneDeep(dynamicValidateForm.searches);
@@ -409,7 +408,7 @@
         startWith: undefined,
         endWith: undefined,
         fieldName: '请选择',
-        rule: undefined,
+        rule: 'LIKE',
         date: undefined,
         val: undefined,
         labelValue: '',
@@ -421,14 +420,18 @@
       },
     ];
   };
-  //取消查询
-  const handleCel = () => {
+  //重置
+  const handleReset = () => {
     formRef.value.resetFields();
     nowCheckData.data = '';
     dynamicValidateForm.searches.length = 1;
     cacheQueryArr.data = [];
-    moreSearchDialog.value = false;
+    // moreSearchDialog.value = false;
     emit('resetEvent');
+  };
+  //取消查询
+  const handleCel = () => {
+    moreSearchDialog.value = false;
   };
   //关闭查询弹框--X
   const handleClose = () => {
@@ -446,7 +449,7 @@
     dynamicValidateForm.searches.push({
       startWith: undefined,
       fieldName: '请选择',
-      rule: undefined,
+      rule: 'LIKE',
       val: '',
       date: undefined,
       endWith: undefined,

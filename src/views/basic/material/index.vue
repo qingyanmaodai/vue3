@@ -382,12 +382,13 @@
     startWith: '',
     endWith: '',
   };
+  //重新加载页面——获取表格信息
   const refreshTable = async () => {
     console.log('重新加载');
     const res: any = await getMatTable({
       params: [init],
       orderByBean: {
-        descList: ['BdMaterial.create_time'],
+        descList: ['BdMaterial.update_time'],
       },
       pageIndex: 1,
       pageRows: 10,
@@ -395,7 +396,6 @@
     pages.currentPage = res.current;
     pages.total = res.total;
     pages.pageSize = res.size;
-    console.log('getting', pages.currentPage, pages.total, pages.pageSize);
     let data = res.records;
     tableEvent.value.init(data);
   };
@@ -405,10 +405,10 @@
     pageSize: 10,
     total: 0,
   });
-  let wlNo = undefined;
-  let wlName = undefined;
-  let moreKeys: any = undefined;
-  let selectedKeys = undefined;
+  let wlNo = null;
+  let wlName = null;
+  let moreKeys: any = null;
+  let selectedKeys = null;
   //从组件获取搜素关键字
   const getTreeKey = (selected) => {
     selectedKeys = selected;
@@ -419,7 +419,6 @@
   };
   const getMoreKey = (keys) => {
     moreKeys = keys;
-    console.log(moreKeys, 'sasas');
   };
   //表格查询
   const getList = async () => {
@@ -466,8 +465,14 @@
         endWith: '',
       });
     }
+    //高级查询接收参数并处理
     if (moreKeys && moreKeys.length > 0) {
+      console.log('aasa', moreKeys);
+      let start = '';
       for (let i = 0; i < moreKeys.length; i++) {
+        if (moreKeys[i].startWith && moreKeys[i].startWith == 'start') {
+          start = JSON.parse(moreKeys[i].fieldName).propName;
+        }
         getParams.push({
           table: 'BdMaterial',
           name: JSON.parse(moreKeys[i].fieldName).propName,
@@ -475,14 +480,28 @@
           link: moreKeys[i].link,
           rule: moreKeys[i].rule,
           type: moreKeys[i].type,
-          date: dayjs(dayjs(moreKeys[i].date).valueOf()).format('YYYY-MM-DD HH:mm:ss'),
+          date: dayjs(dayjs(moreKeys[i].date).valueOf()).format('YYYY-MM-DD'),
           val: moreKeys[i].val,
-          startWith: moreKeys[i].startWith,
+          startWith: start,
           endWith: moreKeys[i].endWith,
         });
+        if (typeof moreKeys[i].endWith != 'undefined') {
+          start = '';
+        }
       }
-      console.log(getParams[0], 'sasas');
+      let end = '';
+      for (let i in getParams.reverse()) {
+        if (getParams[i].endWith && getParams[i].endWith == 'end') {
+          end = getParams[i].name;
+        }
+        getParams[i].endWith = end;
+        if (getParams[i + 1] && getParams[i].startWith != getParams[i + 1].startWith) {
+          end = '';
+        }
+      }
+      getParams.reverse();
     }
+    //表格查询
     const res: any = await getMatTable({
       params: getParams,
       orderByBean: {
@@ -501,12 +520,13 @@
   //重置
   const resetTable = () => {
     treeRef.value.resetSelect();
-    selectedKeys = undefined;
-    moreKeys = undefined;
-    wlNo = undefined;
-    wlName = undefined;
+    selectedKeys = null;
+    moreKeys = null;
+    wlNo = null;
+    wlName = null;
     refreshTable();
   };
+  //有待考虑还需不需要
   //获取基本单位字段
   const getTableUnit = async () => {
     try {
@@ -665,12 +685,14 @@
       console.log('审核n失败', e);
     }
   };
+  //关闭审核/反审核结果的窗口
   const closeRes = () => {
     unAudit.value = false;
     isAudit.value = false;
     resY.value = 0;
     resF.value = 0;
   };
+  //结果表格颜色
   const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
     if (row.info.status == 'F') {
       return {
@@ -684,8 +706,9 @@
     refreshTree();
     getList();
   });
+
   onActivated(() => {
-    // refreshTable();
+    //页面缓存
     getList();
   });
 </script>

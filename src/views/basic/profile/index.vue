@@ -213,7 +213,7 @@
                     label="分仓"
                     :show="showUnExam"
                     v-model:value="formState.subStockName"
-                    :disabled="hasLocation"
+                    :disabled="hasSub"
                     @search="onStock('sub')"
                     @clear="onClear('sub')"
                   />
@@ -531,7 +531,6 @@
     getLocationOption,
     getMatTableById,
     getMatTableUnit,
-    // getMatTableUnitList,
     getPublicList,
     getStockOption,
     getSubOption,
@@ -548,20 +547,13 @@
   const ACard = Card;
 
   const router = useRouter();
+  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
+  //物料分组弹框visible
   const visibleGroupModal: any = ref<boolean>(false);
-  const onGroupSearch = (name) => {
-    console.log('物料分组弹框', name);
-    visibleGroupModal.value = true;
-    formState.node = name;
-    if (formState.node == '') {
-      formState.node = undefined;
-    }
-  };
-
   //基础信息
   const basicSearchRef: any = ref<any>(undefined); //基础信息查询组件ref
-  //更新表头数据
+  //更新基础信息表头数据
   const getCurrentCols = (key: any) => {
     const colConfig = {
       baseUnit: unitColumns,
@@ -573,7 +565,7 @@
     };
     return colConfig[key];
   };
-  //待用URL
+  //公共接口---待用URL---表格数据+表头
   let urlConfig = {
     baseUnit: '/stock/bd-unit/list',
     weightUnit: '/stock/bd-unit/list',
@@ -582,306 +574,16 @@
     location: '/stock/bd-stock-location/list',
     plan: '/stock/bd-examine/list',
   };
-  //所选框
+  //选择对应的基本信息弹框
   let chosenModal: String = '';
-  //点击清空事件
-  const onClear = (key: string) => {
-    switch (key) {
-      case 'baseUnit':
-        formState.baseUnitName = '';
-        formState.baseUnitId = '';
-        break;
-      case 'weightUnit':
-        formState.weightName = '';
-        formState.weightUnitId = '';
-        break;
-      case 'group':
-        formState.groupId = '';
-        formState.groupName = '';
-        break;
-      case 'stock':
-        formState.stockId = '';
-        formState.stockName = '';
-        formState.subStockId = '';
-        formState.subStockName = '';
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'sub':
-        formState.subStockId = '';
-        formState.subStockName = '';
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'location':
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'plan':
-        formState.examineId = '';
-        formState.bdExamineName = '';
-        break;
-    }
-  };
-  //获取仓库字段
-  const getStcokOps = async (key) => {
-    if (key == 'stock') {
-      try {
-        let data = await getStockOption(np);
-        basicSearchRef.value.init(data);
-        console.log('仓库选项', data);
-      } catch (e) {
-        console.log('获取仓库选项字段失败', e);
-      }
-    } else if (key == 'sub') {
-      try {
-        let data = await getSubOption(np);
-        basicSearchRef.value.init(data);
-        console.log('分仓选项', data);
-      } catch (e) {
-        console.log('获取分仓选项字段失败', e);
-      }
-    } else if (key == 'location') {
-      try {
-        let data = await getLocationOption(np);
-        basicSearchRef.value.init(data);
-        console.log('分仓选项', data);
-      } catch (e) {
-        console.log('获取分仓选项字段失败', e);
-      }
-    } else {
-      try {
-        let data = await getMatTableUnit(np);
-        basicSearchRef.value.init(data);
-        console.log('详情页基本单位字段', data);
-      } catch (e) {
-        console.log('详情页获取基本单位字段失败', e);
-      }
-    }
-  };
-  //弹窗类型
-  let modalType = ref<string>('');
-  //点击放大镜事件
-  const onStock: any = async (key) => {
-    await getStcokOps(key);
-    modalType.value = key;
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: 'name',
-            column: 'name',
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'string',
-            val: '',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      urlConfig[key],
-    );
-    chosenModal = key;
-    let dataCols = getCurrentCols(key);
-    let dataList = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initCols(dataCols);
-    basicSearchRef.value.initList(dataList);
-    basicSearchRef.value.initSearch(key);
-    console.log('获取基本单位表格数据1', dataList);
-    return res;
-  };
-  //双击单元格事件
-  let stockId = '';
-  let subStockId = '';
-  let locationId = '';
+  //审核状态
+  const hasSub = ref<boolean>(true); //分仓
+  const hasLocation = ref<boolean>(true); //仓位
+  const showUnExam = ref<boolean>(false); //反审核
+  const showExam = ref<boolean>(false); //审核
+  const showSubmit = ref<boolean>(true); //保存
 
-  const cellClickEvent = (row) => {
-    console.log('所选', chosenModal);
-    switch (chosenModal) {
-      case 'baseUnit':
-        formState.baseUnitId = row.id;
-        formState.baseUnitName = row.name;
-        break;
-      case 'weightUnit':
-        formState.weightName = row.name;
-        formState.bdStockLocationName = '';
-        formState.weightUnitId = row.id;
-        break;
-      case 'stock':
-        formState.stockId = row.id;
-        formState.stockName = row.name;
-        stockId = row.id;
-        getNextStock('stock', 'stockId', stockId);
-        break;
-      case 'sub':
-        formState.subStockId = row.id;
-        formState.subStockName = row.name;
-        subStockId = row.id;
-        getNextStock('sub', 'subStockId', subStockId);
-        break;
-      case 'location':
-        formState.bdStockLocationId = row.id;
-        formState.bdStockLocationName = row.name;
-        locationId = row.id;
-        getNextStock('location', 'bdStockLocationId', locationId);
-        break;
-      case 'plan':
-        formState.examineId = row.id;
-        formState.bdExamineName = row.name;
-        break;
-    }
-    basicSearchRef.value.bSearch(false);
-  };
-  //选择仓库后查询
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'number',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      urlConfig[key],
-    );
-    console.log(res);
-  };
-  //获取物料分组数据
-  let treeData = ref<TreeItem[]>([]);
-  const getGroup = async () => {
-    const tree = await treeMatGroup({ params: '0' });
-    runTree(tree);
-    console.log('tree1111:', tree);
-    // treeData.value = JSON.parse(JSON.stringify(tree));   //两种方式
-    treeData.value = cloneDeep(tree);
-  };
-  getGroup();
-  const runTree = (tree: MatGroupEntity[]) => {
-    tree.forEach((item) => {
-      item.title = item.name;
-      item.value = item.id;
-      item.key = item.id;
-      runTree(item.children || []);
-      console.log('key', item.key);
-    });
-  };
-  //物料分组弹框关
-  const groupSelect = (value, node) => {
-    formState.node = node;
-    // groupValue = value;
-    console.log('物料分组弹框node', value, node);
-    formState.groupName = formState.node;
-    formState.groupId = value;
-    visibleGroupModal.value = false;
-  };
-  let getParams = () => {
-    let query = router.currentRoute.value.query;
-    console.log('query', query);
-  };
-  getParams();
-  //空参数
-  const np = { params: '' };
-  //接受参数
-  let rowId = useRoute().query.row?.toString();
-  let hasId = ref<boolean>(false);
-  console.log('编辑id', rowId);
-  const getListById = async (id) => {
-    if (rowId) {
-      id = rowId;
-      hasId.value = true;
-    }
-    const res: any = await getMatTableById({
-      params: id,
-    });
-    console.log('res的值', res);
-    formState.number = res.number;
-    formState.name = res.name;
-    formState.shortName = res.shortName;
-    formState.baseUnitId = res.baseUnit.id;
-    formState.baseUnitName = res.baseUnit.name;
-    formState.groupId = res.bdMaterialGroup.id;
-    formState.groupName = res.bdMaterialGroup.name;
-    formState.attr = res.attr;
-    formState.netWeight = res.netWeight;
-    formState.model = res.model;
-    formState.bsStatus = res.bsStatus;
-    if (rowId && res.bsStatus === 'A') {
-      showExam.value = true;
-      showUnExam.value = false;
-      hasSub.value = false;
-      hasLocation.value = false;
-      console.log('2');
-    } else if (rowId && res.bsStatus === 'B') {
-      showExam.value = false;
-      showUnExam.value = true;
-      hasSub.value = true;
-      hasLocation.value = true;
-      showSubmit.value = false;
-      console.log('3');
-    }
-    if (formState.bsStatus === 'A') {
-      formState.labelValue = '创建';
-    } else {
-      formState.labelValue = '已审核';
-    }
-    formState.oldMatNumber = res.oldMatNumber;
-    formState.mark = res.mark;
-    formState.stockId = res.stockId;
-    if (formState.stockId) {
-      formState.stockId = res.bdStock.id;
-      formState.stockName = res.bdStock.name;
-    }
-    formState.bdStock = res.bdStock;
-    formState.subStockId = res.subStockId;
-    if (formState.subStockId) {
-      formState.subStockId = res.bdSubStock.id;
-      formState.subStockName = res.bdSubStock.name;
-    }
-    formState.bdSubStock = res.bdSubStock;
-    formState.bdStockLocationId = res.bdStockLocationId;
-    if (formState.bdStockLocationId) {
-      formState.bdStockLocationId = res.bdStockLocation.id;
-      formState.bdStockLocationName = res.bdStockLocation.name;
-    }
-    formState.bdStockLocation = res.bdStockLocation;
-    formState.enableSn = res.enableSn;
-    formState.enableBatch = res.enableBatch;
-    formState.storagePeriod = res.storagePeriod;
-    formState.minStockNum = res.minStockNum;
-    formState.maxStockNum = res.minStockNum;
-    formState.safeStockNum = res.safeStockNum;
-    if (res.bdExamine != undefined && res.bdExamine.id) {
-      formState.examineId = res.bdExamine.id;
-      formState.bdExamineName = res.bdExamine.name;
-    }
-    formState.stockInExamine = res.stockInExamine;
-    formState.stockOutExamine = res.stockOutExamine;
-    formState.produceExamine = res.produceExamine;
-    formState.createTime = res.createTime;
-    formState.createBy = res.createBy;
-    formState.updateTime = res.updateTime;
-    formState.updateBy = res.updateBy;
-    formState.weightUnitId = res.weightUnitId;
-    if (formState.weightUnitId) {
-      // formState.weightName = res.weightUnit.name;
-      formState.weightUnitId = res.weightUnit.id;
-    }
-    formState.weightName = res.weightUnit.name;
-  };
-  if (rowId) {
-    getListById(rowId);
-  }
+  //对应输入框绑定的值接口类型
   interface FormState {
     id?: string | undefined;
     number: string | undefined;
@@ -926,6 +628,7 @@
     updateTime: string | undefined;
     updateBy: string | undefined;
   }
+  //初始化
   const formState: UnwrapRef<FormState> = reactive({
     id: undefined,
     number: undefined,
@@ -972,12 +675,415 @@
   });
 
   const formRules = reactive({
-    name: [{ required: true, message: '请输入物料名称', trigger: 'change' }],
-    number: [{ required: true, message: '请输入物料编码', trigger: 'change' }],
-    groupId: [{ required: true, message: '请输入物料分组', trigger: 'change' }],
-    baseUnitId: [{ required: true, message: '请选择基本单位', trigger: 'change' }],
-    attr: [{ required: true, message: '请输入物料属性', trigger: 'change' }],
+    name: [{ required: true, message: '请输入物料名称' }],
+    number: [{ required: true, message: '请输入物料编码' }],
+    groupId: [{ required: true, message: '请选择物料分组' }],
+    baseUnitId: [{ required: true, message: '请选择基本单位' }],
+    attr: [{ required: true, message: '请选择物料属性' }],
   });
+
+  //物料分组弹框
+  const onGroupSearch = (name) => {
+    visibleGroupModal.value = true;
+    formState.node = name;
+    if (formState.node == '') {
+      formState.node = undefined;
+    }
+  };
+
+  //点击清空图标清空事件
+  const onClear = (key: string) => {
+    switch (key) {
+      case 'baseUnit':
+        formState.baseUnitName = '';
+        formState.baseUnitId = '';
+        break;
+      case 'weightUnit':
+        formState.weightName = '';
+        formState.weightUnitId = '';
+        break;
+      case 'group':
+        formState.groupId = '';
+        formState.groupName = '';
+        break;
+      case 'stock':
+        formState.stockId = '';
+        formState.stockName = '';
+        formState.subStockId = '';
+        formState.subStockName = '';
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        if (!formState.stockId) {
+          hasSub.value = true;
+          hasLocation.value = true;
+        }
+        break;
+      case 'sub':
+        formState.subStockId = '';
+        formState.subStockName = '';
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        if (!formState.subStockId) {
+          hasLocation.value = true;
+        }
+        break;
+      case 'location':
+        formState.bdStockLocationId = '';
+        formState.bdStockLocationName = '';
+        break;
+      case 'plan':
+        formState.examineId = '';
+        formState.bdExamineName = '';
+        break;
+    }
+  };
+  //获取仓库字段
+  const getStcokOps = async (key) => {
+    if (key == 'stock') {
+      try {
+        let data = await getStockOption(np);
+        basicSearchRef.value.init(data);
+        console.log('仓库选项', data);
+      } catch (e) {
+        console.log('获取仓库选项字段失败', e);
+      }
+    } else if (key == 'sub') {
+      try {
+        let arr = [] as any;
+        let data = await getSubOption(np);
+        arr = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'stock_id');
+        basicSearchRef.value.init(arr);
+        console.log('分仓选项', data);
+      } catch (e) {
+        console.log('获取分仓选项字段失败', e);
+      }
+    } else if (key == 'location') {
+      try {
+        let arr = [] as any;
+        let data = await getLocationOption(np);
+        arr = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'sub_stock_id' && e.fieldName != 'stock_id');
+        console.log('仓位选项', data);
+        basicSearchRef.value.init(arr);
+      } catch (e) {
+        console.log('获取仓位选项字段失败', e);
+      }
+    } else {
+      try {
+        let data = await getMatTableUnit(np);
+        basicSearchRef.value.init(data);
+        console.log('详情页基本单位字段', data);
+      } catch (e) {
+        console.log('详情页获取基本单位字段失败', e);
+      }
+    }
+  };
+  //弹窗类型
+  let modalType = ref<string>('');
+  let queryStockParam = reactive({
+    subStock: {},
+    stockLocation: {},
+  });
+  //点击放大镜事件
+  const onStock: any = async (key) => {
+    let q = {};
+    await getStcokOps(key);
+    modalType.value = key;
+    if (key == 'sub') {
+      q = queryStockParam.subStock;
+    } else if (key == 'location') {
+      q = queryStockParam.stockLocation;
+    }
+    const res: any = await getPublicList(
+      {
+        params: [
+          q,
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: 'AND',
+            rule: 'EQ',
+            type: 'string',
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      urlConfig[key],
+    );
+    chosenModal = key;
+    let dataCols = getCurrentCols(key);
+    let dataList = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
+    basicSearchRef.value.initSearch(key);
+    console.log('获取基本单位表格数据1', dataList);
+    return res;
+  };
+  //双击单元格事件
+  let stockId = '';
+  let subStockId = '';
+  let locationId = '';
+  //选择事件——获取双击所选的值并赋值到对应字段
+  const cellClickEvent = (row) => {
+    console.log('所选', chosenModal);
+    switch (chosenModal) {
+      case 'baseUnit':
+        formState.baseUnitId = row.id;
+        formState.baseUnitName = row.name;
+        break;
+      case 'weightUnit':
+        formState.weightName = row.name;
+        formState.bdStockLocationName = '';
+        formState.weightUnitId = row.id;
+        break;
+      case 'stock':
+        formState.stockId = row.id;
+        formState.stockName = row.name;
+        stockId = row.id;
+        queryStockParam.subStock = {
+          table: '',
+          name: 'stockId',
+          column: 'stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
+        getNextStock('stock', 'stockId', stockId);
+        break;
+      case 'sub':
+        formState.subStockId = row.id;
+        formState.subStockName = row.name;
+        subStockId = row.id;
+        queryStockParam.stockLocation = {
+          table: '',
+          name: 'subStockId',
+          column: 'sub_stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
+        getNextStock('sub', 'subStockId', subStockId);
+        break;
+      case 'location':
+        formState.bdStockLocationId = row.id;
+        formState.bdStockLocationName = row.name;
+        locationId = row.id;
+        getNextStock('location', 'bdStockLocationId', locationId);
+        break;
+      case 'plan':
+        formState.examineId = row.id;
+        formState.bdExamineName = row.name;
+        break;
+    }
+    basicSearchRef.value.bSearch(false);
+    if (formState.stockId) {
+      hasSub.value = false;
+      if (formState.subStockId) {
+        hasLocation.value = false;
+      }
+    }
+  };
+  //选择仓库后查询——联动
+  //key:在待用url中选择的
+  //colname:需要查询的名字，如编码，名称。。。
+  //id:输入的值
+  const getNextStock = async (key, colName, id) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: colName,
+            column: colName,
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'number',
+            val: id,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      urlConfig[key],
+    );
+    console.log('res1111', res);
+  };
+  //获取物料分组数据
+  let treeData = ref<TreeItem[]>([]);
+  const getGroup = async () => {
+    const tree = await treeMatGroup({ params: '0' });
+    runTree(tree);
+    console.log('tree1111:', tree);
+    // treeData.value = JSON.parse(JSON.stringify(tree));   //两种方式
+    treeData.value = cloneDeep(tree);
+  };
+  getGroup();
+  const runTree = (tree: MatGroupEntity[]) => {
+    tree.forEach((item) => {
+      item.title = item.name;
+      item.value = item.id;
+      item.key = item.id;
+      runTree(item.children || []);
+      console.log('key', item.key);
+    });
+  };
+  //物料分组弹框关
+  const groupSelect = (value, node) => {
+    formState.node = node;
+    console.log('物料分组弹框node', value, node);
+    formState.groupName = formState.node;
+    formState.groupId = value;
+    visibleGroupModal.value = false;
+  };
+  let getParams = () => {
+    let query = router.currentRoute.value.query;
+    console.log('query', query);
+  };
+  getParams();
+  //空参数
+  const np = { params: '' };
+  //接受参数
+  let rowId = useRoute().query.row?.toString();
+  let hasId = ref<boolean>(false);
+  console.log('编辑id', rowId);
+
+  //如果有id，则通过getMatTableById，进入编辑页面。没有id——新增
+  const getListById = async (id) => {
+    if (rowId) {
+      id = rowId;
+      hasId.value = true;
+    }
+    const res: any = await getMatTableById({
+      params: id,
+    });
+    console.log('res的值', res);
+    formState.number = res.number;
+    formState.name = res.name;
+    formState.shortName = res.shortName;
+    formState.baseUnitId = res.baseUnit.id;
+    formState.baseUnitName = res.baseUnit.name;
+    formState.groupId = res.bdMaterialGroup.id;
+    formState.groupName = res.bdMaterialGroup.name;
+    formState.attr = res.attr;
+    formState.netWeight = res.netWeight;
+    formState.model = res.model;
+    formState.bsStatus = res.bsStatus;
+    if (rowId && res.bsStatus === 'A') {
+      showExam.value = true;
+      showUnExam.value = false;
+      console.log('2.创建状态');
+    } else if (rowId && res.bsStatus === 'B') {
+      showExam.value = false;
+      showUnExam.value = true;
+      showSubmit.value = false;
+      hasSub.value = true;
+      hasLocation.value = true;
+      console.log('3.审核状态');
+    }
+    if (formState.bsStatus === 'A') {
+      formState.labelValue = '创建';
+    } else {
+      formState.labelValue = '已审核';
+    }
+    formState.oldMatNumber = res.oldMatNumber;
+    formState.mark = res.mark;
+    formState.stockId = res.stockId;
+    if (formState.stockId) {
+      formState.stockId = res.bdStock.id;
+      formState.stockName = res.bdStock.name;
+      queryStockParam.subStock = {
+        table: '',
+        name: 'stockId',
+        column: 'stock_id',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: res.bdStock.id,
+        startWith: '',
+        endWith: '',
+      };
+    }
+    formState.bdStock = res.bdStock;
+    formState.subStockId = res.subStockId;
+    if (formState.subStockId) {
+      formState.subStockId = res.bdSubStock.id;
+      formState.subStockName = res.bdSubStock.name;
+      queryStockParam.stockLocation = {
+        table: '',
+        name: 'subStockId',
+        column: 'sub_stock_id',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: res.bdSubStock.id,
+        startWith: '',
+        endWith: '',
+      };
+    }
+    formState.bdSubStock = res.bdSubStock;
+    formState.bdStockLocationId = res.bdStockLocationId;
+    if (formState.bdStockLocationId) {
+      formState.bdStockLocationId = res.bdStockLocation.id;
+      formState.bdStockLocationName = res.bdStockLocation.name;
+    }
+    formState.bdStockLocation = res.bdStockLocation;
+    formState.enableSn = res.enableSn;
+    formState.enableBatch = res.enableBatch;
+    formState.storagePeriod = res.storagePeriod;
+    formState.minStockNum = res.minStockNum;
+    formState.maxStockNum = res.minStockNum;
+    formState.safeStockNum = res.safeStockNum;
+    if (res.bdExamine != undefined && res.bdExamine.id) {
+      formState.examineId = res.bdExamine.id;
+      formState.bdExamineName = res.bdExamine.name;
+    }
+    formState.stockInExamine = res.stockInExamine;
+    formState.stockOutExamine = res.stockOutExamine;
+    formState.produceExamine = res.produceExamine;
+    formState.createTime = res.createTime;
+    formState.createBy = res.createBy;
+    formState.updateTime = res.updateTime;
+    formState.updateBy = res.updateBy;
+    formState.weightUnitId = res.weightUnitId;
+    if (formState.weightUnitId) {
+      formState.weightUnitId = res.weightUnit.id;
+      formState.weightName = res.weightUnit.name;
+    }
+  };
+  const stockHandle = async () => {
+    //修改
+    if (rowId) {
+      await getListById(rowId);
+      if (formState.bsStatus == 'B') {
+        hasSub.value = true;
+        hasLocation.value = true;
+      } else {
+        if (formState.stockId) {
+          hasSub.value = false;
+        }
+        if (formState.subStockId) {
+          hasLocation.value = false;
+        }
+      }
+    } else {
+      //新增
+      hasSub.value = true;
+      hasLocation.value = true;
+    }
+  };
+  stockHandle();
+
   const handleFinish = (values: FormState) => {
     console.log(values, formState);
   };
@@ -986,10 +1092,17 @@
   };
   //搜索功能
   const searchList = async (type, keywords) => {
+    let param: any = [];
+    param.push(keywords);
+    if (type == 'sub') {
+      param.push(queryStockParam.subStock);
+    } else if (type == 'location') {
+      param.push(queryStockParam.stockLocation);
+    }
     basicSearchRef.value.initList(
       await getPublicList(
         {
-          params: [keywords],
+          params: param,
         },
         urlConfig[type],
       ),
@@ -1089,19 +1202,14 @@
       }
     }
   };
-  //审核状态
-  const hasSub = ref<boolean>(false);
-  const hasLocation = ref<boolean>(false);
-  const showUnExam = ref<boolean>(false);
-  const showExam = ref<boolean>(false);
-  const showSubmit = ref<boolean>(true);
+
   //控制审核与反审核按钮显示
   const btnChecking = () => {
     console.log('0', rowId);
     if (!rowId) {
       showExam.value = false;
       showUnExam.value = false;
-      console.log('1');
+      console.log('1.点击新增时');
     }
   };
   //审核功能
@@ -1121,6 +1229,8 @@
           showSubmit.value = false;
           showExam.value = false;
           showUnExam.value = true;
+          hasSub.value = true;
+          hasLocation.value = true;
           useMessage().createMessage.success('审核成功');
           getListById(rowId);
           // back();
@@ -1150,6 +1260,8 @@
           showSubmit.value = true;
           showExam.value = true;
           showUnExam.value = false;
+          hasSub.value = false;
+          hasLocation.value = false;
           useMessage().createMessage.success('反审核成功');
           getListById(rowId);
           // back();
@@ -1166,6 +1278,7 @@
   const back = () => {
     router.go(-1);
   };
+  //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
     btnChecking();
   });

@@ -95,7 +95,7 @@
               <a-input-search
                 v-show="
                   search.fieldName !== '请选择'
-                    ? JSON.parse(search.fieldName).controlType === 'inputsearch'
+                    ? JSON.parse(search.fieldName).controlType === 'inputSearch'
                     : false
                 "
                 style="width: 200px"
@@ -122,7 +122,7 @@
               <a-select
                 v-show="
                   search.fieldName !== '请选择'
-                    ? JSON.parse(search.fieldName).controlType === 'checkbox'
+                    ? JSON.parse(search.fieldName).controlType === 'checkBox'
                     : false
                 "
                 mode="multiple"
@@ -236,7 +236,7 @@
   };
 
   const xGrid = ref<VxeGridInstance>();
-  //详情页查询字段数据
+  //详情页查询字段数据——渲染数据
   const init = (data) => {
     console.log('详情页字段数据', data);
     optionsUnitFieldName.data = data;
@@ -249,21 +249,21 @@
     isUnit.value = data;
     return isUnit;
   };
-  //详情页基本单位表格数据
+  //详情页基本单位表格数据——表头
   const tableCols = reactive<any>({ data: [] });
   const initCols = (data) => {
     tableCols.data = data;
     console.log('详情页基本单位表格数据', data);
   };
   const tableData = reactive<any>({ data: [] });
+  //表格内容
   const initList = (data) => {
-    console.log('mmm', data);
     tableData.data = data.records;
     pages.currentPage = data.current;
     pages.total = data.total;
     pages.pageSize = data.size;
   };
-  //高级查询字段数据
+  //高级查询字段数据——待测试
   const getListUnitEvent = (data) => {
     console.log('高级查询字段数据', data);
     optionsUnitFieldName.data = data;
@@ -274,7 +274,6 @@
   //显示弹框
   const bSearch = (data) => {
     basicSearchDialog.value = data;
-    console.log('基础查询弹框：', data);
   };
   //双击单元格事件
   const emit = defineEmits<Emits>();
@@ -293,7 +292,7 @@
     { value: 'LT', label: '小于' },
   ]);
   const optionsTime = reactive<any>([
-    { value: 'EQ', label: '等于' },
+    { value: 'LIKE', label: '等于' },
     { value: 'GE', label: '大于等于' },
     { value: 'LE', label: '小于等于' },
     { value: 'NE', label: '不等于' },
@@ -317,8 +316,8 @@
       {
         startWith: undefined,
         fieldName: '请选择',
-        rule: undefined,
-        val: undefined,
+        rule: 'LIKE',
+        val: '',
         date: undefined,
         controlType: 'string',
         endWith: undefined,
@@ -340,8 +339,9 @@
   };
   const selectOne = (data: any) => {
     data.val = '';
-    if (data.labelValue) {
+    if (data.labelValue || data.date) {
       data.labelValue = '';
+      data.date = '';
     }
   };
   //关闭
@@ -349,12 +349,12 @@
     formRef.value.resetFields();
     dynamicValidateForm.searches.length = 1;
   };
-  //查询
+  //查询按钮
   const basicSearch = (type, keywords) => {
     type = props.modalType;
     dynamicValidateForm.searches.map((r) => {
       if (r.date) {
-        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD 00:00:00');
+        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD');
       }
     });
     if (dynamicValidateForm.searches) {
