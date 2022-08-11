@@ -30,7 +30,7 @@
 </template>
 <script lang="ts" setup>
   import { Button, Card, Form, Input } from 'ant-design-vue';
-  import MoreSearch from '/@/components/Amoresearch/src/Moresearch.vue';
+  import { MoreSearch } from '/@/components/AMoreSearch';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { getMatOption } from '/@/api/mattable';
   // import { useMessage } from '/@/hooks/web/useMessage';

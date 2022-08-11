@@ -512,7 +512,7 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   import {
     nuitGridOptions,
     planColumns,
@@ -520,7 +520,7 @@
     subStockColumns,
     locationColumns,
     unitColumns,
-  } from '/@/components/Amoresearch/data';
+  } from '/@/components/AMoreSearch/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';

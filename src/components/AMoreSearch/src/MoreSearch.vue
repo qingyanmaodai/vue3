@@ -214,8 +214,8 @@
   } from 'ant-design-vue';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { nuitGridOptions, unitColumns } from '/@/components/Amoresearch/data';
-  import BasicSearch from '/@/components/Amoresearch/src/Basicsearch.vue';
+  import { nuitGridOptions, unitColumns } from '/@/components/AMoreSearch/data';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/mattable';
