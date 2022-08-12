@@ -7,7 +7,7 @@
         <span>物料名称：</span>
         <a-input class="input" v-model:value="formState.wlName" />
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
-        <a-button class="button" type="none" @click="resetEvent">重置</a-button>
+        <a-button class="button" @click="resetEvent">重置</a-button>
         <a-button
           class="button"
           style="background-color: #2f4056; color: #fff"
@@ -32,7 +32,8 @@
   import { Button, Card, Form, Input } from 'ant-design-vue';
   import { MoreSearch } from '/@/components/AMoreSearch';
   import { reactive, ref, UnwrapRef } from 'vue';
-  import { getMatOption } from '/@/api/mattable';
+  import { getMatOption } from '/@/api/matTable';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   // import { useMessage } from '/@/hooks/web/useMessage';
 
   const AButton = Button;
@@ -40,17 +41,65 @@
   const AInput = Input;
   const ACard = Card;
   const moreSearchRef: any = ref(null); //高级查询组件ref
+  const props = defineProps({
+    tableName: {
+      type: String,
+      default: '',
+    },
+  });
+  interface FormState {
+    wlNo: string;
+    wlName: string;
+    tableName: string;
+  }
+  const formRef = ref();
+  const formState: UnwrapRef<FormState> = reactive({
+    wlNo: '',
+    wlName: '',
+    tableName: props.tableName,
+  });
   type Emits = {
-    (event: 'getKeyword', num: string, name: string): void;
     (event: 'getList', keywords?: object, selected?): void;
-    (event: 'refreshTable'): void;
     (event: 'init'): void;
     (event: 'getTableUnitList'): void;
     (event: 'searchList', keywords: object): void;
-    (event: 'resetTable'): void;
-    (event: 'getMoreKey', moreKeys): void;
+    (event: 'resetEvent'): void;
   };
   const emit = defineEmits<Emits>();
+  // const searchParams: SearchParams[] = [];
+  const getSearchParams = (): SearchParams[] => {
+    let searchParams: SearchParams[] = [];
+    if (formState.wlNo) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'number',
+        column: 'number',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlNo,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.wlName) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'name',
+        column: 'name',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlName,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (moreSearchRef.value.getSearchParams() && moreSearchRef.value.getSearchParams().length > 0) {
+      searchParams = searchParams.concat(moreSearchRef.value.getSearchParams());
+    }
+    return searchParams;
+  };
   //空参数
   const np = { params: '' };
   //查询菜单数据
@@ -62,11 +111,7 @@
   getOptions();
   //查询功能
 
-  const searchEvent = (num, name) => {
-    // if (formState.wlNo || formState.wlName) {
-    num = formState.wlNo;
-    name = formState.wlName;
-    emit('getKeyword', num, name);
+  const searchEvent = () => {
     emit('getList');
     // } else {
     //   useMessage().createMessage.warning('输入不能为空');
@@ -75,25 +120,14 @@
   //高级查询中基本单位字段数据
   const init = (data) => {
     moreSearchRef.value.getTableUnitEvent(data);
-    console.log('高级查询中基本单位字段数据', data);
   };
   //高级查询
-  const moreListEvent = (moreKeys) => {
-    emit('getMoreKey', moreKeys);
-    emit('getList', moreKeys);
+  const moreListEvent = () => {
+    emit('getList');
   };
   const moreSearchEvent = () => {
     moreSearchRef.value.mSearch(true);
   };
-  interface FormState {
-    wlNo: string;
-    wlName: string;
-  }
-  const formRef = ref();
-  const formState: UnwrapRef<FormState> = reactive({
-    wlNo: '',
-    wlName: '',
-  });
   // 高级查询关闭
   const moreSearchClose = () => {
     moreSearchRef.value.handleClose();
@@ -102,10 +136,10 @@
   const resetEvent = () => {
     formState.wlNo = '';
     formState.wlName = '';
-    moreSearchRef.value.reset();
-    emit('resetTable');
+    moreSearchRef.value.resetEvent();
+    emit('resetEvent');
   };
-  defineExpose({ moreSearchClose, init, resetEvent }); //initList,searchUnit
+  defineExpose({ moreSearchClose, init, formState, getSearchParams, resetEvent }); //initList,searchUnit
   const options = reactive({ data: [] });
 </script>
 

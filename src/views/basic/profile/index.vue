@@ -6,8 +6,8 @@
       >
       <div style="display: flex; float: right">
         <Button type="primary" class="button" @click="onSubmit" v-if="showSubmit">保存</Button>
-        <Button type="warning" class="button" @click="onExam" v-if="showExam">审核</Button>
-        <Button type="danger" class="button" @click="unExam" v-if="showUnExam">反审核</Button>
+        <Button danger class="button" @click="onExam" v-if="showExam">审核</Button>
+        <Button danger class="button" @click="unExam" v-if="showUnExam">反审核</Button>
       </div>
     </LayoutHeader>
     <a-card class="content">
@@ -258,7 +258,7 @@
         </TabPane>
         <TabPane key="2" tab="质量信息">
           <a-form :model="formState" :rules="formRules">
-            <div class="keytwo">
+            <div class="keyTwo">
               <Row>
                 <Col :span="8">
                   <a-form-item
@@ -267,7 +267,7 @@
                     name="stockInExamine"
                     class="switch"
                   >
-                    <div class="swithdiv">
+                    <div class="switchDiv">
                       <Switch
                         checked-children="开"
                         un-checked-children="关"
@@ -286,7 +286,7 @@
                     name="produceExamine"
                     class="switch"
                   >
-                    <div class="swithdiv">
+                    <div class="switchDiv">
                       <Switch
                         checked-children="开"
                         un-checked-children="关"
@@ -305,7 +305,7 @@
                     name="stockOutExamine"
                     class="switch"
                   >
-                    <div class="swithdiv">
+                    <div class="switchDiv">
                       <Switch
                         checked-children="开"
                         un-checked-children="关"
@@ -321,7 +321,7 @@
               <Row>
                 <Col :span="8">
                   <a-form-item label="启用SN：" ref="enableSn" name="enableSn" class="switch">
-                    <div class="swithdiv">
+                    <div class="switchDiv">
                       <Switch
                         checked-children="开"
                         un-checked-children="关"
@@ -340,7 +340,7 @@
                     name="enableBatch"
                     class="switch"
                   >
-                    <div class="swithdiv">
+                    <div class="switchDiv">
                       <Switch
                         checked-children="开"
                         un-checked-children="关"
@@ -484,7 +484,7 @@
       @searchList="searchList"
       title="基础信息查询"
       ref="basicSearchRef"
-      :gridOptions="nuitGridOptions"
+      :gridOptions="unitGridOptions"
     />
   </div>
 </template>
@@ -512,9 +512,9 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { BasicSearch } from '/@/components/AMoreSearch';
+  import BasicSearch from '/@/components/AMoreSearch/src/BasicSearch.vue';
   import {
-    nuitGridOptions,
+    unitGridOptions,
     planColumns,
     stockColumns,
     subStockColumns,
@@ -524,7 +524,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
-  import { MatGroupEntity, treeMatGroup } from '/@/api/matgroup';
+  import { MatGroupEntity, treeMatGroup } from '/@/api/matGroup';
   import {
     addMatTable,
     auditMatTable,
@@ -536,7 +536,7 @@
     getSubOption,
     unAuditMatTable,
     updateMatTable,
-  } from '/@/api/mattable';
+  } from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
 
@@ -565,7 +565,7 @@
     };
     return colConfig[key];
   };
-  //公共接口---待用URL---表格数据+表头
+  //基本信息公共接口---待用URL---表格数据+表头
   let urlConfig = {
     baseUnit: '/stock/bd-unit/list',
     weightUnit: '/stock/bd-unit/list',
@@ -577,8 +577,8 @@
   //选择对应的基本信息弹框
   let chosenModal: String = '';
   //审核状态
-  const hasSub = ref<boolean>(true); //分仓
-  const hasLocation = ref<boolean>(true); //仓位
+  const hasSub = ref<boolean>(false); //分仓
+  const hasLocation = ref<boolean>(false); //仓位
   const showUnExam = ref<boolean>(false); //反审核
   const showExam = ref<boolean>(false); //审核
   const showSubmit = ref<boolean>(true); //保存
@@ -713,19 +713,19 @@
         formState.subStockName = '';
         formState.bdStockLocationId = '';
         formState.bdStockLocationName = '';
-        if (!formState.stockId) {
-          hasSub.value = true;
-          hasLocation.value = true;
-        }
+        // if (!formState.stockId) {
+        //   hasSub.value = true;
+        //   hasLocation.value = true;
+        // }
         break;
       case 'sub':
         formState.subStockId = '';
         formState.subStockName = '';
         formState.bdStockLocationId = '';
         formState.bdStockLocationName = '';
-        if (!formState.subStockId) {
-          hasLocation.value = true;
-        }
+        // if (!formState.subStockId) {
+        //   hasLocation.value = true;
+        // }
         break;
       case 'location':
         formState.bdStockLocationId = '';
@@ -738,7 +738,7 @@
     }
   };
   //获取仓库字段
-  const getStcokOps = async (key) => {
+  const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
         let data = await getStockOption(np);
@@ -771,9 +771,12 @@
       }
     } else {
       try {
+        let arr = [] as any;
         let data = await getMatTableUnit(np);
-        basicSearchRef.value.init(data);
-        console.log('详情页基本单位字段', data);
+        arr = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
+        console.log('详情页基本单位字段', arr);
       } catch (e) {
         console.log('详情页获取基本单位字段失败', e);
       }
@@ -784,17 +787,19 @@
   let queryStockParam = reactive({
     subStock: {},
     stockLocation: {},
+    subStockName: {},
+    stockName: {},
   });
-  //点击放大镜事件
+  //输入框点击放大镜事件
   const onStock: any = async (key) => {
     let q = {};
-    await getStcokOps(key);
+    await getStockOps(key);
     modalType.value = key;
-    if (key == 'sub') {
-      q = queryStockParam.subStock;
-    } else if (key == 'location') {
-      q = queryStockParam.stockLocation;
-    }
+    // if (key == 'sub') {
+    //   q = queryStockParam.subStock;
+    // } else if (key == 'location') {
+    //   q = queryStockParam.stockLocation;
+    // }
     const res: any = await getPublicList(
       {
         params: [
@@ -824,12 +829,38 @@
     console.log('获取基本单位表格数据1', dataList);
     return res;
   };
+
+  //选择仓库后查询——联动
+  //key:在待用url中选择的
+  //colName:需要查询的名字，如编码，名称。。。
+  //id:输入的值
+  const getNextStock = async (key, colName, id) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: colName,
+            column: colName,
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'number',
+            val: id,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      urlConfig[key],
+    );
+    console.log('还需要测试', res);
+    return res;
+  };
   //双击单元格事件
   let stockId = '';
   let subStockId = '';
-  let locationId = '';
   //选择事件——获取双击所选的值并赋值到对应字段
-  const cellClickEvent = (row) => {
+  const cellClickEvent = async (row) => {
     console.log('所选', chosenModal);
     switch (chosenModal) {
       case 'baseUnit':
@@ -856,12 +887,11 @@
           startWith: '',
           endWith: '',
         };
-        getNextStock('stock', 'stockId', stockId);
+        await getNextStock('stock', 'stockId', stockId);
         break;
       case 'sub':
         formState.subStockId = row.id;
         formState.subStockName = row.name;
-        subStockId = row.id;
         queryStockParam.stockLocation = {
           table: '',
           name: 'subStockId',
@@ -873,13 +903,30 @@
           startWith: '',
           endWith: '',
         };
-        getNextStock('sub', 'subStockId', subStockId);
+        const stockByStock = await getNextStock('stock', 'id', row.stockId);
+        formState.stockId = stockByStock.records[0].id;
+        formState.stockName = stockByStock.records[0].name;
         break;
       case 'location':
         formState.bdStockLocationId = row.id;
         formState.bdStockLocationName = row.name;
-        locationId = row.id;
-        getNextStock('location', 'bdStockLocationId', locationId);
+        queryStockParam.subStockName = {
+          table: '',
+          name: 'subStockId',
+          column: 'sub_stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
+        const subStockByStockLocation = await getNextStock('sub', 'id', row.subStockId);
+        const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
+        formState.subStockId = subStockByStockLocation.records[0].id;
+        formState.subStockName = subStockByStockLocation.records[0].name;
+        formState.stockId = stockByStockLocation.records[0].id;
+        formState.stockName = stockByStockLocation.records[0].name;
         break;
       case 'plan':
         formState.examineId = row.id;
@@ -894,31 +941,7 @@
       }
     }
   };
-  //选择仓库后查询——联动
-  //key:在待用url中选择的
-  //colname:需要查询的名字，如编码，名称。。。
-  //id:输入的值
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'number',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      urlConfig[key],
-    );
-    console.log('res1111', res);
-  };
+
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
   const getGroup = async () => {
@@ -1069,17 +1092,17 @@
         hasSub.value = true;
         hasLocation.value = true;
       } else {
-        if (formState.stockId) {
-          hasSub.value = false;
-        }
-        if (formState.subStockId) {
-          hasLocation.value = false;
-        }
+        // if (formState.stockId) {
+        //   hasSub.value = false;
+        // }
+        // if (formState.subStockId) {
+        //   hasLocation.value = false;
+        // }
       }
     } else {
       //新增
-      hasSub.value = true;
-      hasLocation.value = true;
+      // hasSub.value = true;
+      // hasLocation.value = true;
     }
   };
   stockHandle();
@@ -1163,13 +1186,12 @@
           const addList = await addMatTable({
             params: newData,
           });
-          console.log('addList', addList);
           if (addList.id != null) {
             useMessage().createMessage.success('添加成功');
             // back();
             showExam.value = true;
             rowId = addList.id;
-            getListById(rowId);
+            await getListById(rowId);
           }
         } catch (e) {
           console.log('失败', e);
@@ -1193,7 +1215,7 @@
               params: newData,
             });
           };
-          updateList();
+          await updateList();
           useMessage().createMessage.success('修改成功');
           // back();
         } catch (e) {
@@ -1218,21 +1240,21 @@
     if (type == 'confirm') {
       if (formState.labelValue === 'A' || formState.labelValue === '创建') {
         try {
-          const aduitEvent = async () => {
+          const auditEvent = async () => {
             await auditMatTable({
               params: {
                 id: rowId,
               },
             });
           };
-          await aduitEvent();
+          await auditEvent();
           showSubmit.value = false;
           showExam.value = false;
           showUnExam.value = true;
           hasSub.value = true;
           hasLocation.value = true;
           useMessage().createMessage.success('审核成功');
-          getListById(rowId);
+          await getListById(rowId);
           // back();
         } catch (e) {
           console.log('失败', e);
@@ -1249,21 +1271,21 @@
     if (type == 'confirm') {
       if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
         try {
-          const unAduitEvent = async () => {
+          const unAuditEvent = async () => {
             await unAuditMatTable({
               params: {
                 id: rowId,
               },
             });
           };
-          await unAduitEvent();
+          await unAuditEvent();
           showSubmit.value = true;
           showExam.value = true;
           showUnExam.value = false;
           hasSub.value = false;
           hasLocation.value = false;
           useMessage().createMessage.success('反审核成功');
-          getListById(rowId);
+          await getListById(rowId);
           // back();
         } catch (e) {
           console.log('失败', e);
@@ -1284,7 +1306,7 @@
   });
 </script>
 <style scoped lang="less">
-  .swithdiv {
+  .switchDiv {
     width: 318px;
   }
   .item {

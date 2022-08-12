@@ -59,33 +59,26 @@
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"
-          @deleteEvent="deleteEvent"
-          @getTreeKey="getTreeKey"
-          @getList="getList"
-          @refreshTable="refreshTable"
-          @selectTree="selectTree"
-          @resetTable="resetTable"
+          @deleteEvent="deleteGroupEvent"
+          @selectEvent="selectGroupEvent"
         />
       </pane>
       <pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%">
           <Search
-            @getList="getList"
-            @getTreeKey="getTreeKey"
-            @getMoreKey="getMoreKey"
-            @refreshTable="refreshTable"
-            @getKeyword="getKeyword"
-            @resetTable="resetTable"
             ref="searchRef"
+            tableName="BdMaterial"
+            @getList="getList"
+            @resetEvent="resetTable"
           />
           <ExTable
             :columns="matColumns"
             :buttons="buttons"
-            :gridOptions="AgridOptions"
+            :gridOptions="GridOptions"
             :treeSelectData="treeSelectData"
-            ref="tableEvent"
+            ref="tableRef"
+            @expTable="expTable"
             @getList="getList"
-            @refreshTable="refreshTable"
             @delMatOneEvent="delMatOneEvent"
             @delMatBatchEvent="delMatBatchEvent"
             @auditRowEvent="auditRowEvent"
@@ -109,7 +102,7 @@
                 'FullJump',
                 'Total',
               ]"
-              @page-change="getList"
+              @page-change="tablePagerChange"
               style="width: calc(100% - 5px); height: 42px; margin: 4px"
             />
           </div>
@@ -177,7 +170,7 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Pager, VxeTablePropTypes } from 'vxe-table';
+  import { Pager, VxePagerEvents, VxeTablePropTypes } from 'vxe-table';
   import {
     addMatGroup,
     deleteMatGroup,
@@ -185,17 +178,17 @@
     MatGroupEntity,
     queryOneMatGroup,
     treeMatGroup,
-  } from '/@/api/matgroup';
+  } from '/@/api/matGroup';
   import {
     auditMatTableBatch,
     unAuditMatTableBatch,
     delMatTableBatch,
     delMatTableById,
     getMatTable,
-    getMatTableUnit,
     auditMatTable,
     unAuditMatTable,
-  } from '/@/api/mattable';
+    exportTableList,
+  } from '/@/api/matTable';
   import { Button, Form, FormItem, Input, Modal } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -203,23 +196,23 @@
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
-  import dayjs from 'dayjs';
+  import { SearchParams } from '/@/api/apiLink';
 
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AButton = Button;
   const ASplitpanes = Splitpanes;
-  const AgridOptions = gridOptions;
+  const GridOptions = gridOptions;
   const visibleGroupModal = ref<boolean>(false);
   const visibleDeleteGroupModal = ref<boolean>(false);
   const paneSize = ref<number>(18);
   const installPaneSize = ref<number>(18);
   const formRef = ref();
   //表格事件
-  const tableEvent: any = ref<String | null>(null);
-  //查询条件
+  const tableRef: any = ref<String | null>(null);
+  //查询组件
   const searchRef: any = ref<String | null>(null);
-  //物料分组事件
+  //物料分组组件
   const treeRef: any = ref<String | null>(null);
   //树信息
   interface GroupFormData {
@@ -287,13 +280,18 @@
     showGroupModal(GroupEvent.ADD_SUB, node);
   };
   //删除分组
-  const deleteEvent = (node: TreeItem) => {
+  const deleteGroupEvent = (node: TreeItem) => {
     visibleDeleteGroupModal.value = true;
     optGroupCallBack = async () => {
       await deleteMatGroup({ params: node.key ? node.key.toString() : '' });
       visibleDeleteGroupModal.value = false;
       await refreshTree();
     };
+  };
+
+  //选择分组
+  const selectGroupEvent = (selectedKeys: string[], data: any) => {
+    getList();
   };
   //分组提交回调
   let optGroupCallBack = () => {};
@@ -370,136 +368,28 @@
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };
-  //初始化表格参数
-  const init = {
-    table: 'BdMaterial',
-    name: 'name',
-    column: 'name',
-    link: 'AND',
-    rule: 'LIKE',
-    type: 'string',
-    val: '',
-    startWith: '',
-    endWith: '',
-  };
-  //重新加载页面——获取表格信息
-  const refreshTable = async () => {
-    console.log('重新加载');
-    const res: any = await getMatTable({
-      params: [init],
-      orderByBean: {
-        descList: ['BdMaterial.update_time'],
-      },
-      pageIndex: 1,
-      pageRows: 10,
-    });
-    pages.currentPage = res.current;
-    pages.total = res.total;
-    pages.pageSize = res.size;
-    let data = res.records;
-    tableEvent.value.init(data);
-  };
   //分页信息
   const pages = reactive({
     currentPage: 1,
     pageSize: 10,
     total: 0,
   });
-  let wlNo = null;
-  let wlName = null;
-  let moreKeys: any = null;
-  let selectedKeys = null;
-  //从组件获取搜素关键字
-  const getTreeKey = (selected) => {
-    selectedKeys = selected;
-  };
-  const getKeyword = (num, name) => {
-    wlNo = num;
-    wlName = name;
-  };
-  const getMoreKey = (keys) => {
-    moreKeys = keys;
+  // let wlNo = null;
+  // let wlName = null;
+  let getParams: SearchParams[] = [];
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    await getList(currentPage);
   };
   //表格查询
-  const getList = async () => {
-    let getParams: any[] = [];
-    if ('') {
-      resetTable();
+  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+    getParams = [];
+    if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
+      getParams = getParams.concat(treeRef.value.getSearchParams());
     }
-    if (wlNo) {
-      getParams.push({
-        table: 'BdMaterial',
-        name: 'number',
-        column: 'number',
-        link: 'AND',
-        rule: 'EQ',
-        type: 'string',
-        val: wlNo,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (wlName) {
-      getParams.push({
-        table: 'BdMaterial',
-        name: 'name',
-        column: 'name',
-        link: 'AND',
-        rule: 'EQ',
-        type: 'string',
-        val: wlName,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (selectedKeys) {
-      getParams.push({
-        table: 'BdMaterial',
-        name: 'groupId',
-        column: 'group_id',
-        link: 'AND',
-        rule: 'EQ',
-        type: 'string',
-        val: selectedKeys[0],
-        startWith: '',
-        endWith: '',
-      });
-    }
-    //高级查询接收参数并处理
-    if (moreKeys && moreKeys.length > 0) {
-      console.log('aasa', moreKeys);
-      let start = '';
-      for (let i = 0; i < moreKeys.length; i++) {
-        if (moreKeys[i].startWith && moreKeys[i].startWith == 'start') {
-          start = JSON.parse(moreKeys[i].fieldName).propName;
-        }
-        getParams.push({
-          table: 'BdMaterial',
-          name: JSON.parse(moreKeys[i].fieldName).propName,
-          column: JSON.parse(moreKeys[i].fieldName).fieldName,
-          link: moreKeys[i].link,
-          rule: moreKeys[i].rule,
-          type: moreKeys[i].type,
-          date: dayjs(dayjs(moreKeys[i].date).valueOf()).format('YYYY-MM-DD'),
-          val: moreKeys[i].val,
-          startWith: start,
-          endWith: moreKeys[i].endWith,
-        });
-        if (typeof moreKeys[i].endWith != 'undefined') {
-          start = '';
-        }
-      }
-      let end = '';
-      for (let i in getParams.reverse()) {
-        if (getParams[i].endWith && getParams[i].endWith == 'end') {
-          end = getParams[i].name;
-        }
-        getParams[i].endWith = end;
-        if (getParams[i + 1] && getParams[i].startWith != getParams[i + 1].startWith) {
-          end = '';
-        }
-      }
-      getParams.reverse();
+    if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
+      getParams = getParams.concat(searchRef.value.getSearchParams());
     }
     //表格查询
     const res: any = await getMatTable({
@@ -507,37 +397,39 @@
       orderByBean: {
         descList: ['BdMaterial.update_time'],
       },
-      pageIndex: pages.currentPage,
-      pageRows: pages.pageSize,
+      pageIndex: currPage,
+      pageRows: pageSize,
     });
     pages.total = res.total;
+    pages.currentPage = currPage;
     let data = res.records;
-    tableEvent.value.init(data);
+    tableRef.value.init(data);
     searchRef.value.moreSearchClose();
   };
   //空参数
-  const np = { params: '' };
+  // const np = { params: '' };
   //重置
   const resetTable = () => {
-    treeRef.value.resetSelect();
-    selectedKeys = null;
-    moreKeys = null;
-    wlNo = null;
-    wlName = null;
-    refreshTable();
+    // console.log(treeRef.value.basicTree);
+    treeRef.value.setSelectedKeys([]);
+    searchRef.value.formState.wlNo = null;
+    searchRef.value.formState.wlName = null;
+    getList(1);
   };
-  //有待考虑还需不需要
-  //获取基本单位字段
-  const getTableUnit = async () => {
-    try {
-      let data = await getMatTableUnit(np);
-      searchRef.value.init(data);
-      console.log('高级查询基本单位字段', data);
-    } catch (e) {
-      console.log('高级查询获取基本单位字段失败', e);
-    }
-  };
-  getTableUnit();
+  // //获取基本单位字段
+  // const getTableUnit = async () => {
+  //   try {
+  //     let data = await getMatTableUnit(np);
+  //     let arr = [] as any;
+  //     arr = cloneDeep(data);
+  //     arr = arr.filter((e) => e.fieldName != 'bs_status');
+  //     searchRef.value.init(arr);
+  //     console.log('高级查询基本单位字段', arr);
+  //   } catch (e) {
+  //     console.log('高级查询获取基本单位字段失败', e);
+  //   }
+  // };
+  // getTableUnit();
   //按钮
   const buttons = [
     {
@@ -550,33 +442,29 @@
     {
       type: 'primary',
       label: '审核',
-      onClick: () => {
-        auditEvent();
+      onClick: (row) => {
+        auditEvent(row);
       },
     },
     {
       type: 'default',
       label: '反审核',
-      onClick: () => {
-        unAuditEvent();
+      onClick: (row) => {
+        unAuditEvent(row);
       },
     },
     {
       type: 'danger',
       label: '批量删除',
-      onClick: () => {
-        delTableEvent();
+      onClick: (row) => {
+        delTableEvent(row);
       },
     },
   ];
   let treeSelectData = null;
-  const selectTree = (selected, selectedKeys) => {
-    treeSelectData = selected;
-    tableEvent.value.setGroupId(selected[0], selectedKeys);
-  };
   //新增表格数据
   const addTableEvent = () => {
-    tableEvent.value.addTable();
+    tableRef.value.addTable();
     console.log('treeSelectData:', treeSelectData);
   };
   //删除表格单条数据
@@ -590,8 +478,8 @@
     }
   };
   //批量删除表格
-  const delTableEvent = () => {
-    tableEvent.value.delTable();
+  const delTableEvent = (row) => {
+    tableRef.value.delTable(row);
   };
   const delMatBatchEvent = async (row) => {
     console.log('nnn', row);
@@ -620,8 +508,8 @@
   const unAudit = ref(false);
   let adResult = reactive({ data: {} });
   const auditModal = ref(false);
-  const auditEvent = () => {
-    tableEvent.value.auditTable();
+  const auditEvent = (row) => {
+    tableRef.value.auditTable(row);
   };
   let resY = ref(0);
   let resF = ref(0);
@@ -660,8 +548,8 @@
     }
   };
   //批量反审核
-  const unAuditEvent = () => {
-    tableEvent.value.unAuditTable();
+  const unAuditEvent = (row) => {
+    tableRef.value.unAuditTable(row);
   };
   const unAuditBatchEvent = async (row) => {
     try {
@@ -701,6 +589,33 @@
       };
     }
   };
+
+  //导出
+  const expTable = async () => {
+    const data = await exportTableList({
+      params: {
+        list: getParams,
+        fileName: '物料列表',
+      },
+      pageIndex: 1,
+      pageRows: pages.total,
+    });
+    if (!data) {
+      createMessage.error('文件下载失败');
+      return;
+    }
+    //“URL.createObjectURL()方法会根据传入的参数创建一个指向该参数对象的URL. 这个URL的生命仅存在于它被创建的这个文档里.
+    let url = window.URL.createObjectURL(new Blob([data], { type: 'application/vnd.ms-excel' }));
+    let link = document.createElement('a');
+    link.style.display = 'none';
+    link.href = url;
+    link.setAttribute('download', '物料列表信息.xls');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); //下载完成移除元素
+    window.URL.revokeObjectURL(url); //释放掉blob对象
+  };
+
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     refreshTree();
@@ -709,7 +624,6 @@
 
   onActivated(() => {
     //页面缓存
-    getList();
   });
 </script>
 

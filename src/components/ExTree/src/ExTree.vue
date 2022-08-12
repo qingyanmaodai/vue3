@@ -26,7 +26,6 @@
     <basic-tree
       ref="tree"
       @select="selectTree"
-      v-model:selectedKeys="selectedKeys"
       :search="prop.search"
       :toolbar="prop.toolbar"
       :tree-data="prop.treeData"
@@ -35,31 +34,69 @@
     />
   </div>
 </template>
-
+<script lang="ts">
+  import { basicProps } from '/@/components/Tree/src/props';
+  const prop1 = basicProps;
+  const prop2 = {
+    tableName: {
+      type: String,
+      default: '',
+    },
+  };
+  const prop3 = Object.assign({}, prop1, prop2);
+</script>
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { reactive, ref, UnwrapRef } from 'vue';
   import { BasicTree, ContextMenuItem, TreeItem } from '/@/components/Tree/index';
   import { Button, Card, Col, Row } from 'ant-design-vue';
   import { basicProps } from '/@/components/Tree/src/props';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
 
   const { createMessage } = useMessage();
   const AButton = Button;
   const ARow = Row;
   const ACol = Col;
   const tree = ref<any>(null);
-  const selectedKeys = ref<string[]>([]);
   let rightClickNode: TreeItem = {};
-  const prop = defineProps(basicProps);
+  // const prop1 = basicProps;
+  // const prop2 = {
+  //   tableName: {
+  //     type: String,
+  //     default: '',
+  //   },
+  // };
+  const prop = defineProps(prop3);
+  interface FormState {
+    tableName: string;
+  }
+  const formState: UnwrapRef<FormState> = reactive({
+    tableName: prop.tableName,
+  });
+  const setSelectedKeys = (keys: string[]) => {
+    tree.value.setSelectedKeys(keys);
+  };
+  const getSearchParams = (): SearchParams[] => {
+    const searchParams: SearchParams[] = [];
+    if (tree.value.getSelectedKeys() && tree.value.getSelectedKeys().length > 0) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'groupId',
+        column: 'group_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.EQ,
+        type: SearchDataType.string,
+        val: tree.value.getSelectedKeys()[0],
+      });
+    }
+    return searchParams;
+  };
   const emits = defineEmits<{
-    (e: 'getList', keywords, selected?): void;
-    (e: 'getTreeKey', selected): void;
     (e: 'editEvent', node: TreeItem): void;
     (e: 'addEvent'): void;
     (e: 'addSubEvent', node: TreeItem): void;
     (e: 'deleteEvent', node: TreeItem): void;
-    (e: 'resetTable'): void;
-    (e: 'selectTree', selected, selectedKeys): void;
+    (e: 'selectEvent', selectedKeys: string[], data: any);
   }>();
   const rightMenuList: ContextMenuItem[] = [
     {
@@ -70,23 +107,9 @@
     },
   ];
   //单选树事件
-  const selectTree = (selected, selectedKeys) => {
-    if (selected.length == 0) {
-      //单击树后的表格刷新
-      emits('resetTable');
-    } else {
-      selectedKeys = selectedKeys.selectedNodes[0].props.name;
-      console.log('selected', selected, selectedKeys);
-      emits('selectTree', selected, selectedKeys);
-      emits('getTreeKey', selected);
-      emits('getList', null, selected);
-    }
+  const selectTree = (selectedKeys, data) => {
+    emits('selectEvent', selectedKeys, data);
   };
-  //重置树选择
-  const resetSelect = () => {
-    selectedKeys.value = [];
-  };
-
   const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
@@ -137,7 +160,7 @@
     const node = findNode(key);
     emits('deleteEvent', node);
   };
-  defineExpose({ resetSelect });
+  defineExpose({ getSearchParams, setSelectedKeys });
 </script>
 
 <style scoped lang="less">

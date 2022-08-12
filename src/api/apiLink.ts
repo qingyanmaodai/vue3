@@ -21,8 +21,25 @@ export enum Url {
   BATCH_DEL_TABLE_LIST = '/stock/bd-material/batch-delete',
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto',
   GET_TABLE_UNIT_LIST = '/stock/bd-unit/list',
+  EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
 }
-
+export enum SearchLink {
+  AND = 'AND',
+  OR = 'OR',
+}
+export enum SearchMatchType {
+  EQ = 'EQ', //等于
+  LIKE = 'LIKE', //包含
+  GE = 'GE', //大于等于
+  LE = 'LE', //小于等于
+  NE = 'NE', //不等于
+  GT = 'GT', //大于
+  LT = 'LT', //小于
+}
+export enum SearchDataType {
+  string = 'string',
+  number = 'number',
+}
 export interface OrderByBean {
   ascList?: string[];
   descList?: string[];
@@ -32,4 +49,16 @@ export interface RequestData<T> {
   pageRows?: number;
   orderByBean?: OrderByBean;
   params: T;
+}
+export interface SearchParams {
+  table: string;
+  name: string;
+  column: string;
+  link: SearchLink;
+  rule: SearchMatchType;
+  type: SearchDataType;
+  val: string;
+  date?: string;
+  startWith?: string;
+  endWith?: string;
 }

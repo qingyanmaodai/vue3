@@ -41,7 +41,7 @@
             <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
               <a-select
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType === 'date'
                     : false
                 "
@@ -53,7 +53,7 @@
               />
               <a-select
                 v-show="
-                  search.fieldName != '请选择'
+                  search.fieldName !== '请选择'
                     ? JSON.parse(search.fieldName).controlType !== 'date'
                     : true
                 "
@@ -91,7 +91,6 @@
                 v-model:value="search.val"
                 :filterOption="filterOption"
               />
-              <!--@click="onSearch(search)" -->
               <a-input-search
                 v-show="
                   search.fieldName !== '请选择'
@@ -119,21 +118,6 @@
                   placeholder="请选择时间..."
                 />
               </a-space>
-              <a-select
-                v-show="
-                  search.fieldName !== '请选择'
-                    ? JSON.parse(search.fieldName).controlType === 'checkBox'
-                    : false
-                "
-                mode="multiple"
-                showSearch
-                style="width: 200px"
-                :allowClear="true"
-                :showArrow="true"
-                v-model:value="search.val"
-                :filterOption="filterOption"
-                placeholder="请选择...多选。。"
-              />
             </a-form-item>
             <span style="margin-left: 10px">
               <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
@@ -208,16 +192,17 @@
   const ASelectOption = SelectOption;
   const ADatePicker = DatePicker;
 
+  const optionsUnitFieldName = reactive<any>({ data: [] });
+
   type Emits = {
     (event: 'cellClickEvent', data: object): void;
     (event: 'getListUnitEvent', keywords: object): void;
-    // (event: 'searchUnitList', keywords: object): void;
     (event: 'openSearch', keywords: object): void;
     (event: 'searchList', type: string, keywords: object): void;
   };
   //获取父组件的数据
   const props = defineProps({
-    gridOptions: String,
+    gridOptions: Object,
     tableCols: String,
     tableData: String,
     modalType: String,
@@ -238,7 +223,7 @@
   const xGrid = ref<VxeGridInstance>();
   //详情页查询字段数据——渲染数据
   const init = (data) => {
-    console.log('详情页字段数据', data);
+    console.log('详情页字段数据11', data);
     optionsUnitFieldName.data = data;
   };
   //判断窗体类型
@@ -249,11 +234,11 @@
     isUnit.value = data;
     return isUnit;
   };
-  //详情页基本单位表格数据——表头
+  //高级查询基本单位表格数据——表头
   const tableCols = reactive<any>({ data: [] });
   const initCols = (data) => {
     tableCols.data = data;
-    console.log('详情页基本单位表格数据', data);
+    console.log('详情页基本单位表格数据表头', data);
   };
   const tableData = reactive<any>({ data: [] });
   //表格内容
@@ -265,9 +250,7 @@
   };
   //高级查询字段数据——待测试
   const getListUnitEvent = (data) => {
-    console.log('高级查询字段数据', data);
     optionsUnitFieldName.data = data;
-    console.log(data.total);
   };
   //弹框
   const basicSearchDialog = ref(false);
@@ -278,10 +261,8 @@
   //双击单元格事件
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
-    console.log('单元格内容：', row);
     emit('cellClickEvent', row.row);
   };
-  const optionsUnitFieldName = reactive<any>({ data: [] });
   const optionsRule = reactive<any>([
     { value: 'LIKE', label: '包含' },
     { value: 'EQ', label: '等于' },
@@ -358,8 +339,13 @@
       }
     });
     if (dynamicValidateForm.searches) {
-      console.log('基础查询里面的查询按钮：', dynamicValidateForm.searches);
       keywords = dynamicValidateForm.searches;
+      if (keywords.length == 1) {
+        if (keywords[0].fieldName === '请选择') {
+          createMessage.error('请选择查询条件');
+          return;
+        }
+      }
       keywords = {
         table: '',
         name: JSON.parse(keywords[0].fieldName).propName,
@@ -372,8 +358,7 @@
         date: keywords[0].date,
         val: keywords[0].val,
       };
-      console.log('参数', keywords);
-      // emit('searchUnitList', keywords);
+      console.log('基础查询里面的查询按钮--参数keywords', keywords);
       emit('searchList', type, keywords);
       emit('openSearch', keywords);
     } else {
@@ -384,7 +369,6 @@
   const resetSearch = (type, keywords) => {
     type = props.modalType;
     formRef.value.resetFields();
-    // emit('searchUnitList', type);
     emit('searchList', type, keywords);
     emit('openSearch', keywords);
   };

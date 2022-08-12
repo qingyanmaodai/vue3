@@ -17,7 +17,7 @@ export interface DataItem {
   updateBy: string; //修改人
   updateTime: string; //修改日期
 }
-export const nuitGridOptions = reactive<VxeGridProps>({
+export const unitGridOptions = reactive<VxeGridProps>({
   border: true,
   height: 400,
   align: 'center',

@@ -20,7 +20,7 @@ export interface DataItem {
   groupId: string; //物料分组编码
   attr: string; //物料属性：A自制，B外购，C委外，D虚拟
   packId: string; //包装容器ID
-  examinSet: string; //检验设置A采购检验B生产检验 可组合用，隔开
+  examineSet: string; //检验设置A采购检验B生产检验 可组合用，隔开
   examineType: string; //检验类型A免检，B质检，C全检
   examineProjectId: number; //检验方案id
   examineRuleId: number; //抽检规则
@@ -69,4 +69,3 @@ export const matColumns = [
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
-// export const count = getData().value.length;

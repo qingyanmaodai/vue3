@@ -228,7 +228,8 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
             return json.parse(data);
           } catch (err) {
             console.log('axios解析错误:', err);
-            return JSON.parse(data);
+            // return JSON.parse(data);
+            return data;
           }
         },
         // 配置项，下面的选项都可以在独立的接口请求中覆盖

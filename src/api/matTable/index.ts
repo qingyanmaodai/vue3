@@ -309,6 +309,22 @@ export function getMatTableUnitList(json: RequestData<object>, mode: ErrorMessag
   );
 }
 /**
+ * 导出表格数据
+ */
+export function exportTableList(json: Object, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<any>(
+    {
+      url: Url.EXPORT_TABLE_LIST,
+      data: json,
+      responseType: 'blob',
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: false,
+    },
+  );
+}
+/**
  * 公共
  */
 export function getPublicList(

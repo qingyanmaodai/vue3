@@ -6,12 +6,12 @@
       :scroll-y="{ gt: 50 }"
       v-bind="props.gridOptions"
       :columns="props.columns"
-      :buttons="props.buttons"
       :export-config="{}"
       :data="tableData.data"
       :show="props.show"
       :treeSelectData="treeSelectData"
       show-overflow="tooltip"
+      show-header-overflow
       height="auto"
       class="table"
     >
@@ -19,14 +19,15 @@
         <div style="width: 100%">
           <AButton
             v-for="(button, key) in buttons"
-            :type="button.type"
+            :type="button.type !== 'danger' ? button.type : 'default'"
             :key="key"
+            :danger="button.type === 'danger'"
             @click="button.onClick()"
             style="margin-right: 10px"
             >{{ button.label }}
           </AButton>
           <span style="float: right">
-            <AButton type="defalut" style="margin: 0 10px">导入</AButton>
+            <AButton type="default" style="margin: 0 10px" @click="upTable">导入</AButton>
             <AButton style="background-color: rgb(47, 64, 86); color: #fff" @click="expTable"
               >导出</AButton
             >
@@ -63,27 +64,54 @@
         >
       </template>
     </vxe-grid>
+    <!--    action:	上传的地址  headers：设置上传的请求头部-->
+    <template>
+      <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
+        <span style="margin: 10px 10px">
+          <a-button type="primary" style="margin: 10px 10px">下载模板</a-button>
+          <!--                      v-model:file-list="fileList"-->
+          <a-upload
+            name="file"
+            :multiple="true"
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            :headers="headers"
+            @change="handleChange"
+          >
+            <a-button>
+              <upload-outlined />
+              上传文件
+            </a-button>
+          </a-upload>
+        </span>
+      </a-modal>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
-  import { VXETable, VxeGridInstance, VxeButtonEvents } from 'vxe-table';
-  import { Tag, Button } from 'ant-design-vue';
+  import { VXETable, VxeGridInstance, VxeGridProps } from 'vxe-table'; //VxeButtonEvents
+  import { Tag, Button, Modal, Upload, message } from 'ant-design-vue';
+  import { UploadOutlined } from '@ant-design/icons-vue';
   import { useRouter } from 'vue-router';
   import { useMessage } from '/@/hooks/web/useMessage';
   const { createMessage } = useMessage();
   const AButton = Button;
+  const AModal = Modal;
+  const AUpload = Upload;
+
   const props = defineProps({
-    gridOptions: String,
-    columns: String,
-    buttons: String,
+    gridOptions: Object,
+    columns: Array,
+    buttons: Array,
     count: Number,
     treeSelectData: Number,
     show: Boolean,
   });
+  console.log('看看1312312', props.buttons);
   type Emits = {
     (event: 'getList'): void;
+    (event: 'expTable'): void;
     (event: 'refreshTable'): void;
     (event: 'delMatOneEvent', row: object): void;
     (event: 'delMatBatchEvent', row: any): void;
@@ -97,6 +125,7 @@
   const router = useRouter();
   const groupId = ref('');
   const groupName = ref('');
+  const visibleUploadModal: any = ref<boolean>(false);
   //获取物料分组
   const setGroupId = (data: string, selectedKeys: string) => {
     groupId.value = data;
@@ -107,7 +136,6 @@
   const tableData = reactive<any>({ data: [] });
   const init = (data) => {
     tableData.data = data;
-    console.log('ccc', data);
   };
   //新增信息
   const addTable = () => {
@@ -289,11 +317,40 @@
       createMessage.warning('请至少勾选一条记录。');
     }
   };
+  //导入
+  const upTable = () => {
+    console.log('1111111111111');
+    visibleUploadModal.value = true;
+  };
+
+  interface FileItem {
+    uid: string;
+    name?: string;
+    status?: string;
+    response?: string;
+    url?: string;
+  }
+
+  interface FileInfo {
+    file: FileItem;
+    fileList: FileItem[];
+  }
+  const headers = {
+    authorization: 'authorization-text',
+  };
+  const handleChange = (info: FileInfo) => {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
   //导出
-  const expTable: VxeButtonEvents.Click = () => {
-    const $grid: any = xGrid.value;
-    $grid.openExport();
-    console.log('导出');
+  const expTable = async () => {
+    emit('expTable');
   };
   defineExpose({
     addTable,
