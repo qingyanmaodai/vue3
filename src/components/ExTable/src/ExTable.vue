@@ -114,7 +114,9 @@
     <!--    action:	上传的地址  headers：设置上传的请求头部-->
     <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
       <span style="margin: 10px 10px">
-        <a-button type="primary" style="margin: 10px 10px">下载模板</a-button>
+        <a-button type="primary" style="margin: 10px 10px" @click="importModelEvent"
+          >下载模板</a-button
+        >
         <!--                      v-model:file-list="fileList"-->
         <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
           <a-button>
@@ -157,6 +159,7 @@
     (e: 'deleteRowEvent', row: object): void;
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
+    (e: 'importModelEvent'): void;
     (e: 'refreshTable'): void;
     (e: 'auditRowEvent', row: any): void;
     (e: 'auditBatchEvent', row: any): void;
@@ -175,6 +178,20 @@
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
 
+  //上传文件
+  interface FileItem {
+    uid: string;
+    name?: string;
+    status?: string;
+    response?: string;
+    url?: string;
+    error?: string;
+  }
+  //上传文件后状态
+  interface FileInfo {
+    file: FileItem;
+    fileList: FileItem[];
+  }
   //数据初始化
   const tableData = reactive<any>({ data: [] });
   const init = (data) => {
@@ -198,8 +215,6 @@
       if (type === 'confirm') {
         if (row.bsStatus == 'A') {
           try {
-            //前端删除更新
-            // await $grid.remove(row);
             emit('deleteRowEvent', row);
             useMessage().createMessage.success('删除成功');
           } catch (e) {
@@ -234,7 +249,6 @@
             for (let i = 0; i < selectRecords.length; i++) {
               row.push(selectRecords[i].id);
             }
-            // $grid.remove(selectRecords);
             emit('delBatchEvent', row);
             createMessage.success('删除成功');
           } catch (e) {
@@ -327,7 +341,6 @@
           console.log('审核多条失败', e);
         }
       }
-      // }
     } else {
       createMessage.warning('请至少勾选一条记录。');
     }
@@ -355,7 +368,6 @@
         } catch (e) {
           console.log('反审核多条失败', e);
         }
-        // }
       }
     } else {
       createMessage.warning('请至少勾选一条记录。');
@@ -377,25 +389,6 @@
       };
     }
   };
-
-  //导入
-  const upTable = () => {
-    visibleUploadModal.value = true;
-  };
-
-  interface FileItem {
-    uid: string;
-    name?: string;
-    status?: string;
-    response?: string;
-    url?: string;
-    error?: string;
-  }
-
-  interface FileInfo {
-    file: FileItem;
-    fileList: FileItem[];
-  }
 
   //上传文件前的判断
   const beforeUpload = (file, UpFileList) => {
@@ -447,6 +440,28 @@
       file.status = 'done';
       file.onSuccess(res.data.message);
     }
+  };
+  //下载模板
+  const importModelEvent = async () => {
+    emit('importModelEvent');
+    OptTableHook.importModel().then((res: any) => {
+      //“URL.createObjectURL()方法会根据传入的参数创建一个指向该参数对象的URL. 这个URL的生命仅存在于它被创建的这个文档里.
+      let url = window.URL.createObjectURL(
+        new Blob([res.data], { type: 'application/vnd.ms-excel' }),
+      );
+      let link = document.createElement('a');
+      link.style.display = 'none';
+      link.href = url;
+      link.setAttribute('download', res.title);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); //下载完成移除元素
+      window.URL.revokeObjectURL(url); //释放掉blob对象
+    });
+  };
+  //导入
+  const upTable = () => {
+    visibleUploadModal.value = true;
   };
   //导出
   const exportTable = async () => {

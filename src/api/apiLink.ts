@@ -23,6 +23,7 @@ export enum Url {
   // GET_TABLE_UNIT_LIST = '/stock/bd-unit/list',
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
+  IMPORT_MODEL = '/stock/bd-material/import-model',
 }
 
 export const TableColum = {

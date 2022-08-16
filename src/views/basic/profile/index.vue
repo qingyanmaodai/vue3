@@ -513,7 +513,7 @@
   } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
-  import { MatGroupEntity, treeMatGroup } from '/@/api/matGroup';
+  import { MatGroupEntity, queryOneMatGroup, treeMatGroup } from '/@/api/matGroup';
   import { config } from '/@/utils/publicParamConfig';
   import {
     addMatTable,
@@ -622,8 +622,8 @@
     shortName: undefined,
     baseUnitName: undefined,
     baseUnitId: undefined,
-    groupId: router.currentRoute.value.query.groupId?.toString(),
-    groupName: router.currentRoute.value.query.groupName?.toString(),
+    groupId: undefined,
+    groupName: undefined,
     attr: 'A',
     weightUnitId: undefined,
     weightName: undefined,
@@ -659,7 +659,16 @@
     createBy: undefined,
     createTime: undefined,
   });
-
+  let groupSelectId = router.currentRoute.value.query.groupId?.toString();
+  //重新物料分组赋值
+  const groupEvent = async () => {
+    const result = await queryOneMatGroup({ params: groupSelectId || '0' });
+    if (result) {
+      formState.groupId = result.id;
+      formState.groupName = result.name;
+    }
+  };
+  groupEvent();
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],

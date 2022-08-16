@@ -1,4 +1,5 @@
 export const config = {
+  //基本单位表格数据
   PUBLIC_REQUEST_URL: {
     baseUnit: '/stock/bd-unit/list', //基本单位
     weightUnit: '/stock/bd-unit/list', //重量单位

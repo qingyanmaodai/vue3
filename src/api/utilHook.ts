@@ -24,4 +24,7 @@ export const OptTableHook = {
   exportExcel: (): Promise<any> => {
     return new Promise<any>(() => {});
   },
+  importModel: (): Promise<any> => {
+    return new Promise<any>(() => {});
+  },
 };

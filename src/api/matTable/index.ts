@@ -340,6 +340,22 @@ export function importMaterial(
   );
 }
 /**
+ * 导入的下载模板
+ */
+export function importModel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.IMPORT_MODEL,
+      data: json,
+      responseType: 'blob',
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: false,
+    },
+  );
+}
+/**
  * 公共
  */
 export function getPublicList(

@@ -39,6 +39,7 @@
             @unAuditRowEvent="unAuditRowEvent"
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
+            @importModelEvent="importModelEvent"
             @refreshTable="refreshTable"
           />
           <div>
@@ -90,6 +91,7 @@
     auditMatTable,
     unAuditMatTable,
     exportTableList,
+    importModel,
   } from '/@/api/matTable';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -115,8 +117,8 @@
   const treeRef: any = ref<String | null>(null);
   //分组数据
   let treeData = ref<TreeItem[]>([]);
-  const groupId = ref(['']);
-  const groupName = ref('');
+  // const groupId = ref(['']);
+  // const groupName = ref('');
   //加载分组
   const refreshTree = async () => {
     const tree = await treeMatGroup({ params: '0' });
@@ -187,8 +189,8 @@
   };
   //选择分组
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
-    groupId.value = selectedKeys;
-    groupName.value = data.selectedNodes[0].props.name;
+    // groupId.value = selectedKeys;
+    // groupName.value = data.selectedNodes[0].props.name;
     getList();
   };
   //分页信息
@@ -269,14 +271,15 @@
   ];
   //添加
   const addTableEvent = () => {
+    let groupId = treeRef.value.getSelectedKeys();
     router.push({
       path: '../profile/index',
       //需要带到详情页的参数
       query: {
-        groupId: groupId.value == [''] ? '' : groupId.value,
-        groupName: groupName.value == '' ? '' : groupName.value,
+        groupId: groupId == '' ? '' : groupId,
       },
     });
+    console.log(groupId);
   };
   //编辑
   const editTableEvent = (row) => {
@@ -343,7 +346,23 @@
     await tableRef.value.computeData(res);
     await getList();
   };
-
+  //下载模板
+  const importModelEvent = async () => {
+    OptTableHook.importModel = (): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        importModel({
+          params: '导入模板',
+        })
+          .then((res) => {
+            const data = { title: '物料信息导入模板.xls', data: res };
+            resolve(data);
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      });
+    };
+  };
   //导出
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
@@ -354,7 +373,7 @@
             fileName: '物料列表',
           },
           pageIndex: 1,
-          pageRows: pages.total,
+          pageRows: pages.pageSize,
         })
           .then((res) => {
             const data = { title: '物料列表信息.xls', data: res };
