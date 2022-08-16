@@ -1,4 +1,12 @@
 export const config = {
+  PUBLIC_REQUEST_URL: {
+    baseUnit: '/stock/bd-unit/list', //基本单位
+    weightUnit: '/stock/bd-unit/list', //重量单位
+    stock: '/stock/bd-stock/list', //仓库
+    sub: '/stock/bd-sub-stock/list', //分仓
+    location: '/stock/bd-stock-location/list', //仓位
+    plan: '/stock/bd-examine/list', //检验方案
+  },
   //物料属性
   MATERIAL_ATTR: [
     {
@@ -95,6 +103,7 @@ export const config = {
       label: '全检',
     },
   ],
+  //检验设置
   EXAMINE_SET: [
     {
       value: 'A',
@@ -105,13 +114,10 @@ export const config = {
       label: '生产检验',
     },
   ],
-  TAME_OPTION_RULE: [
+  //时间类型的选规则选择
+  TIME_OPTION_RULE: [
     {
       value: 'LIKE',
-      label: '等于',
-    },
-    {
-      value: 'EQ',
       label: '等于',
     },
     {
@@ -135,10 +141,11 @@ export const config = {
       label: '小于',
     },
   ],
+  //一般类型的选规则选择
   OPTION_RULE: [
     {
       value: 'LIKE',
-      label: '等于',
+      label: '包含',
     },
     {
       value: 'EQ',

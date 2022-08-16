@@ -20,9 +20,96 @@ export enum Url {
   DEL_TABLE_LIST = '/stock/bd-material/delete',
   BATCH_DEL_TABLE_LIST = '/stock/bd-material/batch-delete',
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto',
-  GET_TABLE_UNIT_LIST = '/stock/bd-unit/list',
+  // GET_TABLE_UNIT_LIST = '/stock/bd-unit/list',
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
+  IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
 }
+
+export const TableColum = {
+  //基本单位表头
+  GET_TABLE_UNIT: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '单位编码', sortable: true },
+    { field: 'name', title: '单位名称', sortable: true },
+    {
+      field: 'createBy',
+      title: '创建人',
+      sortable: true,
+    },
+    {
+      field: 'createTime',
+      title: '创建日期',
+      sortable: true,
+    },
+    {
+      field: 'updateBy',
+      title: '修改人',
+      sortable: true,
+    },
+    {
+      field: 'updateTime',
+      title: '修改日期',
+      sortable: true,
+    },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //仓库
+  GET_STOCK_LIST: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '仓库编码', sortable: true },
+    { field: 'name', title: '仓库名称', sortable: true },
+    { field: 'address', title: '仓库地址', sortable: true },
+    { field: 'mainBy', title: '仓库管理员', sortable: true },
+    { field: 'phone', title: '联系电话', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //分仓
+  GET_SUB_LIST: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '分仓编码', sortable: true },
+    { field: 'name', title: '分仓名称', sortable: true },
+    { field: 'address', title: '仓库地址', sortable: true },
+    { field: 'mainBy', title: '仓库管理员', sortable: true },
+    { field: 'phone', title: '联系电话', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //仓位
+  GET_LOCATION_LIST: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '仓位编码', sortable: true },
+    { field: 'name', title: '仓位名称', sortable: true },
+    { field: 'address', title: '仓位地址', sortable: true },
+    { field: 'mainBy', title: '仓位管理员', sortable: true },
+    { field: 'phone', title: '联系电话', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //检验方案
+};
+
 export enum SearchLink {
   AND = 'AND',
   OR = 'OR',

@@ -89,8 +89,12 @@
               style="width: 200px"
               :filterOption="filterOption"
             >
-              <a-select-option value="A">创建</a-select-option>
-              <a-select-option value="B">已审核</a-select-option>
+              <a-select-option
+                v-for="(item, optionIndex) in config[selectConfigOption(search.fieldName)]"
+                :key="optionIndex"
+                :value="item.value"
+                >{{ item.label }}</a-select-option
+              >
             </a-select>
             <a-input
               v-show="
@@ -214,14 +218,15 @@
   } from 'ant-design-vue';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { unitGridOptions, unitColumns } from '/@/components/AMoreSearch/data';
-  import BasicSearch from '/@/components/AMoreSearch/src/BasicSearch.vue';
+  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/matTable';
   import dayjs, { Dayjs } from 'dayjs';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { SearchParams } from '/@/api/apiLink';
+  import { SearchParams, Url, TableColum } from '/@/api/apiLink';
+  import { config } from '/@/utils/publicParamConfig';
   const { createMessage } = useMessage();
   const APlusOutlined = PlusOutlined;
   const AModal = Modal;
@@ -236,23 +241,23 @@
   const ADatePicker = DatePicker;
 
   const emit = defineEmits<Emits>();
-  //查询
   type Emits = {
-    (event: 'moreListEvent'): void;
-    (event: 'getTableUnitEvent', keywords: object): void;
-    (event: 'getTableUnitListEvent', keywords: object): void;
-    (event: 'resetEvent'): void;
+    (event: 'moreListEvent'): void; //查询
+    (event: 'resetEvent'): void; //重置
   };
-
-  //基础信息组件
-  const basicSearchRef: any = ref(null); //基础信息查询组件ref
+  const formRef = ref<any>(null);
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref(null); //
   //选择框data
   const nowCheckData: any = reactive({ data: {} });
   //高级查询弹框
   const moreSearchDialog = ref(false);
   //查询条件
   const cacheQueryArr: any = reactive({ data: [] });
-
+  //判断输入框controlType类型，改变后面输入框的类型
+  const selectOption: any = reactive({ data: {} });
+  //选择字段数据
+  const optionsFieldName = reactive<any>({ data: [] });
   const props = defineProps({
     tableName: {
       type: String,
@@ -272,7 +277,7 @@
     tableName: props.tableName,
   });
 
-  //查询参数
+  //查询按钮--查询参数
   let searchKeywords: any = [];
   const getSearchParams = (): SearchParams[] => {
     const searchParams: SearchParams[] = [];
@@ -292,8 +297,7 @@
     }
     return searchParams;
   };
-
-  //基本信息公共组件
+  //基本信息公共组件--获取基本信息表格信息
   const publicEvent = async (keywords) => {
     if (!keywords) {
       keywords = {
@@ -317,6 +321,27 @@
     );
   };
 
+  //选择公共属性
+  const selectConfigOption = (data) => {
+    if (data !== '' && data !== '请选择') return JSON.parse(data).queryConfig;
+  };
+  //获取基本单位字段
+  const getTableUnit = async () => {
+    try {
+      const data: any = await getPublicList(
+        {
+          params: [],
+        },
+        Url[selectOption.data.queryConfig],
+      );
+      let arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.getListUnitEvent(arr);
+    } catch (e) {
+      console.log('高级查询获取基本信息字段失败', e);
+    }
+  };
+
   interface Search {
     startWith: string | undefined;
     endWith: string | undefined;
@@ -332,7 +357,6 @@
     column: string | undefined;
     checkData: string[] | undefined;
   }
-  const formRef = ref<any>(undefined);
   const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
     searches: [
       {
@@ -352,29 +376,27 @@
       },
     ],
   });
-
-  //判断输入框controlType类型，改变后面输入框的类型
-  const selectOption: any = reactive({ data: {} });
+  //改变选择的字段数据
   const handleChange = (value: string) => {
     selectOption.data = JSON.parse(value);
   };
   //判断输入框controlType类型，改变rule的默认值
   const selectOne = (data: any) => {
     data.val = '';
+    data.rule = 'LIKE';
     if (data.labelValue || data.date) {
-
       data.labelValue = '';
       data.date = '';
     }
   };
-
-  //基础信息弹框
+  //基础信息弹框--打开放大镜
   const onSearch = async (data) => {
     nowCheckData.data = data;
     const res = await publicEvent(data);
     basicSearchRef.value.initList(res);
-    basicSearchRef.value.initCols(unitColumns);
+    basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]);
     basicSearchRef.value.bSearch(true);
+    await getTableUnit();
   };
   //打开基本信息弹框
   const openSearch = async (keywords) => {
@@ -387,25 +409,9 @@
     nowCheckData.data.labelValue = row.name;
     basicSearchRef.value.bSearch(false);
   };
-  const optionsFieldName = reactive<any>({ data: [] });
-  const optionsRule = reactive<any>([
-    { value: 'LIKE', label: '包含' },
-    { value: 'EQ', label: '等于' },
-    { value: 'GE', label: '大于等于' },
-    { value: 'LE', label: '小于等于' },
-    { value: 'NE', label: '不等于' },
-    { value: 'GT', label: '大于' },
-    { value: 'LT', label: '小于' },
-  ]);
-  const optionsTimeRule = reactive<any>([
-    { value: 'LIKE', label: '等于' },
-    { value: 'EQ', label: '等于' },
-    { value: 'GE', label: '大于等于' },
-    { value: 'LE', label: '小于等于' },
-    { value: 'NE', label: '不等于' },
-    { value: 'GT', label: '大于' },
-    { value: 'LT', label: '小于' },
-  ]);
+  //一般类型/时间类型的查询规则--包含-等于
+  let optionsRule = config.OPTION_RULE;
+  let optionsTimeRule = config.TIME_OPTION_RULE;
   // const optionsStartWith = reactive<any>([{ value: 'start', label: '(' }]);
   // const optionsEndWith = reactive<any>([{ value: 'end', label: ')' }]);
   const optionsLink = reactive<any>([
@@ -415,10 +421,10 @@
   const filterOption = (input: string) => {
     return optionsFieldName.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
-  const init = (data) => {
+  //选择字段数据
+  const initOptions = (data) => {
     optionsFieldName.data = cloneDeep(data);
   };
-
   //打开高级查询弹框事件
   const mSearch = (data: boolean) => {
     moreSearchDialog.value = data;
@@ -426,13 +432,9 @@
       dynamicValidateForm.searches = cloneDeep(cacheQueryArr.data);
     }
     setTimeout(() => {
+      //移动拖拽
       dragModal();
     }, 1000);
-  };
-
-  //基本单位字段
-  const getTableUnitEvent = (data) => {
-    basicSearchRef.value.getListUnitEvent(data);
   };
 
   //查询按钮
@@ -443,6 +445,7 @@
         r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD');
       }
     });
+    //保留查询条件
     cacheQueryArr.data = cloneDeep(dynamicValidateForm.searches);
     searchKeywords = dynamicValidateForm.searches;
     if (searchKeywords.length > 0) {
@@ -458,7 +461,9 @@
 
   //重置方法
   const resetEvent = () => {
-    formRef.value.resetFields();
+    if (formRef.value) {
+      formRef.value.resetFields();
+    }
     searchKeywords = [];
     cacheQueryArr.data = [];
     dynamicValidateForm.searches.length = 1;
@@ -470,7 +475,6 @@
   };
   //关闭查询弹框--X
   const handleClose = () => {
-    // cacheQueryArr.data = cloneDeep(dynamicValidateForm.searches);
     moreSearchDialog.value = false;
   };
   //单行条件移除
@@ -499,9 +503,8 @@
   //将moreSearch这个方法暴露出去，传给父组件
   defineExpose({
     mSearch,
-    init,
+    initOptions,
     handleClose,
-    getTableUnitEvent,
     publicEvent,
     resetEvent,
     formState,

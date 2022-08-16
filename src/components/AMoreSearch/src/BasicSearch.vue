@@ -10,7 +10,6 @@
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
-        <!--v-show="isUnit"-->
         <div>
           <a-space
             v-for="(search, index) in dynamicValidateForm.searches"
@@ -26,7 +25,6 @@
                 style="width: 200px"
                 :filterOption="filterOption"
                 @focus="handleFocus"
-                @change="handleChange"
                 @select="selectOne(search)"
               >
                 <a-select-option
@@ -47,7 +45,7 @@
                 "
                 v-model:value="search.rule"
                 placeholder="等于"
-                :options="optionsTime"
+                :options="optionsTimeRule"
                 style="width: 100px"
                 :filterOption="filterOption"
               />
@@ -77,8 +75,12 @@
                 style="width: 200px"
                 :filterOption="filterOption"
               >
-                <a-select-option value="A">创建</a-select-option>
-                <a-select-option value="B">已审核</a-select-option>
+                <a-select-option
+                  v-for="(item, optionIndex) in config[selectConfigOption(search.fieldName)]"
+                  :key="optionIndex"
+                  :value="item.value"
+                  >{{ item.label }}</a-select-option
+                >
               </a-select>
               <a-input
                 v-show="
@@ -130,8 +132,8 @@
           <vxe-grid
             ref="xGrid"
             v-bind="props.gridOptions"
-            :data="tableData.data"
-            :columns="tableCols.data"
+            :data="tableData"
+            :columns="tableCols"
             :export-config="{}"
             @cell-dblclick="cellClickEvent"
           >
@@ -178,6 +180,7 @@
   } from 'ant-design-vue';
   import { reactive, ref } from 'vue';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
+  import { config } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs, { Dayjs } from 'dayjs';
   const { createMessage } = useMessage();
@@ -207,53 +210,43 @@
     tableData: String,
     modalType: String,
   });
-  //分页信息
-  const pages = reactive({
-    currentPage: 0,
-    pageSize: 0,
-    total: 0,
-  });
-  //分页处理
-  const handlePageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    console.log('hand', currentPage, pageSize);
-  };
 
   const xGrid = ref<VxeGridInstance>();
+  //判断窗体类型
+  let isUnit = ref<string>();
+  //高级查询基本单位表格数据
+  const tableCols = ref<any>([]);
+  //高级查询字段数据
+  const tableData = ref<any>([]);
+  //弹框
+  const basicSearchDialog = ref(false);
   //详情页查询字段数据——渲染数据
   const init = (data) => {
-    console.log('详情页字段数据11', data);
     optionsUnitFieldName.data = data;
   };
   //判断窗体类型
-  let isUnit = ref<string>();
   const initSearch = (data) => {
-    console.log('inits', data);
     // isUnit.value = data == 'baseUnit' || data == 'weightUnit' || !data;
     isUnit.value = data;
     return isUnit;
   };
   //高级查询基本单位表格数据——表头
-  const tableCols = reactive<any>({ data: [] });
   const initCols = (data) => {
-    tableCols.data = data;
-    console.log('详情页基本单位表格数据表头', data);
+    tableCols.value = data;
   };
-  const tableData = reactive<any>({ data: [] });
+
   //表格内容
   const initList = (data) => {
-    tableData.data = data.records;
+    tableData.value = data.records;
     pages.currentPage = data.current;
     pages.total = data.total;
     pages.pageSize = data.size;
   };
-  //高级查询字段数据——待测试
+  //高级查询字段数据
   const getListUnitEvent = (data) => {
     optionsUnitFieldName.data = data;
   };
-  //弹框
-  const basicSearchDialog = ref(false);
+
   //显示弹框
   const bSearch = (data) => {
     basicSearchDialog.value = data;
@@ -263,23 +256,9 @@
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
     emit('cellClickEvent', row.row);
   };
-  const optionsRule = reactive<any>([
-    { value: 'LIKE', label: '包含' },
-    { value: 'EQ', label: '等于' },
-    { value: 'GE', label: '大于等于' },
-    { value: 'LE', label: '小于等于' },
-    { value: 'NE', label: '不等于' },
-    { value: 'GT', label: '大于' },
-    { value: 'LT', label: '小于' },
-  ]);
-  const optionsTime = reactive<any>([
-    { value: 'LIKE', label: '等于' },
-    { value: 'GE', label: '大于等于' },
-    { value: 'LE', label: '小于等于' },
-    { value: 'NE', label: '不等于' },
-    { value: 'GT', label: '大于' },
-    { value: 'LT', label: '小于' },
-  ]);
+  //一般类型/时间类型的查询规则--包含-等于
+  let optionsRule = config.OPTION_RULE;
+  let optionsTimeRule = config.TIME_OPTION_RULE;
   interface Search {
     startWith: string | undefined;
     fieldName: string | undefined;
@@ -313,13 +292,14 @@
   const filterOption = (input: string, option: any) => {
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
-
-  //选择事件
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+  //选择公共属性
+  const selectConfigOption = (data) => {
+    if (data !== '' && data !== '请选择') return JSON.parse(data).queryConfig;
   };
+  //选择事件
   const selectOne = (data: any) => {
     data.val = '';
+    data.rule = 'LIKE';
     if (data.labelValue || data.date) {
       data.labelValue = '';
       data.date = '';
@@ -358,7 +338,6 @@
         date: keywords[0].date,
         val: keywords[0].val,
       };
-      console.log('基础查询里面的查询按钮--参数keywords', keywords);
       emit('searchList', type, keywords);
       emit('openSearch', keywords);
     } else {
@@ -372,7 +351,18 @@
     emit('searchList', type, keywords);
     emit('openSearch', keywords);
   };
-  defineExpose({ init, bSearch, basicSearch, initList, initCols, initSearch, getListUnitEvent }); //getListUnitEventList,
+  //分页信息
+  const pages = reactive({
+    currentPage: 0,
+    pageSize: 0,
+    total: 0,
+  });
+  //分页处理
+  const handlePageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+  };
+  defineExpose({ init, bSearch, basicSearch, initList, initCols, initSearch, getListUnitEvent });
 </script>
 <style scoped lang="less">
   .x-button {

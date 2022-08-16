@@ -28,14 +28,13 @@
           </AButton>
           <span style="float: right">
             <AButton type="default" style="margin: 0 10px" @click="upTable">导入</AButton>
-            <AButton style="background-color: rgb(47, 64, 86); color: #fff" @click="expTable"
+            <AButton style="background-color: rgb(47, 64, 86); color: #fff" @click="exportTable"
               >导出</AButton
             >
           </span>
         </div>
       </template>
       <template #number="{ row }">
-        <!--        <AButton type="link" @click="editTable(row)">{{ row.number }}</AButton>-->
         <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
       </template>
       <template #status="{ row }">
@@ -59,42 +58,86 @@
         <AButton v-if="row.bsStatus === 'B'" type="link" class="link" @click="unAuditRow(row)"
           >反审核</AButton
         >
-        <AButton type="link" class="link" danger @click="removeRowEvent(row)" v-show="row.bsStatus"
+        <AButton type="link" class="link" danger @click="deleteRowEvent(row)" v-show="row.bsStatus"
           >删除</AButton
         >
       </template>
     </vxe-grid>
+    <a-modal
+      v-model:visible="auditModal"
+      title="操作结果"
+      :footer="null"
+      width="800px"
+      @cancel="closeRes"
+    >
+      <div v-if="isAudit"
+        >审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
+      >
+      <div v-if="unAudit"
+        >反审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
+      >
+      <vxe-table
+        border
+        show-overflow
+        :row-style="rowStyle"
+        :row-config="{ isHover: true }"
+        :data="adResult.data"
+      >
+        <vxe-column type="seq" title="序号" width="60" />
+        <vxe-column field="info.title" title="关键字" width="180" />
+        <vxe-column field="info.status" title="状态" width="80">
+          <template #default="{ row }">
+            <Tag :color="row.info.status === 'Y' ? 'success' : 'error'" v-if="row.info.status">{{
+              row.info.status === 'Y' ? '成功' : '失败'
+            }}</Tag>
+          </template>
+        </vxe-column>
+        <vxe-column field="info.msg" title="信息" />
+        <vxe-column field="info.type" title="信息类型" width="80" />
+      </vxe-table>
+      <vxe-pager
+        background
+        :total="adResult.data.length"
+        :layouts="[
+          'PrevJump',
+          'PrevPage',
+          'JumpNumber',
+          'NextPage',
+          'NextJump',
+          'Sizes',
+          'FullJump',
+          'Total',
+        ]"
+      />
+    </a-modal>
+
     <!--    action:	上传的地址  headers：设置上传的请求头部-->
-    <template>
-      <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
-        <span style="margin: 10px 10px">
-          <a-button type="primary" style="margin: 10px 10px">下载模板</a-button>
-          <!--                      v-model:file-list="fileList"-->
-          <a-upload
-            name="file"
-            :multiple="true"
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            :headers="headers"
-            @change="handleChange"
-          >
-            <a-button>
-              <upload-outlined />
-              上传文件
-            </a-button>
-          </a-upload>
-        </span>
-      </a-modal>
-    </template>
+    <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
+      <span style="margin: 10px 10px">
+        <a-button type="primary" style="margin: 10px 10px">下载模板</a-button>
+        <!--                      v-model:file-list="fileList"-->
+        <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
+          <a-button>
+            <upload-outlined />
+            上传文件
+          </a-button>
+        </a-upload>
+      </span>
+    </a-modal>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
-  import { VXETable, VxeGridInstance, VxeGridProps } from 'vxe-table'; //VxeButtonEvents
+  import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
   import { Tag, Button, Modal, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
-  import { useRouter } from 'vue-router';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { OptTableHook } from '/@/api/utilHook';
+  import { importMaterial } from '/@/api/matTable';
+  // import { useRouter } from 'vue-router';
+  // const router = useRouter();
+
   const { createMessage } = useMessage();
   const AButton = Button;
   const AModal = Modal;
@@ -108,99 +151,46 @@
     treeSelectData: Number,
     show: Boolean,
   });
-  console.log('看看1312312', props.buttons);
   type Emits = {
-    (event: 'getList'): void;
-    (event: 'expTable'): void;
-    (event: 'refreshTable'): void;
-    (event: 'delMatOneEvent', row: object): void;
-    (event: 'delMatBatchEvent', row: any): void;
-    (event: 'auditRowEvent', row: any): void;
-    (event: 'auditBatchEvent', row: any): void;
-    (event: 'unAuditRowEvent', row: any): void;
-    (event: 'unAuditBatchEvent', row: any): void;
+    (e: 'addEvent'): void;
+    (e: 'editEvent', row: any): void;
+    (e: 'deleteRowEvent', row: object): void;
+    (e: 'delBatchEvent', row: any): void;
+    (e: 'exportTable'): void;
+    (e: 'refreshTable'): void;
+    (e: 'auditRowEvent', row: any): void;
+    (e: 'auditBatchEvent', row: any): void;
+    (e: 'unAuditRowEvent', row: any): void;
+    (e: 'unAuditBatchEvent', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
-  const router = useRouter();
-  const groupId = ref('');
-  const groupName = ref('');
+
   const visibleUploadModal: any = ref<boolean>(false);
-  //获取物料分组
-  const setGroupId = (data: string, selectedKeys: string) => {
-    groupId.value = data;
-    groupName.value = selectedKeys;
-    console.log('setting', groupId.value, groupName.value);
-  };
+  //批量审核弹框
+  const isAudit = ref(false); //审核
+  const unAudit = ref(false); //反审核
+  let adResult = reactive({ data: {} }); //审核结果数据
+  const auditModal = ref(false); //审核结果弹框
+  let resY = ref(0); //审核成功
+  let resF = ref(0); //审核失败
+
   //数据初始化
   const tableData = reactive<any>({ data: [] });
   const init = (data) => {
     tableData.data = data;
   };
-  //新增信息
+  //新增
   const addTable = () => {
-    console.log('新增groupId', groupId);
-    router.push({
-      path: '../profile/index',
-      //需要带到详情页的参数
-      query: {
-        groupId: groupId.value == '' ? '' : groupId.value,
-        groupName: groupName.value == '' ? '' : groupName.value,
-      },
-    });
+    emit('addEvent');
   };
   //编辑
   const editTable = (row: any) => {
-    console.log('编辑:', row.id);
-    router.push({
-      path: '../profile/index',
-      query: {
-        row: row.id,
-      },
-    });
+    emit('editEvent', row);
   };
-  //审核单条
-  const auditRow = async (row) => {
-    const type = await VXETable.modal.confirm('您确定要审核该数据?');
-    const $grid = xGrid.value;
-    if ($grid) {
-      if (type === 'confirm') {
-        if (row.bsStatus == 'A') {
-          try {
-            emit('auditRowEvent', row);
-            useMessage().createMessage.success('审核成功');
-            row.bsStatus = 'B';
-          } catch (e) {
-            console.log('删除1失败', e);
-          }
-        } else {
-          useMessage().createMessage.error('当前状态不能完成【审核】操作');
-        }
-      }
-    }
-  };
-  //反审核单条
-  const unAuditRow = async (row) => {
-    const type = await VXETable.modal.confirm('您确定要反审核该数据?');
-    const $grid = xGrid.value;
-    if ($grid) {
-      if (type === 'confirm') {
-        if (row.bsStatus == 'B') {
-          try {
-            emit('unAuditRowEvent', row);
-            useMessage().createMessage.success('反审核成功');
-            row.bsStatus = 'A';
-          } catch (e) {
-            console.log('删除1失败', e);
-          }
-        } else {
-          useMessage().createMessage.error('当前状态不能完成【反审核】操作');
-        }
-      }
-    }
-  };
+
   //删除单条
-  const removeRowEvent = async (row: any) => {
+  const deleteRowEvent = async (row: any) => {
     //删除确认窗口
     const type = await VXETable.modal.confirm('您确定要删除该数据?');
     const $grid = xGrid.value;
@@ -208,11 +198,9 @@
       if (type === 'confirm') {
         if (row.bsStatus == 'A') {
           try {
-            emit('delMatOneEvent', row);
             //前端删除更新
-            await $grid.remove(row);
-            //重新查询数据
-            emit('getList');
+            // await $grid.remove(row);
+            emit('deleteRowEvent', row);
             useMessage().createMessage.success('删除成功');
           } catch (e) {
             console.log('删除1失败', e);
@@ -246,17 +234,73 @@
             for (let i = 0; i < selectRecords.length; i++) {
               row.push(selectRecords[i].id);
             }
-            emit('delMatBatchEvent', row);
-            $grid.remove(selectRecords);
-            emit('getList');
+            // $grid.remove(selectRecords);
+            emit('delBatchEvent', row);
             createMessage.success('删除成功');
           } catch (e) {
-            console.log('删除n失败', e);
+            console.log('删除多条失败', e);
           }
         }
       }
     } else {
       createMessage.warning('请至少勾选一条记录。');
+    }
+  };
+  //审核单条
+  const auditRow = async (row) => {
+    //VXETable自带的弹框
+    const type = await VXETable.modal.confirm('您确定要审核该数据?');
+    const $grid = xGrid.value;
+    if ($grid) {
+      if (type === 'confirm') {
+        if (row.bsStatus == 'A') {
+          try {
+            emit('auditRowEvent', row);
+            useMessage().createMessage.success('审核成功');
+            row.bsStatus = 'B';
+          } catch (e) {
+            console.log('审核单条失败', e);
+          }
+        } else {
+          useMessage().createMessage.error('当前状态不能完成【审核】操作');
+        }
+      }
+    }
+  };
+  //反审核单条
+  const unAuditRow = async (row) => {
+    const type = await VXETable.modal.confirm('您确定要反审核该数据?');
+    const $grid = xGrid.value;
+    if ($grid) {
+      if (type === 'confirm') {
+        if (row.bsStatus == 'B') {
+          try {
+            emit('unAuditRowEvent', row);
+            useMessage().createMessage.success('反审核成功');
+            row.bsStatus = 'A';
+          } catch (e) {
+            console.log('反审核单条失败', e);
+          }
+        } else {
+          useMessage().createMessage.error('当前状态不能完成【反审核】操作');
+        }
+      }
+    }
+  };
+  //批量审核或反审核结果输出
+  const computeData = (res) => {
+    if (res) {
+      adResult.data = res;
+      let arr = res;
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].info.status == 'Y') {
+          resY.value += 1;
+        } else {
+          resF.value += 1;
+        }
+      }
+      auditModal.value = true;
+      isAudit.value = true;
     }
   };
   //批量审核
@@ -280,7 +324,7 @@
             $grid.getCheckboxRecords()[i].bsStatus = 'B';
           }
         } catch (e) {
-          console.log('审核n失败', e);
+          console.log('审核多条失败', e);
         }
       }
       // }
@@ -309,7 +353,7 @@
             $grid.getCheckboxRecords()[i].bsStatus = 'A';
           }
         } catch (e) {
-          console.log('反审核n失败', e);
+          console.log('反审核多条失败', e);
         }
         // }
       }
@@ -317,9 +361,25 @@
       createMessage.warning('请至少勾选一条记录。');
     }
   };
+  //关闭审核/反审核结果的窗口
+  const closeRes = () => {
+    unAudit.value = false;
+    isAudit.value = false;
+    resY.value = 0;
+    resF.value = 0;
+  };
+  //结果表格颜色
+  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
+    if (row.info.status == 'F') {
+      return {
+        backgroundColor: '#f5f7fa',
+        color: 'red',
+      };
+    }
+  };
+
   //导入
   const upTable = () => {
-    console.log('1111111111111');
     visibleUploadModal.value = true;
   };
 
@@ -329,51 +389,102 @@
     status?: string;
     response?: string;
     url?: string;
+    error?: string;
   }
 
   interface FileInfo {
     file: FileItem;
     fileList: FileItem[];
   }
-  const headers = {
-    authorization: 'authorization-text',
+
+  //上传文件前的判断
+  const beforeUpload = (file, UpFileList) => {
+    console.log(file, UpFileList);
+    //控制上传文件的类型 arr是上传类型的白名单
+    const type = file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase();
+    const arr = ['.xls', '.xlsx'];
+    if (arr.includes('.' + type)) {
+      return true;
+    } else {
+      createMessage.warning(`不支持以 .${type} 扩展类型的文件或图片上传!`);
+      file.status = 'error';
+      return false;
+    }
   };
+  //上传文件后状态判断以及表格刷新
   const handleChange = (info: FileInfo) => {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
     }
     if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
+      message.success(`${info.file.response}`);
+      //重新加载表格数据
+      emit('refreshTable');
     } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
+      info.fileList = [];
+      message.error(`${info.file.error}`);
+    }
+  };
+  //上传文件
+  const uploadFile = async (file) => {
+    const form = new FormData();
+    form.append('file', file.file);
+    // 调用上传接口
+    console.log('aa', file.file, form);
+    //获取上传进度
+    const onUploadProgress = (progressEvent) => {
+      let progressPercent = parseInt(
+        ((progressEvent.loaded / progressEvent.total) * 100).toFixed(2),
+      );
+      file.onProgress({ percent: progressPercent });
+    };
+    const res: any = await importMaterial({ file: file.file }, onUploadProgress);
+    console.log(res.data, 'result');
+    if (res.data.code !== 200) {
+      file.status = 'error';
+      file.onError(res.data.message);
+    } else {
+      file.status = 'done';
+      file.onSuccess(res.data.message);
     }
   };
   //导出
-  const expTable = async () => {
-    emit('expTable');
+  const exportTable = async () => {
+    emit('exportTable');
+    OptTableHook.exportExcel().then((res: any) => {
+      //“URL.createObjectURL()方法会根据传入的参数创建一个指向该参数对象的URL. 这个URL的生命仅存在于它被创建的这个文档里.
+      let url = window.URL.createObjectURL(
+        new Blob([res.data], { type: 'application/vnd.ms-excel' }),
+      );
+      let link = document.createElement('a');
+      link.style.display = 'none';
+      link.href = url;
+      link.setAttribute('download', res.title);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); //下载完成移除元素
+      window.URL.revokeObjectURL(url); //释放掉blob对象
+    });
   };
   defineExpose({
     addTable,
     delTable,
     auditTable,
     unAuditTable,
-    expTable,
-    removeRowEvent,
+    // exportTable,
     editTable,
     init,
-    setGroupId,
+    computeData,
   });
 </script>
 
 <style scoped lang="less">
   .table {
     background-color: #fff;
-    //border: 1px solid #e5e7eb;
     border-bottom: none;
     width: 100%;
     height: calc(100vh - 250px);
     max-height: 640px;
-    //height: calc(100vh - 27rem);
     padding: 0 5px;
   }
   .button-group {

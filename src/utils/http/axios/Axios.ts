@@ -8,7 +8,7 @@ import { isFunction } from '/@/utils/is';
 import { cloneDeep } from 'lodash-es';
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { RequestEnum } from '/@/enums/httpEnum';
-
+import { getTenant, getToken } from '/@/utils/auth';
 export * from './axiosTransform';
 
 /**
@@ -120,7 +120,10 @@ export class VAxios {
   /**
    * @description:  File Upload
    */
-  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
+  /**
+   * @description:  File Upload
+   */
+  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams): Promise<T> {
     const formData = new window.FormData();
     const customFilename = params.name || 'file';
 
@@ -143,13 +146,16 @@ export class VAxios {
         formData.append(key, params.data![key]);
       });
     }
-
-    return this.axiosInstance.request<T>({
+    console.log(config, 'config');
+    return axios.create().request({
       ...config,
       method: 'POST',
       data: formData,
       headers: {
-        'Content-type': ContentTypeEnum.FORM_DATA,
+        // @ts-ignore
+        'X-Access-Token': getToken(),
+        // @ts-ignore
+        'tenant-id': getTenant(),
         // @ts-ignore
         ignoreCancelToken: true,
       },

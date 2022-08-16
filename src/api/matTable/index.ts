@@ -1,4 +1,4 @@
-import { ErrorMessageMode, Result } from '/#/axios';
+import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData } from '/@/api/apiLink';
 
@@ -260,9 +260,9 @@ export function delMatTableById(json: RequestData<string>, mode: ErrorMessageMod
     },
   );
 }
-// /**
-//  * 删除单条
-//  */
+/**
+ * 删除单条
+ */
 export function delMatTableBatch(
   json: RequestData<Array<string>>,
   mode: ErrorMessageMode = 'message',
@@ -296,23 +296,23 @@ export function getMatTableUnit(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 基本单位查询
  */
-export function getMatTableUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_TABLE_UNIT_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
+// export function getMatTableUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+//   return defHttp.post<Result>(
+//     {
+//       url: Url.GET_TABLE_UNIT_LIST,
+//       data: json,
+//     },
+//     {
+//       errorMessageMode: mode,
+//       isTransformResponse: true,
+//     },
+//   );
+// }
 /**
  * 导出表格数据
  */
-export function exportTableList(json: Object, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<any>(
+export function exportTableList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
     {
       url: Url.EXPORT_TABLE_LIST,
       data: json,
@@ -322,6 +322,21 @@ export function exportTableList(json: Object, mode: ErrorMessageMode = 'message'
       errorMessageMode: mode,
       isTransformResponse: false,
     },
+  );
+}
+/**
+ * 导入物料数据
+ */
+export function importMaterial(
+  params: UploadFileParams,
+  onUploadProgress: (progressEvent: ProgressEvent) => void,
+) {
+  return defHttp.uploadFile<any>(
+    {
+      url: Url.IMPORT_MATERIAL,
+      onUploadProgress,
+    },
+    params,
   );
 }
 /**

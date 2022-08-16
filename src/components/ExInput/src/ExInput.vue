@@ -19,7 +19,7 @@
   const SearchIcon = SearchOutlined;
   const props = defineProps({
     value: String,
-    disabled: String,
+    disabled: Boolean,
     placeholder: String,
     allowClear: Boolean,
     show: Boolean,

@@ -20,6 +20,8 @@
           <Search
             ref="searchRef"
             tableName="BdMaterial"
+            searchNo="物料编码"
+            searchName="物料名称"
             @getList="getList"
             @resetEvent="resetTable"
           />
@@ -27,16 +29,17 @@
             :columns="matColumns"
             :buttons="buttons"
             :gridOptions="GridOptions"
-            :treeSelectData="treeSelectData"
             ref="tableRef"
-            @expTable="expTable"
-            @getList="getList"
-            @delMatOneEvent="delMatOneEvent"
-            @delMatBatchEvent="delMatBatchEvent"
+            @addEvent="addTableEvent"
+            @editEvent="editTableEvent"
+            @deleteRowEvent="deleteRowTableEvent"
+            @delBatchEvent="deleteMatBatchEvent"
             @auditRowEvent="auditRowEvent"
             @auditBatchEvent="auditBatchEvent"
             @unAuditRowEvent="unAuditRowEvent"
             @unAuditBatchEvent="unAuditBatchEvent"
+            @exportTable="exportTable"
+            @refreshTable="refreshTable"
           />
           <div>
             <Pager
@@ -59,69 +62,17 @@
             />
           </div>
         </div>
-        <AModal
-          v-model:visible="auditModal"
-          title="操作结果"
-          :footer="null"
-          width="800px"
-          @cancel="closeRes"
-        >
-          <div v-if="isAudit"
-            >审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
-          >
-          <div v-if="unAudit"
-            >反审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{
-              resF
-            }}条。</div
-          >
-          <vxe-table
-            border
-            show-overflow
-            :row-style="rowStyle"
-            :row-config="{ isHover: true }"
-            :data="adResult.data"
-          >
-            <vxe-column type="seq" title="序号" width="60" />
-            <vxe-column field="info.title" title="关键字" width="180" />
-            <vxe-column field="info.status" title="状态" width="80">
-              <template #default="{ row }">
-                <Tag
-                  :color="row.info.status === 'Y' ? 'success' : 'error'"
-                  v-if="row.info.status"
-                  >{{ row.info.status === 'Y' ? '成功' : '失败' }}</Tag
-                >
-              </template>
-            </vxe-column>
-            <vxe-column field="info.msg" title="信息" />
-            <vxe-column field="info.type" title="信息类型" width="80" />
-          </vxe-table>
-          <vxe-pager
-            background
-            :total="adResult.data.length"
-            :layouts="[
-              'PrevJump',
-              'PrevPage',
-              'JumpNumber',
-              'NextPage',
-              'NextJump',
-              'Sizes',
-              'FullJump',
-              'Total',
-            ]"
-          />
-        </AModal>
       </pane>
     </a-splitpanes>
   </div>
 </template>
 
 <script setup lang="ts" name="basic-material-index">
-  import { Tag } from 'ant-design-vue';
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents, VxeTablePropTypes } from 'vxe-table';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
+  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     addMatGroup,
     deleteMatGroup,
@@ -140,18 +91,18 @@
     unAuditMatTable,
     exportTableList,
   } from '/@/api/matTable';
-  import { Modal } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
-  import { OptGroupHook } from '/@/api/utilHook';
+  import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
+  import { useRouter } from 'vue-router';
+  // import { useMessage } from '/@/hooks/web/useMessage';
+  // const { createMessage } = useMessage();
 
-  const { createMessage } = useMessage();
-  const AModal = Modal;
+  const router = useRouter();
   const ASplitpanes = Splitpanes;
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -162,8 +113,11 @@
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
   const treeRef: any = ref<String | null>(null);
-
+  //分组数据
   let treeData = ref<TreeItem[]>([]);
+  const groupId = ref(['']);
+  const groupName = ref('');
+  //加载分组
   const refreshTree = async () => {
     const tree = await treeMatGroup({ params: '0' });
     runTree(tree);
@@ -231,20 +185,18 @@
       await refreshTree();
     };
   };
-
   //选择分组
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
+    groupId.value = selectedKeys;
+    groupName.value = data.selectedNodes[0].props.name;
     getList();
   };
-
   //分页信息
   const pages = reactive({
     currentPage: 1,
     pageSize: 10,
     total: 0,
   });
-  // let wlNo = null;
-  // let wlName = null;
   let getParams: SearchParams[] = [];
   const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
     pages.currentPage = currentPage;
@@ -275,30 +227,15 @@
     tableRef.value.init(data);
     searchRef.value.moreSearchClose();
   };
-  //空参数
-  // const np = { params: '' };
+
   //重置
   const resetTable = () => {
-    // console.log(treeRef.value.basicTree);
     treeRef.value.setSelectedKeys([]);
     searchRef.value.formState.wlNo = null;
     searchRef.value.formState.wlName = null;
     getList(1);
   };
-  // //获取基本单位字段
-  // const getTableUnit = async () => {
-  //   try {
-  //     let data = await getMatTableUnit(np);
-  //     let arr = [] as any;
-  //     arr = cloneDeep(data);
-  //     arr = arr.filter((e) => e.fieldName != 'bs_status');
-  //     searchRef.value.init(arr);
-  //     console.log('高级查询基本单位字段', arr);
-  //   } catch (e) {
-  //     console.log('高级查询获取基本单位字段失败', e);
-  //   }
-  // };
-  // getTableUnit();
+
   //按钮
   const buttons = [
     {
@@ -330,164 +267,117 @@
       },
     },
   ];
-  let treeSelectData = null;
-  //新增表格数据
+  //添加
   const addTableEvent = () => {
-    tableRef.value.addTable();
-    console.log('treeSelectData:', treeSelectData);
+    router.push({
+      path: '../profile/index',
+      //需要带到详情页的参数
+      query: {
+        groupId: groupId.value == [''] ? '' : groupId.value,
+        groupName: groupName.value == '' ? '' : groupName.value,
+      },
+    });
+  };
+  //编辑
+  const editTableEvent = (row) => {
+    router.push({
+      path: '../profile/index',
+      query: {
+        row: row.id,
+      },
+    });
+    console.log('编辑:', row.id);
   };
   //删除表格单条数据
-  const delMatOneEvent = async (row) => {
-    try {
-      await delMatTableById({
-        params: row.id,
-      });
-    } catch (e) {
-      console.log('删除1失败', e);
-    }
+  const deleteRowTableEvent = async (row) => {
+    await delMatTableById({ params: row.id });
+    await getList();
   };
   //批量删除表格
   const delTableEvent = (row) => {
     tableRef.value.delTable(row);
   };
-  const delMatBatchEvent = async (row) => {
-    console.log('nnn', row);
-    try {
-      await delMatTableBatch({
-        params: row,
-      });
-    } catch (e) {
-      console.log('删除n失败', e);
-    }
+  const deleteMatBatchEvent = async (row) => {
+    await delMatTableBatch({ params: row });
+    await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
-    try {
-      await auditMatTable({
-        params: {
-          id: row.id,
-        },
-      });
-    } catch (e) {
-      console.log('审核1失败');
-    }
+    await auditMatTable({
+      params: {
+        id: row.id,
+      },
+    });
+    await getList();
   };
-  //批量审核表格
-  const isAudit = ref(false);
-  const unAudit = ref(false);
-  let adResult = reactive({ data: {} });
-  const auditModal = ref(false);
+
+  //审核事件
   const auditEvent = (row) => {
     tableRef.value.auditTable(row);
   };
-  let resY = ref(0);
-  let resF = ref(0);
+  let res: any = '';
   const auditBatchEvent = async (row) => {
-    try {
-      const res = await auditMatTableBatch({
-        params: row,
-      });
-      if (res) {
-        adResult.data = res;
-        let arr = res;
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].info.status == 'Y') {
-            resY.value += 1;
-          } else {
-            resF.value += 1;
-          }
-        }
-        auditModal.value = true;
-        isAudit.value = true;
-      }
-    } catch (e) {
-      console.log('审核n失败', e);
-    }
+    res = await auditMatTableBatch({
+      params: row,
+    });
+    await tableRef.value.computeData(res);
+    await getList();
   };
   //单条反审核
-  const unAuditRowEvent = async (row) => {
-    try {
-      await unAuditMatTable({
-        params: {
-          id: row.id,
-        },
-      });
-    } catch (e) {
-      console.log('反审核1失败');
-    }
+  const unAuditRowEvent = async (row: any) => {
+    await unAuditMatTable({
+      params: {
+        id: row?.id,
+      },
+    });
+    await getList();
   };
   //批量反审核
   const unAuditEvent = (row) => {
     tableRef.value.unAuditTable(row);
   };
   const unAuditBatchEvent = async (row) => {
-    try {
-      const res = await unAuditMatTableBatch({
-        params: row,
-      });
-      if (res) {
-        adResult.data = res;
-        let arr = res;
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].info.status == 'Y') {
-            resY.value += 1;
-          } else {
-            resF.value += 1;
-          }
-        }
-        auditModal.value = true;
-        isAudit.value = true;
-      }
-    } catch (e) {
-      console.log('审核n失败', e);
-    }
-  };
-  //关闭审核/反审核结果的窗口
-  const closeRes = () => {
-    unAudit.value = false;
-    isAudit.value = false;
-    resY.value = 0;
-    resF.value = 0;
-  };
-  //结果表格颜色
-  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
-    if (row.info.status == 'F') {
-      return {
-        backgroundColor: '#f5f7fa',
-        color: 'red',
-      };
-    }
+    res = await unAuditMatTableBatch({
+      params: row,
+    });
+    await tableRef.value.computeData(res);
+    await getList();
   };
 
   //导出
-  const expTable = async () => {
-    const data = await exportTableList({
-      params: {
-        list: getParams,
-        fileName: '物料列表',
-      },
-      pageIndex: 1,
-      pageRows: pages.total,
-    });
-    if (!data) {
-      createMessage.error('文件下载失败');
-      return;
-    }
-    //“URL.createObjectURL()方法会根据传入的参数创建一个指向该参数对象的URL. 这个URL的生命仅存在于它被创建的这个文档里.
-    let url = window.URL.createObjectURL(new Blob([data], { type: 'application/vnd.ms-excel' }));
-    let link = document.createElement('a');
-    link.style.display = 'none';
-    link.href = url;
-    link.setAttribute('download', '物料列表信息.xls');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); //下载完成移除元素
-    window.URL.revokeObjectURL(url); //释放掉blob对象
+  const exportTable = async () => {
+    OptTableHook.exportExcel = (): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        exportTableList({
+          params: {
+            list: getParams,
+            fileName: '物料列表',
+          },
+          pageIndex: 1,
+          pageRows: pages.total,
+        })
+          .then((res) => {
+            const data = { title: '物料列表信息.xls', data: res };
+            resolve(data);
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      });
+    };
+  };
+  //导入文件刷新
+  const refreshTable = () => {
+    getList();
   };
 
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     refreshTree();
+    getList();
+  });
+  //被keep-alive 缓存的组件激活时调用
+  onActivated(() => {
     getList();
   });
 </script>

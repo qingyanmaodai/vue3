@@ -83,6 +83,7 @@
   </div>
 </template>
 <script lang="ts">
+  //如果是多个prop要组合在一起，那么就不能在setup里面？——找不到文章怎么说明的了
   import { basicProps } from '/@/components/Tree/src/props';
   const prop1 = basicProps;
   const prop2 = {
@@ -191,6 +192,7 @@
   const selectTree = (selectedKeys, data) => {
     emits('selectEvent', selectedKeys, data);
   };
+  //整理树数据
   const runNode = (key: string | number, list: TreeItem[], res: TreeItem): TreeItem => {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
@@ -213,6 +215,7 @@
     rightClickNode = { key: node.eventKey };
     return rightMenuList;
   };
+  //获取分组
   const getOneSelectedKey = (): string | number => {
     const keys = tree.value.getSelectedKeys();
     if (keys.length !== 1) {
@@ -220,10 +223,12 @@
     }
     return keys[0];
   };
+  //添加分组
   const addEvent = () => {
     visibleGroupModal.value = true;
     emits('addEvent');
   };
+  //添加下级
   const addSubEvent = () => {
     const key = getOneSelectedKey();
     if (key === 0) {
@@ -234,6 +239,7 @@
     visibleGroupModal.value = true;
     emits('addSubEvent', node);
   };
+  //删除分组
   const deleteEvent = () => {
     const key = getOneSelectedKey();
     if (key === 0) {
@@ -244,6 +250,7 @@
     visibleDeleteGroupModal.value = true;
     emits('deleteEvent', node);
   };
+  //添加分组的提交
   const submitGroup = () => {
     formRef.value
       .validate()
@@ -257,14 +264,17 @@
         console.log(error);
       });
   };
+  //删除分组的提交
   const okDeleteGroup = async () => {
     OptGroupHook.submitGroup().then(() => {
       visibleDeleteGroupModal.value = false;
     });
   };
+  //添加分组的取消
   const cancelGroup = () => {
     visibleGroupModal.value = false;
   };
+  //删除分组的取消
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };

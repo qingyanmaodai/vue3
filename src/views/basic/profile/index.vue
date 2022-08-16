@@ -13,12 +13,7 @@
     <a-card class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
-          <a-form
-            :model="formState"
-            :rules="formRules"
-            @finish="handleFinish"
-            @finishFailed="handleFinishFailed"
-          >
+          <a-form :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="物料编码：" ref="number" name="number" class="item">
@@ -154,7 +149,7 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select v-model:value="formState.bsStatus" class="select" disabled="true">
+                  <Select v-model:value="formState.bsStatus" class="select" disabled>
                     <SelectOption value="A">创建</SelectOption>
                     <SelectOption value="B">已审核</SelectOption>
                   </Select>
@@ -431,12 +426,12 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
-                  <Input class="input" v-model:value="formState.createTime" disabled="true" />
+                  <Input class="input" v-model:value="formState.createTime" disabled />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="创建人：" ref="createBy" name="createBy" class="item">
-                  <Input class="input" v-model:value="formState.createBy" disabled="true" />
+                  <Input class="input" v-model:value="formState.createBy" disabled />
                 </a-form-item>
               </Col>
             </Row>
@@ -446,16 +441,12 @@
                   <Input
                     class="input"
                     v-model:value="formState.updateTime"
-                    disabled="true"
+                    disabled
                   /> </a-form-item
               ></Col>
               <Col :span="8">
                 <a-form-item label="修改人：" ref="updateBy" name="updateBy" class="item">
-                  <Input
-                    class="input"
-                    v-model:value="formState.updateBy"
-                    disabled="true"
-                  /> </a-form-item
+                  <Input class="input" v-model:value="formState.updateBy" disabled /> </a-form-item
               ></Col>
             </Row>
           </a-form>
@@ -511,8 +502,7 @@
   } from 'ant-design-vue';
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
-  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import BasicSearch from '/@/components/AMoreSearch/src/BasicSearch.vue';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   import {
     unitGridOptions,
     planColumns,
@@ -521,10 +511,10 @@
     locationColumns,
     unitColumns,
   } from '/@/components/AMoreSearch/data';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
   import { MatGroupEntity, treeMatGroup } from '/@/api/matGroup';
+  import { config } from '/@/utils/publicParamConfig';
   import {
     addMatTable,
     auditMatTable,
@@ -539,7 +529,8 @@
   } from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
-
+  import { useMessage } from '/@/hooks/web/useMessage';
+  const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
@@ -547,12 +538,16 @@
   const ACard = Card;
 
   const router = useRouter();
+  //空参数
+  const paramsNull = { params: '' };
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //物料分组弹框visible
   const visibleGroupModal: any = ref<boolean>(false);
-  //基础信息
-  const basicSearchRef: any = ref<any>(undefined); //基础信息查询组件ref
+  //弹窗类型
+  let modalType = ref<string>('');
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined);
   //更新基础信息表头数据
   const getCurrentCols = (key: any) => {
     const colConfig = {
@@ -564,15 +559,6 @@
       plan: planColumns,
     };
     return colConfig[key];
-  };
-  //基本信息公共接口---待用URL---表格数据+表头
-  let urlConfig = {
-    baseUnit: '/stock/bd-unit/list',
-    weightUnit: '/stock/bd-unit/list',
-    stock: '/stock/bd-stock/list',
-    sub: '/stock/bd-sub-stock/list',
-    location: '/stock/bd-stock-location/list',
-    plan: '/stock/bd-examine/list',
   };
   //选择对应的基本信息弹框
   let chosenModal: String = '';
@@ -713,19 +699,12 @@
         formState.subStockName = '';
         formState.bdStockLocationId = '';
         formState.bdStockLocationName = '';
-        // if (!formState.stockId) {
-        //   hasSub.value = true;
-        //   hasLocation.value = true;
-        // }
         break;
       case 'sub':
         formState.subStockId = '';
         formState.subStockName = '';
         formState.bdStockLocationId = '';
         formState.bdStockLocationName = '';
-        // if (!formState.subStockId) {
-        //   hasLocation.value = true;
-        // }
         break;
       case 'location':
         formState.bdStockLocationId = '';
@@ -741,49 +720,44 @@
   const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
-        let data = await getStockOption(np);
+        let data = await getStockOption(paramsNull);
         basicSearchRef.value.init(data);
-        console.log('仓库选项', data);
       } catch (e) {
         console.log('获取仓库选项字段失败', e);
       }
     } else if (key == 'sub') {
       try {
-        let arr = [] as any;
-        let data = await getSubOption(np);
+        let arr: any = [];
+        let data = await getSubOption(paramsNull);
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
-        console.log('分仓选项', data);
       } catch (e) {
         console.log('获取分仓选项字段失败', e);
       }
     } else if (key == 'location') {
       try {
-        let arr = [] as any;
-        let data = await getLocationOption(np);
+        let arr: any = [];
+        let data = await getLocationOption(paramsNull);
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'sub_stock_id' && e.fieldName != 'stock_id');
-        console.log('仓位选项', data);
         basicSearchRef.value.init(arr);
       } catch (e) {
         console.log('获取仓位选项字段失败', e);
       }
     } else {
       try {
-        let arr = [] as any;
-        let data = await getMatTableUnit(np);
+        let arr: any = [];
+        let data = await getMatTableUnit(paramsNull);
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
-        console.log('详情页基本单位字段', arr);
       } catch (e) {
         console.log('详情页获取基本单位字段失败', e);
       }
     }
   };
   //弹窗类型
-  let modalType = ref<string>('');
   let queryStockParam = reactive({
     subStock: {},
     stockLocation: {},
@@ -795,11 +769,6 @@
     let q = {};
     await getStockOps(key);
     modalType.value = key;
-    // if (key == 'sub') {
-    //   q = queryStockParam.subStock;
-    // } else if (key == 'location') {
-    //   q = queryStockParam.stockLocation;
-    // }
     const res: any = await getPublicList(
       {
         params: [
@@ -817,7 +786,7 @@
           },
         ],
       },
-      urlConfig[key],
+      config.PUBLIC_REQUEST_URL[key],
     );
     chosenModal = key;
     let dataCols = getCurrentCols(key);
@@ -826,7 +795,6 @@
     basicSearchRef.value.initCols(dataCols);
     basicSearchRef.value.initList(dataList);
     basicSearchRef.value.initSearch(key);
-    console.log('获取基本单位表格数据1', dataList);
     return res;
   };
 
@@ -851,17 +819,12 @@
           },
         ],
       },
-      urlConfig[key],
+      config.PUBLIC_REQUEST_URL[key],
     );
-    console.log('还需要测试', res);
     return res;
   };
-  //双击单元格事件
-  let stockId = '';
-  let subStockId = '';
-  //选择事件——获取双击所选的值并赋值到对应字段
+  //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const cellClickEvent = async (row) => {
-    console.log('所选', chosenModal);
     switch (chosenModal) {
       case 'baseUnit':
         formState.baseUnitId = row.id;
@@ -875,7 +838,6 @@
       case 'stock':
         formState.stockId = row.id;
         formState.stockName = row.name;
-        stockId = row.id;
         queryStockParam.subStock = {
           table: '',
           name: 'stockId',
@@ -887,7 +849,7 @@
           startWith: '',
           endWith: '',
         };
-        await getNextStock('stock', 'stockId', stockId);
+        await getNextStock('stock', 'formState.stockId', formState.stockId);
         break;
       case 'sub':
         formState.subStockId = row.id;
@@ -947,7 +909,6 @@
   const getGroup = async () => {
     const tree = await treeMatGroup({ params: '0' });
     runTree(tree);
-    console.log('tree1111:', tree);
     // treeData.value = JSON.parse(JSON.stringify(tree));   //两种方式
     treeData.value = cloneDeep(tree);
   };
@@ -958,13 +919,11 @@
       item.value = item.id;
       item.key = item.id;
       runTree(item.children || []);
-      console.log('key', item.key);
     });
   };
   //物料分组弹框关
   const groupSelect = (value, node) => {
     formState.node = node;
-    console.log('物料分组弹框node', value, node);
     formState.groupName = formState.node;
     formState.groupId = value;
     visibleGroupModal.value = false;
@@ -974,8 +933,7 @@
     console.log('query', query);
   };
   getParams();
-  //空参数
-  const np = { params: '' };
+
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
@@ -990,7 +948,6 @@
     const res: any = await getMatTableById({
       params: id,
     });
-    console.log('res的值', res);
     formState.number = res.number;
     formState.name = res.name;
     formState.shortName = res.shortName;
@@ -1002,17 +959,17 @@
     formState.netWeight = res.netWeight;
     formState.model = res.model;
     formState.bsStatus = res.bsStatus;
+    //创建状态
     if (rowId && res.bsStatus === 'A') {
       showExam.value = true;
       showUnExam.value = false;
-      console.log('2.创建状态');
     } else if (rowId && res.bsStatus === 'B') {
+      //审核状态
       showExam.value = false;
       showUnExam.value = true;
       showSubmit.value = false;
       hasSub.value = true;
       hasLocation.value = true;
-      console.log('3.审核状态');
     }
     if (formState.bsStatus === 'A') {
       formState.labelValue = '创建';
@@ -1092,27 +1049,11 @@
         hasSub.value = true;
         hasLocation.value = true;
       } else {
-        // if (formState.stockId) {
-        //   hasSub.value = false;
-        // }
-        // if (formState.subStockId) {
-        //   hasLocation.value = false;
-        // }
       }
     } else {
-      //新增
-      // hasSub.value = true;
-      // hasLocation.value = true;
     }
   };
   stockHandle();
-
-  const handleFinish = (values: FormState) => {
-    console.log(values, formState);
-  };
-  const handleFinishFailed = (errors: ValidateErrorEntity<FormState>) => {
-    console.log(errors);
-  };
   //搜索功能
   const searchList = async (type, keywords) => {
     let param: any = [];
@@ -1127,7 +1068,7 @@
         {
           params: param,
         },
-        urlConfig[type],
+        config.PUBLIC_REQUEST_URL[type],
       ),
     );
   };
@@ -1140,7 +1081,7 @@
       shortName: formState.shortName,
       baseUnitName: formState.baseUnitName,
       baseUnitId: formState.baseUnitId,
-      // groupName: formState.groupName,
+      groupName: formState.groupName,
       groupId: formState.groupId,
       attr: formState.attr,
       netWeight: formState.netWeight,
@@ -1172,7 +1113,6 @@
       weightUnitId: formState.weightUnitId,
     };
     if (!rowId) {
-      console.log('newData', newData);
       if (
         !formState.name ||
         !formState.number ||
@@ -1180,14 +1120,14 @@
         !formState.groupId ||
         !formState.attr
       ) {
-        useMessage().createMessage.error('必填字段不能为空');
+        createMessage.error('必填字段不能为空');
       } else {
         try {
           const addList = await addMatTable({
             params: newData,
           });
           if (addList.id != null) {
-            useMessage().createMessage.success('添加成功');
+            createMessage.success('添加成功');
             // back();
             showExam.value = true;
             rowId = addList.id;
@@ -1199,7 +1139,6 @@
       }
     } else {
       newData.id = rowId;
-      console.log('newData', newData);
       if (
         !formState.name ||
         !formState.number ||
@@ -1207,7 +1146,7 @@
         !formState.groupId ||
         !formState.attr
       ) {
-        useMessage().createMessage.error('必填字段不能为空');
+        createMessage.error('必填字段不能为空');
       } else {
         try {
           const updateList = async () => {
@@ -1216,7 +1155,7 @@
             });
           };
           await updateList();
-          useMessage().createMessage.success('修改成功');
+          createMessage.success('修改成功');
           // back();
         } catch (e) {
           console.log('失败', e);
@@ -1225,13 +1164,11 @@
     }
   };
 
-  //控制审核与反审核按钮显示
+  //点击新增时:控制审核与反审核按钮显示
   const btnChecking = () => {
-    console.log('0', rowId);
     if (!rowId) {
       showExam.value = false;
       showUnExam.value = false;
-      console.log('1.点击新增时');
     }
   };
   //审核功能
@@ -1253,7 +1190,7 @@
           showUnExam.value = true;
           hasSub.value = true;
           hasLocation.value = true;
-          useMessage().createMessage.success('审核成功');
+          createMessage.success('审核成功');
           await getListById(rowId);
           // back();
         } catch (e) {
@@ -1261,7 +1198,7 @@
         }
       }
     } else {
-      useMessage().createMessage.error('该物料已审核，无需再次审核');
+      createMessage.error('该物料已审核，无需再次审核');
       // back();
     }
   };
@@ -1284,14 +1221,14 @@
           showUnExam.value = false;
           hasSub.value = false;
           hasLocation.value = false;
-          useMessage().createMessage.success('反审核成功');
+          createMessage.success('反审核成功');
           await getListById(rowId);
           // back();
         } catch (e) {
           console.log('失败', e);
         }
       } else {
-        useMessage().createMessage.error('该物料已反审核，无需再次反审核');
+        createMessage.error('该物料已反审核，无需再次反审核');
         // back();
       }
     }

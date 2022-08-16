@@ -4,8 +4,6 @@ import { createVNode, reactive } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { isFunction } from '/@/utils/is';
-import { useMessage } from '/@/hooks/web/useMessage';
-const { createMessage } = useMessage();
 
 const showDialog = (content: string) => {
   Modal.confirm({

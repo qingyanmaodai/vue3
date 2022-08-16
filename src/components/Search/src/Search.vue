@@ -2,9 +2,9 @@
   <div>
     <a-card class="search" style="background-color: #fff">
       <a-form :model="formState" ref="formRef" v-model="formRef">
-        <span>物料编码：</span>
+        <span>{{ searchNo }}</span>
         <a-input class="input" v-model:value="formState.wlNo" />
-        <span>物料名称：</span>
+        <span>{{ searchName }}</span>
         <a-input class="input" v-model:value="formState.wlName" />
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
         <a-button class="button" @click="resetEvent">重置</a-button>
@@ -34,15 +34,26 @@
   import { reactive, ref, UnwrapRef } from 'vue';
   import { getMatOption } from '/@/api/matTable';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
-  // import { useMessage } from '/@/hooks/web/useMessage';
 
   const AButton = Button;
   const AForm = Form;
   const AInput = Input;
   const ACard = Card;
-  const moreSearchRef: any = ref(null); //高级查询组件ref
+  //高级查询组件ref
+  const moreSearchRef: any = ref(null);
+  const options = reactive({ data: [] });
+  //空参数
+  const paramsNull = { params: '' };
   const props = defineProps({
     tableName: {
+      type: String,
+      default: '',
+    },
+    searchNo: {
+      type: String,
+      default: '',
+    },
+    searchName: {
       type: String,
       default: '',
     },
@@ -51,22 +62,22 @@
     wlNo: string;
     wlName: string;
     tableName: string;
+    searchNo: string;
+    searchName: string;
   }
   const formRef = ref();
   const formState: UnwrapRef<FormState> = reactive({
     wlNo: '',
     wlName: '',
     tableName: props.tableName,
+    searchNo: props.searchNo,
+    searchName: props.searchName,
   });
   type Emits = {
     (event: 'getList', keywords?: object, selected?): void;
-    (event: 'init'): void;
-    (event: 'getTableUnitList'): void;
-    (event: 'searchList', keywords: object): void;
     (event: 'resetEvent'): void;
   };
   const emit = defineEmits<Emits>();
-  // const searchParams: SearchParams[] = [];
   const getSearchParams = (): SearchParams[] => {
     let searchParams: SearchParams[] = [];
     if (formState.wlNo) {
@@ -100,31 +111,23 @@
     }
     return searchParams;
   };
-  //空参数
-  const np = { params: '' };
+
   //查询菜单数据
   const getOptions = async () => {
-    const res = await getMatOption(np);
-    console.log('op', res);
-    moreSearchRef.value.init(res);
+    const res = await getMatOption(paramsNull);
+    moreSearchRef.value.initOptions(res);
   };
   getOptions();
   //查询功能
-
   const searchEvent = () => {
     emit('getList');
-    // } else {
-    //   useMessage().createMessage.warning('输入不能为空');
-    // }
   };
-  //高级查询中基本单位字段数据
-  const init = (data) => {
-    moreSearchRef.value.getTableUnitEvent(data);
-  };
+
   //高级查询
   const moreListEvent = () => {
     emit('getList');
   };
+  // 高级查询打开
   const moreSearchEvent = () => {
     moreSearchRef.value.mSearch(true);
   };
@@ -136,11 +139,12 @@
   const resetEvent = () => {
     formState.wlNo = '';
     formState.wlName = '';
-    moreSearchRef.value.resetEvent();
+    if (moreSearchRef.value) {
+      moreSearchRef.value.resetEvent();
+    }
     emit('resetEvent');
   };
-  defineExpose({ moreSearchClose, init, formState, getSearchParams, resetEvent }); //initList,searchUnit
-  const options = reactive({ data: [] });
+  defineExpose({ moreSearchClose, formState, getSearchParams, resetEvent });
 </script>
 
 <style scoped lang="less">
