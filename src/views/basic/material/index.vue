@@ -273,7 +273,7 @@
   const addTableEvent = () => {
     let groupId = treeRef.value.getSelectedKeys();
     router.push({
-      path: '../profile/index',
+      path: '../material/profile/index',
       //需要带到详情页的参数
       query: {
         groupId: groupId == '' ? '' : groupId,
@@ -284,7 +284,7 @@
   //编辑
   const editTableEvent = (row) => {
     router.push({
-      path: '../profile/index',
+      path: '../material/profile/index',
       query: {
         row: row.id,
       },
