@@ -24,6 +24,21 @@ export enum Url {
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
+  SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
+  SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
+  SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
+  SUPPLIER_UN_AUDIT = '/stock/bd-supplier/un-audit', //供应反审核
+  SUPPLIER_BATCH_UN_AUDIT = '/stock/bd-supplier/batch-un-audit', //供应商批量反审核
+  SUPPLIER_DELETE = '/stock/bd-supplier/delete', //供应商批量删除
+  SUPPLIER_BATCH_DELETE = '/stock/bd-supplier/batch-delete', //供应商批量删除
+  SUPPLIER_EXPORT_DATA = '/stock/bd-supplier/export-list', //供应商导出
+  SUPPLIER_IMPORT = 'http://192.168.200.136:9999/stock/bd-supplier/import-list', //供应商导入
+  SUPPLIER_IMPORT_MODEL = '/stock/bd-supplier/import-model', //供应商导入模板下载
+  SUPPLIER_GROUP_ADD = '/stock/bd-supplier-group/save', //新增供应商分组
+  SUPPLIER_GROUP_UPDATE = '/stock/bd-supplier-group/update', //修改供应商分组
+  SUPPLIER_GROUP_DELETE = '/stock/bd-supplier-group/delete', //删除供应商分组
+  SUPPLIER_GROUP_GET_ONE = '/stock/bd-supplier-group/query-one', //查询单个供应商分组
+  SUPPLIER_GROUP_GET_TREE = '/stock/bd-supplier-group/tree', //获取供应商分组
 }
 
 export const TableColum = {

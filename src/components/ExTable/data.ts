@@ -69,3 +69,27 @@ export const matColumns = [
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+
+export const supplierColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '供应商', sortable: true },
+  { field: 'model', title: '……', sortable: true },
+  { field: 'baseUnit.name', title: '……', sortable: true },
+  { field: 'weightUnit.name', title: '……', sortable: true },
+  { field: 'bdMaterialGroup.name', title: '……', sortable: true },
+  {
+    field: 'attr',
+    title: '……',
+    sortable: true,
+    slots: { default: 'attr' },
+  },
+  {
+    field: 'bsStatus',
+    title: '……',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
