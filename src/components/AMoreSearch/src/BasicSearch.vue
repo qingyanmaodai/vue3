@@ -120,6 +120,26 @@
                   placeholder="请选择时间..."
                 />
               </a-space>
+              <a-tree-select
+                v-if="
+                  search.fieldName !== '请选择'
+                    ? JSON.parse(search.fieldName).controlType === 'treeSelect'
+                    : false
+                "
+                v-model:value="search.val"
+                show-search
+                :replaceFields="{ label: 'name', value: 'id', key: 'id' }"
+                style="width: 200px"
+                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                placeholder="请选择"
+                allow-clear
+                tree-default-expand-all
+                :tree-data="search.treeData"
+              >
+                <template #title="{ title }">
+                  <template>{{ title }}</template>
+                </template>
+              </a-tree-select>
             </a-form-item>
             <span style="margin-left: 10px">
               <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
@@ -177,12 +197,15 @@
     Space,
     InputSearch,
     Tag,
+    TreeSelect,
   } from 'ant-design-vue';
   import { reactive, ref } from 'vue';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
   import { config } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs, { Dayjs } from 'dayjs';
+  import { getPublicList } from '/@/api/matTable';
+  import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -194,6 +217,7 @@
   const AInputSearch = InputSearch;
   const ASelectOption = SelectOption;
   const ADatePicker = DatePicker;
+  const ATreeSelect = TreeSelect;
 
   const optionsUnitFieldName = reactive<any>({ data: [] });
 
@@ -264,6 +288,7 @@
     fieldName: string | undefined;
     rule: string | undefined;
     val: string | undefined;
+    treeData?: object[] | undefined;
     date?: Dayjs;
     endWith: string | undefined;
     link: string | undefined;
@@ -279,6 +304,7 @@
         rule: 'LIKE',
         val: '',
         date: undefined,
+        treeData: undefined,
         controlType: 'string',
         endWith: undefined,
         link: undefined,
@@ -297,12 +323,26 @@
     if (data !== '' && data !== '请选择') return JSON.parse(data).queryConfig;
   };
   //选择事件
-  const selectOne = (data: any) => {
+  const selectOne = async (data: any) => {
     data.val = '';
     data.rule = 'LIKE';
     if (data.labelValue || data.date) {
       data.labelValue = '';
       data.date = '';
+    }
+    if (data.fieldName) {
+      let obj = JSON.parse(data.fieldName);
+      if (obj.controlType && obj.controlType === 'treeSelect') {
+        const res = await getPublicList(
+          {
+            params: 0,
+          },
+          //选择分类的接口地址，如基本单位。。
+          obj.requestUrl,
+        );
+        data.val = undefined;
+        data.treeData = cloneDeep(res);
+      }
     }
   };
   //关闭

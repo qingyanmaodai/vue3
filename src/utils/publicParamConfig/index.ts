@@ -23,52 +23,8 @@ export const config = {
       label: '虚拟',
     },
   ],
-  // 启用SN
-  ENABLE_SN: [
-    {
-      value: '0',
-      label: '关闭',
-    },
-    {
-      value: '1',
-      label: '开启',
-    },
-  ],
-  // 启用批量管理
-  ENABLE_BATCH_MANAGEMENT: [
-    {
-      value: '0',
-      label: '关闭',
-    },
-    {
-      value: '1',
-      label: '开启',
-    },
-  ],
-  // 来料检验
-  INCOMING_EXAMINE: [
-    {
-      value: '0',
-      label: '关闭',
-    },
-    {
-      value: '1',
-      label: '开启',
-    },
-  ],
-  // 生产检验
-  PRODUCT_EXAMINE: [
-    {
-      value: '0',
-      label: '关闭',
-    },
-    {
-      value: '1',
-      label: '开启',
-    },
-  ],
-  // 发货检验
-  OUT_EXAMINE: [
+  // 启用状态
+  ENABLE_STATUS: [
     {
       value: '0',
       label: '关闭',

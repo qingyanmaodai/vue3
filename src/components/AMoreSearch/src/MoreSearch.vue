@@ -150,6 +150,26 @@
               :filterOption="filterOption"
               placeholder="请选择...多选。。"
             />
+            <a-tree-select
+              v-if="
+                search.fieldName !== '请选择'
+                  ? JSON.parse(search.fieldName).controlType === 'treeSelect'
+                  : false
+              "
+              v-model:value="search.val"
+              show-search
+              :replaceFields="{ label: 'name', value: 'id', key: 'id' }"
+              style="width: 200px"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              placeholder="请选择"
+              allow-clear
+              tree-default-expand-all
+              :tree-data="search.treeData"
+            >
+              <template #title="{ title }">
+                <template>{{ title }}</template>
+              </template>
+            </a-tree-select>
           </a-form-item>
 
           <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'endWith']">-->
@@ -215,6 +235,7 @@
     Select,
     SelectOption,
     Space,
+    TreeSelect,
   } from 'ant-design-vue';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
@@ -239,6 +260,7 @@
   const AInputSearch = InputSearch;
   const ASelectOption = SelectOption;
   const ADatePicker = DatePicker;
+  const ATreeSelect = TreeSelect;
 
   const emit = defineEmits<Emits>();
   type Emits = {
@@ -348,6 +370,7 @@
     fieldName: string | undefined;
     rule: string | undefined;
     date?: Dayjs;
+    treeData?: object[] | undefined;
     val: string | undefined;
     labelValue: string | undefined;
     link: string | undefined;
@@ -365,6 +388,7 @@
         fieldName: '请选择',
         rule: 'LIKE',
         date: undefined,
+        treeData: undefined,
         checkData: undefined,
         val: '',
         labelValue: '',
@@ -381,12 +405,23 @@
     selectOption.data = JSON.parse(value);
   };
   //判断输入框controlType类型，改变rule的默认值
-  const selectOne = (data: any) => {
+  const selectOne = async (data: any) => {
     data.val = '';
     data.rule = 'LIKE';
     if (data.labelValue || data.date) {
       data.labelValue = '';
       data.date = '';
+    }
+    if (selectOption.data.controlType && selectOption.data.controlType === 'treeSelect') {
+      const res = await getPublicList(
+        {
+          params: 0,
+        },
+        //选择分类的接口地址，如基本单位。。
+        selectOption.data.requestUrl,
+      );
+      data.val = undefined;
+      data.treeData = cloneDeep(res);
     }
   };
   //基础信息弹框--打开放大镜
