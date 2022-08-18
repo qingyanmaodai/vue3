@@ -16,26 +16,26 @@
           <a-form :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
-                <a-form-item label="物料编码：" ref="number" name="number" class="item">
+                <a-form-item label="编码：" ref="number" name="number" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入物料编码"
+                    placeholder="请输入供应商编码"
                     :disabled="hasId"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="物料名称：" ref="name" name="name" class="item">
+                <a-form-item label="供应商名称：" ref="name" name="name" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入物料名称"
+                    placeholder="请输入供应商名称"
                     :disabled="showUnExam"
                   />
                 </a-form-item>
@@ -55,26 +55,6 @@
             <Row>
               <Col :span="8">
                 <a-form-item
-                  label="基本单位:"
-                  v-model:value="formState.baseUnitId"
-                  ref="baseUnitId"
-                  name="baseUnitId"
-                  class="item"
-                >
-                  <ExInput
-                    :show="showUnExam"
-                    autocomplete="off"
-                    class="input"
-                    placeholder="请选择基本单位"
-                    v-model:value="formState.baseUnitName"
-                    :disabled="showUnExam"
-                    @search="onStock('baseUnit')"
-                    @clear="onClear('baseUnit')"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item
                   label="物料分组："
                   v-model:value="formState.groupId"
                   ref="groupId"
@@ -84,7 +64,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择物料分组"
+                    placeholder="请选择供应商分组"
                     label="物料分组"
                     :show="showUnExam"
                     v-model:value="formState.groupName"
@@ -94,59 +74,8 @@
                   />
                 </a-form-item>
               </Col>
-              <Col :span="8">
-                <a-form-item label="物料属性：" ref="attr" name="attr" class="item">
-                  <Select v-model:value="formState.attr" class="select" :disabled="showUnExam">
-                    <SelectOption value="A">自制</SelectOption>
-                    <SelectOption value="B">委外</SelectOption>
-                    <SelectOption value="C">虚拟</SelectOption>
-                  </Select>
-                </a-form-item>
-              </Col>
             </Row>
             <Row>
-              <Col :span="8">
-                <a-form-item
-                  label="重量单位："
-                  ref="weightUnitId"
-                  name="weightUnitId"
-                  class="item"
-                  v-model:value="formState.weightUnitId"
-                >
-                  <ExInput
-                    class="input"
-                    autocomplete="off"
-                    placeholder="请选择重量单位"
-                    label="重量单位"
-                    :show="showUnExam"
-                    v-model:value="formState.weightName"
-                    :disabled="showUnExam"
-                    @search="onStock('weightUnit')"
-                    @clear="onClear('weightUnit')"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.netWeight"
-                    :min="0"
-                    :step="0.1"
-                    :disabled="showUnExam"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="规格型号：" ref="model" name="model" class="item">
-                  <Input
-                    class="input"
-                    v-model:value="formState.model"
-                    placeholder="请输入规格型号"
-                    :disabled="showUnExam"
-                  />
-                </a-form-item>
-              </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Select v-model:value="formState.bsStatus" class="select" disabled>
@@ -251,176 +180,6 @@
             </Row>
           </a-form>
         </TabPane>
-        <TabPane key="2" tab="质量信息">
-          <a-form :model="formState" :rules="formRules">
-            <div class="keyTwo">
-              <Row>
-                <Col :span="8">
-                  <a-form-item
-                    label="来料检验"
-                    ref="stockInExamine"
-                    name="stockInExamine"
-                    class="switch"
-                  >
-                    <div class="switchDiv">
-                      <Switch
-                        checked-children="开"
-                        un-checked-children="关"
-                        :checkedValue="1"
-                        :unCheckedValue="0"
-                        v-model:checked="formState.stockInExamine"
-                        :disabled="showUnExam"
-                      />
-                    </div>
-                  </a-form-item>
-                </Col>
-                <Col :span="8">
-                  <a-form-item
-                    label="生产检验"
-                    ref="produceExamine"
-                    name="produceExamine"
-                    class="switch"
-                  >
-                    <div class="switchDiv">
-                      <Switch
-                        checked-children="开"
-                        un-checked-children="关"
-                        :checkedValue="1"
-                        :unCheckedValue="0"
-                        v-model:checked="formState.produceExamine"
-                        :disabled="showUnExam"
-                      />
-                    </div>
-                  </a-form-item>
-                </Col>
-                <Col :span="8">
-                  <a-form-item
-                    label="发货检验"
-                    ref="stockOutExamine"
-                    name="stockOutExamine"
-                    class="switch"
-                  >
-                    <div class="switchDiv">
-                      <Switch
-                        checked-children="开"
-                        un-checked-children="关"
-                        :checkedValue="1"
-                        :unCheckedValue="0"
-                        v-model:checked="formState.stockOutExamine"
-                        :disabled="showUnExam"
-                      />
-                    </div>
-                  </a-form-item>
-                </Col>
-              </Row>
-              <Row>
-                <Col :span="8">
-                  <a-form-item label="启用SN：" ref="enableSn" name="enableSn" class="switch">
-                    <div class="switchDiv">
-                      <Switch
-                        checked-children="开"
-                        un-checked-children="关"
-                        :checkedValue="1"
-                        :unCheckedValue="0"
-                        v-model:checked="formState.enableSn"
-                        :disabled="showUnExam"
-                      />
-                    </div>
-                  </a-form-item>
-                </Col>
-                <Col :span="8">
-                  <a-form-item
-                    label="批次管理："
-                    ref="enableBatch"
-                    name="enableBatch"
-                    class="switch"
-                  >
-                    <div class="switchDiv">
-                      <Switch
-                        checked-children="开"
-                        un-checked-children="关"
-                        :checkedValue="1"
-                        :unCheckedValue="0"
-                        v-model:checked="formState.enableBatch"
-                        :disabled="showUnExam"
-                      />
-                    </div>
-                  </a-form-item>
-                </Col>
-                <Col :span="8">
-                  <a-form-item
-                    v-model:value="formState.examineId"
-                    label="检验方案"
-                    ref="bdExamineId"
-                    name="bdExamineId"
-                    class="item"
-                    @clear="onClear"
-                  >
-                    <ExInput
-                      autocomplete="off"
-                      class="input"
-                      placeholder="请选择检验方案"
-                      label="检验方案"
-                      :show="showUnExam"
-                      v-model:value="formState.bdExamineName"
-                      :disabled="showUnExam"
-                      @search="onStock('plan')"
-                      @clear="onClear('plan')"
-                    />
-                  </a-form-item>
-                </Col>
-              </Row>
-              <Row>
-                <Col :span="8">
-                  <a-form-item label="最小库存：" ref="minSize" name="minSize" class="item">
-                    <InputNumber
-                      class="input"
-                      v-model:value="formState.minStockNum"
-                      :disabled="showUnExam"
-                      :min="0" /></a-form-item
-                ></Col>
-                <Col :span="8">
-                  <a-form-item label="最大库存：" ref="maxSize" name="maxSize" class="item">
-                    <InputNumber
-                      class="input"
-                      v-model:value="formState.maxStockNum"
-                      :disabled="showUnExam"
-                      :min="0" /></a-form-item
-                ></Col>
-                <Col :span="8">
-                  <a-form-item
-                    label="安全库存："
-                    ref="safeStockNum"
-                    name="safeStockNum"
-                    class="item"
-                  >
-                    <InputNumber
-                      class="input"
-                      v-model:value="formState.safeStockNum"
-                      :disabled="showUnExam"
-                      :min="0" /></a-form-item
-                ></Col>
-              </Row>
-              <Row>
-                <Col :span="8">
-                  <a-form-item
-                    label="存储期（天）："
-                    ref="storagePeriod"
-                    name="storagePeriod"
-                    class="item"
-                  >
-                    <InputNumber
-                      class="input"
-                      v-model:value="formState.storagePeriod"
-                      :min="0"
-                      :disabled="showUnExam"
-                    />
-                  </a-form-item>
-                </Col>
-              </Row>
-            </div>
-          </a-form>
-        </TabPane>
         <TabPane key="3" tab="其他信息">
           <a-form :model="formState" :rules="formRules">
             <Row>
@@ -453,15 +212,15 @@
         </TabPane>
       </Tabs>
     </a-card>
-    <!--  点击物料分组弹框  -->
-    <a-modal v-model:visible="visibleGroupModal" title="物料分组" ref="node">
+    <!--  点击供应商分组弹框  -->
+    <a-modal v-model:visible="visibleGroupModal" title="供应商分组" ref="node">
       <a-tree-select
         loading
         show-search
         v-model:value="formState.node"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-        placeholder="请选择物料分组"
+        placeholder="请选择供应商分组"
         treeNodeFilterProp="title"
         tree-default-expand-all
         :treeData="treeData"

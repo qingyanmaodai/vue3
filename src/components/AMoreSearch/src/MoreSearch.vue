@@ -158,6 +158,7 @@
               "
               v-model:value="search.val"
               show-search
+              treeNodeFilterProp="title"
               :replaceFields="{ label: 'name', value: 'id', key: 'id' }"
               style="width: 200px"
               :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
