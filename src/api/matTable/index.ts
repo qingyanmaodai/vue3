@@ -261,7 +261,7 @@ export function delMatTableById(json: RequestData<string>, mode: ErrorMessageMod
   );
 }
 /**
- * 删除单条
+ * 删除多条
  */
 export function delMatTableBatch(
   json: RequestData<Array<string>>,

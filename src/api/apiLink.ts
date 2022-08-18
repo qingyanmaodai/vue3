@@ -1,15 +1,13 @@
 export const testApi = 'http://192.168.200.114:6211';
 export enum Url {
-  ADD_MATERIAL_GROUP = '/stock/bd-material-group/save',
-  EDIT_MATERIAL_GROUP = '/stock/bd-material-group/update',
+  //物料信息
+  ADD_MATERIAL_GROUP = '/stock/bd-material-group/save', //添加
+  EDIT_MATERIAL_GROUP = '/stock/bd-material-group/update', //编辑
   DELETE_MATERIAL_GROUP = '/stock/bd-material-group/delete',
   QUERY_ONE_MATERIAL_GROUP = '/stock/bd-material-group/query-one',
   TREE_MATERIAL_GROUP = '/stock/bd-material-group/tree',
   GET_TABLE_LIST = '/stock/bd-material/getPageList',
-  GET_OPTIONS_LIST = '/stock/bd-material/query-dto',
-  GET_STOCK_LIST = '/stock/bd-stock/query-dto',
-  GET_SUB_LIST = '/stock/bd-sub-stock/query-dto',
-  GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto',
+  GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取基本单位实体信息
   ADD_TABLE_LIST = '/stock/bd-material/save',
   AUDIT_TABLE_LIST = '/stock/bd-material/audit',
   BATCH_AUDIT_TABLE_LIST = '/stock/bd-material/batch-audit',
@@ -19,11 +17,31 @@ export enum Url {
   GET_TABLE_BY_ID = '/stock/bd-material/getOneMaterial',
   DEL_TABLE_LIST = '/stock/bd-material/delete',
   BATCH_DEL_TABLE_LIST = '/stock/bd-material/batch-delete',
-  GET_TABLE_UNIT = '/stock/bd-unit/query-dto',
-  // GET_TABLE_UNIT_LIST = '/stock/bd-unit/list',
+  // GET_TABLE_UNIT_LIST = '/mainStock/bd-unit/list',
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
+
+  //共用
+  GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //基本单位查询字段
+  GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
+  GET_SUB_LIST = '/stock/bd-sub-stock/query-dto', //获取分仓实体信息
+  GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
+
+  //仓库管理
+  AUDIT_STOCK_LIST = '/stock/bd-stock/audit',
+  BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-audit',
+  UN_AUDIT_STOCK_LIST = '/stock/bd-stock/un_audit',
+  UN_BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-un-audit',
+  DELETE_STOCK_LIST = '/stock/bd-stock/delete',
+  BATCH_DELETE_STOCK_LIST = '/stock/bd-stock/batch-delete',
+  GET_PAGE_STOCK_LIST = '/stock/bd-stock/list', //分页查询
+  GET_ID_STOCK_LIST = '/stock/bd-stock/query-one', //id查询
+  IMPORT_STOCK_LIST = '/stock/bd-stock/import-list',
+  IMPORT_MODEL_STOCK_LIST = '/stock/bd-stock/import-model',
+  EXPORT_STOCK_LIST = '/stock/bd-stock/export-list',
+  ADD_STOCK_LIST = '/stock/bd-stock/save',
+  UPDATE_STOCK_LIST = '/stock/bd-stock/update',
 }
 
 export const TableColum = {

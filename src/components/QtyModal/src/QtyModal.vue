@@ -32,7 +32,7 @@
     max?: number;
     keyNum?: string | number;
     currData?: any;
-    // stock?: Stock[];
+    // mainStock?: Stock[];
   }
   let props = withDefaults(defineProps<dProps>(), {
     visible: false,

@@ -11,7 +11,7 @@
       />
       <ExTable
         style="margin-left: 15px"
-        :columns="matColumns"
+        :columns="stockColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
         ref="tableRef"
@@ -56,27 +56,26 @@
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { Pager, VxePagerEvents } from 'vxe-table';
-  import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, matColumns } from '/@/components/ExTable/data';
+  import { gridOptions, stockColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
-  import { useRouter } from 'vue-router';
+  import { useGo } from '/@/hooks/web/usePage';
+  import { PageEnum } from '/@/enums/pageEnum';
   import {
     auditStockTable,
     auditStockTableBatch,
     delStockTableBatch,
     delStockTableById,
     exportStockList,
+    getStockOption,
     getStockTable,
     importStockModel,
     unAuditStockTable,
     unAuditStockTableBatch,
   } from '/@/api/mainStock';
-  // import { useMessage } from '/@/hooks/web/useMessage';
-  // const { createMessage } = useMessage();
 
-  const router = useRouter();
+  const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
@@ -100,7 +99,7 @@
   const paramsNull = { params: '' };
   //获取高级查询字段数据
   const getOptions = async () => {
-    const moreSearchData = await getSubStockOption(paramsNull);
+    const moreSearchData = await getStockOption(paramsNull);
     searchRef.value.getOptions(moreSearchData);
   };
   getOptions();
@@ -164,18 +163,28 @@
       },
     },
   ];
+
   //添加
   const addTableEvent = () => {
-    router.push({
-      path: '../subStock/profile/index',
-      //需要带到详情页的参数
-      query: {},
+    // router.push({
+    //   path: '../mainStock/detail',
+    //   //需要带到详情页的参数
+    //   query: {},
+    // });
+    go({
+      path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
     });
   };
   //编辑
   const editTableEvent = (row) => {
-    router.push({
-      path: '../subStock/profile/index',
+    // router.push({
+    //   path: '../mainStock/detail',
+    //   query: {
+    //     row: row.id,
+    //   },
+    // });
+    go({
+      path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
       query: {
         row: row.id,
       },

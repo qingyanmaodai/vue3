@@ -1,9 +1,11 @@
 <template>
-  <div style="margin: 4px">
-    <Search />
-  </div>
-  <div style="margin: 4px">
-    <ExTable />
+  <div>
+    <div style="margin: 4px">
+      <Search />
+    </div>
+    <div style="margin: 4px">
+      <ExTable />
+    </div>
   </div>
 </template>
 
