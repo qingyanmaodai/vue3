@@ -92,6 +92,7 @@
     unAuditMatTable,
     exportTableList,
     importModel,
+    getMatOption,
   } from '/@/api/matTable';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -100,11 +101,10 @@
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
-  import { useRouter } from 'vue-router';
-  // import { useMessage } from '/@/hooks/web/useMessage';
-  // const { createMessage } = useMessage();
+  import { PageEnum } from '/@/enums/pageEnum';
+  import { useGo } from '/@/hooks/web/usePage';
 
-  const router = useRouter();
+  const go = useGo();
   const ASplitpanes = Splitpanes;
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -115,6 +115,8 @@
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
   const treeRef: any = ref<String | null>(null);
+  //空参数
+  const paramsNull = { params: '' };
   //分组数据
   let treeData = ref<TreeItem[]>([]);
   // const groupId = ref(['']);
@@ -189,8 +191,6 @@
   };
   //选择分组
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
-    // groupId.value = selectedKeys;
-    // groupName.value = data.selectedNodes[0].props.name;
     getList();
   };
   //分页信息
@@ -205,6 +205,12 @@
     pages.pageSize = pageSize;
     await getList(currentPage);
   };
+  //获取高级查询字段数据
+  const getOptions = async () => {
+    const moreSearchData = await getMatOption(paramsNull);
+    searchRef.value.getOptions(moreSearchData);
+  };
+  getOptions();
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -269,22 +275,22 @@
       },
     },
   ];
+
   //添加
   const addTableEvent = () => {
     let groupId = treeRef.value.getSelectedKeys();
-    router.push({
-      path: '../material/profile/index',
-      //需要带到详情页的参数
+    go({
+      path: PageEnum.MATERIAL_ADD_AND_EDIT,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
     });
-    console.log(groupId);
+    console.log('添加:', groupId);
   };
   //编辑
   const editTableEvent = (row) => {
-    router.push({
-      path: '../material/profile/index',
+    go({
+      path: PageEnum.MATERIAL_ADD_AND_EDIT,
       query: {
         row: row.id,
       },

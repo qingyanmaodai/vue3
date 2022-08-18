@@ -46,6 +46,8 @@ export const gridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
+
+/*物料列表表头*/
 export const matColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -70,6 +72,7 @@ export const matColumns = [
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
+/*供应商列表表头*/
 export const supplierColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -88,6 +91,21 @@ export const supplierColumns = [
   {
     field: 'bsStatus',
     title: '……',
+  },
+];
+
+/*仓库列表表头*/
+export const stockColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '仓库编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '仓库名称', sortable: true },
+  { field: 'principal', title: '负责人', sortable: true },
+  { field: 'phone', title: '联系方式', sortable: true },
+  { field: 'address', title: '仓库地址', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
     sortable: true,
     slots: { default: 'status' },
   },

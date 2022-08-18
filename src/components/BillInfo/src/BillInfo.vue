@@ -61,7 +61,7 @@
   }>();
   const getStock = (stock: Stock[]) => {
     options.value = [];
-    // const copyStock = cloneDeep(stock);
+    // const copyStock = cloneDeep(mainStock);
     thatStock = cloneDeep(stock);
     thatStock.forEach((item) => {
       let s: any = {};
@@ -86,7 +86,7 @@
     columns?: TableColumns[];
     data?: any[];
     scroll?: any;
-    // stock?: Stock[];
+    // mainStock?: Stock[];
   }
   const rowClassName = (record, index) => {
     return 'tableStyle';
@@ -100,7 +100,7 @@
     scroll: () => {
       return { x: 800, y: 400 };
     },
-    // stock: () => [],
+    // mainStock: () => [],
   });
   //非ts
   // const props = defineProps({

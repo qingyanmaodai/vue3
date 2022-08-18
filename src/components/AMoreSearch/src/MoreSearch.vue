@@ -421,6 +421,7 @@
   const filterOption = (input: string) => {
     return optionsFieldName.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
+
   //选择字段数据
   const initOptions = (data) => {
     optionsFieldName.data = cloneDeep(data);

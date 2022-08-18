@@ -32,7 +32,6 @@
   import { Button, Card, Form, Input } from 'ant-design-vue';
   import { MoreSearch } from '/@/components/AMoreSearch';
   import { reactive, ref, UnwrapRef } from 'vue';
-  import { getMatOption } from '/@/api/matTable';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
 
   const AButton = Button;
@@ -42,8 +41,6 @@
   //高级查询组件ref
   const moreSearchRef: any = ref(null);
   const options = reactive({ data: [] });
-  //空参数
-  const paramsNull = { params: '' };
   const props = defineProps({
     tableName: {
       type: String,
@@ -111,13 +108,12 @@
     }
     return searchParams;
   };
-
-  //查询菜单数据
-  const getOptions = async () => {
-    const res = await getMatOption(paramsNull);
+  let res: any = [];
+  //查询高级查询字段数据
+  const getOptions = async (moreSearchData) => {
+    res = moreSearchData;
     moreSearchRef.value.initOptions(res);
   };
-  getOptions();
   //查询功能
   const searchEvent = () => {
     emit('getList');
@@ -144,7 +140,7 @@
     }
     emit('resetEvent');
   };
-  defineExpose({ moreSearchClose, formState, getSearchParams, resetEvent });
+  defineExpose({ moreSearchClose, getOptions, formState, getSearchParams, resetEvent });
 </script>
 
 <style scoped lang="less">

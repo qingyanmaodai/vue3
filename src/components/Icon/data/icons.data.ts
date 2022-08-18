@@ -679,7 +679,7 @@ export default {
     'step-backward-outlined',
     'step-forward-filled',
     'step-forward-outlined',
-    'stock-outlined',
+    'mainStock-outlined',
     'stop-filled',
     'stop-outlined',
     'stop-twotone',
