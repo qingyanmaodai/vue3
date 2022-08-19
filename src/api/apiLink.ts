@@ -6,7 +6,7 @@ export enum Url {
   DELETE_MATERIAL_GROUP = '/stock/bd-material-group/delete',
   QUERY_ONE_MATERIAL_GROUP = '/stock/bd-material-group/query-one',
   TREE_MATERIAL_GROUP = '/stock/bd-material-group/tree',
-  GET_TABLE_LIST = '/stock/bd-material/getPageList',
+  GET_TABLE_LIST = '/stock/bd-material/list',
   GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取基本单位实体信息
   ADD_TABLE_LIST = '/stock/bd-material/save',
   AUDIT_TABLE_LIST = '/stock/bd-material/audit',
@@ -22,6 +22,7 @@ export enum Url {
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
   SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
+  SUPPLIER_GET_ONE = '/stock/bd-supplier/getOneSupplier', //获取单个供应商
   SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
   SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
   SUPPLIER_UN_AUDIT = '/stock/bd-supplier/un-audit', //供应反审核

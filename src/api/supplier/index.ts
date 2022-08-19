@@ -6,24 +6,37 @@ export interface SupplierEntity {
   id?: string;
   number?: string;
   name?: string;
-  short_name?: string;
+  shortName?: string;
   contact?: string;
   phone?: string;
-  main_by?: string;
+  mainBy?: string;
   address?: string;
   country?: string;
   district?: string;
   level?: string;
-  group_id?: string;
+  groupId?: string;
+  groupName?: string;
   mark?: string;
-  erp_code?: string;
-  bs_status?: string;
-  is_delete?: string;
-  create_time?: string;
-  update_time?: string;
-  create_by?: string;
-  update_by?: string;
-  tenant_id?: string;
+  erpCode?: string;
+  bsStatus?: string;
+  isDelete?: string;
+  createTime?: string;
+  updateTime?: string;
+  createBy?: string;
+  updateBy?: string;
+}
+
+export function getOneSupplier(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.SUPPLIER_GET_ONE,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
 }
 
 /**
