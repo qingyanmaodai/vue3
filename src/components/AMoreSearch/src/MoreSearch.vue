@@ -244,7 +244,7 @@
   import { BasicSearch } from '/@/components/AMoreSearch';
   import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
-  import { getPublicList } from '/@/api/matTable';
+  import { getPublicList } from '/@/api/public';
   import dayjs, { Dayjs } from 'dayjs';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { SearchParams, Url, TableColum } from '/@/api/apiLink';

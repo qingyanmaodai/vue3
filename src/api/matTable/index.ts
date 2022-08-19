@@ -1,4 +1,4 @@
-import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
+import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
@@ -309,21 +309,7 @@ export function exportTableList(json: RequestData<any>, mode: ErrorMessageMode =
     },
   );
 }
-/**
- * 导入物料数据
- */
-export function importMaterial(
-  params: UploadFileParams,
-  onUploadProgress: (progressEvent: ProgressEvent) => void,
-) {
-  return defHttp.uploadFile<any>(
-    {
-      url: Url.IMPORT_MATERIAL,
-      onUploadProgress,
-    },
-    params,
-  );
-}
+
 /**
  * 导入的下载模板
  */
@@ -337,25 +323,6 @@ export function importModel(json: RequestData<any>, mode: ErrorMessageMode = 'me
     {
       errorMessageMode: mode,
       isTransformResponse: false,
-    },
-  );
-}
-/**
- * 公共
- */
-export function getPublicList(
-  json: RequestData<any>,
-  url: string,
-  mode: ErrorMessageMode = 'message',
-) {
-  return defHttp.post<Result>(
-    {
-      url: url,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
     },
   );
 }

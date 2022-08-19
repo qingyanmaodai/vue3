@@ -29,6 +29,7 @@
             :columns="matColumns"
             :buttons="buttons"
             :gridOptions="GridOptions"
+            :importConfig="importConfig"
             ref="tableRef"
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
@@ -119,6 +120,7 @@
   const paramsNull = { params: '' };
   //分组数据
   let treeData = ref<TreeItem[]>([]);
+  let importConfig = ref<string>('IMPORT_MATERIAL'); //导入上传文件api
   // const groupId = ref(['']);
   // const groupName = ref('');
   //加载分组
@@ -369,6 +371,7 @@
       });
     };
   };
+
   //导出
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {

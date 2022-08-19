@@ -136,7 +136,7 @@
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
-  import { importMaterial } from '/@/api/matTable';
+  import { importData } from '/@/api/public';
   // import { useRouter } from 'vue-router';
   // const router = useRouter();
 
@@ -152,6 +152,7 @@
     count: Number,
     treeSelectData: Number,
     show: Boolean,
+    importConfig: String,
   });
   type Emits = {
     (e: 'addEvent'): void;
@@ -187,6 +188,7 @@
     url?: string;
     error?: string;
   }
+
   //上传文件后状态
   interface FileInfo {
     file: FileItem;
@@ -422,8 +424,6 @@
   const uploadFile = async (file) => {
     const form = new FormData();
     form.append('file', file.file);
-    // 调用上传接口
-    console.log('aa', file.file, form);
     //获取上传进度
     const onUploadProgress = (progressEvent) => {
       let progressPercent = parseInt(
@@ -431,7 +431,9 @@
       );
       file.onProgress({ percent: progressPercent });
     };
-    const res: any = await importMaterial({ file: file.file }, onUploadProgress);
+    // 调用上传接口
+    let url = props.importConfig || '';
+    const res: any = await importData(url, { file: file.file }, onUploadProgress);
     console.log(res.data, 'result');
     if (res.data.code !== 200) {
       file.status = 'error';

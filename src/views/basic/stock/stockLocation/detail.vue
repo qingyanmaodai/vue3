@@ -189,7 +189,8 @@
   import { unitGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { config } from '/@/utils/publicParamConfig';
-  import { getPublicList, getStockOption, getSubOption } from '/@/api/matTable';
+  import { getStockOption, getSubOption } from '/@/api/matTable';
+  import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';

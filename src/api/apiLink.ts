@@ -21,6 +21,8 @@ export enum Url {
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
+
+  //供应商
   SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
   SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
   SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
@@ -57,6 +59,7 @@ export enum Url {
   EXPORT_STOCK_LIST = '/stock/bd-stock/export-list',
   ADD_STOCK_LIST = '/stock/bd-stock/save',
   UPDATE_STOCK_LIST = '/stock/bd-stock/update',
+
   //质量检验
   ADD_EXA_GROUP = '/stock/bd-examine-group/save', //添加
   EDIT_EXA_GROUP = '/stock/bd-examine-group/update', //编辑

@@ -204,7 +204,7 @@
   import { config } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs, { Dayjs } from 'dayjs';
-  import { getPublicList } from '/@/api/matTable';
+  import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const AModal = Modal;
