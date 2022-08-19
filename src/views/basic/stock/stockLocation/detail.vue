@@ -56,32 +56,49 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="所属仓库" ref="phone" name="phone" class="item">
-                  <Input
-                    allowClear
-                    class="input"
+                <a-form-item
+                  label="所属仓库："
+                  ref="stockId"
+                  name="stockId"
+                  class="item"
+                  v-model:value="formState.stockId"
+                >
+                  <ExInput
                     autocomplete="off"
-                    v-model:value="formState.phone"
-                    placeholder="请输入所属仓库"
-                    :disabled="hasId"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="所属分仓：" ref="address" name="address" class="item">
-                  <Input
-                    allowClear
                     class="input"
-                    autocomplete="off"
-                    v-model:value="formState.address"
-                    name="name"
-                    placeholder="请输入所属分仓"
+                    placeholder="请选择所属仓库"
+                    label="仓库"
+                    :show="showUnExam"
+                    v-model:value="formState.stockName"
                     :disabled="showUnExam"
+                    @search="onStock('stock')"
+                    @clear="onClear('stock')"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="数据状态：" ref="name" name="name" class="item">
+                <a-form-item
+                  label="所属分仓："
+                  ref="subStockId"
+                  name="subStockId"
+                  class="item"
+                  v-model:value="formState.subStockId"
+                >
+                  <ExInput
+                    autocomplete="off"
+                    class="input"
+                    placeholder="请选择所属分仓"
+                    label="仓库"
+                    :show="showUnExam"
+                    v-model:value="formState.subStockName"
+                    :disabled="hasSub"
+                    @search="onStock('sub')"
+                    @clear="onClear('sub')"
+                  />
+                </a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -140,6 +157,15 @@
         </TabPane>
       </Tabs>
     </a-card>
+    <BasicSearch
+      style="top: 20px"
+      :modalType="modalType"
+      @cellClickEvent="cellClickEvent"
+      @searchList="searchList"
+      title="基础信息查询"
+      ref="basicSearchRef"
+      :gridOptions="unitGridOptions"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -157,31 +183,49 @@
     Tabs,
     Textarea,
   } from 'ant-design-vue';
-  // import { ExInput } from '/@/components/ExInput';
+  import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { unitGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
-  // import { cloneDeep } from 'lodash-es';
+  import { config } from '/@/utils/publicParamConfig';
+  import { getPublicList, getStockOption, getSubOption } from '/@/api/matTable';
+  import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
-    addStockTable,
-    auditStockTable,
-    getStockTable,
-    unAuditStockTable,
-    updateStockTable,
-  } from '/@/api/mainStock';
+    addStockLocationList,
+    auditStockLocationList,
+    getStockLocationListById,
+    unAuditStockLocationList,
+    updateStockLocationList,
+  } from '/@/api/stockLocation';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
 
   const router = useRouter();
+  //空参数
+  const paramsNull = { params: '' };
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
-
+  //弹窗类型
+  let modalType = ref<string>('');
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined);
+  //更新基础信息表头数据
+  const getCurrentCols = (key: any) => {
+    const colConfig = {
+      stock: stockColumns,
+      sub: subStockColumns,
+    };
+    return colConfig[key];
+  };
+  //选择对应的基本信息弹框
+  let chosenModal: String = '';
   //审核状态
   const hasSub = ref<boolean>(false); //分仓
-  const hasLocation = ref<boolean>(false); //仓位
   const showUnExam = ref<boolean>(false); //反审核
   const showExam = ref<boolean>(false); //审核
   const showSubmit = ref<boolean>(true); //保存
@@ -193,10 +237,19 @@
     name: string | undefined;
     principal: string | undefined;
     phone: string | undefined;
-    address: string | undefined;
+    shortName: string | undefined;
+    model: string | undefined;
     bsStatus: string | undefined;
-    mark: string | undefined;
     labelValue: string | undefined;
+    mark: string | undefined;
+    stockId: string | undefined;
+    stockName: string | undefined;
+    bdStock: string | undefined;
+    subStockId: string | undefined;
+    subStockName: string | undefined;
+    bdSubStock: string | undefined;
+    stockInExamine: number | undefined;
+    stockOutExamine: number | undefined;
     createTime: string | undefined;
     createBy: string | undefined;
     updateTime: string | undefined;
@@ -207,12 +260,21 @@
     id: undefined,
     number: undefined,
     name: undefined,
+    shortName: undefined,
     principal: undefined,
     phone: undefined,
-    address: undefined,
+    model: undefined,
     bsStatus: 'A',
-    mark: undefined,
     labelValue: undefined,
+    mark: undefined,
+    bdStock: undefined,
+    bdSubStock: undefined,
+    stockId: undefined,
+    stockName: undefined,
+    subStockId: undefined,
+    subStockName: undefined,
+    stockInExamine: undefined,
+    stockOutExamine: undefined,
     updateBy: undefined,
     updateTime: undefined,
     createBy: undefined,
@@ -220,9 +282,158 @@
   });
 
   const formRules = reactive({
-    name: [{ required: true, message: '请输入仓库名称' }],
-    number: [{ required: true, message: '请输入仓库编码' }],
+    name: [{ required: true, message: '请输入仓位名称' }],
+    number: [{ required: true, message: '请输入仓位编码' }],
+    stockId: [{ required: true, message: '请输入所属仓库' }],
+    subStockId: [{ required: true, message: '请输入所属分仓' }],
   });
+
+  //点击清空图标清空事件
+  const onClear = (key: string) => {
+    switch (key) {
+      case 'stock':
+        formState.stockId = '';
+        formState.stockName = '';
+        formState.subStockId = '';
+        formState.subStockName = '';
+        break;
+      case 'sub':
+        formState.subStockId = '';
+        formState.subStockName = '';
+        break;
+    }
+  };
+  //获取仓库字段
+  const getStockOps = async (key) => {
+    if (key == 'stock') {
+      try {
+        let data = await getStockOption(paramsNull);
+        basicSearchRef.value.init(data);
+      } catch (e) {
+        console.log('获取仓库选项字段失败', e);
+      }
+    } else if (key == 'sub') {
+      try {
+        let arr: any = [];
+        let data = await getSubOption(paramsNull);
+        arr = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'stock_id');
+        basicSearchRef.value.init(arr);
+      } catch (e) {
+        console.log('获取分仓选项字段失败', e);
+      }
+    }
+  };
+  //弹窗类型
+  let queryStockParam = reactive({
+    subStock: {},
+    stockLocation: {},
+    subStockName: {},
+    stockName: {},
+  });
+  //输入框点击放大镜事件
+  const onStock: any = async (key) => {
+    let q = {};
+    await getStockOps(key);
+    modalType.value = key;
+    const res: any = await getPublicList(
+      {
+        params: [
+          q,
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: 'AND',
+            rule: 'EQ',
+            type: 'string',
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    chosenModal = key;
+    let dataCols = getCurrentCols(key);
+    let dataList = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
+    basicSearchRef.value.initSearch(key);
+    return res;
+  };
+
+  //选择仓库后查询——联动
+  //key:在待用url中选择的
+  //colName:需要查询的名字，如编码，名称。。。
+  //id:输入的值
+  const getNextStock = async (key, colName, id) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: colName,
+            column: colName,
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'number',
+            val: id,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    return res;
+  };
+  //双击单元格选择事件——获取双击所选的值并赋值到对应字段
+  const cellClickEvent = async (row) => {
+    switch (chosenModal) {
+      case 'stock':
+        formState.stockId = row.id;
+        formState.stockName = row.name;
+        queryStockParam.subStock = {
+          table: '',
+          name: 'stockId',
+          column: 'stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
+        await getNextStock('stock', 'formState.stockId', formState.stockId);
+        break;
+      case 'sub':
+        formState.subStockId = row.id;
+        formState.subStockName = row.name;
+        queryStockParam.stockLocation = {
+          table: '',
+          name: 'subStockId',
+          column: 'sub_stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
+        const stockByStock = await getNextStock('stock', 'id', row.stockId);
+        formState.stockId = stockByStock.records[0].id;
+        formState.stockName = stockByStock.records[0].name;
+        break;
+    }
+    basicSearchRef.value.bSearch(false);
+    if (formState.stockId) {
+      hasSub.value = false;
+    }
+  };
+
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('query', query);
@@ -234,20 +445,21 @@
   let hasId = ref<boolean>(false);
   console.log('编辑id', rowId);
 
-  //如果有id，则通过接口进入编辑页面。没有id——新增
+  //如果有id，则通过接口，进入编辑页面。没有id——新增
   const getListById = async (id) => {
     if (rowId) {
       id = rowId;
       hasId.value = true;
     }
-    const res: any = await getStockTable({
+    const res: any = await getStockLocationListById({
       params: id,
     });
+    console.log('jkikjkjk--id', rowId);
+    console.log('jkikjkjk--res', res);
     formState.number = res.number;
     formState.name = res.name;
-    formState.principal = res.principal;
-    formState.phone = res.phone;
-    formState.address = res.address;
+    formState.shortName = res.shortName;
+    formState.model = res.model;
     formState.bsStatus = res.bsStatus;
     //创建状态
     if (rowId && res.bsStatus === 'A') {
@@ -259,55 +471,108 @@
       showUnExam.value = true;
       showSubmit.value = false;
       hasSub.value = true;
-      hasLocation.value = true;
     }
     if (formState.bsStatus === 'A') {
       formState.labelValue = '创建';
     } else {
       formState.labelValue = '已审核';
     }
+    formState.mark = res.mark;
+    formState.stockId = res.stockId;
+    if (formState.stockId) {
+      formState.stockId = res.bdStock.id;
+      formState.stockName = res.bdStock.name;
+      queryStockParam.subStock = {
+        table: '',
+        name: 'stockId',
+        column: 'stock_id',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: res.bdStock.id,
+        startWith: '',
+        endWith: '',
+      };
+    }
+    formState.bdStock = res.bdStock;
+    formState.subStockId = res.subStockId;
+    if (formState.subStockId) {
+      formState.subStockId = res.bdSubStock.id;
+      formState.subStockName = res.bdSubStock.name;
+      queryStockParam.stockLocation = {
+        table: '',
+        name: 'subStockId',
+        column: 'sub_stock_id',
+        link: 'AND',
+        rule: 'EQ',
+        type: 'string',
+        val: res.bdSubStock.id,
+        startWith: '',
+        endWith: '',
+      };
+    }
+    formState.bdSubStock = res.bdSubStock;
+    formState.stockInExamine = res.stockInExamine;
+    formState.stockOutExamine = res.stockOutExamine;
     formState.createTime = res.createTime;
     formState.createBy = res.createBy;
     formState.updateTime = res.updateTime;
     formState.updateBy = res.updateBy;
   };
-  const stockHandle = async () => {
-    //修改
-    if (rowId) {
-      await getListById(rowId);
-      if (formState.bsStatus == 'B') {
-        hasSub.value = true;
-        hasLocation.value = true;
-      } else {
-      }
-    } else {
-    }
-  };
-  stockHandle();
+  getListById(rowId);
+  // const stockHandle = async () => {
+  //   //修改
+  //   if (rowId) {
+  //     await getListById(rowId);
+  //     if (formState.bsStatus == 'B') {
+  //       hasSub.value = true;
+  //     }
+  //   }
+  // };
+  // stockHandle();
   //搜索功能
-
+  const searchList = async (type, keywords) => {
+    let param: any = [];
+    param.push(keywords);
+    if (type == 'sub') {
+      param.push(queryStockParam.subStock);
+    }
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: param,
+        },
+        config.PUBLIC_REQUEST_URL[type],
+      ),
+    );
+  };
   //保存事件
   const onSubmit = async () => {
     let newData = {
       id: rowId,
       number: formState.number,
       name: formState.name,
-      principal: formState.principal,
-      phone: formState.phone,
-      address: formState.address,
+      shortName: formState.shortName,
+      model: formState.model,
       bsStatus: formState.bsStatus,
       mark: formState.mark,
+      stockName: formState.stockName,
+      stockId: formState.stockId,
+      subStockId: formState.subStockId,
+      subStockName: formState.subStockName,
+      stockInExamine: formState.stockInExamine,
+      stockOutExamine: formState.stockOutExamine,
       createTime: formState.createTime,
       createBy: formState.createBy,
       updateTime: formState.updateTime,
       updateBy: formState.updateBy,
     };
     if (!rowId) {
-      if (!formState.name || !formState.number) {
+      if (!formState.name || !formState.number || !formState.stockId || !formState.subStockId) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
-          const addList = await addStockTable({
+          const addList = await addStockLocationList({
             params: newData,
           });
           if (addList.id != null) {
@@ -323,12 +588,12 @@
       }
     } else {
       newData.id = rowId;
-      if (!formState.name || !formState.number) {
+      if (!formState.name || !formState.number || !formState.stockId || !formState.subStockId) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
           const updateList = async () => {
-            await updateStockTable({
+            await updateStockLocationList({
               params: newData,
             });
           };
@@ -356,7 +621,7 @@
       if (formState.labelValue === 'A' || formState.labelValue === '创建') {
         try {
           const auditEvent = async () => {
-            await auditStockTable({
+            await auditStockLocationList({
               params: {
                 id: rowId,
               },
@@ -367,7 +632,6 @@
           showExam.value = false;
           showUnExam.value = true;
           hasSub.value = true;
-          hasLocation.value = true;
           createMessage.success('审核成功');
           await getListById(rowId);
           // back();
@@ -387,7 +651,7 @@
       if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
         try {
           const unAuditEvent = async () => {
-            await unAuditStockTable({
+            await unAuditStockLocationList({
               params: {
                 id: rowId,
               },
@@ -398,7 +662,6 @@
           showExam.value = true;
           showUnExam.value = false;
           hasSub.value = false;
-          hasLocation.value = false;
           createMessage.success('反审核成功');
           await getListById(rowId);
           // back();

@@ -20,8 +20,8 @@
           <Search
             ref="searchRef"
             tableName="BdMaterial"
-            searchNo="物料编码"
-            searchName="物料名称"
+            searchNo="物料编码："
+            searchName="物料名称："
             @getList="getList"
             @resetEvent="resetTable"
           />
@@ -244,7 +244,7 @@
     getList(1);
   };
 
-  //按钮
+  //按钮----批量
   const buttons = [
     {
       type: 'primary',
@@ -391,7 +391,7 @@
       });
     };
   };
-  //导入文件刷新
+  //导入文件页面刷新
   const refreshTable = () => {
     getList();
   };

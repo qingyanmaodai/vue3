@@ -51,13 +51,13 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择仓库"
+                    placeholder="请选择所属仓库"
                     label="仓库"
                     :show="showUnExam"
                     v-model:value="formState.stockName"
                     :disabled="showUnExam"
-                    @search="onStock('stock')"
-                    @clear="onClear('stock')"
+                    @search="onStock()"
+                    @clear="onClear()"
                   />
                 </a-form-item>
               </Col>
@@ -104,7 +104,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="数据状态：" ref="name" name="name" class="item">
+                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -161,6 +161,14 @@
         </TabPane>
       </Tabs>
     </a-card>
+    <BasicSearch
+      style="top: 20px"
+      @cellClickEvent="cellClickEvent"
+      @openSearch="openSearch"
+      title="基础信息查询"
+      ref="basicSearchRef"
+      :gridOptions="unitGridOptions"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -181,16 +189,21 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  // import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
-    addStockTable,
-    auditStockTable,
-    getStockTable,
-    unAuditStockTable,
-    updateStockTable,
-  } from '/@/api/mainStock';
+    addSubStockList,
+    auditSubStockList,
+    getSubStockTable,
+    getSubStockListById,
+    unAuditSubStockList,
+    updateSubStockList,
+  } from '/@/api/subStock';
+  import { unitGridOptions, stockColumns } from '/@/components/AMoreSearch/data';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { cloneDeep } from 'lodash-es';
+  import { getStockOption } from '/@/api/matTable';
+
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -199,10 +212,12 @@
   const router = useRouter();
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref(null);
+  //空参数
+  const paramsNull = { params: '' };
 
   //审核状态
-  const hasSub = ref<boolean>(false); //分仓
-  const hasLocation = ref<boolean>(false); //仓位
   const showUnExam = ref<boolean>(false); //反审核
   const showExam = ref<boolean>(false); //审核
   const showSubmit = ref<boolean>(true); //保存
@@ -218,8 +233,10 @@
     phone: string | undefined;
     address: string | undefined;
     bsStatus: string | undefined;
-    mark: string | undefined;
     labelValue: string | undefined;
+    mark: string | undefined;
+    stockInExamine: number | undefined;
+    stockOutExamine: number | undefined;
     createTime: string | undefined;
     createBy: string | undefined;
     updateTime: string | undefined;
@@ -236,8 +253,10 @@
     phone: undefined,
     address: undefined,
     bsStatus: 'A',
-    mark: undefined,
     labelValue: undefined,
+    mark: undefined,
+    stockInExamine: undefined,
+    stockOutExamine: undefined,
     updateBy: undefined,
     updateTime: undefined,
     createBy: undefined,
@@ -245,15 +264,68 @@
   });
 
   const formRules = reactive({
-    name: [{ required: true, message: '请输入仓库名称' }],
-    number: [{ required: true, message: '请输入仓库编码' }],
+    name: [{ required: true, message: '请输入分仓名称' }],
+    number: [{ required: true, message: '请输入分仓编码' }],
+    stockId: [{ required: true, message: '请输入所属仓库' }],
   });
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('query', query);
   };
   getParams();
+  //点击清空图标清空事件
+  const onClear = () => {
+    formState.stockId = '';
+    formState.stockName = '';
+  };
 
+  //打开基本信息弹框
+  const openSearch = async () => {
+    const res = await onStock();
+    basicSearchRef.value.initList(res);
+  };
+  //打开放大镜
+  const onStock = async () => {
+    const res: any = await getSubStockTable({
+      params: [
+        {
+          table: '',
+          name: 'bsStatus',
+          column: 'bs_status',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: 'B',
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    let data = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initList(data);
+    basicSearchRef.value.initCols(stockColumns);
+    await getTableUnit();
+    return res;
+  };
+  //获取基本单位字段
+  const getTableUnit = async () => {
+    try {
+      let arr: any = [];
+      let data = await getStockOption(paramsNull);
+      arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.init(arr);
+    } catch (e) {
+      console.log('获取基本信息字段失败', e);
+    }
+  };
+  //基本信息表格双击事件
+  const cellClickEvent = (row) => {
+    formState.stockId = row.id;
+    formState.stockName = row.name;
+    basicSearchRef.value.bSearch(false);
+  };
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
@@ -265,9 +337,11 @@
       id = rowId;
       hasId.value = true;
     }
-    const res: any = await getStockTable({
+    const res: any = await getSubStockTableById({
       params: id,
     });
+    console.log('jkikjkjk--id', rowId);
+    console.log('jkikjkjk--res', res);
     formState.number = res.number;
     formState.name = res.name;
     formState.stockId = res.bdStock.id;
@@ -285,34 +359,25 @@
       showExam.value = false;
       showUnExam.value = true;
       showSubmit.value = false;
-      hasSub.value = true;
-      hasLocation.value = true;
     }
     if (formState.bsStatus === 'A') {
       formState.labelValue = '创建';
     } else {
       formState.labelValue = '已审核';
     }
+    formState.stockInExamine = res.stockInExamine;
+    formState.stockOutExamine = res.stockOutExamine;
     formState.createTime = res.createTime;
     formState.createBy = res.createBy;
     formState.updateTime = res.updateTime;
     formState.updateBy = res.updateBy;
   };
   const stockHandle = async () => {
-    //修改
     if (rowId) {
       await getListById(rowId);
-      if (formState.bsStatus == 'B') {
-        hasSub.value = true;
-        hasLocation.value = true;
-      } else {
-      }
-    } else {
     }
   };
   stockHandle();
-  //搜索功能
-
   //保存事件
   const onSubmit = async () => {
     let newData = {
@@ -326,17 +391,19 @@
       address: formState.address,
       bsStatus: formState.bsStatus,
       mark: formState.mark,
+      stockInExamine: formState.stockInExamine,
+      stockOutExamine: formState.stockOutExamine,
       createTime: formState.createTime,
       createBy: formState.createBy,
       updateTime: formState.updateTime,
       updateBy: formState.updateBy,
     };
     if (!rowId) {
-      if (!formState.name || !formState.number) {
+      if (!formState.name || !formState.number || !formState.stockId) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
-          const addList = await addStockTable({
+          const addList = await addSubStockList({
             params: newData,
           });
           if (addList.id != null) {
@@ -352,12 +419,12 @@
       }
     } else {
       newData.id = rowId;
-      if (!formState.name || !formState.number) {
+      if (!formState.name || !formState.number || !formState.stockId) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
           const updateList = async () => {
-            await updateStockTable({
+            await updateSubStockList({
               params: newData,
             });
           };
@@ -385,7 +452,7 @@
       if (formState.labelValue === 'A' || formState.labelValue === '创建') {
         try {
           const auditEvent = async () => {
-            await auditStockTable({
+            await auditSubStockList({
               params: {
                 id: rowId,
               },
@@ -395,8 +462,6 @@
           showSubmit.value = false;
           showExam.value = false;
           showUnExam.value = true;
-          hasSub.value = true;
-          hasLocation.value = true;
           createMessage.success('审核成功');
           await getListById(rowId);
           // back();
@@ -416,7 +481,7 @@
       if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
         try {
           const unAuditEvent = async () => {
-            await unAuditStockTable({
+            await unAuditSubStockList({
               params: {
                 id: rowId,
               },
@@ -426,8 +491,6 @@
           showSubmit.value = true;
           showExam.value = true;
           showUnExam.value = false;
-          hasSub.value = false;
-          hasLocation.value = false;
           createMessage.success('反审核成功');
           await getListById(rowId);
           // back();

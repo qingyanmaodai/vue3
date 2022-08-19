@@ -1057,9 +1057,7 @@
       if (formState.bsStatus == 'B') {
         hasSub.value = true;
         hasLocation.value = true;
-      } else {
       }
-    } else {
     }
   };
   stockHandle();
