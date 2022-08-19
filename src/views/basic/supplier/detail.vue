@@ -332,7 +332,7 @@
    */
   const getSupplier = async () => {
     const res = await getOneSupplier({ params: rowId.value });
-
+    console.log(res);
   };
 
   /**
