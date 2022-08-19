@@ -77,6 +77,47 @@ export const stockColumns = [
   { field: 'principal', title: '负责人', sortable: true },
   { field: 'phone', title: '联系方式', sortable: true },
   { field: 'address', title: '仓库地址', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  { field: 'creatTime', title: '创建日期', sortable: true },
+
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+export const subStockColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '分仓编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '分仓名称', sortable: true },
+  { field: 'stock', title: '所属仓库', sortable: true },
+  { field: 'principal', title: '负责人', sortable: true },
+  { field: 'phone', title: '联系方式', sortable: true },
+  { field: 'address', title: '仓库地址', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  { field: 'creatTime', title: '创建日期', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+export const stockLocationColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '仓位编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '仓位名称', sortable: true },
+  { field: 'stock', title: '所属仓库', sortable: true },
+  { field: 'subStock', title: '所属分仓', sortable: true },
+  { field: 'principal', title: '负责人', sortable: true },
+  { field: 'phone', title: '联系方式', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  { field: 'creatTime', title: '创建日期', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',

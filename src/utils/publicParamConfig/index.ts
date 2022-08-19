@@ -1,12 +1,12 @@
 export const config = {
   //基本单位表格数据
   PUBLIC_REQUEST_URL: {
-    baseUnit: '/mainStock/bd-unit/list', //基本单位
-    weightUnit: '/mainStock/bd-unit/list', //重量单位
-    stock: '/mainStock/bd-mainStock/list', //仓库
-    sub: '/mainStock/bd-sub-mainStock/list', //分仓
-    location: '/mainStock/bd-mainStock-location/list', //仓位
-    plan: '/mainStock/bd-examine/list', //检验方案
+    baseUnit: '/stock/bd-unit/list', //基本单位
+    weightUnit: '/stock/bd-unit/list', //重量单位
+    stock: '/stock/bd-stock/list', //仓库
+    sub: '/stock/bd-sub-stock/list', //分仓
+    location: '/stock/bd-stock-location/list', //仓位
+    plan: '/stock/bd-examine/list', //检验方案
   },
   //物料属性
   MATERIAL_ATTR: [

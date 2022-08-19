@@ -203,7 +203,7 @@ export function auditMatTableBatch(json: RequestData<object>, mode: ErrorMessage
 export function unAuditMatTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UNAUDIT_TABLE_LIST,
+      url: Url.UN_AUDIT_TABLE_LIST,
       data: json,
     },
     {
@@ -221,7 +221,7 @@ export function unAuditMatTableBatch(
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_UNAUDIT_TABLE_LIST,
+      url: Url.BATCH_UN_AUDIT_TABLE_LIST,
       data: json,
     },
     {

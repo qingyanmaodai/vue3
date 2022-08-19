@@ -14,5 +14,5 @@ export enum PageEnum {
   //分仓详情页
   SUB_STOCK_DETAIL_AND_EDIT = '/basic/stock/subStock/detail',
   //仓位详情页
-  STOCK_LOCATION_DETAIL_AND_EDIT = '/basic/stock/locationStock/detail',
+  STOCK_LOCATION_DETAIL_AND_EDIT = '/basic/stock/stockLocation/detail',
 }

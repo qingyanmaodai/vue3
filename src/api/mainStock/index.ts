@@ -1,20 +1,8 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
-export interface StockTableEntity {
-  stock?: string;
-  id?: string;
-  name?: string;
-  column?: string;
-  link?: string;
-  rule?: string;
-  type?: string;
-  val?: string;
-  startWith?: string;
-  endWith?: string;
-}
-export interface MatProfileEntity {
+export interface StockProfileEntity {
   id?: string;
   number?: string;
   name?: string;
@@ -27,7 +15,6 @@ export interface MatProfileEntity {
   mainBy?: string;
   phone?: string;
   tenantId?: number;
-  attr?: string;
   bsStatus?: string;
   mark?: string;
   createTime?: string;
@@ -39,7 +26,7 @@ export interface MatProfileEntity {
  * 获取表格信息
  */
 export function getStockTable(
-  json: RequestData<StockTableEntity[]>,
+  json: RequestData<SearchParams[]>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -54,12 +41,15 @@ export function getStockTable(
   );
 }
 /**
- * 获取仓库选项
+ * 根据id获取表格信息
  */
-export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function getIdStockList(
+  json: RequestData<SearchParams[]>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
-      url: Url.GET_STOCK_LIST,
+      url: Url.GET_ID_STOCK_LIST,
       data: json,
     },
     {
@@ -71,8 +61,8 @@ export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode
 /**
  * 添加仓库信息
  */
-export function addStockTable(
-  json: RequestData<MatProfileEntity>,
+export function addStockList(
+  json: RequestData<StockProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -89,8 +79,8 @@ export function addStockTable(
 /**
  * 编辑仓库信息
  */
-export function updateStockTable(
-  json: RequestData<MatProfileEntity>,
+export function updateStockList(
+  json: RequestData<StockProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -107,7 +97,7 @@ export function updateStockTable(
 /**
  * 审核仓库信息
  */
-export function auditStockTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function auditStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.AUDIT_STOCK_LIST,
@@ -122,10 +112,7 @@ export function auditStockTable(json: RequestData<object>, mode: ErrorMessageMod
 /**
  * 批量审核仓库信息
  */
-export function auditStockTableBatch(
-  json: RequestData<object>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function auditStockListBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.BATCH_AUDIT_STOCK_LIST,
@@ -140,7 +127,7 @@ export function auditStockTableBatch(
 /**
  * 反审核仓库信息
  */
-export function unAuditStockTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function unAuditStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.UN_AUDIT_STOCK_LIST,
@@ -155,7 +142,7 @@ export function unAuditStockTable(json: RequestData<object>, mode: ErrorMessageM
 /**
  * 批量反审核仓库信息
  */
-export function unAuditStockTableBatch(
+export function unAuditStockListBatch(
   json: RequestData<object>,
   mode: ErrorMessageMode = 'message',
 ) {
@@ -173,7 +160,7 @@ export function unAuditStockTableBatch(
 /**
  * 查询单条
  */
-// export function getStockTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+// export function getStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
 //   return defHttp.post<Result>(
 //     {
 //       url: Url.GET_Stock_BY_ID,
@@ -188,7 +175,7 @@ export function unAuditStockTableBatch(
 /**
  * 删除单条
  */
-export function delStockTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function delStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.DELETE_STOCK_LIST,
@@ -203,7 +190,7 @@ export function delStockTableById(json: RequestData<string>, mode: ErrorMessageM
 /**
  * 删除多条
  */
-export function delStockTableBatch(
+export function delStockListBatch(
   json: RequestData<Array<string>>,
   mode: ErrorMessageMode = 'message',
 ) {
@@ -221,7 +208,7 @@ export function delStockTableBatch(
 /**
  * 基本单位查询字段
  */
-// export function getStockTableUnit(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+// export function getStockListUnit(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
 //   return defHttp.post<Result>(
 //     {
 //       url: Url.GET_Stock_UNIT,
@@ -280,22 +267,3 @@ export function importStockModel(json: RequestData<any>, mode: ErrorMessageMode 
     },
   );
 }
-/**
- * 公共
- */
-// export function getPublicList(
-//   json: RequestData<any>,
-//   url: string,
-//   mode: ErrorMessageMode = 'message',
-// ) {
-//   return defHttp.post<Result>(
-//     {
-//       url: url,
-//       data: json,
-//     },
-//     {
-//       errorMessageMode: mode,
-//       isTransformResponse: true,
-//     },
-//   );
-// }
