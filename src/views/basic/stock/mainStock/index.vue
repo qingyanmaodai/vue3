@@ -4,8 +4,8 @@
       <Search
         ref="searchRef"
         tableName=""
-        searchNo="仓库编码"
-        searchName="仓库名称"
+        searchNo="仓库编码："
+        searchName="仓库名称："
         @getList="getList"
         @resetEvent="resetTable"
       />
@@ -63,18 +63,18 @@
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
   import {
-    auditStockTable,
-    auditStockTableBatch,
-    delStockTableBatch,
-    delStockTableById,
+    auditStockList,
+    auditStockListBatch,
+    delStockListBatch,
+    delStockListById,
     exportStockList,
-    getStockOption,
     getStockTable,
     importStockModel,
-    unAuditStockTable,
-    unAuditStockTableBatch,
+    unAuditStockList,
+    unAuditStockListBatch,
   } from '/@/api/mainStock';
-
+  import { getStockOption } from '/@/api/matTable';
+  import {addSubStockList} from "/@/api/subStock";
   const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -132,7 +132,7 @@
     getList(1);
   };
 
-  //按钮
+  //按钮----批量
   const buttons = [
     {
       type: 'primary',
@@ -166,23 +166,12 @@
 
   //添加
   const addTableEvent = () => {
-    // router.push({
-    //   path: '../mainStock/detail',
-    //   //需要带到详情页的参数
-    //   query: {},
-    // });
     go({
       path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
     });
   };
   //编辑
   const editTableEvent = (row) => {
-    // router.push({
-    //   path: '../mainStock/detail',
-    //   query: {
-    //     row: row.id,
-    //   },
-    // });
     go({
       path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
       query: {
@@ -193,7 +182,7 @@
   };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
-    await delStockTableById({ params: row.id });
+    await delStockListById({ params: row.id });
     await getList();
   };
   //批量删除表格
@@ -201,12 +190,13 @@
     tableRef.value.delTable(row);
   };
   const deleteMatBatchEvent = async (row) => {
-    await delStockTableBatch({ params: row });
+    await delStockListBatch({ params: row });
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
-    await auditStockTable({
+    console.log('231e3e3', row.id);
+    await auditStockList({
       params: {
         id: row.id,
       },
@@ -220,7 +210,7 @@
   };
   let res: any = '';
   const auditBatchEvent = async (row) => {
-    res = await auditStockTableBatch({
+    res = await auditStockListBatch({
       params: row,
     });
     await tableRef.value.computeData(res);
@@ -228,7 +218,7 @@
   };
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
-    await unAuditStockTable({
+    await unAuditStockList({
       params: {
         id: row?.id,
       },
@@ -240,7 +230,7 @@
     tableRef.value.unAuditTable(row);
   };
   const unAuditBatchEvent = async (row) => {
-    res = await unAuditStockTableBatch({
+    res = await unAuditStockListBatch({
       params: row,
     });
     await tableRef.value.computeData(res);
@@ -285,7 +275,7 @@
       });
     };
   };
-  //导入文件刷新
+  //导入文件页面刷新
   const refreshTable = () => {
     getList();
   };

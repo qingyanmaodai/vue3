@@ -4,14 +4,14 @@
       <Search
         ref="searchRef"
         tableName=""
-        searchNo="仓库编码"
-        searchName="仓库名称"
+        searchNo="分仓编码："
+        searchName="分仓名称："
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
         style="margin-left: 15px"
-        :columns="matColumns"
+        :columns="subStockColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
         ref="tableRef"
@@ -56,27 +56,27 @@
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { Pager, VxePagerEvents } from 'vxe-table';
-  import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, matColumns } from '/@/components/ExTable/data';
+  import { gridOptions, subStockColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
-  import { useRouter } from 'vue-router';
+  import { useGo } from '/@/hooks/web/usePage';
+  import { PageEnum } from '/@/enums/pageEnum';
   import {
-    auditStockTable,
-    auditStockTableBatch,
-    delStockTableBatch,
-    delStockTableById,
-    exportStockList,
-    getStockTable,
-    importStockModel,
-    unAuditStockTable,
-    unAuditStockTableBatch,
-  } from '/@/api/mainStock';
-  // import { useMessage } from '/@/hooks/web/useMessage';
-  // const { createMessage } = useMessage();
+    addSubStockList,
+    auditSubStockList,
+    auditSubStockListBatch,
+    delSubStockListBatch,
+    delSubStockListById,
+    exportSubStockList,
+    getSubStockTable,
+    importSubStockModel,
+    unAuditSubStockList,
+    unAuditSubStockListBatch,
+  } from '/@/api/subStock';
+  import { getSubOption } from '/@/api/matTable';
 
-  const router = useRouter();
+  const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
@@ -100,7 +100,7 @@
   const paramsNull = { params: '' };
   //获取高级查询字段数据
   const getOptions = async () => {
-    const moreSearchData = await getSubStockOption(paramsNull);
+    const moreSearchData = await getSubOption(paramsNull);
     searchRef.value.getOptions(moreSearchData);
   };
   getOptions();
@@ -111,7 +111,7 @@
       getParams = getParams.concat(searchRef.value.getSearchParams());
     }
     //表格查询
-    const res: any = await getStockTable({
+    const res: any = await getSubStockTable({
       params: getParams,
       orderByBean: {
         descList: ['update_time'],
@@ -133,7 +133,7 @@
     getList(1);
   };
 
-  //按钮
+  //按钮----批量
   const buttons = [
     {
       type: 'primary',
@@ -164,18 +164,17 @@
       },
     },
   ];
+
   //添加
   const addTableEvent = () => {
-    router.push({
-      path: '../subStock/profile/index',
-      //需要带到详情页的参数
-      query: {},
+    go({
+      path: PageEnum.SUB_STOCK_DETAIL_AND_EDIT,
     });
   };
   //编辑
   const editTableEvent = (row) => {
-    router.push({
-      path: '../subStock/profile/index',
+    go({
+      path: PageEnum.SUB_STOCK_DETAIL_AND_EDIT,
       query: {
         row: row.id,
       },
@@ -184,7 +183,7 @@
   };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
-    await delStockTableById({ params: row.id });
+    await delSubStockListById({ params: row.id });
     await getList();
   };
   //批量删除表格
@@ -192,12 +191,12 @@
     tableRef.value.delTable(row);
   };
   const deleteMatBatchEvent = async (row) => {
-    await delStockTableBatch({ params: row });
+    await delSubStockListBatch({ params: row });
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
-    await auditStockTable({
+    await auditSubStockList({
       params: {
         id: row.id,
       },
@@ -211,7 +210,7 @@
   };
   let res: any = '';
   const auditBatchEvent = async (row) => {
-    res = await auditStockTableBatch({
+    res = await auditSubStockListBatch({
       params: row,
     });
     await tableRef.value.computeData(res);
@@ -219,7 +218,7 @@
   };
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
-    await unAuditStockTable({
+    await unAuditSubStockList({
       params: {
         id: row?.id,
       },
@@ -231,7 +230,7 @@
     tableRef.value.unAuditTable(row);
   };
   const unAuditBatchEvent = async (row) => {
-    res = await unAuditStockTableBatch({
+    res = await unAuditSubStockListBatch({
       params: row,
     });
     await tableRef.value.computeData(res);
@@ -241,11 +240,11 @@
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        importStockModel({
+        importSubStockModel({
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '仓库信息导入模板.xls', data: res };
+            const data = { title: '分仓信息导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -258,16 +257,16 @@
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        exportStockList({
+        exportSubStockList({
           params: {
             list: getParams,
-            fileName: '仓库料列表',
+            fileName: '分仓料列表',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '仓库列表信息.xls', data: res };
+            const data = { title: '分仓列表信息.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -276,7 +275,7 @@
       });
     };
   };
-  //导入文件刷新
+  //导入文件刷新页面
   const refreshTable = () => {
     getList();
   };

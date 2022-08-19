@@ -6,13 +6,13 @@ export enum Url {
   DELETE_MATERIAL_GROUP = '/stock/bd-material-group/delete',
   QUERY_ONE_MATERIAL_GROUP = '/stock/bd-material-group/query-one',
   TREE_MATERIAL_GROUP = '/stock/bd-material-group/tree',
-  GET_TABLE_LIST = '/stock/bd-material/getPageList',
+  GET_TABLE_LIST = '/stock/bd-material/list', //获取基本单位列表
   GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取基本单位实体信息
   ADD_TABLE_LIST = '/stock/bd-material/save',
   AUDIT_TABLE_LIST = '/stock/bd-material/audit',
   BATCH_AUDIT_TABLE_LIST = '/stock/bd-material/batch-audit',
-  UNAUDIT_TABLE_LIST = '/stock/bd-material/un-audit',
-  BATCH_UNAUDIT_TABLE_LIST = '/stock/bd-material/batch-un-audit',
+  UN_AUDIT_TABLE_LIST = '/stock/bd-material/un-audit',
+  BATCH_UN_AUDIT_TABLE_LIST = '/stock/bd-material/batch-un-audit',
   UPDATE_TABLE_LIST = '/stock/bd-material/update',
   GET_TABLE_BY_ID = '/stock/bd-material/getOneMaterial',
   DEL_TABLE_LIST = '/stock/bd-material/delete',
@@ -36,19 +36,21 @@ export enum Url {
   SUPPLIER_GROUP_DELETE = '/stock/bd-supplier-group/delete', //删除供应商分组
   SUPPLIER_GROUP_GET_ONE = '/stock/bd-supplier-group/query-one', //查询单个供应商分组
   SUPPLIER_GROUP_GET_TREE = '/stock/bd-supplier-group/tree', //获取供应商分组
+
   //共用
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //基本单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
   GET_SUB_LIST = '/stock/bd-sub-stock/query-dto', //获取分仓实体信息
   GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
+
   //仓库管理
   AUDIT_STOCK_LIST = '/stock/bd-stock/audit',
   BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-audit',
-  UN_AUDIT_STOCK_LIST = '/stock/bd-stock/un_audit',
+  UN_AUDIT_STOCK_LIST = '/stock/bd-stock/un-audit',
   UN_BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-un-audit',
   DELETE_STOCK_LIST = '/stock/bd-stock/delete',
   BATCH_DELETE_STOCK_LIST = '/stock/bd-stock/batch-delete',
-  GET_PAGE_STOCK_LIST = '/stock/bd-stock/list', //分页查询
+  GET_PAGE_STOCK_LIST = '/stock/bd-stock/list', //分页查询--获取仓库列表
   GET_ID_STOCK_LIST = '/stock/bd-stock/query-one', //id查询
   IMPORT_STOCK_LIST = '/stock/bd-stock/import-list',
   IMPORT_MODEL_STOCK_LIST = '/stock/bd-stock/import-model',
@@ -67,6 +69,37 @@ export enum Url {
   UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/un-audit', //反审核检验项目
   BATCH_UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-un-audit', //检验项目批量反审核
   BATCH_DEL_EXA_PROJECT = '/stock/bd-examine-project/batch-delete', //删除检验项目
+
+  //分仓管理
+  AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',
+  BATCH_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-audit',
+  UN_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/un-audit',
+  UN_BATCH_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-un-audit',
+  DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/delete',
+  BATCH_DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-delete',
+  GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/getPageList', //获取分仓列表
+  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/query-one', //id查询
+  IMPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-list',
+  IMPORT_MODEL_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-model',
+  EXPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/export-list',
+  ADD_SUB_STOCK_LIST = '/stock/bd-sub-stock/save',
+  UPDATE_SUB_STOCK_LIST = '/stock/bd-sub-stock/update',
+
+  //仓位管理
+  AUDIT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/audit',
+  BATCH_AUDIT_STOCK_LOCATION = '/stock/bd-stock-location/batch-audit',
+  UN_AUDIT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/un-audit',
+  UN_BATCH_AUDIT_STOCK_LOCATION = '/stock/bd-stock-location/batch-un-audit',
+  DELETE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/delete',
+  BATCH_DELETE_STOCK_LOCATION = '/stock/bd-stock-location/batch-delete',
+  GET_PAGE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getPageList', //获取仓位列表
+  // GET_LIST_STOCK_LOCATION = '/stock/bd-stock-location/list', //分页查询
+  GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/query-one', //id查询
+  IMPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/import-list',
+  IMPORT_MODEL_STOCK_LOCATION = '/stock/bd-stock-location/import-model',
+  EXPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/export-list',
+  ADD_STOCK_LOCATION_LIST = '/stock/bd-stock-location/save',
+  UPDATE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/update',
 }
 
 export const TableColum = {
