@@ -55,6 +55,18 @@ export enum Url {
   EXPORT_STOCK_LIST = '/stock/bd-stock/export-list',
   ADD_STOCK_LIST = '/stock/bd-stock/save',
   UPDATE_STOCK_LIST = '/stock/bd-stock/update',
+  //质量检验
+  ADD_EXA_GROUP = '/stock/bd-examine-group/save', //添加
+  EDIT_EXA_GROUP = '/stock/bd-examine-group/update', //编辑
+  DELETE_EXA_GROUP = '/stock/bd-examine-group/delete',
+  QUERY_ONE_EXA_GROUP = '/stock/bd-examine-group/query-one',
+  TREE_EXA_GROUP = '/stock/bd-examine-group/tree',
+  GET_EXA_PROJECT_LIST = '/stock/bd-examine-project/list', //检验项目列表
+  AUDIT_EXA_PROJECT = '/stock/bd-examine-project/audit', //检验项目审核
+  BATCH_AUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-audit', //检验项目批量审核
+  UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/un-audit', //反审核检验项目
+  BATCH_UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-un-audit', //检验项目批量反审核
+  BATCH_DEL_EXA_PROJECT = '/stock/bd-examine-project/batch-delete', //删除检验项目
 }
 
 export const TableColum = {

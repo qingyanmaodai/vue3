@@ -111,3 +111,20 @@ export const stockColumns = [
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+
+//检验项目
+export const exaColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '项目编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '项目名称', sortable: true },
+  { field: 'description', title: '描述', sortable: true },
+  { field: 'isOpen', title: '启用状态', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];

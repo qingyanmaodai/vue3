@@ -1,19 +1,7 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
-export interface MatTableEntity {
-  table?: string;
-  id?: string;
-  name?: string;
-  column?: string;
-  link?: string;
-  rule?: string;
-  type?: string;
-  val?: string;
-  startWith?: string;
-  endWith?: string;
-}
 export interface MatProfileEntity {
   id?: string;
   number?: string;
@@ -56,10 +44,7 @@ export interface MatProfileEntity {
 /**
  * 获取表格信息
  */
-export function getMatTable(
-  json: RequestData<MatTableEntity[]>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function getMatTable(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.GET_TABLE_LIST,
