@@ -55,7 +55,7 @@
               "
               v-model:value="search.rule"
               placeholder="等于"
-              :options="optionsTimeRule"
+              :options="config.TIME_OPTION_RULE"
               style="width: 100px"
               :filterOption="filterOption"
             />
@@ -67,7 +67,7 @@
               "
               v-model:value="search.rule"
               placeholder="包含"
-              :options="optionsRule"
+              :options="config.OPTION_RULE"
               style="width: 100px"
               :filterOption="filterOption"
             />
@@ -445,9 +445,7 @@
     nowCheckData.data.labelValue = row.name;
     basicSearchRef.value.bSearch(false);
   };
-  //一般类型/时间类型的查询规则--包含-等于
-  let optionsRule = config.OPTION_RULE;
-  let optionsTimeRule = config.TIME_OPTION_RULE;
+
   // const optionsStartWith = reactive<any>([{ value: 'start', label: '(' }]);
   // const optionsEndWith = reactive<any>([{ value: 'end', label: ')' }]);
   const optionsLink = reactive<any>([
