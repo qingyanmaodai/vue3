@@ -41,14 +41,14 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="负责人：" ref="principal" name="principal" class="item">
+                <a-form-item label="地址：" ref="address" name="address" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
-                    v-model:value="formState.principal"
+                    v-model:value="formState.address"
                     name="name"
-                    placeholder="请输入负责人"
+                    placeholder="请输入地址"
                     :disabled="showUnExam"
                   />
                 </a-form-item>
@@ -189,7 +189,8 @@
   import { unitGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { config } from '/@/utils/publicParamConfig';
-  import { getStockOption, getSubOption } from '/@/api/matTable';
+  import { getStockOption } from '/@/api/mainStock';
+  import { getSubOption } from '/@/api/subStock';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
@@ -237,7 +238,7 @@
     number: string | undefined;
     name: string | undefined;
     principal: string | undefined;
-    phone: string | undefined;
+    address: string | undefined;
     shortName: string | undefined;
     model: string | undefined;
     bsStatus: string | undefined;
@@ -263,7 +264,7 @@
     name: undefined,
     shortName: undefined,
     principal: undefined,
-    phone: undefined,
+    address: undefined,
     model: undefined,
     bsStatus: 'A',
     labelValue: undefined,
@@ -455,13 +456,12 @@
     const res: any = await getStockLocationListById({
       params: id,
     });
-    console.log('jkikjkjk--id', rowId);
-    console.log('jkikjkjk--res', res);
     formState.number = res.number;
     formState.name = res.name;
     formState.shortName = res.shortName;
     formState.model = res.model;
     formState.bsStatus = res.bsStatus;
+    formState.address = res.address;
     //创建状态
     if (rowId && res.bsStatus === 'A') {
       showExam.value = true;
@@ -520,17 +520,13 @@
     formState.updateTime = res.updateTime;
     formState.updateBy = res.updateBy;
   };
-  getListById(rowId);
-  // const stockHandle = async () => {
-  //   //修改
-  //   if (rowId) {
-  //     await getListById(rowId);
-  //     if (formState.bsStatus == 'B') {
-  //       hasSub.value = true;
-  //     }
-  //   }
-  // };
-  // stockHandle();
+  const stockHandle = async () => {
+    //修改
+    if (rowId) {
+      await getListById(rowId);
+    }
+  };
+  stockHandle();
   //搜索功能
   const searchList = async (type, keywords) => {
     let param: any = [];
@@ -557,6 +553,7 @@
       model: formState.model,
       bsStatus: formState.bsStatus,
       mark: formState.mark,
+      address: formState.address,
       stockName: formState.stockName,
       stockId: formState.stockId,
       subStockId: formState.subStockId,
@@ -581,6 +578,7 @@
             // back();
             showExam.value = true;
             rowId = addList.id;
+            console.log('newdata', rowId);
             await getListById(rowId);
           }
         } catch (e) {

@@ -281,7 +281,13 @@
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };
-  defineExpose({ getSearchParams, setSelectedKeys, getSelectedKeys, resetGroupFormData, groupFormData });
+  defineExpose({
+    getSearchParams,
+    setSelectedKeys,
+    getSelectedKeys,
+    resetGroupFormData,
+    groupFormData,
+  });
 </script>
 
 <style scoped lang="less">

@@ -41,12 +41,12 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="负责人：" ref="principal" name="principal" class="item">
+                <a-form-item label="负责人：" ref="mainBy" name="mainBy" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
-                    v-model:value="formState.principal"
+                    v-model:value="formState.mainBy"
                     name="name"
                     placeholder="请输入负责人"
                     :disabled="showUnExam"
@@ -63,7 +63,9 @@
                     autocomplete="off"
                     v-model:value="formState.phone"
                     placeholder="请输入联系电话"
-                    :disabled="hasId"
+                    :disabled="showUnExam"
+                    onkeyup="value=value.replace(/[^\d\-\d]/g,'')"
+                    maxlength="20"
                   />
                 </a-form-item>
               </Col>
@@ -168,7 +170,6 @@
     unAuditStockList,
     updateStockList,
   } from '/@/api/mainStock';
-  import {addSubStockList} from "/@/api/subStock";
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -188,7 +189,7 @@
     id?: string | undefined;
     number: string | undefined;
     name: string | undefined;
-    principal: string | undefined;
+    mainBy: string | undefined;
     phone: string | undefined;
     address: string | undefined;
     bsStatus: string | undefined;
@@ -206,7 +207,7 @@
     id: undefined,
     number: undefined,
     name: undefined,
-    principal: undefined,
+    mainBy: undefined,
     phone: undefined,
     address: undefined,
     bsStatus: 'A',
@@ -244,12 +245,9 @@
     const res: any = await getIdStockList({
       params: id,
     });
-    console.log('jkikjkjk--id', rowId);
-    console.log('jkikjkjk--res', res);
-
     formState.number = res.number;
     formState.name = res.name;
-    formState.principal = res.principal;
+    formState.mainBy = res.mainBy;
     formState.phone = res.phone;
     formState.address = res.address;
     formState.bsStatus = res.bsStatus;
@@ -283,7 +281,7 @@
       id: rowId,
       number: formState.number,
       name: formState.name,
-      principal: formState.principal,
+      mainBy: formState.mainBy,
       phone: formState.phone,
       address: formState.address,
       bsStatus: formState.bsStatus,

@@ -518,14 +518,14 @@
   import {
     addMatTable,
     auditMatTable,
-    getLocationOption,
     getMatTableById,
     getMatTableUnit,
-    getStockOption,
-    getSubOption,
     unAuditMatTable,
     updateMatTable,
   } from '/@/api/matTable';
+  import { getStockOption } from '/@/api/mainStock';
+  import { getSubOption } from '/@/api/subStock';
+  import { getLocationOption } from '/@/api/stockLocation';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
@@ -946,7 +946,6 @@
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
-  console.log('编辑id', rowId);
 
   //如果有id，则通过getMatTableById，进入编辑页面。没有id——新增
   const getListById = async (id) => {
