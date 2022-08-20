@@ -71,51 +71,7 @@ export function getMatOption(json: RequestData<string>, mode: ErrorMessageMode =
     },
   );
 }
-/**
- * 获取仓库选项
- */
-export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_STOCK_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 获取分仓选项
- */
-export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_SUB_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 获取仓位选项
- */
-export function getLocationOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_LOCATION_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
+
 /**
  * 添加物料信息
  */

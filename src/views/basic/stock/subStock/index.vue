@@ -14,6 +14,7 @@
         :columns="subStockColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
+        :importConfig="importConfig"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -63,7 +64,7 @@
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
   import {
-    addSubStockList,
+    getSubOption,
     auditSubStockList,
     auditSubStockListBatch,
     delSubStockListBatch,
@@ -74,7 +75,6 @@
     unAuditSubStockList,
     unAuditSubStockListBatch,
   } from '/@/api/subStock';
-  import { getSubOption } from '/@/api/matTable';
 
   const go = useGo();
   const GridOptions = gridOptions;
@@ -84,6 +84,8 @@
   const tableRef: any = ref<String | null>(null);
   //查询组件
   const searchRef: any = ref<String | null>(null);
+  //导入上传文件api
+  let importConfig = ref<string>('IMPORT_SUB_STOCK_LIST');
   //分页信息
   const pages = reactive({
     currentPage: 1,
