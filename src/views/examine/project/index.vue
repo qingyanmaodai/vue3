@@ -7,7 +7,7 @@
           :search="true"
           :tree-data="treeData"
           ref="treeRef"
-          title="分组列表"
+          title="检验类别"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"

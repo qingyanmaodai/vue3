@@ -41,7 +41,7 @@ export function getExaProjectList(
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_PROJECT_OPTIONS_LIST,
+      url: Url.GET_OPTIONS_LIST,
       data: json,
     },
     {
