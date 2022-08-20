@@ -72,6 +72,7 @@ export enum Url {
   UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/un-audit', //反审核检验项目
   BATCH_UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-un-audit', //检验项目批量反审核
   BATCH_DEL_EXA_PROJECT = '/stock/bd-examine-project/batch-delete', //删除检验项目
+  GET_EXA_PROJECT_OPTIONS_LIST = '/stock/bd-examine-project/query-dto', //获取实体信息
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',

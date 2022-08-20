@@ -1,6 +1,6 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams } from "/@/api/apiLink";
+import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
 export interface ExaProjectEntity {
   id: string;
@@ -41,7 +41,7 @@ export function getExaProjectList(
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_OPTIONS_LIST,
+      url: Url.GET_EXA_PROJECT_OPTIONS_LIST,
       data: json,
     },
     {

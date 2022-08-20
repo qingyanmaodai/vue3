@@ -42,6 +42,11 @@
           row.bsStatus === 'A' ? '创建' : '已审核'
         }}</Tag>
       </template>
+      <template #open="{ row }">
+        <Tag :color="row.isOpen === '1' ? 'processing' : 'default'" v-if="row.isOpen">{{
+          row.isOpen === '1' ? '启用' : '禁止'
+        }}</Tag>
+      </template>
       <template #attr="{ row }"
         >{{ row.attr === 'A' ? '自制' : row.attr === 'B' ? '外购' : '虚拟' }}
       </template>
