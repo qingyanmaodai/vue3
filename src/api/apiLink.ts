@@ -1,13 +1,14 @@
 export const testApi = 'http://192.168.200.114:6211';
 export enum Url {
-  //物料信息
+  //物料分组
   ADD_MATERIAL_GROUP = '/stock/bd-material-group/save', //添加
   EDIT_MATERIAL_GROUP = '/stock/bd-material-group/update', //编辑
   DELETE_MATERIAL_GROUP = '/stock/bd-material-group/delete',
   QUERY_ONE_MATERIAL_GROUP = '/stock/bd-material-group/query-one',
   TREE_MATERIAL_GROUP = '/stock/bd-material-group/tree',
+  //物料信息
   GET_TABLE_LIST = '/stock/bd-material/list', //获取基本单位列表
-  GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取基本单位实体信息
+  GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取物料信息实体信息
   ADD_TABLE_LIST = '/stock/bd-material/save',
   AUDIT_TABLE_LIST = '/stock/bd-material/audit',
   BATCH_AUDIT_TABLE_LIST = '/stock/bd-material/batch-audit',
@@ -39,7 +40,7 @@ export enum Url {
   SUPPLIER_GROUP_GET_ONE = '/stock/bd-supplier-group/query-one', //查询单个供应商分组
   SUPPLIER_GROUP_GET_TREE = '/stock/bd-supplier-group/tree', //获取供应商分组
 
-  //共用
+  //共用--实体信息--搜索的下拉框
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //基本单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
   GET_SUB_LIST = '/stock/bd-sub-stock/query-dto', //获取分仓实体信息
@@ -81,7 +82,7 @@ export enum Url {
   DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/delete',
   BATCH_DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-delete',
   GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/getPageList', //获取分仓列表
-  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/query-one', //id查询
+  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/getOne', //id查询
   IMPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-list',
   IMPORT_MODEL_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-model',
   EXPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/export-list',
@@ -97,7 +98,7 @@ export enum Url {
   BATCH_DELETE_STOCK_LOCATION = '/stock/bd-stock-location/batch-delete',
   GET_PAGE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getPageList', //获取仓位列表
   // GET_LIST_STOCK_LOCATION = '/stock/bd-stock-location/list', //分页查询
-  GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/query-one', //id查询
+  GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getOne', //id查询
   IMPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/import-list',
   IMPORT_MODEL_STOCK_LOCATION = '/stock/bd-stock-location/import-model',
   EXPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/export-list',
@@ -187,7 +188,6 @@ export const TableColum = {
       slots: { default: 'status' },
     },
   ],
-  //检验方案
 };
 
 export enum SearchLink {

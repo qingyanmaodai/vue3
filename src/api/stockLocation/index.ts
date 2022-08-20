@@ -1,4 +1,4 @@
-import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
+import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
@@ -19,6 +19,22 @@ export interface StockLocationProfileEntity {
   createBy?: string;
   updateTime?: string;
   updateBy?: string;
+}
+
+/**
+ * 获取仓位选项
+ */
+export function getLocationOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_LOCATION_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
 }
 /**
  * 获取表格信息
@@ -234,21 +250,7 @@ export function exportStockLocationList(
     },
   );
 }
-/**
- * 导入仓位数据
- */
-export function importStockLocationList(
-  params: UploadFileParams,
-  onUploadProgress: (progressEvent: ProgressEvent) => void,
-) {
-  return defHttp.uploadFile<any>(
-    {
-      url: Url.IMPORT_STOCK_LOCATION_LIST,
-      onUploadProgress,
-    },
-    params,
-  );
-}
+
 /**
  * 导入的下载模板
  */

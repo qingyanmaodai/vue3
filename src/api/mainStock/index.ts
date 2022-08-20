@@ -1,4 +1,4 @@
-import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
+import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams } from '/@/api/apiLink';
 
@@ -21,6 +21,21 @@ export interface StockProfileEntity {
   createBy?: string;
   updateTime?: string;
   updateBy?: string;
+}
+/**
+ * 获取仓库选项
+ */
+export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_STOCK_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
 }
 /**
  * 获取表格信息
@@ -234,21 +249,6 @@ export function exportStockList(json: RequestData<any>, mode: ErrorMessageMode =
       errorMessageMode: mode,
       isTransformResponse: false,
     },
-  );
-}
-/**
- * 导入仓库数据
- */
-export function importStockList(
-  params: UploadFileParams,
-  onUploadProgress: (progressEvent: ProgressEvent) => void,
-) {
-  return defHttp.uploadFile<any>(
-    {
-      url: Url.IMPORT_STOCK_LIST,
-      onUploadProgress,
-    },
-    params,
   );
 }
 /**

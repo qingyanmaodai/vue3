@@ -64,12 +64,12 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="负责人：" ref="principal" name="principal" class="item">
+                <a-form-item label="负责人：" ref="mainBy" name="mainBy" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
-                    v-model:value="formState.principal"
+                    v-model:value="formState.mainBy"
                     name="name"
                     placeholder="请输入负责人"
                     :disabled="showUnExam"
@@ -84,19 +84,21 @@
                     autocomplete="off"
                     v-model:value="formState.phone"
                     placeholder="请输入联系电话"
-                    :disabled="hasId"
+                    :disabled="showUnExam"
+                    onkeyup="value=value.replace(/[^\d\-\d]/g,'')"
+                    maxlength="20"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="仓库地址：" ref="address" name="address" class="item">
+                <a-form-item label="地址：" ref="address" name="address" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.address"
                     name="name"
-                    placeholder="请输入仓库地址"
+                    placeholder="请输入地址"
                     :disabled="showUnExam"
                   />
                 </a-form-item>
@@ -194,7 +196,6 @@
   import {
     addSubStockList,
     auditSubStockList,
-    getSubStockTable,
     getSubStockListById,
     unAuditSubStockList,
     updateSubStockList,
@@ -202,7 +203,8 @@
   import { unitGridOptions, stockColumns } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { cloneDeep } from 'lodash-es';
-  import { getStockOption } from '/@/api/matTable';
+  import { getStockOption, getStockTable } from '/@/api/mainStock';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
 
   const { createMessage } = useMessage();
   const AForm = Form;
@@ -227,9 +229,10 @@
     id?: string | undefined;
     number: string | undefined;
     name: string | undefined;
+    bdStock: string | undefined;
     stockId: string | undefined;
     stockName: string | undefined;
-    principal: string | undefined;
+    mainBy: string | undefined;
     phone: string | undefined;
     address: string | undefined;
     bsStatus: string | undefined;
@@ -247,9 +250,10 @@
     id: undefined,
     number: undefined,
     name: undefined,
+    bdStock: undefined,
     stockId: undefined,
     stockName: undefined,
-    principal: undefined,
+    mainBy: undefined,
     phone: undefined,
     address: undefined,
     bsStatus: 'A',
@@ -267,7 +271,19 @@
     name: [{ required: true, message: '请输入分仓名称' }],
     number: [{ required: true, message: '请输入分仓编码' }],
     stockId: [{ required: true, message: '请输入所属仓库' }],
+    // phone: [
+    //   {
+    //     required: false,
+    //   },
+    //   {
+    //     pattern: /^[3456789]\d{6-9}$/,
+    //     message: '手机格式错误！',
+    //   },
+    // ],
   });
+  // const getValueFromEvent = (e) => {
+  //   return e.target.value.replace(/[^0-9]/gi, '');
+  // };
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('query', query);
@@ -286,15 +302,15 @@
   };
   //打开放大镜
   const onStock = async () => {
-    const res: any = await getSubStockTable({
+    const res: any = await getStockTable({
       params: [
         {
           table: '',
           name: 'bsStatus',
           column: 'bs_status',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
+          link: SearchLink.AND,
+          rule: SearchMatchType.EQ,
+          type: SearchDataType.string,
           val: 'B',
           startWith: '',
           endWith: '',
@@ -337,16 +353,21 @@
       id = rowId;
       hasId.value = true;
     }
-    const res: any = await getSubStockTableById({
+    const res: any = await getSubStockListById({
       params: id,
     });
-    console.log('jkikjkjk--id', rowId);
-    console.log('jkikjkjk--res', res);
     formState.number = res.number;
     formState.name = res.name;
-    formState.stockId = res.bdStock.id;
-    formState.stockName = res.bdStock.name;
-    formState.principal = res.principal;
+    formState.stockId = res.stockId;
+    // formState.stockId = res.bdStock.id;
+    // formState.stockName = res.bdStock.name;
+    formState.stockId = res.stockId;
+    if (formState.stockId) {
+      formState.stockId = res.bdStock.id;
+      formState.stockName = res.bdStock.name;
+    }
+    formState.bdStock = res.bdStock;
+    formState.mainBy = res.mainBy;
     formState.phone = res.phone;
     formState.address = res.address;
     formState.bsStatus = res.bsStatus;
@@ -373,6 +394,7 @@
     formState.updateBy = res.updateBy;
   };
   const stockHandle = async () => {
+    //修改
     if (rowId) {
       await getListById(rowId);
     }
@@ -386,7 +408,7 @@
       name: formState.name,
       stockName: formState.stockName,
       stockId: formState.stockId,
-      principal: formState.principal,
+      mainBy: formState.mainBy,
       phone: formState.phone,
       address: formState.address,
       bsStatus: formState.bsStatus,
@@ -411,6 +433,7 @@
             // back();
             showExam.value = true;
             rowId = addList.id;
+            console.log('newdata', rowId);
             await getListById(rowId);
           }
         } catch (e) {

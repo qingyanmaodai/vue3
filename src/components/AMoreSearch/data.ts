@@ -101,8 +101,6 @@ export const locationColumns = [
   { field: 'number', title: '仓位编码', sortable: true },
   { field: 'name', title: '仓位名称', sortable: true },
   { field: 'address', title: '仓位地址', sortable: true },
-  { field: 'mainBy', title: '仓位管理员', sortable: true },
-  { field: 'phone', title: '联系电话', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',
