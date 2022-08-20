@@ -521,12 +521,12 @@
     getLocationOption,
     getMatTableById,
     getMatTableUnit,
-    getPublicList,
     getStockOption,
     getSubOption,
     unAuditMatTable,
     updateMatTable,
   } from '/@/api/matTable';
+  import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';

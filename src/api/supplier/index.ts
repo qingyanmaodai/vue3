@@ -26,11 +26,13 @@ export interface SupplierEntity {
   updateBy?: string;
 }
 
-export function getOneSupplier(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function getOneSupplier(id: string, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.SUPPLIER_GET_ONE,
-      data: json,
+      data: {
+        params: id,
+      },
     },
     {
       errorMessageMode: mode,
