@@ -303,7 +303,7 @@
     }
   };
   const onUnAudit = async () => {
-    const type = await VXETable.modal.confirm('您确定要审核吗?');
+    const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
       const data = await unAudit({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
