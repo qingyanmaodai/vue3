@@ -129,4 +129,23 @@ export const config = {
       label: '小于',
     },
   ],
+  //供应商等级
+  SUPPLIER_GRADE: [
+    {
+      value: 'A',
+      label: 'A级',
+    },
+    {
+      value: 'B',
+      label: 'B级',
+    },
+    {
+      value: 'C',
+      label: 'C级',
+    },
+    {
+      value: 'D',
+      label: 'D级',
+    },
+  ],
 };

@@ -1,8 +1,8 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface SupplierEntity {
+export interface SupplierEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -16,14 +16,6 @@ export interface SupplierEntity {
   level?: string;
   groupId?: string;
   groupName?: string;
-  mark?: string;
-  erpCode?: string;
-  bsStatus?: string;
-  isDelete?: string;
-  createTime?: string;
-  updateTime?: string;
-  createBy?: string;
-  updateBy?: string;
 }
 
 export function getOneSupplier(id: string, mode: ErrorMessageMode = 'message') {

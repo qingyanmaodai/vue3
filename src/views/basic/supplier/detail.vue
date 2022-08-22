@@ -131,13 +131,15 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="供应商等级：" ref="level" name="level" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    v-model:value="formState.level"
-                    placeholder="请输入供应商等级"
-                    :disabled="isDisable"
-                  />
+                  <Select v-model:value="formState.level" class="select" placeholder="请选择">
+                    <SelectOption
+                      v-for="(item, index) in config['SUPPLIER_GRADE']"
+                      :key="index"
+                      :value="item.value"
+                    >
+                      {{ item.label }}</SelectOption
+                    >
+                  </Select>
                 </a-form-item>
               </Col>
               <Col :span="8">
@@ -161,14 +163,14 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
+                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Select v-model:value="formState.bsStatus" class="select" disabled>
                     <SelectOption
                       v-for="(item, index) in config['DATA_STATUS']"
                       :key="index"
                       :value="item.value"
                     >
-                      {{ item.label }}}</SelectOption
+                      {{ item.label }}</SelectOption
                     >
                   </Select>
                 </a-form-item>
@@ -428,7 +430,7 @@
    * @param node
    */
   const groupSelect = (value, node) => {
-    formState.groupName = node;
+    formState.groupName = node ? node[0] : '';
     formState.groupId = value;
     supplierGroupModel.value = false;
   };
@@ -449,6 +451,7 @@
   const runTree = (tree: SupplierGroupEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
+      item.value = item.id;
       item.key = item.id;
       runTree(item.children || []);
     });
@@ -457,7 +460,10 @@
   /**
    * 清空事件
    */
-  const onClear = () => {};
+  const onClear = () => {
+    formState.groupId = '';
+    formState.groupName = '';
+  };
 
   const back = () => {
     router.go(-1);
