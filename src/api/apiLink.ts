@@ -54,7 +54,7 @@ export enum Url {
   DELETE_STOCK_LIST = '/stock/bd-stock/delete', //删除
   BATCH_DELETE_STOCK_LIST = '/stock/bd-stock/batch-delete', //批量删除
   GET_PAGE_STOCK_LIST = '/stock/bd-stock/list', //分页查询--获取仓库列表
-  GET_ID_STOCK_LIST = '/stock/bd-stock/query-one', //查询单条
+  GET_ONE_STOCK_LIST = '/stock/bd-stock/query-one', //查询单条
   IMPORT_STOCK_LIST = 'http://192.168.200.136:9999/stock/bd-stock/import-list', //导入
   IMPORT_MODEL_STOCK_LIST = '/stock/bd-stock/import-model', //导入模板下载
   EXPORT_STOCK_LIST = '/stock/bd-stock/export-list', //导出

@@ -144,7 +144,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Card,
@@ -165,10 +165,12 @@
   import {
     addStockList,
     auditStockList,
-    getIdStockList,
+    getOneStockById,
+    StockProfileEntity,
     unAuditStockList,
     updateStockList,
   } from '/@/api/mainStock';
+  import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -182,48 +184,23 @@
   const showUnExam = ref<boolean>(false); //反审核
   const showExam = ref<boolean>(false); //审核
   const showSubmit = ref<boolean>(true); //保存
-
-  //对应输入框绑定的值接口类型
-  interface FormState {
-    id?: string | undefined;
-    number: string | undefined;
-    name: string | undefined;
-    mainBy: string | undefined;
-    phone: string | undefined;
-    address: string | undefined;
-    bsStatus: string | undefined;
-    mark: string | undefined;
-    stockInExamine: number | undefined;
-    stockOutExamine: number | undefined;
-    labelValue: string | undefined;
-    createTime: string | undefined;
-    createBy: string | undefined;
-    updateTime: string | undefined;
-    updateBy: string | undefined;
-  }
-  //初始化
-  const formState: UnwrapRef<FormState> = reactive({
-    id: undefined,
-    number: undefined,
-    name: undefined,
-    mainBy: undefined,
-    phone: undefined,
-    address: undefined,
-    bsStatus: 'A',
-    mark: undefined,
-    labelValue: undefined,
-    stockInExamine: undefined,
-    stockOutExamine: undefined,
-    updateBy: undefined,
-    updateTime: undefined,
-    createBy: undefined,
-    createTime: undefined,
-  });
-
+  //规则
   const formRules = reactive({
     name: [{ required: true, message: '请输入仓库名称' }],
     number: [{ required: true, message: '请输入仓库编码' }],
   });
+  //初始化
+  const formData: StockProfileEntity = {
+    id: undefined,
+    number: '',
+    name: '',
+  };
+  const formStateInit = reactive({
+    data: formData,
+  });
+  let formState = toRef(formStateInit, 'data');
+  let resInit = toRef(formStateInit, 'data');
+
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('query', query);
@@ -231,99 +208,78 @@
   getParams();
 
   //接受参数
-  let rowId = useRoute().query.row?.toString();
+  let rowId = useRoute().query.row?.toString() || '';
   let hasId = ref<boolean>(false);
 
   //如果有id，则通过接口进入编辑页面。没有id——新增
-  const getListById = async (id) => {
+  const getListById = async () => {
     if (rowId) {
-      id = rowId;
       hasId.value = true;
+      const res = await getOneStockById({
+        params: rowId,
+      });
+      formState.value = cloneDeep(res);
+      resInit.value = cloneDeep(res);
+      console.log('resInit', resInit.value);
+      console.log('formState.value', formState.value);
+      //创建状态
+      if (rowId && formState.value.bsStatus === 'A') {
+        showExam.value = true;
+        showUnExam.value = false;
+      } else if (rowId && formState.value.bsStatus === 'B') {
+        //审核状态
+        showExam.value = false;
+        showUnExam.value = true;
+        showSubmit.value = false;
+      }
+      if (formState.value.bsStatus === 'A') {
+        formState.value.labelValue = '创建';
+      } else {
+        formState.value.labelValue = '已审核';
+      }
     }
-    const res: any = await getIdStockList({
-      params: id,
-    });
-    formState.number = res.number;
-    formState.name = res.name;
-    formState.mainBy = res.mainBy;
-    formState.phone = res.phone;
-    formState.address = res.address;
-    formState.bsStatus = res.bsStatus;
-    //创建状态
-    if (rowId && res.bsStatus === 'A') {
-      showExam.value = true;
-      showUnExam.value = false;
-    } else if (rowId && res.bsStatus === 'B') {
-      //审核状态
-      showExam.value = false;
-      showUnExam.value = true;
-      showSubmit.value = false;
-    }
-    if (formState.bsStatus === 'A') {
-      formState.labelValue = '创建';
-    } else {
-      formState.labelValue = '已审核';
-    }
-    formState.stockInExamine = res.stockInExamine;
-    formState.stockOutExamine = res.stockOutExamine;
-    formState.createTime = res.createTime;
-    formState.createBy = res.createBy;
-    formState.updateTime = res.updateTime;
-    formState.updateBy = res.updateBy;
   };
 
-  getListById(rowId);
+  const stockHandle = async () => {
+    //修改
+    if (rowId) {
+      await getListById();
+    }
+  };
+  stockHandle();
   //保存事件
   const onSubmit = async () => {
-    let newData = {
-      id: rowId,
-      number: formState.number,
-      name: formState.name,
-      mainBy: formState.mainBy,
-      phone: formState.phone,
-      address: formState.address,
-      bsStatus: formState.bsStatus,
-      mark: formState.mark,
-      stockInExamine: formState.stockInExamine,
-      stockOutExamine: formState.stockOutExamine,
-      createTime: formState.createTime,
-      createBy: formState.createBy,
-      updateTime: formState.updateTime,
-      updateBy: formState.updateBy,
-    };
     if (!rowId) {
-      if (!formState.name || !formState.number) {
+      if (!formState.value.name || !formState.value.number) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
           const addList = await addStockList({
-            params: newData,
+            params: formState.value,
           });
           if (addList.id != null) {
-            createMessage.success('添加成功');
-            // back();
             showExam.value = true;
-            rowId = addList.id;
-            await getListById(rowId);
+            await getListById();
+            createMessage.success('添加成功');
           }
         } catch (e) {
           console.log('失败', e);
         }
       }
     } else {
-      newData.id = rowId;
-      if (!formState.name || !formState.number) {
+      formState.value.id = rowId;
+      if (!formState.value.name || !formState.value.number) {
         createMessage.error('必填字段不能为空');
       } else {
         try {
           const updateList = async () => {
             await updateStockList({
-              params: newData,
+              params: formState.value,
             });
           };
           await updateList();
+          await getListById();
           createMessage.success('修改成功');
-          // back();
         } catch (e) {
           console.log('失败', e);
         }
@@ -340,38 +296,42 @@
   };
   //审核功能
   const onExam = async () => {
+    console.log('ssssssss', resInit.value == formState.value);
+    console.log('resInit', resInit.value);
     const type = await VXETable.modal.confirm('您确定要审核当前物料吗?');
     if (type == 'confirm') {
-      if (formState.labelValue === 'A' || formState.labelValue === '创建') {
-        try {
-          const auditEvent = async () => {
-            await auditStockList({
-              params: {
-                id: rowId,
-              },
-            });
-          };
-          await auditEvent();
-          showSubmit.value = false;
-          showExam.value = false;
-          showUnExam.value = true;
-          createMessage.success('审核成功');
-          await getListById(rowId);
-          // back();
-        } catch (e) {
-          console.log('失败', e);
+      if (formState.value === resInit.value) {
+        if (formState.value.labelValue === 'A' || formState.value.labelValue === '创建') {
+          try {
+            const auditEvent = async () => {
+              await auditStockList({
+                params: {
+                  id: rowId,
+                },
+              });
+            };
+            await auditEvent();
+            showSubmit.value = false;
+            showExam.value = false;
+            showUnExam.value = true;
+            await getListById();
+            createMessage.success('审核成功');
+          } catch (e) {
+            console.log('失败', e);
+          }
         }
+      } else {
+        createMessage.error('您修改的数据还未保存');
       }
     } else {
-      createMessage.error('该物料已审核，无需再次审核');
-      // back();
+      console.log('取消');
     }
   };
   //反审核功能
   const unExam = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核当前物料吗?');
     if (type == 'confirm') {
-      if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
+      if (formState.value.labelValue === 'B' || formState.value.labelValue === '已审核') {
         try {
           const unAuditEvent = async () => {
             await unAuditStockList({
@@ -385,14 +345,12 @@
           showExam.value = true;
           showUnExam.value = false;
           createMessage.success('反审核成功');
-          await getListById(rowId);
-          // back();
+          await getListById();
         } catch (e) {
           console.log('失败', e);
         }
       } else {
-        createMessage.error('该物料已反审核，无需再次反审核');
-        // back();
+        console.log('取消');
       }
     }
   };

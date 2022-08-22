@@ -635,8 +635,7 @@
         }
       }
     } else {
-      createMessage.error('该物料已审核，无需再次审核');
-      // back();
+      console.log('取消');
     }
   };
   //反审核功能
@@ -664,8 +663,7 @@
           console.log('失败', e);
         }
       } else {
-        createMessage.error('该物料已反审核，无需再次反审核');
-        // back();
+        console.log('取消');
       }
     }
   };

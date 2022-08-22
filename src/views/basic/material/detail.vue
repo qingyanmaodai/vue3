@@ -62,7 +62,7 @@
                   class="item"
                 >
                   <ExInput
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     autocomplete="off"
                     class="input"
                     placeholder="请选择基本单位"
@@ -86,7 +86,7 @@
                     class="input"
                     placeholder="请选择物料分组"
                     label="物料分组"
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     v-model:value="formState.groupName"
                     :disabled="showUnExam"
                     @search="onGroupSearch(formState.groupName)"
@@ -119,7 +119,7 @@
                     autocomplete="off"
                     placeholder="请选择重量单位"
                     label="重量单位"
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     v-model:value="formState.weightName"
                     :disabled="showUnExam"
                     @search="onStock('weightUnit')"
@@ -149,13 +149,12 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
-                    name="bsStatus"
-                    :disabled="true"
+                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
+                  <Select
+                    v-model:value="formState.bsStatus"
+                    :options="config.DATA_STATUS"
+                    class="select"
+                    disabled
                   />
                 </a-form-item>
               </Col>
@@ -189,7 +188,7 @@
                     class="input"
                     placeholder="请选择仓库"
                     label="仓库"
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     v-model:value="formState.stockName"
                     :disabled="showUnExam"
                     @search="onStock('stock')"
@@ -210,7 +209,7 @@
                     class="input"
                     placeholder="请选择分仓"
                     label="分仓"
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     v-model:value="formState.subStockName"
                     :disabled="hasSub"
                     @search="onStock('sub')"
@@ -231,7 +230,7 @@
                     class="input"
                     placeholder="请选择仓位"
                     label="仓位"
-                    :show="!showUnExam"
+                    :show="showUnExam"
                     v-model:value="formState.bdStockLocationName"
                     :disabled="hasLocation"
                     @search="onStock('location')"
@@ -365,7 +364,7 @@
                       class="input"
                       placeholder="请选择检验方案"
                       label="检验方案"
-                      :show="!showUnExam"
+                      :show="showUnExam"
                       v-model:value="formState.bdExamineName"
                       :disabled="showUnExam"
                       @search="onStock('plan')"
@@ -522,7 +521,6 @@
     auditMatTable,
     getMatTableById,
     getMatTableUnit,
-    MatProfileEntity,
     unAuditMatTable,
     updateMatTable,
   } from '/@/api/matTable';
@@ -573,11 +571,95 @@
   const showExam = ref<boolean>(false); //审核
   const showSubmit = ref<boolean>(true); //保存
 
+  //对应输入框绑定的值接口类型
+  interface FormState {
+    id?: string | undefined;
+    number: string | undefined;
+    name: string | undefined;
+    shortName: string | undefined;
+    baseUnitName: string | undefined;
+    baseUnitId: string | undefined;
+    groupId: string | undefined;
+    groupName: string | undefined;
+    attr: string | undefined;
+    weightUnitId: string | undefined;
+    weightName: string | undefined;
+    netWeight: number | undefined;
+    model: string | undefined;
+    bsStatus: string | undefined;
+    labelValue: string | undefined;
+    oldMatNumber: number | undefined;
+    mark: string | undefined;
+    node: string | undefined;
+    stockId: string | undefined;
+    stockName: string | undefined;
+    bdStock: string | undefined;
+    subStockId: string | undefined;
+    subStockName: string | undefined;
+    bdSubStock: string | undefined;
+    bdStockLocation: string | undefined;
+    bdStockLocationId: string | undefined;
+    bdStockLocationName: string | undefined;
+    enableSn: number | undefined;
+    enableBatch: number | undefined;
+    storagePeriod: number | undefined;
+    minStockNum: number | undefined;
+    maxStockNum: number | undefined;
+    safeStockNum: number | undefined;
+    examineId: string | undefined;
+    bdExamineName: string | undefined;
+    stockInExamine: number | undefined;
+    stockOutExamine: number | undefined;
+    produceExamine: number | undefined;
+    createTime: string | undefined;
+    createBy: string | undefined;
+    updateTime: string | undefined;
+    updateBy: string | undefined;
+  }
   //初始化
-  const formState: UnwrapRef<MatProfileEntity> = reactive({
-    id: '0',
-    number: '',
-    name: '',
+  const formState: UnwrapRef<FormState> = reactive({
+    id: undefined,
+    number: undefined,
+    name: undefined,
+    shortName: undefined,
+    baseUnitName: undefined,
+    baseUnitId: undefined,
+    groupId: undefined,
+    groupName: undefined,
+    attr: 'A',
+    weightUnitId: undefined,
+    weightName: undefined,
+    netWeight: undefined,
+    model: undefined,
+    bsStatus: 'A',
+    labelValue: undefined,
+    oldMatNumber: undefined,
+    mark: undefined,
+    node: undefined,
+    bdStock: undefined,
+    bdSubStock: undefined,
+    stockId: undefined,
+    stockName: undefined,
+    subStockId: undefined,
+    subStockName: undefined,
+    bdStockLocation: undefined,
+    bdStockLocationId: undefined,
+    bdStockLocationName: undefined,
+    enableSn: undefined,
+    enableBatch: undefined,
+    storagePeriod: undefined,
+    minStockNum: undefined,
+    maxStockNum: undefined,
+    safeStockNum: undefined,
+    examineId: undefined,
+    bdExamineName: undefined,
+    stockInExamine: undefined,
+    stockOutExamine: undefined,
+    produceExamine: undefined,
+    updateBy: undefined,
+    updateTime: undefined,
+    createBy: undefined,
+    createTime: undefined,
   });
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
   //重新物料分组赋值
@@ -1123,8 +1205,7 @@
         }
       }
     } else {
-      createMessage.error('该物料已审核，无需再次审核');
-      // back();
+      console.log('取消');
     }
   };
   //反审核功能
@@ -1153,8 +1234,7 @@
           console.log('失败', e);
         }
       } else {
-        createMessage.error('该物料已反审核，无需再次反审核');
-        // back();
+        console.log('取消');
       }
     }
   };
