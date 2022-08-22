@@ -1,8 +1,8 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams } from "/@/api/apiLink";
+import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface ExaProjectEntity {
+export interface ExaProjectEntity extends PublicModel {
   id: string;
   number: string;
   name: string;
@@ -10,12 +10,6 @@ export interface ExaProjectEntity {
   description?: string;
   groupId?: string | undefined;
   groupName?: string;
-  bsStatus?: string;
-  mark?: string;
-  createTime?: string;
-  createBy?: string;
-  updateTime?: string;
-  updateBy?: string;
 }
 /**
  * 获取表格信息

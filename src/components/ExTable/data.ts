@@ -163,7 +163,7 @@ export const exaColumns = [
   { field: 'number', title: '项目编码', slots: { default: 'number' }, sortable: true },
   { field: 'name', title: '项目名称', sortable: true },
   { field: 'description', title: '描述', sortable: true },
-  { field: 'isOpen', title: '启用状态', sortable: true },
+  { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
   {
     field: 'bsStatus',
     title: '数据状态',

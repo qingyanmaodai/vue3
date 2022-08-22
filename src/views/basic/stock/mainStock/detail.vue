@@ -65,7 +65,7 @@
                     placeholder="请输入联系电话"
                     :disabled="showUnExam"
                     onkeyup="value=value.replace(/[^\d\-\d]/g,'')"
-                    maxlength="20"
+                    :maxlength="20"
                   />
                 </a-form-item>
               </Col>
@@ -84,12 +84,10 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
+                  <Select
                     v-model:value="formState.bsStatus"
-                    name="name"
+                    :options="config.DATA_STATUS"
+                    class="select"
                     disabled
                   />
                 </a-form-item>
@@ -98,7 +96,7 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea
+                  <TextArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
@@ -157,11 +155,12 @@
     Row,
     TabPane,
     Tabs,
-    Textarea,
+    Select,
   } from 'ant-design-vue';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { VXETable } from 'vxe-table';
+  import { config } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
     addStockList,
@@ -174,9 +173,9 @@
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
+  const TextArea = Input.TextArea;
 
   const router = useRouter();
-  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
 
   //审核状态
@@ -234,7 +233,6 @@
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
-  console.log('编辑id', rowId);
 
   //如果有id，则通过接口进入编辑页面。没有id——新增
   const getListById = async (id) => {

@@ -96,11 +96,12 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="物料属性：" ref="attr" name="attr" class="item">
-                  <Select v-model:value="formState.attr" class="select" :disabled="showUnExam">
-                    <SelectOption value="A">自制</SelectOption>
-                    <SelectOption value="B">委外</SelectOption>
-                    <SelectOption value="C">虚拟</SelectOption>
-                  </Select>
+                  <Select
+                    v-model:value="formState.attr"
+                    class="select"
+                    :options="config.MATERIAL_ATTR"
+                    :disabled="showUnExam"
+                  />
                 </a-form-item>
               </Col>
             </Row>
@@ -149,10 +150,12 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select v-model:value="formState.bsStatus" class="select" disabled>
-                    <SelectOption value="A">创建</SelectOption>
-                    <SelectOption value="B">已审核</SelectOption>
-                  </Select>
+                  <Select
+                    v-model:value="formState.bsStatus"
+                    :options="config.DATA_STATUS"
+                    class="select"
+                    disabled
+                  />
                 </a-form-item>
               </Col>
               <Col :span="8">
@@ -239,7 +242,7 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea
+                  <TextArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
@@ -493,11 +496,9 @@
     Modal,
     Row,
     Select,
-    SelectOption,
     Switch,
     TabPane,
     Tabs,
-    Textarea,
     TreeSelect,
   } from 'ant-design-vue';
   import { ExInput } from '/@/components/ExInput';
@@ -536,6 +537,7 @@
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
   const ACard = Card;
+  const TextArea = Input.TextArea;
 
   const router = useRouter();
   //空参数
@@ -672,7 +674,6 @@
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
-    groupId: [{ required: true, message: '请选择物料分组' }],
     baseUnitId: [{ required: true, message: '请选择基本单位' }],
     attr: [{ required: true, message: '请选择物料属性' }],
   });
@@ -947,7 +948,7 @@
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
 
-  //如果有id，则通过getMatTableById，进入编辑页面。没有id——新增
+  //如果有id，进入编辑页面。没有id——新增
   const getListById = async (id) => {
     if (rowId) {
       id = rowId;

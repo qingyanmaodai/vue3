@@ -7,7 +7,7 @@
           :search="true"
           :tree-data="treeData"
           ref="treeRef"
-          title="分组列表"
+          title="检验类别"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"
@@ -278,7 +278,7 @@
   const addTableEvent = () => {
     let groupId = treeRef.value.getSelectedKeys();
     go({
-      path: PageEnum.MATERIAL_ADD_AND_EDIT,
+      path: PageEnum.EXA_PROJECT_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -288,7 +288,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.MATERIAL_ADD_AND_EDIT,
+      path: PageEnum.EXA_PROJECT_DETAIL,
       query: {
         row: row.id,
       },

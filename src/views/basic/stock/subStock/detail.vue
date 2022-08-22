@@ -86,7 +86,7 @@
                     placeholder="请输入联系电话"
                     :disabled="showUnExam"
                     onkeyup="value=value.replace(/[^\d\-\d]/g,'')"
-                    maxlength="20"
+                    :maxlength="20"
                   />
                 </a-form-item>
               </Col>
@@ -107,19 +107,17 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
+                  <Select
                     v-model:value="formState.bsStatus"
-                    name="name"
+                    :options="config.DATA_STATUS"
+                    class="select"
                     disabled
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea
+                  <TextArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
@@ -184,9 +182,9 @@
     Input,
     LayoutHeader,
     Row,
+    Select,
     TabPane,
     Tabs,
-    Textarea,
   } from 'ant-design-vue';
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
@@ -203,6 +201,7 @@
   import { unitGridOptions, stockColumns } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { cloneDeep } from 'lodash-es';
+  import { config } from '/@/utils/publicParamConfig';
   import { getStockOption, getStockTable } from '/@/api/mainStock';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
 
@@ -210,9 +209,9 @@
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
+  const TextArea = Input.TextArea;
 
   const router = useRouter();
-  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //基础信息查询组件ref
   const basicSearchRef: any = ref(null);
@@ -271,19 +270,8 @@
     name: [{ required: true, message: '请输入分仓名称' }],
     number: [{ required: true, message: '请输入分仓编码' }],
     stockId: [{ required: true, message: '请输入所属仓库' }],
-    // phone: [
-    //   {
-    //     required: false,
-    //   },
-    //   {
-    //     pattern: /^[3456789]\d{6-9}$/,
-    //     message: '手机格式错误！',
-    //   },
-    // ],
   });
-  // const getValueFromEvent = (e) => {
-  //   return e.target.value.replace(/[^0-9]/gi, '');
-  // };
+
   let getParams = () => {
     let query = router.currentRoute.value.query;
     console.log('query', query);
@@ -345,7 +333,6 @@
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
-  console.log('编辑id', rowId);
 
   //如果有id，则通过接口进入编辑页面。没有id——新增
   const getListById = async (id) => {
@@ -359,8 +346,6 @@
     formState.number = res.number;
     formState.name = res.name;
     formState.stockId = res.stockId;
-    // formState.stockId = res.bdStock.id;
-    // formState.stockName = res.bdStock.name;
     formState.stockId = res.stockId;
     if (formState.stockId) {
       formState.stockId = res.bdStock.id;
@@ -433,7 +418,6 @@
             // back();
             showExam.value = true;
             rowId = addList.id;
-            console.log('newdata', rowId);
             await getListById(rowId);
           }
         } catch (e) {
