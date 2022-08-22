@@ -44,7 +44,7 @@
       </template>
       <template #open="{ row }">
         <Tag :color="row.isOpen === '1' ? 'processing' : 'default'" v-if="row.isOpen">{{
-          row.isOpen === '1' ? '启用' : '禁止'
+          row.isOpen === 1 ? '启用' : '禁止'
         }}</Tag>
       </template>
       <template #attr="{ row }"

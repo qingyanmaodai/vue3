@@ -3,7 +3,7 @@ import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
 export interface ExaProjectEntity extends PublicModel {
-  id: string;
+  id: string | undefined;
   number: string;
   name: string;
   isOpen?: number;
@@ -14,7 +14,7 @@ export interface ExaProjectEntity extends PublicModel {
 /**
  * 获取表格信息
  */
-export function getExaProjectList(
+export function getDataList(
   json: RequestData<SearchParams[]>,
   mode: ErrorMessageMode = 'message',
 ) {
@@ -35,7 +35,7 @@ export function getExaProjectList(
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_OPTIONS_LIST,
+      url: Url.GET_EXA_PROJECT_OPTIONS_LIST,
       data: json,
     },
     {
@@ -47,13 +47,13 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加物料信息
  */
-export function addExaProject(
+export function add(
   json: RequestData<ExaProjectEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<Result>(
+  return defHttp.post<ExaProjectEntity>(
     {
-      url: Url.ADD_TABLE_LIST,
+      url: Url.ADD_EXA_PROJECT,
       data: json,
     },
     {
@@ -65,13 +65,13 @@ export function addExaProject(
 /**
  * 编辑物料信息
  */
-export function updateExaProject(
+export function update(
   json: RequestData<ExaProjectEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<Result>(
+  return defHttp.post<ExaProjectEntity>(
     {
-      url: Url.UPDATE_TABLE_LIST,
+      url: Url.UPDATE_EXA_PROJECT,
       data: json,
     },
     {
@@ -83,8 +83,8 @@ export function updateExaProject(
 /**
  * 审核物料信息
  */
-export function auditExaProject(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
+export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<ExaProjectEntity>(
     {
       url: Url.AUDIT_EXA_PROJECT,
       data: json,
@@ -98,7 +98,7 @@ export function auditExaProject(json: RequestData<object>, mode: ErrorMessageMod
 /**
  * 批量审核物料信息
  */
-export function auditExaProjectBatch(
+export function auditBatch(
   json: RequestData<object>,
   mode: ErrorMessageMode = 'message',
 ) {
@@ -109,7 +109,7 @@ export function auditExaProjectBatch(
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: true,
+      isTransformResponse: false,
     },
   );
 }
@@ -117,9 +117,9 @@ export function auditExaProjectBatch(
  * 查询单条
  */
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
+  return defHttp.post<ExaProjectEntity>(
     {
-      url: Url.GET_TABLE_BY_ID,
+      url: Url.QUERY_ONE_EXA_PROJECT,
       data: json,
     },
     {
@@ -139,14 +139,14 @@ export function delMatTableById(json: RequestData<string>, mode: ErrorMessageMod
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: true,
+      isTransformResponse: false,
     },
   );
 }
 /**
  * 删除多条
  */
-export function delExaProjectBatch(
+export function delBatch(
   json: RequestData<Array<string>>,
   mode: ErrorMessageMode = 'message',
 ) {
@@ -165,7 +165,7 @@ export function delExaProjectBatch(
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
+  return defHttp.post<ExaProjectEntity>(
     {
       url: Url.UNAUDIT_EXA_PROJECT,
       data: json,

@@ -52,7 +52,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="basic-stock-index">
+<script setup lang="ts" name="basic-stockLocation-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';

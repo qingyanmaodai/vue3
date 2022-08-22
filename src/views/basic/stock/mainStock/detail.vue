@@ -64,7 +64,7 @@
                     v-model:value="formState.phone"
                     placeholder="请输入联系电话"
                     :disabled="showUnExam"
-                    onkeyup="value=value.replace(/[^\d\-\d]/g,'')"
+                    onkeyup="value=value.replace(/[^\d\-]/g,'')"
                     :maxlength="20"
                   />
                 </a-form-item>
@@ -83,12 +83,13 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select
-                    v-model:value="formState.bsStatus"
-                    :options="config.DATA_STATUS"
-                    class="select"
-                    disabled
+                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
+                  <Input
+                    allowClear
+                    class="input"
+                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                    name="bsStatus"
+                    :disabled="true"
                   />
                 </a-form-item>
               </Col>
@@ -155,7 +156,6 @@
     Row,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';

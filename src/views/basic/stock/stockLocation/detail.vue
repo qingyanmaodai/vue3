@@ -68,7 +68,7 @@
                     class="input"
                     placeholder="请选择所属仓库"
                     label="仓库"
-                    :show="showUnExam"
+                    :show="!showUnExam"
                     v-model:value="formState.stockName"
                     :disabled="showUnExam"
                     @search="onStock('stock')"
@@ -89,7 +89,7 @@
                     class="input"
                     placeholder="请选择所属分仓"
                     label="仓库"
-                    :show="showUnExam"
+                    :show="!showUnExam"
                     v-model:value="formState.subStockName"
                     :disabled="hasSub"
                     @search="onStock('sub')"
@@ -98,12 +98,13 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select
-                    v-model:value="formState.bsStatus"
-                    :options="config.DATA_STATUS"
-                    class="select"
-                    disabled
+                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
+                  <Input
+                    allowClear
+                    class="input"
+                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                    name="bsStatus"
+                    :disabled="true"
                   />
                 </a-form-item>
               </Col>
@@ -177,7 +178,6 @@
     Input,
     LayoutHeader,
     Row,
-    Select,
     TabPane,
     Tabs,
   } from 'ant-design-vue';

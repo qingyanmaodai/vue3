@@ -1,8 +1,8 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface MatProfileEntity {
+export interface MatProfileEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -16,13 +16,17 @@ export interface MatProfileEntity {
   weightName?: string;
   netWeight?: number;
   model?: string;
-  bsStatus?: string;
   oldMatNumber?: number;
-  mark?: string;
   node?: string;
   stockId?: string;
   bdStock?: string;
   subStockId?: string;
+  stockName?: string;
+  subStockName?: string;
+  bdStockLocation?: string;
+  labelValue?: string;
+  examineId?: string;
+  bdExamineName?: string;
   bdSubStock?: string;
   bdStockLocationId?: string;
   bdStockLocationName?: string;
@@ -35,11 +39,6 @@ export interface MatProfileEntity {
   stockInExamine?: number;
   stockOutExamine?: number;
   produceExamine?: number;
-  createTime?: string;
-  createBy?: string;
-  updateTime?: string;
-  updateBy?: string;
-  examineId?: string;
 }
 /**
  * 获取表格信息
