@@ -5,9 +5,15 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus">保存</Button>
-        <Button danger class="button" @click="onExam" v-if="showExam">审核</Button>
-        <Button danger class="button" @click="unExam" v-if="showUnExam">反审核</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="onExam" v-if="formState.bsStatus === 'A'"
+          >审核</Button
+        >
+        <Button danger class="button" @click="unExam" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
       </div>
     </LayoutHeader>
     <a-card class="content">
@@ -36,7 +42,7 @@
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入项目名称"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -63,6 +69,18 @@
               </Col>
             </Row>
             <Row>
+              <Col :span="8">
+                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
+                  <Input
+                    allowClear
+                    class="input"
+                    autocomplete="off"
+                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                    name="bsStatus"
+                    :disabled="true"
+                  />
+                </a-form-item>
+              </Col>
               <Col :span="8">
                 <a-form-item label="检验描述：" ref="description" name="description" class="item">
                   <a-textArea
@@ -163,6 +181,7 @@
   import { ExaProjectEntity } from '/@/api/exa';
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { config } from '/@/utils/publicParamConfig';
   import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
   const { createMessage } = useMessage();
   const AModal = Modal;
