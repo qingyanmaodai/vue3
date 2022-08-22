@@ -5,7 +5,7 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="save" v-if="showSave">保存</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-show="showSave">保存</Button>
         <Button danger class="button" @click="handleAudit(0)" v-show="showAudit && formState.id"
           >审核</Button
         >
@@ -136,7 +136,12 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="供应商等级：" ref="level" name="level" class="item">
-                  <Select v-model:value="formState.level" class="select" placeholder="请选择">
+                  <Select
+                    v-model:value="formState.level"
+                    class="select"
+                    :disabled="isDisable"
+                    placeholder="请选择"
+                  >
                     <SelectOption
                       v-for="(item, index) in config['SUPPLIER_GRADE']"
                       :key="index"
@@ -276,13 +281,12 @@
   import { config } from '/@/utils/publicParamConfig'; //公共配置ts
   import { useRoute, useRouter } from 'vue-router'; //路由
   const router = useRouter();
-  import { getOneSupplier, saveSupplier, SupplierEntity } from '/@/api/supplier'; //供应商api
+  import { getOneSupplier, save, update, audit, unAudit, SupplierEntity } from '/@/api/supplier'; //供应商api
   import { getSupplierGroupTree, SupplierGroupEntity } from '/@/api/supplierGroup'; //供应商分组api
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
-  import { auditMatTable } from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
   import { CountryEntity, getCountryTree } from '/@/api/public';
 
@@ -360,6 +364,11 @@
     const res = await getOneSupplier(supId);
     if (res) {
       formState.value = res;
+      if (formState.value.bsStatus === 'B') {
+        isDisable.value = true;
+        showAudit.value = false;
+        showSave.value = false;
+      }
       //回显地区信息
       await echoDistrict();
     }
@@ -368,7 +377,7 @@
   /**
    * 保存事件
    */
-  const save = async () => {
+  const onSubmit = async () => {
     formState.value.provincial = tempFormState.districtArr[0]
       ? tempFormState.districtArr[0]
       : undefined; //省
@@ -381,22 +390,15 @@
     console.log(formState.value);
     try {
       await formRef.value.validateFields();
-      //保存操作
+      let res;
       if (supplierId.value) {
-        const res = await saveSupplier({
-          params: formState.value,
-        });
-        console.log(res);
+        res = await save({ params: formState.value });
       } else {
-        const res = await saveSupplier({
-          params: formState.value,
-        });
-        if (res.id) {
-          await getSupplier(res.id);
-          createMessage.success('新增供应商成功');
-        }
-        console.log(res);
+        res = await update({ params: formState.value });
       }
+      console.log(res);
+      await getSupplier(res.id);
+      createMessage.success('操作成功');
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
@@ -407,30 +409,23 @@
    * @param flag 0.审核 1.反审核
    */
   const handleAudit = async (flag: number) => {
-    const type = await VXETable.modal.confirm('确定审核当前供应商吗?');
+    let mess = flag === 1 ? '反审核' : '审核';
+    const type = await VXETable.modal.confirm(`确定${mess}当前供应商吗?`);
     if (type == 'confirm') {
-      if (formState.value.bsStatus === 'A') {
-        try {
-          await auditMatTable({
-            params: {
-              id: supplierId.value,
-            },
-          });
-          showSave.value = false;
-          showAudit.value = false;
-          createMessage.success('审核成功');
-          const res = await getOneSupplier(supplierId.value);
-          console.log('getOneSupplier', res);
-        } catch (e) {
-          console.log('失败', e);
-        }
+      let data;
+      if (flag === 0) {
+        data = await audit({ params: formState.value });
+        isDisable.value = true;
+        showAudit.value = false;
+        showSave.value = false;
+      } else {
+        data = await unAudit({ params: formState.value });
+        isDisable.value = false;
+        showAudit.value = true;
+        showSave.value = true;
       }
-    } else {
-      createMessage.error('该物料已审核，无需再次审核');
-      // back();
-    }
-    if (flag === 0) {
-    } else {
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
     }
   };
 
@@ -594,13 +589,7 @@
   };
 </script>
 <style scoped lang="less">
-  .switchDiv {
-    width: 318px;
-  }
   .item {
-    flex-flow: nowrap;
-  }
-  .switch {
     flex-flow: nowrap;
   }
   .input {

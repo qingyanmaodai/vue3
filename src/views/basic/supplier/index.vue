@@ -81,12 +81,12 @@
   const GridOptions = gridOptions;
   import { Pager } from 'vxe-table';
   import {
-    auditSupplier,
+    audit,
     batchAuditSupplier,
     batchUnAuditSupplier,
     deleteSupplier,
     getSupplierData,
-    unAuditSupplier,
+    unAudit,
     batchDeleteSupplier,
     exportSupplierData,
     supplierImportModel,
@@ -221,7 +221,7 @@
    * @param row
    */
   const auditRowEvent = async (row) => {
-    await auditSupplier({
+    await audit({
       params: {
         id: row.id,
       },
@@ -249,7 +249,7 @@
    * @param row
    */
   const unAuditRowEvent = async (row: any) => {
-    await unAuditSupplier({
+    await unAudit({
       params: {
         id: row?.id,
       },

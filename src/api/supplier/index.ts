@@ -54,9 +54,25 @@ export function getSupplierData(
 }
 
 /**
- * 审核供应商
+ * 保存供应商
  */
-export function saveSupplier(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function save(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.SUPPLIER_SAVE,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
+ * 修改供应商
+ */
+export function update(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.SUPPLIER_SAVE,
@@ -72,10 +88,26 @@ export function saveSupplier(json: RequestData<object>, mode: ErrorMessageMode =
 /**
  * 审核供应商
  */
-export function auditSupplier(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.SUPPLIER_AUDIT,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
+ * 反审核供应商
+ */
+export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.SUPPLIER_UN_AUDIT,
       data: json,
     },
     {
@@ -92,22 +124,6 @@ export function batchAuditSupplier(json: RequestData<object>, mode: ErrorMessage
   return defHttp.post<Result>(
     {
       url: Url.SUPPLIER_BATCH_AUDIT,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-
-/**
- * 反审核物料信息
- */
-export function unAuditSupplier(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.SUPPLIER_UN_AUDIT,
       data: json,
     },
     {
