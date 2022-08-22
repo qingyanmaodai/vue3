@@ -26,6 +26,7 @@ export enum Url {
   //供应商
   SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
   SUPPLIER_GET_ONE = '/stock/bd-supplier/query-one', //查询单个供应商
+  SUPPLIER_SAVE = '/stock/bd-supplier/save', //查询单个供应商
   SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
   SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
   SUPPLIER_UN_AUDIT = '/stock/bd-supplier/un-audit', //供应反审核

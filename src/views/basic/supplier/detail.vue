@@ -13,7 +13,7 @@
     <a-card class="content">
       <Tabs v-model:activeKey="activeTabs" class="tabs">
         <TabPane key="basicInfo" tab="基本信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form :model="formState" :rules="formRules" ref="formRef">
             <Row>
               <Col :span="8">
                 <a-form-item label="编码：" ref="number" name="number" class="item">
@@ -54,7 +54,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="联系人：" ref="number" name="number" class="item">
+                <a-form-item label="联系人：" ref="contact" name="contact" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -66,7 +66,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="联系电话：" ref="name" name="name" class="item">
+                <a-form-item label="联系电话：" ref="phone" name="phone" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -79,7 +79,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="责任人：" ref="shortName" name="shortName" class="item">
+                <a-form-item label="责任人：" ref="mainBy" name="mainBy" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -117,7 +117,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="详细地址：" ref="shortName" name="shortName" class="item">
+                <a-form-item label="详细地址：" ref="address" name="address" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -130,7 +130,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="供应商等级：" ref="shortName" name="shortName" class="item">
+                <a-form-item label="供应商等级：" ref="level" name="level" class="item">
                   <Input
                     allowClear
                     class="input"
@@ -144,8 +144,8 @@
                 <a-form-item
                   label="供应商分组："
                   v-model:value="formState.groupId"
-                  ref="groupId"
-                  name="groupId"
+                  ref="groupName"
+                  name="groupName"
                   class="item"
                 >
                   <ExInput
@@ -177,7 +177,7 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea
+                  <TextArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
@@ -222,11 +222,11 @@
       </Tabs>
     </a-card>
     <!--  供应商分组弹框  -->
-    <a-modal v-model:visible="supplierGroupModel" title="物料分组" ref="node">
+    <a-modal v-model:visible="supplierGroupModel" title="供应商分组" ref="node">
       <a-tree-select
         loading
         show-search
-        v-model:value="formState.node"
+        v-model:value="formState.groupId"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
         placeholder="请选择供应商分组"
@@ -254,12 +254,12 @@
     SelectOption,
     TabPane,
     Tabs,
-    Textarea,
     TreeSelect,
     Cascader,
   } from 'ant-design-vue'; //ant组件
   const AModal = Modal;
   const AForm = Form;
+  const TextArea = Input.TextArea;
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
   const ACard = Card;
@@ -270,49 +270,48 @@
   import { config } from '/@/utils/publicParamConfig'; //公共配置ts
   import { useRoute, useRouter } from 'vue-router'; //路由
   const router = useRouter();
-  import { getOneSupplier, SupplierEntity } from '/@/api/supplier'; //供应商api
+  import { getOneSupplier, saveSupplier, SupplierEntity } from '/@/api/supplier'; //供应商api
+  import { getSupplierGroupTree, SupplierGroupEntity } from '/@/api/supplierGroup'; //供应商分组api
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
   import { auditMatTable } from '/@/api/matTable';
+  import { cloneDeep } from 'lodash-es';
 
   /* data */
 
   //表单对象
   const formState: UnwrapRef<SupplierEntity> = reactive({
-    id: '',
-    number: '',
-    name: '',
-    shortName: '',
-    contact: '',
-    phone: '',
-    mainBy: '',
-    address: '',
-    country: '',
-    district: '',
-    level: '',
-    groupId: '',
-    groupName: '',
-    mark: '',
-    erpCode: '',
-    bsStatus: '',
-    isDelete: '',
-    createTime: '',
-    updateTime: '',
-    createBy: '',
-    updateBy: '',
-    tenantId: '',
+    id: undefined,
+    number: undefined,
+    name: undefined,
+    shortName: undefined,
+    contact: undefined,
+    phone: undefined,
+    mainBy: undefined,
+    address: undefined,
+    country: undefined,
+    district: undefined,
+    level: undefined,
+    groupId: undefined,
+    groupName: undefined,
+    mark: undefined,
+    erpCode: undefined,
+    bsStatus: undefined,
+    isDelete: undefined,
+    createTime: undefined,
+    updateTime: undefined,
+    createBy: undefined,
+    updateBy: undefined,
   });
   //表单必填规则配置
   const formRules = reactive({
     name: [{ required: true, message: '请输入供应商名称', trigger: 'blur' }],
     number: [{ required: true, message: '请输入供应商编码', trigger: 'blur' }],
-    groupId: [{ required: true, message: '请选择供应商分组', trigger: 'blur' }],
   });
-  const useForm = Form.useForm; //表单组件
-  const { resetFields, validate, validateInfos } = useForm(formState, formRules);
-  const rowId = ref<string>(''); //路由参数，明细Id
+  const formRef: any = ref<String | null>(null); //表单引用对象
+  const supplierId = ref<string>(''); //路由参数，供应商Id
   const treeData = ref<TreeItem>([]); //供应商分组数据
   const countryData = ref<object[]>([]); //国家数据
   const districtData = ref<object[]>([]); //地区数据
@@ -328,30 +327,42 @@
    * 页面加载
    */
   onMounted(() => {
-    rowId.value = useRoute().query.row?.toString() || '';
-    getSupplier();
+    supplierId.value = useRoute().query.row?.toString() || '';
+    if (supplierId.value) {
+      getSupplier();
+    }
   });
 
   /**
    * 获取供应商详细信息
    */
   const getSupplier = async () => {
-    const res = await getOneSupplier(rowId.value);
+    const res = await getOneSupplier(supplierId.value);
     console.log(res);
   };
 
   /**
    * 保存事件
    */
-  const save = () => {
-    console.log(rowId);
-    validate()
-      .then(() => {
-        createMessage.success('保存成功');
-      })
-      .catch((err) => {
-        console.log('error', err);
-      });
+  const save = async () => {
+    try {
+      const values = await formRef.value.validateFields();
+      console.log('Success:', values);
+      //保存操作
+      if (supplierId.value) {
+        const res = await saveSupplier({
+          params: formState,
+        });
+        console.log(res);
+      } else {
+        const res = await saveSupplier({
+          params: formState,
+        });
+        console.log(res);
+      }
+    } catch (errorInfo) {
+      console.log('Failed:', errorInfo);
+    }
   };
 
   /**
@@ -365,13 +376,13 @@
         try {
           await auditMatTable({
             params: {
-              id: rowId,
+              id: supplierId.value,
             },
           });
           showSave.value = false;
           showAudit.value = false;
           createMessage.success('审核成功');
-          const res = await getOneSupplier(rowId.value);
+          const res = await getOneSupplier(supplierId.value);
           console.log('getOneSupplier', res);
         } catch (e) {
           console.log('失败', e);
@@ -407,6 +418,7 @@
    * 供应商分组弹框
    */
   const onGroupSearch = () => {
+    getTree(); //获取分组数据
     supplierGroupModel.value = true;
   };
 
@@ -422,6 +434,27 @@
   };
 
   /**
+   * 获取树
+   */
+  const getTree = async () => {
+    const tree = await getSupplierGroupTree({ params: '0' });
+    runTree(tree);
+    console.log('tree', tree);
+    treeData.value = cloneDeep(tree);
+  };
+  /**
+   * 初始化树
+   * @param tree
+   */
+  const runTree = (tree: SupplierGroupEntity[]) => {
+    tree.forEach((item) => {
+      item.title = item.name;
+      item.key = item.id;
+      runTree(item.children || []);
+    });
+  };
+
+  /**
    * 清空事件
    */
   const onClear = () => {};
@@ -429,8 +462,6 @@
   const back = () => {
     router.go(-1);
   };
-  //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {});
 </script>
 <style scoped lang="less">
   .switchDiv {

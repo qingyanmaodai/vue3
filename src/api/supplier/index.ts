@@ -12,7 +12,7 @@ export interface SupplierEntity {
   mainBy?: string;
   address?: string;
   country?: string;
-  district?: string;
+  district?: [];
   level?: string;
   groupId?: string;
   groupName?: string;
@@ -51,6 +51,22 @@ export function getSupplierData(
   return defHttp.post<Result>(
     {
       url: Url.SUPPLIER_GET_DATA,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
+ * 审核供应商
+ */
+export function saveSupplier(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.SUPPLIER_SAVE,
       data: json,
     },
     {
