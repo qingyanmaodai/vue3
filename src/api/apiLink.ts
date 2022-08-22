@@ -29,7 +29,7 @@ export enum Url {
   SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
   SUPPLIER_UN_AUDIT = '/stock/bd-supplier/un-audit', //供应反审核
   SUPPLIER_BATCH_UN_AUDIT = '/stock/bd-supplier/batch-un-audit', //供应商批量反审核
-  SUPPLIER_DELETE = '/stock/bd-supplier/delete', //供应商批量删除
+  SUPPLIER_DELETE = '/stock/bd-supplier/delete', //供应商删除
   SUPPLIER_BATCH_DELETE = '/stock/bd-supplier/batch-delete', //供应商批量删除
   SUPPLIER_EXPORT_DATA = '/stock/bd-supplier/export-list', //供应商导出
   SUPPLIER_IMPORT = 'http://192.168.200.136:9999/stock/bd-supplier/import-list', //供应商导入
@@ -47,19 +47,19 @@ export enum Url {
   GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
 
   //仓库管理
-  AUDIT_STOCK_LIST = '/stock/bd-stock/audit',
-  BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-audit',
-  UN_AUDIT_STOCK_LIST = '/stock/bd-stock/un-audit',
-  UN_BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-un-audit',
-  DELETE_STOCK_LIST = '/stock/bd-stock/delete',
-  BATCH_DELETE_STOCK_LIST = '/stock/bd-stock/batch-delete',
+  AUDIT_STOCK_LIST = '/stock/bd-stock/audit', //审核
+  BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-audit', //批量审核
+  UN_AUDIT_STOCK_LIST = '/stock/bd-stock/un-audit', //反审核
+  UN_BATCH_AUDIT_STOCK_LIST = '/stock/bd-stock/batch-un-audit', //批量反审核
+  DELETE_STOCK_LIST = '/stock/bd-stock/delete', //删除
+  BATCH_DELETE_STOCK_LIST = '/stock/bd-stock/batch-delete', //批量删除
   GET_PAGE_STOCK_LIST = '/stock/bd-stock/list', //分页查询--获取仓库列表
-  GET_ID_STOCK_LIST = '/stock/bd-stock/query-one', //id查询
-  IMPORT_STOCK_LIST = '/stock/bd-stock/import-list',
-  IMPORT_MODEL_STOCK_LIST = '/stock/bd-stock/import-model',
-  EXPORT_STOCK_LIST = '/stock/bd-stock/export-list',
-  ADD_STOCK_LIST = '/stock/bd-stock/save',
-  UPDATE_STOCK_LIST = '/stock/bd-stock/update',
+  GET_ID_STOCK_LIST = '/stock/bd-stock/query-one', //查询单条
+  IMPORT_STOCK_LIST = 'http://192.168.200.136:9999/stock/bd-stock/import-list', //导入
+  IMPORT_MODEL_STOCK_LIST = '/stock/bd-stock/import-model', //导入模板下载
+  EXPORT_STOCK_LIST = '/stock/bd-stock/export-list', //导出
+  ADD_STOCK_LIST = '/stock/bd-stock/save', //添加
+  UPDATE_STOCK_LIST = '/stock/bd-stock/update', //编辑
 
   //质量检验
   ADD_EXA_GROUP = '/stock/bd-examine-group/save', //添加
@@ -83,8 +83,8 @@ export enum Url {
   DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/delete',
   BATCH_DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-delete',
   GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/getPageList', //获取分仓列表
-  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/getOne', //id查询
-  IMPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-list',
+  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/getOne', //查询单条
+  IMPORT_SUB_STOCK_LIST = 'http://192.168.200.136:9999/stock/bd-sub-stock/import-list',
   IMPORT_MODEL_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-model',
   EXPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/export-list',
   ADD_SUB_STOCK_LIST = '/stock/bd-sub-stock/save',
@@ -99,8 +99,8 @@ export enum Url {
   BATCH_DELETE_STOCK_LOCATION = '/stock/bd-stock-location/batch-delete',
   GET_PAGE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getPageList', //获取仓位列表
   // GET_LIST_STOCK_LOCATION = '/stock/bd-stock-location/list', //分页查询
-  GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getOne', //id查询
-  IMPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/import-list',
+  GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getOne', //查询单条
+  IMPORT_STOCK_LOCATION_LIST = 'http://192.168.200.136:9999/stock/bd-stock-location/import-list',
   IMPORT_MODEL_STOCK_LOCATION = '/stock/bd-stock-location/import-model',
   EXPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/export-list',
   ADD_STOCK_LOCATION_LIST = '/stock/bd-stock-location/save',

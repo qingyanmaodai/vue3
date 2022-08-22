@@ -120,9 +120,8 @@
   const paramsNull = { params: '' };
   //分组数据
   let treeData = ref<TreeItem[]>([]);
-  let importConfig = ref<string>('IMPORT_MATERIAL'); //导入上传文件api
-  // const groupId = ref(['']);
-  // const groupName = ref('');
+  //导入上传文件api
+  let importConfig = ref<string>('IMPORT_MATERIAL');
   //加载分组
   const refreshTree = async () => {
     const tree = await treeMatGroup({ params: '0' });

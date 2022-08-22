@@ -99,12 +99,10 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="数据状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
+                  <Select
                     v-model:value="formState.bsStatus"
-                    name="name"
+                    :options="config.DATA_STATUS"
+                    class="select"
                     disabled
                   />
                 </a-form-item>
@@ -113,7 +111,7 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <Textarea
+                  <TextArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
@@ -179,9 +177,9 @@
     Input,
     LayoutHeader,
     Row,
+    Select,
     TabPane,
     Tabs,
-    Textarea,
   } from 'ant-design-vue';
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
@@ -206,11 +204,11 @@
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
+  const TextArea = Input.TextArea;
 
   const router = useRouter();
   //空参数
   const paramsNull = { params: '' };
-  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //弹窗类型
   let modalType = ref<string>('');
@@ -445,7 +443,6 @@
   //接受参数
   let rowId = useRoute().query.row?.toString();
   let hasId = ref<boolean>(false);
-  console.log('编辑id', rowId);
 
   //如果有id，则通过接口，进入编辑页面。没有id——新增
   const getListById = async (id) => {
@@ -578,7 +575,6 @@
             // back();
             showExam.value = true;
             rowId = addList.id;
-            console.log('newdata', rowId);
             await getListById(rowId);
           }
         } catch (e) {

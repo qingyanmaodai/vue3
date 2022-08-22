@@ -45,7 +45,7 @@
                 "
                 v-model:value="search.rule"
                 placeholder="等于"
-                :options="optionsTimeRule"
+                :options="config.TIME_OPTION_RULE"
                 style="width: 100px"
                 :filterOption="filterOption"
               />
@@ -57,7 +57,7 @@
                 "
                 v-model:value="search.rule"
                 placeholder="包含"
-                :options="optionsRule"
+                :options="config.OPTION_RULE"
                 style="width: 100px"
                 :filterOption="filterOption"
               />
@@ -280,9 +280,6 @@
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
     emit('cellClickEvent', row.row);
   };
-  //一般类型/时间类型的查询规则--包含-等于
-  let optionsRule = config.OPTION_RULE;
-  let optionsTimeRule = config.TIME_OPTION_RULE;
   interface Search {
     startWith: string | undefined;
     fieldName: string | undefined;
