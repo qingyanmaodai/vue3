@@ -5,7 +5,7 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-if="showSubmit">保存</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus">保存</Button>
         <Button danger class="button" @click="onExam" v-if="showExam">审核</Button>
         <Button danger class="button" @click="unExam" v-if="showUnExam">反审核</Button>
       </div>
@@ -57,7 +57,7 @@
                     :value="formState.groupName"
                     :disabled="showUnExam"
                     @search="onGroupSearch(formState.groupName)"
-                    @clear="onClear(formState.groupId)"
+                    @clear="onClear(['groupId', 'groupName'])"
                   />
                 </a-form-item>
               </Col>
@@ -163,7 +163,7 @@
   import { ExaProjectEntity } from '/@/api/exa';
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from "/@/api/exaProjectGroup";
+  import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -217,13 +217,10 @@
   };
 
   //点击清空图标清空事件
-  const onClear = (key: string) => {
-    switch (key) {
-      case 'group':
-        formState.groupId = '';
-        formState.groupName = '';
-        break;
-    }
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      e.endsWith('Id') ? (formState[e] = '0') : (formState[e] = '');
+    });
   };
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
@@ -243,7 +240,7 @@
   };
   //物料分组弹框关
   const groupSelect = (value, node) => {
-    formState.groupName = node[0];
+    formState.groupName = node[0] || '';
     formState.groupId = value;
     visibleGroupModal.value = false;
   };

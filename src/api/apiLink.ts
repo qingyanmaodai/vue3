@@ -230,3 +230,12 @@ export interface SearchParams {
   startWith?: string;
   endWith?: string;
 }
+export interface PublicModel {
+  bsStatus?: string;
+  mark?: string;
+  createTime?: string;
+  createBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  erpCode?: string;
+}
