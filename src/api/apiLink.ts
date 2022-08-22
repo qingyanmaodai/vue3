@@ -107,6 +107,9 @@ export enum Url {
   EXPORT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/export-list',
   ADD_STOCK_LOCATION_LIST = '/stock/bd-stock-location/save',
   UPDATE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/update',
+
+  //国家地区
+  COUNTRY_TREE = '/stock/bd-country/getCountryByParentId',
 }
 
 export const TableColum = {

@@ -12,10 +12,11 @@ export interface SupplierEntity extends PublicModel {
   mainBy?: string;
   address?: string;
   country?: string;
-  district?: [];
-  level?: string;
+  provincial?: number;
+  municipal?: number;
+  district?: number;
+  level?: number;
   groupId?: string;
-  groupName?: string;
 }
 
 export function getOneSupplier(id: string, mode: ErrorMessageMode = 'message') {

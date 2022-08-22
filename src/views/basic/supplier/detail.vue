@@ -6,8 +6,10 @@
       >
       <div style="display: flex; float: right">
         <Button type="primary" class="button" @click="save" v-if="showSave">保存</Button>
-        <Button danger class="button" @click="handleAudit(0)" v-if="showAudit">审核</Button>
-        <Button danger class="button" @click="handleAudit(1)" v-if="!showAudit">反审核</Button>
+        <Button danger class="button" @click="handleAudit(0)" v-show="showAudit && formState.id"
+          >审核</Button
+        >
+        <Button danger class="button" @click="handleAudit(1)" v-show="!showAudit">反审核</Button>
       </div>
     </LayoutHeader>
     <a-card class="content">
@@ -106,12 +108,15 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="地区：" ref="district" name="district" class="item">
+                <a-form-item label="地区：" ref="districtArr" name="districtArr" class="item">
                   <a-cascader
+                    v-if="isShowDistrict"
                     style="width: 16rem; height: 2rem; margin: 0 60px 0 2px"
                     :disabled="isDisable"
-                    v-model:value="formState.district"
+                    v-model:value="tempFormState.districtArr"
                     :options="districtData"
+                    :load-data="loadDistrictData"
+                    change-on-select
                     placeholder="请选择"
                   />
                 </a-form-item>
@@ -155,7 +160,7 @@
                     class="input"
                     placeholder="请选择供应商分组"
                     label="供应商分组"
-                    v-model:value="formState.groupName"
+                    v-model:value="tempFormState.groupName"
                     :disabled="isDisable"
                     @search="onGroupSearch"
                     @clear="onClear"
@@ -164,15 +169,14 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Select v-model:value="formState.bsStatus" class="select" disabled>
-                    <SelectOption
-                      v-for="(item, index) in config['DATA_STATUS']"
-                      :key="index"
-                      :value="item.value"
-                    >
-                      {{ item.label }}</SelectOption
-                    >
-                  </Select>
+                  <Input
+                    allowClear
+                    class="input"
+                    autocomplete="off"
+                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                    name="bsStatus"
+                    :disabled="true"
+                  />
                 </a-form-item>
               </Col>
             </Row>
@@ -241,7 +245,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, toRef, UnwrapRef } from 'vue';
   import {
     Button,
     Card,
@@ -280,11 +284,21 @@
   const { createMessage } = useMessage();
   import { auditMatTable } from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
+  import { CountryEntity, getCountryTree } from '/@/api/public';
 
   /* data */
 
-  //表单对象
-  const formState: UnwrapRef<SupplierEntity> = reactive({
+  //额外表单数据
+  type tempForm = {
+    groupName: string;
+    districtArr: number[];
+  };
+  const tempFormState: UnwrapRef<tempForm> = reactive({
+    groupName: '', //供应商分组名称
+    districtArr: [], //地区数组
+  });
+  //表单初始数据
+  const formData: UnwrapRef<SupplierEntity> = {
     id: undefined,
     number: undefined,
     name: undefined,
@@ -294,19 +308,16 @@
     mainBy: undefined,
     address: undefined,
     country: undefined,
+    provincial: undefined,
+    municipal: undefined,
     district: undefined,
     level: undefined,
     groupId: undefined,
-    groupName: undefined,
-    mark: undefined,
-    erpCode: undefined,
-    bsStatus: undefined,
-    isDelete: undefined,
-    createTime: undefined,
-    updateTime: undefined,
-    createBy: undefined,
-    updateBy: undefined,
-  });
+  };
+  const formInitState = reactive({ data: formData });
+
+  const formState = toRef(formInitState, 'data'); //表单对象
+
   //表单必填规则配置
   const formRules = reactive({
     name: [{ required: true, message: '请输入供应商名称', trigger: 'blur' }],
@@ -315,13 +326,14 @@
   const formRef: any = ref<String | null>(null); //表单引用对象
   const supplierId = ref<string>(''); //路由参数，供应商Id
   const treeData = ref<TreeItem>([]); //供应商分组数据
-  const countryData = ref<object[]>([]); //国家数据
-  const districtData = ref<object[]>([]); //地区数据
+  const countryData = ref<CountryEntity[]>([]); //国家数据
+  const districtData = ref<CountryEntity[]>([]); //地区数据
   const supplierGroupModel = ref<boolean>(false); //供应商分组弹框显示状态
-  const showAudit = ref<boolean>(false); //显示审核/反审核按钮
+  const showAudit = ref<boolean>(true); //显示审核/反审核按钮
   const showSave = ref<boolean>(true); //显示保存按钮
   const activeTabs = ref<string>('basicInfo'); //当前激活板块
   const isDisable = ref<boolean>(false); //表单禁用状态
+  const isShowDistrict = ref<boolean>(false); //是否显示地区组件
 
   /* method */
 
@@ -330,36 +342,59 @@
    */
   onMounted(() => {
     supplierId.value = useRoute().query.row?.toString() || '';
-    if (supplierId.value) {
-      getSupplier();
-    }
+    init(); //页面初始化
   });
+
+  const init = async () => {
+    await getCountry();
+    if (supplierId.value) {
+      await getSupplier();
+    }
+    isShowDistrict.value = true;
+  };
 
   /**
    * 获取供应商详细信息
    */
-  const getSupplier = async () => {
-    const res = await getOneSupplier(supplierId.value);
-    console.log(res);
+  const getSupplier = async (supId = supplierId.value) => {
+    const res = await getOneSupplier(supId);
+    if (res) {
+      formState.value = res;
+      //回显地区信息
+      await echoDistrict();
+    }
   };
 
   /**
    * 保存事件
    */
   const save = async () => {
+    formState.value.provincial = tempFormState.districtArr[0]
+      ? tempFormState.districtArr[0]
+      : undefined; //省
+    formState.value.municipal = tempFormState.districtArr[1]
+      ? tempFormState.districtArr[1]
+      : undefined; //市
+    formState.value.district = tempFormState.districtArr[2]
+      ? tempFormState.districtArr[2]
+      : undefined; //区
+    console.log(formState.value);
     try {
-      const values = await formRef.value.validateFields();
-      console.log('Success:', values);
+      await formRef.value.validateFields();
       //保存操作
       if (supplierId.value) {
         const res = await saveSupplier({
-          params: formState,
+          params: formState.value,
         });
         console.log(res);
       } else {
         const res = await saveSupplier({
-          params: formState,
+          params: formState.value,
         });
+        if (res.id) {
+          await getSupplier(res.id);
+          createMessage.success('新增供应商成功');
+        }
         console.log(res);
       }
     } catch (errorInfo) {
@@ -374,7 +409,7 @@
   const handleAudit = async (flag: number) => {
     const type = await VXETable.modal.confirm('确定审核当前供应商吗?');
     if (type == 'confirm') {
-      if (formState.bsStatus === 'A') {
+      if (formState.value.bsStatus === 'A') {
         try {
           await auditMatTable({
             params: {
@@ -430,25 +465,114 @@
    * @param node
    */
   const groupSelect = (value, node) => {
-    formState.groupName = node ? node[0] : '';
-    formState.groupId = value;
+    tempFormState.groupName = node ? node[0] : '';
+    formState.value.groupId = value;
     supplierGroupModel.value = false;
   };
 
   /**
-   * 获取树
+   * 获取供应商分组树
    */
   const getTree = async () => {
     const tree = await getSupplierGroupTree({ params: '0' });
     runTree(tree);
-    console.log('tree', tree);
     treeData.value = cloneDeep(tree);
   };
+
+  /**
+   * 获取国家地区
+   */
+  const getCountry = async () => {
+    const res = await getCountryTree({ params: '-1' });
+    if (res.length > 0) {
+      res.forEach((item) => {
+        item.label = item.name;
+        item.value = item.id;
+      });
+      countryData.value = cloneDeep(res); //国家数据;
+      formState.value.country = countryData.value[0].id; //默认选中第一条
+      const data = await getCountryTree({ params: countryData.value[0].number || '' });
+      if (res.length > 0) {
+        data.forEach((item) => {
+          item.label = item.name;
+          item.value = item.id;
+          item.isLeaf = false;
+        });
+        districtData.value = data;
+      }
+    }
+  };
+
+  /**
+   * 获取地区数据
+   */
+  const loadDistrictData = async (selectedOptions) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1];
+    targetOption.loading = true;
+    //懒加载
+    const res = await getCountryTree({ params: targetOption.number });
+    if (res.length > 0) {
+      res.forEach((item) => {
+        item.label = item.name;
+        item.value = item.id;
+        item.isLeaf = item.level == 3;
+      });
+      targetOption.children = res;
+      districtData.value = [...districtData.value]; //地区数据
+    }
+    targetOption.loading = false;
+  };
+
+  /**
+   * 省市区回显
+   */
+  const echoDistrict = async () => {
+    let arr: number[] = [];
+    let ssqData = cloneDeep(districtData.value);
+    if (formState.value.provincial) {
+      arr.push(formState.value.provincial);
+      if (formState.value.municipal) {
+        arr.push(formState.value.municipal);
+        let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
+        if (provincialIndex != -1) {
+          const municipalRes = await getCountryTree({
+            params: ssqData[provincialIndex].number || '',
+          });
+          municipalRes.forEach((item) => {
+            item.label = item.name;
+            item.value = item.id;
+            item.isLeaf = item.level == 3;
+          });
+          ssqData[provincialIndex].children = cloneDeep(municipalRes);
+          if (formState.value.district) {
+            arr.push(formState.value.district);
+            let municipalIndex = ssqData[provincialIndex].children!.findIndex(
+              (e) => e.id == formState.value.municipal,
+            );
+            if (municipalIndex != -1) {
+              const districtRes = await getCountryTree({
+                params: ssqData[provincialIndex].children![municipalIndex].number || '',
+              });
+              districtRes.forEach((item) => {
+                item.label = item.name;
+                item.value = item.id;
+                item.isLeaf = item.level == 3;
+              });
+              ssqData[provincialIndex].children![municipalIndex].children = cloneDeep(districtRes);
+            }
+          }
+        }
+      }
+    }
+    districtData.value = cloneDeep(ssqData);
+    tempFormState.districtArr = arr;
+  };
+
   /**
    * 初始化树
    * @param tree
    */
-  const runTree = (tree: SupplierGroupEntity[]) => {
+  const runTree = (tree: SupplierGroupEntity[] | CountryEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
       item.value = item.id;
@@ -461,8 +585,8 @@
    * 清空事件
    */
   const onClear = () => {
-    formState.groupId = '';
-    formState.groupName = '';
+    formState.value.groupId = '';
+    tempFormState.groupName = '';
   };
 
   const back = () => {
