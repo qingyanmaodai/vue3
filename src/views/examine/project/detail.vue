@@ -19,7 +19,7 @@
     <a-card class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="项目编码：" ref="number" name="number" class="item">
@@ -123,7 +123,7 @@
           </a-form>
         </TabPane>
         <TabPane key="2" tab="其他信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
@@ -198,6 +198,7 @@
   import { config } from '/@/utils/publicParamConfig';
   import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
   import { VXETable } from 'vxe-table';
+  import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -206,6 +207,7 @@
   const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
+  const formRef = ref();
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //分组弹框visible
@@ -221,7 +223,7 @@
   //重新物料分组赋值
   const groupEvent = async () => {
     const result = await queryOneExaGroup({
-      params: groupSelectId || formState.value.groupId || '0',
+      params: groupSelectId || formState.value.groupId || '',
     });
     if (result) {
       formState.value.groupId = result.id;
@@ -275,14 +277,22 @@
   //接受参数
   const dataId = useRoute().query.row?.toString();
   const onSubmit = async () => {
-    if (!formState.value.id) {
-      const data = await add({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
-    } else {
-      const data = await update({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
-    }
-    createMessage.success('操作成功');
+    formRef.value
+      .validate()
+      .then(async () => {
+        if (!formState.value.id) {
+          const data = await add({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+        } else {
+          const data = await update({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+        }
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
   const onAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要审核吗?');
