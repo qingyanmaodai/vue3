@@ -198,7 +198,7 @@
   import { config } from '/@/utils/publicParamConfig';
   import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
   import { VXETable } from 'vxe-table';
-  import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
