@@ -8,10 +8,10 @@
         <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
           >保存</Button
         >
-        <Button danger class="button" @click="onExam" v-if="formState.bsStatus === 'A'"
+        <Button danger class="button" @click="onAudit" v-if="formState.bsStatus === 'A'"
           >审核</Button
         >
-        <Button danger class="button" @click="unExam" v-if="formState.bsStatus === 'B'"
+        <Button danger class="button" @click="onUnAudit" v-if="formState.bsStatus === 'B'"
           >反审核</Button
         >
       </div>
@@ -29,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入项目编码"
-                    :disabled="dataId"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -59,9 +59,9 @@
                     class="input"
                     placeholder="请选择项目类别"
                     label="项目类别"
-                    :show="showUnExam"
-                    :value="formState.groupName"
-                    :disabled="showUnExam"
+                    :show="formState.bsStatus !== 'B'"
+                    v-model:value="formState.groupName"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onGroupSearch(formState.groupName)"
                     @clear="onClear(['groupId', 'groupName'])"
                   />
@@ -88,7 +88,7 @@
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -99,8 +99,24 @@
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
+                </a-form-item>
+              </Col>
+            </Row>
+            <Row>
+              <Col :span="8">
+                <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
+                  <div class="switchDiv">
+                    <Switch
+                      checked-children="启用"
+                      un-checked-children="禁用"
+                      :checkedValue="1"
+                      :unCheckedValue="0"
+                      v-model:checked="formState.isOpen"
+                      :disabled="formState.bsStatus === 'B'"
+                    />
+                  </div>
                 </a-form-item>
               </Col>
             </Row>
@@ -156,7 +172,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Card,
@@ -167,8 +183,6 @@
     LayoutHeader,
     Modal,
     Row,
-    Select,
-    SelectOption,
     Switch,
     TabPane,
     Tabs,
@@ -178,11 +192,12 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { TreeItem } from '/@/components/Tree';
-  import { ExaProjectEntity } from '/@/api/exa';
+  import { add, audit, unAudit, ExaProjectEntity, getOneById, update } from '/@/api/exa';
   import { cloneDeep } from 'lodash-es';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
+  import { VXETable } from 'vxe-table';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -191,36 +206,28 @@
   const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
-  //空参数
-  const paramsNull = { params: '' };
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //分组弹框visible
   const visibleGroupModal: any = ref<boolean>(false);
-  //弹窗类型
-  let modalType = ref<string>('');
-  //基础信息查询组件ref
-  const basicSearchRef: any = ref<any>(undefined);
   //审核状态
-  const showUnExam = ref<boolean>(false); //反审核
-  const showExam = ref<boolean>(false); //审核
-  const showSubmit = ref<boolean>(true); //保存
-  //初始化
-  const formState: UnwrapRef<ExaProjectEntity> = reactive({
-    id: '0',
-    number: '',
-    name: '',
-  });
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
+  const formData: ExaProjectEntity = { id: undefined, number: '', name: '', isOpen: 1 };
+  //初始化
+  const formStateInit = reactive({
+    data: formData,
+  });
+  const formState = toRef(formStateInit, 'data');
   //重新物料分组赋值
   const groupEvent = async () => {
-    const result = await queryOneExaGroup({ params: groupSelectId || '0' });
+    const result = await queryOneExaGroup({
+      params: groupSelectId || formState.value.groupId || '0',
+    });
     if (result) {
-      formState.groupId = result.id;
-      formState.groupName = result.name;
+      formState.value.groupId = result.id;
+      formState.value.groupName = result.name;
     }
   };
-  groupEvent();
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
@@ -229,16 +236,17 @@
   //分组弹框
   const onGroupSearch = (name) => {
     visibleGroupModal.value = true;
-    formState.groupName = name;
-    if (formState.groupName == '') {
-      formState.groupName = undefined;
+    formState.value.groupName = name;
+    if (formState.value.groupName == '') {
+      formState.value.groupName = undefined;
     }
   };
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      e.endsWith('Id') ? (formState[e] = '0') : (formState[e] = '');
+      formState.value[e] = '';
+      // e.endsWith('Id') ? (formState.value[e] = '') : (formState.value[e] = '');
     });
   };
   //获取物料分组数据
@@ -259,17 +267,54 @@
   };
   //物料分组弹框关
   const groupSelect = (value, node) => {
-    formState.groupName = node[0] || '';
-    formState.groupId = value;
+    formState.value.groupName = node[0] || '';
+    formState.value.groupId = value;
     visibleGroupModal.value = false;
   };
 
   //接受参数
   const dataId = useRoute().query.row?.toString();
+  const onSubmit = async () => {
+    if (!formState.value.id) {
+      const data = await add({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+    } else {
+      const data = await update({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+    }
+    createMessage.success('操作成功');
+  };
+  const onAudit = async () => {
+    const type = await VXETable.modal.confirm('您确定要审核吗?');
+    if (type === 'confirm') {
+      const data = await audit({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
+    }
+  };
+  const onUnAudit = async () => {
+    const type = await VXETable.modal.confirm('您确定要审核吗?');
+    if (type === 'confirm') {
+      const data = await unAudit({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
+    }
+  };
   //返回上一页
   const back = () => {
     router.go(-1);
   };
+  const init = async () => {
+    if (dataId) {
+      await getOneById({ params: dataId }).then(async (res) => {
+        formState.value = res;
+        await groupEvent();
+      });
+    } else {
+      await groupEvent();
+    }
+  };
+  init();
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {});
 </script>

@@ -83,12 +83,12 @@
     treeExaGroup,
   } from '/@/api/exaProjectGroup';
   import {
-    auditExaProject,
-    auditExaProjectBatch,
-    delExaProjectBatch,
+    audit,
+    auditBatch,
+    delBatch,
     delMatTableById,
     exportExcel,
-    getExaProjectList,
+    getDataList,
     getSearchOption,
     importFile,
     unAudit,
@@ -219,7 +219,7 @@
       getParams = getParams.concat(searchRef.value.getSearchParams());
     }
     //表格查询
-    const res: any = await getExaProjectList({
+    const res: any = await getDataList({
       params: getParams,
       orderByBean: {
         descList: ['BdExamineProject.update_time'],
@@ -305,12 +305,12 @@
     tableRef.value.delTable(row);
   };
   const deleteMatBatchEvent = async (row) => {
-    await delExaProjectBatch({ params: row });
+    await delBatch({ params: row });
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
-    await auditExaProject({
+    await audit({
       params: {
         id: row.id,
       },
@@ -324,7 +324,7 @@
   };
   let res: any = '';
   const auditBatchEvent = async (row) => {
-    res = await auditExaProjectBatch({
+    res = await auditBatch({
       params: row,
     });
     await tableRef.value.computeData(res);

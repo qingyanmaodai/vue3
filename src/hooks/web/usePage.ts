@@ -31,6 +31,7 @@ export function useGo(_router?: Router) {
  * @description: redo current page
  */
 export const useRedo = (_router?: Router) => {
+  console.log(useRouter());
   const { replace, currentRoute } = _router || useRouter();
   const { query, params = {}, name, fullPath } = unref(currentRoute.value);
   function redo(): Promise<boolean> {
