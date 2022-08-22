@@ -162,6 +162,7 @@ export const exaColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '项目编码', slots: { default: 'number' }, sortable: true },
   { field: 'name', title: '项目名称', sortable: true },
+  { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
   { field: 'description', title: '描述', sortable: true },
   { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
   {

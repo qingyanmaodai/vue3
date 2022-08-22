@@ -48,7 +48,7 @@ export const config = {
   //  数据业务状态
   BS_STATUS: {
     A: '创建',
-    B: '审核',
+    B: '已审核',
   },
   //  检验类型
   EXAMINE_TYPE: [
