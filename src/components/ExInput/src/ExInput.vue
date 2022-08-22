@@ -7,8 +7,8 @@
     :allowClear="props.allowClear"
   >
     <template #suffix>
-      <CloseIcon class="icon" v-if="props.value && !props.show" @click="clearEvent" />
-      <SearchIcon class="icon" v-if="!props.show" @click="searchEvent" style="margin-left: 5px" />
+      <CloseIcon class="icon" v-if="props.value && props.show" @click="clearEvent" />
+      <SearchIcon class="icon" v-if="props.show" @click="searchEvent" style="margin-left: 5px" />
     </template>
   </Input>
 </template>
