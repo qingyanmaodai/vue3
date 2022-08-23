@@ -5,15 +5,21 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-if="showSubmit">保存</Button>
-        <Button danger class="button" @click="onExam" v-if="showExam">审核</Button>
-        <Button danger class="button" @click="unExam" v-if="showUnExam">反审核</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="onExam" v-if="formState.bsStatus === 'A'"
+          >审核</Button
+        >
+        <Button danger class="button" @click="unExam" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
       </div>
     </LayoutHeader>
     <a-card class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="分仓编码：" ref="number" name="number" class="item">
@@ -23,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入分仓编码"
-                    :disabled="hasId"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -36,7 +42,7 @@
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入分仓名称"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -53,11 +59,11 @@
                     class="input"
                     placeholder="请选择所属仓库"
                     label="仓库"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.stockName"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock()"
-                    @clear="onClear()"
+                    @clear="onClear(['stockId', 'stockName'])"
                   />
                 </a-form-item>
               </Col>
@@ -72,7 +78,7 @@
                     v-model:value="formState.mainBy"
                     name="name"
                     placeholder="请输入负责人"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -84,7 +90,7 @@
                     autocomplete="off"
                     v-model:value="formState.phone"
                     placeholder="请输入联系电话"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     onkeyup="value=value.replace(/[^\d\-]/g,'')"
                     :maxlength="20"
                   />
@@ -99,7 +105,7 @@
                     v-model:value="formState.address"
                     name="name"
                     placeholder="请输入地址"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -110,6 +116,7 @@
                   <Input
                     allowClear
                     class="input"
+                    autocomplete="off"
                     :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
                     name="bsStatus"
                     :disabled="true"
@@ -118,12 +125,12 @@
               </Col>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <TextArea
+                  <a-textArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -131,7 +138,7 @@
           </a-form>
         </TabPane>
         <TabPane key="2" tab="其他信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
@@ -173,7 +180,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Card,
@@ -195,6 +202,7 @@
     addSubStockList,
     auditSubStockList,
     getSubStockListById,
+    SubStockProfileEntity,
     unAuditSubStockList,
     updateSubStockList,
   } from '/@/api/subStock';
@@ -204,89 +212,62 @@
   import { config } from '/@/utils/publicParamConfig';
   import { getStockOption, getStockTable } from '/@/api/mainStock';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
-  const TextArea = Input.TextArea;
+  const ATextArea = Input.TextArea;
 
   const router = useRouter();
   const activeKey = ref<string>('1');
+  const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref(null);
   //空参数
   const paramsNull = { params: '' };
-
-  //审核状态
-  const showUnExam = ref<boolean>(false); //反审核
-  const showExam = ref<boolean>(false); //审核
-  const showSubmit = ref<boolean>(true); //保存
-
-  //对应输入框绑定的值接口类型
-  interface FormState {
-    id?: string | undefined;
-    number: string | undefined;
-    name: string | undefined;
-    bdStock: string | undefined;
-    stockId: string | undefined;
-    stockName: string | undefined;
-    mainBy: string | undefined;
-    phone: string | undefined;
-    address: string | undefined;
-    bsStatus: string | undefined;
-    labelValue: string | undefined;
-    mark: string | undefined;
-    stockInExamine: number | undefined;
-    stockOutExamine: number | undefined;
-    createTime: string | undefined;
-    createBy: string | undefined;
-    updateTime: string | undefined;
-    updateBy: string | undefined;
-  }
-  //初始化
-  const formState: UnwrapRef<FormState> = reactive({
-    id: undefined,
-    number: undefined,
-    name: undefined,
-    bdStock: undefined,
-    stockId: undefined,
-    stockName: undefined,
-    mainBy: undefined,
-    phone: undefined,
-    address: undefined,
-    bsStatus: 'A',
-    labelValue: undefined,
-    mark: undefined,
-    stockInExamine: undefined,
-    stockOutExamine: undefined,
-    updateBy: undefined,
-    updateTime: undefined,
-    createBy: undefined,
-    createTime: undefined,
-  });
 
   const formRules = reactive({
     name: [{ required: true, message: '请输入分仓名称' }],
     number: [{ required: true, message: '请输入分仓编码' }],
     stockId: [{ required: true, message: '请输入所属仓库' }],
   });
-
-  let getParams = () => {
-    let query = router.currentRoute.value.query;
-    console.log('query', query);
+  //初始化
+  const formData: SubStockProfileEntity = {
+    id: undefined,
+    number: '',
+    name: '',
   };
-  getParams();
-  //点击清空图标清空事件
-  const onClear = () => {
-    formState.stockId = '';
-    formState.stockName = '';
-  };
+  const formStateInit = reactive({
+    data: formData,
+  });
+  let formState = toRef(formStateInit, 'data');
 
   //打开基本信息弹框
   const openSearch = async () => {
     const res = await onStock();
     basicSearchRef.value.initList(res);
+  };
+
+  //接受参数
+  let rowId = useRoute().query.row?.toString() || '';
+
+  //获取初始值
+  const getListById = async (rowId) => {
+    if (rowId) {
+      const res: any = await getSubStockListById({ params: rowId });
+      formState.value = res;
+      formState.value.stockId = res.bdStock.id;
+      formState.value.stockName = res.bdStock.name;
+    }
+  };
+  getListById(rowId);
+  //点击清空图标清空事件
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = '';
+    });
   };
   //打开放大镜
   const onStock = async () => {
@@ -326,186 +307,55 @@
   };
   //基本信息表格双击事件
   const cellClickEvent = (row) => {
-    formState.stockId = row.id;
-    formState.stockName = row.name;
+    formState.value.stockId = row.id;
+    formState.value.stockName = row.name;
     basicSearchRef.value.bSearch(false);
   };
-  //接受参数
-  let rowId = useRoute().query.row?.toString();
-  let hasId = ref<boolean>(false);
 
-  //如果有id，则通过接口进入编辑页面。没有id——新增
-  const getListById = async (id) => {
-    if (rowId) {
-      id = rowId;
-      hasId.value = true;
-    }
-    const res: any = await getSubStockListById({
-      params: id,
-    });
-    formState.number = res.number;
-    formState.name = res.name;
-    formState.stockId = res.stockId;
-    formState.stockId = res.stockId;
-    if (formState.stockId) {
-      formState.stockId = res.bdStock.id;
-      formState.stockName = res.bdStock.name;
-    }
-    formState.bdStock = res.bdStock;
-    formState.mainBy = res.mainBy;
-    formState.phone = res.phone;
-    formState.address = res.address;
-    formState.bsStatus = res.bsStatus;
-    //创建状态
-    if (rowId && res.bsStatus === 'A') {
-      showExam.value = true;
-      showUnExam.value = false;
-    } else if (rowId && res.bsStatus === 'B') {
-      //审核状态
-      showExam.value = false;
-      showUnExam.value = true;
-      showSubmit.value = false;
-    }
-    if (formState.bsStatus === 'A') {
-      formState.labelValue = '创建';
-    } else {
-      formState.labelValue = '已审核';
-    }
-    formState.stockInExamine = res.stockInExamine;
-    formState.stockOutExamine = res.stockOutExamine;
-    formState.createTime = res.createTime;
-    formState.createBy = res.createBy;
-    formState.updateTime = res.updateTime;
-    formState.updateBy = res.updateBy;
-  };
-  const stockHandle = async () => {
-    //修改
-    if (rowId) {
-      await getListById(rowId);
-    }
-  };
-  stockHandle();
   //保存事件
   const onSubmit = async () => {
-    let newData = {
-      id: rowId,
-      number: formState.number,
-      name: formState.name,
-      stockName: formState.stockName,
-      stockId: formState.stockId,
-      mainBy: formState.mainBy,
-      phone: formState.phone,
-      address: formState.address,
-      bsStatus: formState.bsStatus,
-      mark: formState.mark,
-      stockInExamine: formState.stockInExamine,
-      stockOutExamine: formState.stockOutExamine,
-      createTime: formState.createTime,
-      createBy: formState.createBy,
-      updateTime: formState.updateTime,
-      updateBy: formState.updateBy,
-    };
-    if (!rowId) {
-      if (!formState.name || !formState.number || !formState.stockId) {
-        createMessage.error('必填字段不能为空');
-      } else {
-        try {
-          const addList = await addSubStockList({
-            params: newData,
-          });
-          if (addList.id != null) {
-            createMessage.success('添加成功');
-            // back();
-            showExam.value = true;
-            rowId = addList.id;
-            await getListById(rowId);
-          }
-        } catch (e) {
-          console.log('失败', e);
+    let data;
+    formRef.value
+      .validate()
+      .then(async () => {
+        if (!formState.value.id) {
+          data = await addSubStockList({ params: formState.value });
+        } else {
+          data = await updateSubStockList({ params: formState.value });
         }
-      }
-    } else {
-      newData.id = rowId;
-      if (!formState.name || !formState.number || !formState.stockId) {
-        createMessage.error('必填字段不能为空');
-      } else {
-        try {
-          const updateList = async () => {
-            await updateSubStockList({
-              params: newData,
-            });
-          };
-          await updateList();
-          createMessage.success('修改成功');
-          // back();
-        } catch (e) {
-          console.log('失败', e);
-        }
-      }
-    }
+        await getListById(data.id);
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
 
-  //点击新增时:控制审核与反审核按钮显示
-  const btnChecking = () => {
-    if (!rowId) {
-      showExam.value = false;
-      showUnExam.value = false;
-    }
-  };
   //审核功能
   const onExam = async () => {
-    const type = await VXETable.modal.confirm('您确定要审核当前物料吗?');
-    if (type == 'confirm') {
-      if (formState.labelValue === 'A' || formState.labelValue === '创建') {
-        try {
-          const auditEvent = async () => {
-            await auditSubStockList({
-              params: {
-                id: rowId,
-              },
-            });
-          };
-          await auditEvent();
-          showSubmit.value = false;
-          showExam.value = false;
-          showUnExam.value = true;
-          createMessage.success('审核成功');
-          await getListById(rowId);
-          // back();
-        } catch (e) {
-          console.log('失败', e);
+    formRef.value
+      .validate()
+      .then(async () => {
+        const type = await VXETable.modal.confirm('您确定要保存并审核当前物料吗?');
+        if (type === 'confirm') {
+          const data = await auditSubStockList({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+          createMessage.success('操作成功');
         }
-      }
-    } else {
-      console.log('取消');
-    }
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
   //反审核功能
   const unExam = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核当前物料吗?');
-    if (type == 'confirm') {
-      if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
-        try {
-          const unAuditEvent = async () => {
-            await unAuditSubStockList({
-              params: {
-                id: rowId,
-              },
-            });
-          };
-          await unAuditEvent();
-          showSubmit.value = true;
-          showExam.value = true;
-          showUnExam.value = false;
-          createMessage.success('反审核成功');
-          await getListById(rowId);
-          // back();
-        } catch (e) {
-          console.log('失败', e);
-        }
-      } else {
-        console.log('取消');
-      }
+    if (type === 'confirm') {
+      const data = await unAuditSubStockList({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
     }
   };
   //返回上一页
@@ -513,9 +363,7 @@
     router.go(-1);
   };
   //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {
-    btnChecking();
-  });
+  onMounted(() => {});
 </script>
 <style scoped lang="less">
   .switchDiv {

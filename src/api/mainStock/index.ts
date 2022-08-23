@@ -14,9 +14,6 @@ export interface StockProfileEntity extends PublicModel {
   mainBy?: string;
   phone?: string;
   tenantId?: number;
-  stockInExamine?: string;
-  stockOutExamine?: string;
-  labelValue?: string;
 }
 /**
  * 获取仓库选项
@@ -55,7 +52,7 @@ export function getStockTable(
  * 根据id获取表格信息
  */
 export function getOneStockById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
+  return defHttp.post<StockProfileEntity>(
     {
       url: Url.GET_ONE_STOCK_LIST,
       data: json,
