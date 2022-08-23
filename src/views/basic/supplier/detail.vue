@@ -96,6 +96,7 @@
               <Col :span="8">
                 <a-form-item label="国家：" ref="country" name="country" class="item">
                   <a-select
+                    allowClear
                     class="input"
                     :disabled="isDisable"
                     v-model:value="formState.country"
@@ -110,6 +111,7 @@
               <Col :span="8">
                 <a-form-item label="地区：" ref="districtArr" name="districtArr" class="item">
                   <a-cascader
+                    allowClear
                     v-if="isShowDistrict"
                     style="width: 16rem; height: 2rem; margin: 0 60px 0 2px"
                     :disabled="isDisable"
@@ -165,6 +167,7 @@
                     class="input"
                     placeholder="请选择供应商分组"
                     label="供应商分组"
+                    :show="!isDisable"
                     v-model:value="tempFormState.groupName"
                     :disabled="isDisable"
                     @search="onGroupSearch"
@@ -288,7 +291,8 @@
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
   import { cloneDeep } from 'lodash-es';
-  import { CountryEntity, getCountryTree } from '/@/api/public';
+  import { CountryEntity, getCountryTree } from '/@/api/country';
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
   /* data */
 
@@ -361,9 +365,10 @@
    * 获取供应商详细信息
    */
   const getSupplier = async (supId = supplierId.value) => {
-    const res = await getOneSupplier(supId);
+    const res: any = await getOneSupplier(supId);
     if (res) {
       formState.value = res;
+      tempFormState.groupName = res.bdSupplierGroup ? res.bdSupplierGroup.name : '';
       if (formState.value.bsStatus === 'B') {
         isDisable.value = true;
         showAudit.value = false;
@@ -378,30 +383,32 @@
    * 保存事件
    */
   const onSubmit = async () => {
-    formState.value.provincial = tempFormState.districtArr[0]
-      ? tempFormState.districtArr[0]
-      : undefined; //省
-    formState.value.municipal = tempFormState.districtArr[1]
-      ? tempFormState.districtArr[1]
-      : undefined; //市
-    formState.value.district = tempFormState.districtArr[2]
-      ? tempFormState.districtArr[2]
-      : undefined; //区
-    console.log(formState.value);
-    try {
-      await formRef.value.validateFields();
-      let res;
-      if (supplierId.value) {
-        res = await save({ params: formState.value });
-      } else {
-        res = await update({ params: formState.value });
-      }
-      console.log(res);
-      await getSupplier(res.id);
-      createMessage.success('操作成功');
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
-    }
+    //表单验证
+    formRef.value
+      .validate()
+      .then(async () => {
+        formState.value.provincial = tempFormState.districtArr[0]
+          ? tempFormState.districtArr[0]
+          : undefined; //省
+        formState.value.municipal = tempFormState.districtArr[1]
+          ? tempFormState.districtArr[1]
+          : undefined; //市
+        formState.value.district = tempFormState.districtArr[2]
+          ? tempFormState.districtArr[2]
+          : undefined; //区
+        let res;
+        if (supplierId.value) {
+          res = await update({ params: formState.value });
+        } else {
+          res = await save({ params: formState.value });
+        }
+        await getSupplier(res.id);
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
 
   /**
@@ -409,23 +416,31 @@
    * @param flag 0.审核 1.反审核
    */
   const handleAudit = async (flag: number) => {
-    let mess = flag === 1 ? '反审核' : '审核';
+    let mess = flag === 1 ? '反审核' : '保存并审核';
     const type = await VXETable.modal.confirm(`确定${mess}当前供应商吗?`);
     if (type == 'confirm') {
-      let data;
-      if (flag === 0) {
-        data = await audit({ params: formState.value });
-        isDisable.value = true;
-        showAudit.value = false;
-        showSave.value = false;
-      } else {
-        data = await unAudit({ params: formState.value });
-        isDisable.value = false;
-        showAudit.value = true;
-        showSave.value = true;
-      }
-      formState.value = Object.assign({}, formState.value, data);
-      createMessage.success('操作成功');
+      formRef.value
+        .validate()
+        .then(async () => {
+          let data;
+          if (flag === 0) {
+            data = await audit({ params: formState.value });
+            isDisable.value = true;
+            showAudit.value = false;
+            showSave.value = false;
+          } else {
+            data = await unAudit({ params: formState.value });
+            isDisable.value = false;
+            showAudit.value = true;
+            showSave.value = true;
+          }
+          formState.value = Object.assign({}, formState.value, data);
+          createMessage.success('操作成功');
+        })
+        .catch((error: ValidateErrorEntity<FormData>) => {
+          createMessage.error('数据校检不通过，请检查!');
+          console.log(error);
+        });
     }
   };
 
@@ -522,45 +537,50 @@
    * 省市区回显
    */
   const echoDistrict = async () => {
-    let arr: number[] = [];
-    let ssqData = cloneDeep(districtData.value);
-    if (formState.value.provincial) {
-      arr.push(formState.value.provincial);
-      if (formState.value.municipal) {
-        arr.push(formState.value.municipal);
-        let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
-        if (provincialIndex != -1) {
-          const municipalRes = await getCountryTree({
-            params: ssqData[provincialIndex].number || '',
-          });
-          municipalRes.forEach((item) => {
-            item.label = item.name;
-            item.value = item.id;
-            item.isLeaf = item.level == 3;
-          });
-          ssqData[provincialIndex].children = cloneDeep(municipalRes);
-          if (formState.value.district) {
-            arr.push(formState.value.district);
-            let municipalIndex = ssqData[provincialIndex].children!.findIndex(
-              (e) => e.id == formState.value.municipal,
-            );
-            if (municipalIndex != -1) {
-              const districtRes = await getCountryTree({
-                params: ssqData[provincialIndex].children![municipalIndex].number || '',
-              });
-              districtRes.forEach((item) => {
-                item.label = item.name;
-                item.value = item.id;
-                item.isLeaf = item.level == 3;
-              });
-              ssqData[provincialIndex].children![municipalIndex].children = cloneDeep(districtRes);
+    try {
+      let arr: number[] = [];
+      let ssqData = cloneDeep(districtData.value);
+      if (formState.value.provincial) {
+        arr.push(formState.value.provincial);
+        if (formState.value.municipal) {
+          arr.push(formState.value.municipal);
+          let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
+          if (provincialIndex != -1) {
+            const municipalRes = await getCountryTree({
+              params: ssqData[provincialIndex].number || '',
+            });
+            municipalRes.forEach((item) => {
+              item.label = item.name;
+              item.value = item.id;
+              item.isLeaf = item.level == 3;
+            });
+            ssqData[provincialIndex].children = cloneDeep(municipalRes);
+            if (formState.value.district) {
+              arr.push(formState.value.district);
+              let municipalIndex = ssqData[provincialIndex].children!.findIndex(
+                (e) => e.id == formState.value.municipal,
+              );
+              if (municipalIndex != -1) {
+                const districtRes = await getCountryTree({
+                  params: ssqData[provincialIndex].children![municipalIndex].number || '',
+                });
+                districtRes.forEach((item) => {
+                  item.label = item.name;
+                  item.value = item.id;
+                  item.isLeaf = item.level == 3;
+                });
+                ssqData[provincialIndex].children![municipalIndex].children =
+                  cloneDeep(districtRes);
+              }
             }
           }
         }
       }
+      districtData.value = cloneDeep(ssqData);
+      tempFormState.districtArr = arr;
+    } catch (e) {
+      console.log(e);
     }
-    districtData.value = cloneDeep(ssqData);
-    tempFormState.districtArr = arr;
   };
 
   /**

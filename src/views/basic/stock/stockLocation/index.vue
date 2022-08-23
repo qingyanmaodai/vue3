@@ -75,6 +75,8 @@
     unAuditStockLocationList,
     unAuditStockLocationListBatch,
   } from '/@/api/stockLocation';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  const { createMessage } = useMessage();
   const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -185,6 +187,7 @@
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
     await delStockLocationListById({ params: row.id });
+    createMessage.success('删除成功');
     await getList();
   };
   //批量删除表格
@@ -193,6 +196,7 @@
   };
   const deleteMatBatchEvent = async (row) => {
     await delStockLocationListBatch({ params: row });
+    createMessage.success('删除成功');
     await getList();
   };
   //审核单条
@@ -202,6 +206,7 @@
         id: row.id,
       },
     });
+    createMessage.success('审核成功');
     await getList();
   };
 
@@ -224,6 +229,7 @@
         id: row?.id,
       },
     });
+    createMessage.success('反审核成功');
     await getList();
   };
   //批量反审核

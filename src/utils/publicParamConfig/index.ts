@@ -1,3 +1,7 @@
+export interface configEntity {
+  label: string;
+  value: string;
+}
 export const config = {
   //基本单位表格数据
   PUBLIC_REQUEST_URL: {

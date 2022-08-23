@@ -194,6 +194,7 @@
   };
   const deleteMatBatchEvent = async (row) => {
     await delSubStockListBatch({ params: row });
+    createMessage.success('删除成功');
     await getList();
   };
   //审核单条
@@ -203,6 +204,7 @@
         id: row.id,
       },
     });
+    createMessage.success('审核成功');
     await getList();
   };
 
@@ -225,6 +227,7 @@
         id: row?.id,
       },
     });
+    createMessage.success('反审核成功');
     await getList();
   };
   //批量反审核

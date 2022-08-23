@@ -425,10 +425,12 @@
       data.treeData = cloneDeep(res);
     }
   };
+
   //基础信息弹框--打开放大镜
   const onSearch = async (data) => {
     nowCheckData.data = data;
     const res = await publicEvent(data);
+    console.log(res, 'asasa');
     basicSearchRef.value.initList(res);
     basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]);
     basicSearchRef.value.bSearch(true);

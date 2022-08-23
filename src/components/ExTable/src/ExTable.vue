@@ -2,8 +2,6 @@
   <div>
     <vxe-grid
       ref="xGrid"
-      :scroll-x="{ gt: 5 }"
-      :scroll-y="{ gt: 50 }"
       v-bind="props.gridOptions"
       :columns="props.columns"
       :export-config="{}"
@@ -37,19 +35,20 @@
       <template #number="{ row }">
         <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
       </template>
+      <template #SupplierLevel="{ row }">
+        <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
+      </template>
       <template #status="{ row }">
         <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-          row.bsStatus === 'A' ? '创建' : '已审核'
+          formatData(row.bsStatus, config['DATA_STATUS'])
         }}</Tag>
       </template>
       <template #open="{ row }">
-        <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
-          row.isOpen === 1 ? '启用' : '禁止'
+        <Tag :color="row.isOpen === '1' ? 'processing' : 'default'" v-if="row.isOpen">{{
+          formatData(row.isOpen, config['ENABLE_STATUS'])
         }}</Tag>
       </template>
-      <template #attr="{ row }"
-        >{{ row.attr === 'A' ? '自制' : row.attr === 'B' ? '外购' : '虚拟' }}
-      </template>
+      <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
       <template #operate="{ row }">
         <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
         <AButton
@@ -144,6 +143,7 @@
   import { importData } from '/@/api/public';
   // import { useRouter } from 'vue-router';
   // const router = useRouter();
+  import { config, configEntity } from '/@/utils/publicParamConfig'; //公共配置ts
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -204,6 +204,20 @@
   const init = (data) => {
     tableData.data = data;
   };
+
+  /**
+   * 格式化数据
+   * @param data
+   * @param source
+   */
+  const formatData = (data: string, source: configEntity[]) => {
+    let res;
+    if (source && source.length > 0) {
+      res = source.find((item) => item.value === data);
+    }
+    return res ? res.label : '';
+  };
+
   //新增
   const addTable = () => {
     emit('addEvent');
@@ -223,12 +237,12 @@
         if (row.bsStatus == 'A') {
           try {
             emit('deleteRowEvent', row);
-            useMessage().createMessage.success('删除成功');
+            //createMessage.success('删除成功');
           } catch (e) {
             console.log('删除1失败', e);
           }
         } else {
-          useMessage().createMessage.error('已审核的资料不可删除');
+          createMessage.error('已审核的资料不可删除');
         }
       }
     }
@@ -257,7 +271,7 @@
               row.push(selectRecords[i].id);
             }
             emit('delBatchEvent', row);
-            createMessage.success('删除成功');
+            // createMessage.success('删除成功');
           } catch (e) {
             console.log('删除多条失败', e);
           }
@@ -270,20 +284,19 @@
   //审核单条
   const auditRow = async (row) => {
     //VXETable自带的弹框
-    const type = await VXETable.modal.confirm('您确定要审核该数据?');
+    const type = await VXETable.modal.confirm('您确定要保存并审核当前物料吗?');
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
         if (row.bsStatus == 'A') {
           try {
             emit('auditRowEvent', row);
-            useMessage().createMessage.success('审核成功');
             row.bsStatus = 'B';
           } catch (e) {
             console.log('审核单条失败', e);
           }
         } else {
-          useMessage().createMessage.error('当前状态不能完成【审核】操作');
+          createMessage.error('当前状态不能完成【审核】操作');
         }
       }
     }
@@ -297,13 +310,13 @@
         if (row.bsStatus == 'B') {
           try {
             emit('unAuditRowEvent', row);
-            useMessage().createMessage.success('反审核成功');
+            // createMessage.success('反审核成功');
             row.bsStatus = 'A';
           } catch (e) {
             console.log('反审核单条失败', e);
           }
         } else {
-          useMessage().createMessage.error('当前状态不能完成【反审核】操作');
+          createMessage.error('当前状态不能完成【反审核】操作');
         }
       }
     }
@@ -493,7 +506,6 @@
     delTable,
     auditTable,
     unAuditTable,
-    // exportTable,
     editTable,
     init,
     computeData,
