@@ -29,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入项目编码"
-                    :disabled="formState.bsStatus === 'B' || formState.number"
+                    :disabled="!!(formState.bsStatus === 'B' || formState.number)"
                   />
                 </a-form-item>
               </Col>
@@ -214,7 +214,13 @@
   const visibleGroupModal: any = ref<boolean>(false);
   //审核状态
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
-  const formData: ExaProjectEntity = { id: undefined, number: '', name: '', isOpen: 1 };
+  const formData: ExaProjectEntity = {
+    id: undefined,
+    number: '',
+    name: '',
+    isOpen: 1,
+    groupId: undefined,
+  };
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -226,8 +232,11 @@
       params: groupSelectId || formState.value.groupId || '',
     });
     if (result) {
-      formState.value.groupId = result.id;
+      formState.value.groupId = result.id == '0' ? '' : result.id;
       formState.value.groupName = result.name;
+    } else {
+      formState.value.groupId = undefined;
+      formState.value.groupName = undefined;
     }
   };
   const formRules = reactive({
@@ -248,7 +257,6 @@
   const onClear = (key: string[]) => {
     key.forEach((e) => {
       formState.value[e] = '';
-      // e.endsWith('Id') ? (formState.value[e] = '') : (formState.value[e] = '');
     });
   };
   //获取物料分组数据
