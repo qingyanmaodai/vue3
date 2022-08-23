@@ -230,16 +230,15 @@
   //删除单条
   const deleteRowEvent = async (row: any) => {
     //删除确认窗口
-    const type = await VXETable.modal.confirm('您确定要删除该数据?');
+    const type = await VXETable.modal.confirm('您确定要删除该数据?(【已审核】状态的信息不可删除)');
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
         if (row.bsStatus == 'A') {
           try {
             emit('deleteRowEvent', row);
-            //createMessage.success('删除成功');
           } catch (e) {
-            console.log('删除1失败', e);
+            console.log('删除单条失败', e);
           }
         } else {
           createMessage.error('已审核的资料不可删除');
@@ -257,9 +256,9 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要删除所选' +
+          '您确定要删除所选的 ' +
           selectRecords.length +
-          '数据?（【已审核】状态的信息不可删除,请检查后重新操作）',
+          ' 条 数据?(【已审核】状态的信息不可删除,请检查后重新操作)',
       });
       if (type === 'confirm') {
         for (let i = 0; i < selectRecords.length; i++) {
@@ -276,7 +275,7 @@
   //审核单条
   const auditRow = async (row) => {
     //VXETable自带的弹框
-    const type = await VXETable.modal.confirm('您确定要保存并审核当前物料吗?');
+    const type = await VXETable.modal.confirm('您确定要审该物料吗?(【已审核】状态的信息不可审核)');
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
@@ -295,14 +294,15 @@
   };
   //反审核单条
   const unAuditRow = async (row) => {
-    const type = await VXETable.modal.confirm('您确定要反审核该数据?');
+    const type = await VXETable.modal.confirm(
+      '您确定要反审核该数据?(【审核】状态的信息不可反审核)',
+    );
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
         if (row.bsStatus == 'B') {
           try {
             emit('unAuditRowEvent', row);
-            // createMessage.success('反审核成功');
             row.bsStatus = 'A';
           } catch (e) {
             console.log('反审核单条失败', e);
@@ -330,56 +330,46 @@
     }
   };
   //批量审核
-  const auditTable = async (row: number[]) => {
+  const auditTable = async () => {
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
+    let okRow: any[] = [];
     if (selectRecords.length > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
-        content: '您确定要审核所选' + selectRecords.length + '数据?',
+        content:
+          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【已审核】状态的信息不可审核)',
       });
       if (type === 'confirm') {
-        row = [];
-        try {
-          for (let i = 0; i < selectRecords.length; i++) {
-            row.push(selectRecords[i].id);
-          }
-          emit('auditBatchEvent', row);
-          for (let i = 0; i < selectRecords.length; i++) {
-            $grid.getCheckboxRecords()[i].bsStatus = 'B';
-          }
-        } catch (e) {
-          console.log('审核多条失败', e);
+        for (let i = 0; i < selectRecords.length; i++) {
+          okRow.push(selectRecords[i]);
+          $grid.getCheckboxRecords()[i].bsStatus = 'B';
         }
+        emit('auditBatchEvent', okRow);
       }
     } else {
       createMessage.warning('请至少勾选一条记录。');
     }
   };
   //批量反审核
-  const unAuditTable = async (row: number[]) => {
+  const unAuditTable = async () => {
+    let okRow: any[] = [];
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
     if (selectRecords.length > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
-        content: '您确定要反审核所选' + selectRecords.length + '数据?',
+        content:
+          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的信息不可反审核)',
       });
       if (type === 'confirm') {
-        row = [];
-        try {
-          for (let i = 0; i < selectRecords.length; i++) {
-            row.push(selectRecords[i].id);
-          }
-          emit('unAuditBatchEvent', row);
-          for (let i = 0; i < selectRecords.length; i++) {
-            $grid.getCheckboxRecords()[i].bsStatus = 'A';
-          }
-        } catch (e) {
-          console.log('反审核多条失败', e);
+        for (let i = 0; i < selectRecords.length; i++) {
+          okRow.push(selectRecords[i]);
+          $grid.getCheckboxRecords()[i].bsStatus = 'A';
         }
+        emit('unAuditBatchEvent', okRow);
       }
     } else {
       createMessage.warning('请至少勾选一条记录。');

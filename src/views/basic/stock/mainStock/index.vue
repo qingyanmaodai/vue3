@@ -148,22 +148,22 @@
     {
       type: 'primary',
       label: '审核',
-      onClick: (row) => {
-        auditEvent(row);
+      onClick: () => {
+        auditEvent();
       },
     },
     {
       type: 'default',
       label: '反审核',
-      onClick: (row) => {
-        unAuditEvent(row);
+      onClick: () => {
+        unAuditEvent();
       },
     },
     {
       type: 'danger',
       label: '批量删除',
-      onClick: (row) => {
-        delTableEvent(row);
+      onClick: () => {
+        delTableEvent();
       },
     },
   ];
@@ -191,11 +191,14 @@
     await getList();
   };
   //批量删除表格
-  const delTableEvent = (row) => {
-    tableRef.value.delTable(row);
+  const delTableEvent = () => {
+    tableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (row) => {
-    await delStockListBatch({ params: row });
+  const deleteMatBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    await delStockListBatch({ params: ids });
     createMessage.success('删除成功');
     await getList();
   };
@@ -211,13 +214,16 @@
   };
 
   //批量审核事件
-  const auditEvent = (row) => {
-    tableRef.value.auditTable(row);
+  const auditEvent = () => {
+    tableRef.value.auditTable();
   };
   let res: any = '';
-  const auditBatchEvent = async (row) => {
+  const auditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     res = await auditStockListBatch({
-      params: row,
+      params: ids,
     });
     await tableRef.value.computeData(res);
     await getList();
@@ -233,12 +239,15 @@
     await getList();
   };
   //批量反审核
-  const unAuditEvent = (row) => {
-    tableRef.value.unAuditTable(row);
+  const unAuditEvent = () => {
+    tableRef.value.unAuditTable();
   };
-  const unAuditBatchEvent = async (row) => {
+  const unAuditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     res = await unAuditStockListBatch({
-      params: row,
+      params: ids,
     });
     await tableRef.value.computeData(res);
     await getList();
