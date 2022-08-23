@@ -233,6 +233,7 @@
     pages.total = res.total;
     pages.currentPage = currPage;
     let data = res.records;
+    console.log(data);
     tableRef.value.init(data);
     searchRef.value.moreSearchClose();
   };
