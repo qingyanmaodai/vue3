@@ -29,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入项目编码"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="formState.bsStatus === 'B' || formState.number"
                   />
                 </a-form-item>
               </Col>
@@ -295,7 +295,7 @@
       });
   };
   const onAudit = async () => {
-    const type = await VXETable.modal.confirm('您确定要审核吗?');
+    const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
     if (type === 'confirm') {
       const data = await audit({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
