@@ -305,10 +305,13 @@
   };
   //批量删除表格
   const delTableEvent = () => {
-    tableRef.value.delTable([]);
+    tableRef.value.delTable();
   };
-  const deleteBatchEvent = async (row) => {
-    await delBatch({ params: row });
+  const deleteBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    await delBatch({ params: ids });
     await getList();
   };
   //审核单条

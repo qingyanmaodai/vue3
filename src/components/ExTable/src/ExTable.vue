@@ -44,7 +44,7 @@
         }}</Tag>
       </template>
       <template #open="{ row }">
-        <Tag :color="row.isOpen === '1' ? 'processing' : 'default'" v-if="row.isOpen">{{
+        <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
           formatData(row.isOpen, config['ENABLE_STATUS'])
         }}</Tag>
       </template>
@@ -210,7 +210,7 @@
    * @param data
    * @param source
    */
-  const formatData = (data: string, source: configEntity[]) => {
+  const formatData = (data: string | number, source: configEntity[]) => {
     let res;
     if (source && source.length > 0) {
       res = source.find((item) => item.value === data);
@@ -248,34 +248,26 @@
     }
   };
   //批量删除
-  const delTable = async (row: number[]) => {
+  const delTable = async () => {
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
+    let okRow: any[] = [];
     if (selectRecords.length > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
-        content: '您确定要删除所选' + selectRecords.length + '数据?',
+        content:
+          '您确定要删除所选' +
+          selectRecords.length +
+          '数据?（【已审核】状态的信息不可删除,请检查后重新操作）',
       });
       if (type === 'confirm') {
-        row = [];
         for (let i = 0; i < selectRecords.length; i++) {
-          if (selectRecords[i].bsStatus == 'B') {
-            createMessage.error('【已审核】状态的信息不可删除,请检查后重新操作');
-            selectRecords.length = 0;
+          if (selectRecords[i].bsStatus !== 'B') {
+            okRow.push(selectRecords[i]);
           }
         }
-        if (selectRecords.length != 0) {
-          try {
-            for (let i = 0; i < selectRecords.length; i++) {
-              row.push(selectRecords[i].id);
-            }
-            emit('delBatchEvent', row);
-            // createMessage.success('删除成功');
-          } catch (e) {
-            console.log('删除多条失败', e);
-          }
-        }
+        emit('delBatchEvent', okRow);
       }
     } else {
       createMessage.warning('请至少勾选一条记录。');

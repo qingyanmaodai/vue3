@@ -1,6 +1,6 @@
 export interface configEntity {
   label: string;
-  value: string;
+  value: string | number;
 }
 export const config = {
   //基本单位表格数据
@@ -30,11 +30,11 @@ export const config = {
   // 启用状态
   ENABLE_STATUS: [
     {
-      value: '0',
+      value: 0,
       label: '关闭',
     },
     {
-      value: '1',
+      value: 1,
       label: '开启',
     },
   ],
