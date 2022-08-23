@@ -29,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入项目编码"
-                    :disabled="!!(formState.bsStatus === 'B' || formState.number)"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
