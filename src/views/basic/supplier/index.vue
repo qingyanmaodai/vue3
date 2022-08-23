@@ -93,6 +93,7 @@
     batchDeleteSupplier,
     exportSupplierData,
     supplierImportModel,
+    getSupplierEntity,
   } from '/@/api/supplier';
   import {
     addSupplierGroup,
@@ -274,6 +275,7 @@
     await supplierTableRef.value.computeData(res);
     await getSupplierList();
   };
+
   /**
    * 表格批量删除事件
    * @param row
@@ -348,6 +350,15 @@
       });
     };
   };
+
+  /**
+   * 获取高级查询下拉框
+   */
+  const getOptions = async () => {
+    const moreSearchData = await getSupplierEntity();
+    supplierSearchRef.value.getOptions(moreSearchData);
+  };
+  getOptions();
 
   /**
    * 选中分组事件

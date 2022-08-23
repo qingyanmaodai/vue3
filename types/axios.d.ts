@@ -26,9 +26,9 @@ export interface RequestOptions {
 }
 
 export interface Result<T = any> {
-  arr: Array;
-  length: number;
-  id: string;
+  // arr: Array;
+  // length: number;
+  // id: string;
   code: number;
   type: 'success' | 'error' | 'warning';
   message: string;

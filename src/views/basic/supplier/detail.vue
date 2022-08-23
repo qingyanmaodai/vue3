@@ -96,6 +96,7 @@
               <Col :span="8">
                 <a-form-item label="国家：" ref="country" name="country" class="item">
                   <a-select
+                    allowClear
                     class="input"
                     :disabled="isDisable"
                     v-model:value="formState.country"
@@ -110,6 +111,7 @@
               <Col :span="8">
                 <a-form-item label="地区：" ref="districtArr" name="districtArr" class="item">
                   <a-cascader
+                    allowClear
                     v-if="isShowDistrict"
                     style="width: 16rem; height: 2rem; margin: 0 60px 0 2px"
                     :disabled="isDisable"
@@ -165,6 +167,7 @@
                     class="input"
                     placeholder="请选择供应商分组"
                     label="供应商分组"
+                    :show="!isDisable"
                     v-model:value="tempFormState.groupName"
                     :disabled="isDisable"
                     @search="onGroupSearch"
@@ -361,9 +364,10 @@
    * 获取供应商详细信息
    */
   const getSupplier = async (supId = supplierId.value) => {
-    const res = await getOneSupplier(supId);
+    const res: any = await getOneSupplier(supId);
     if (res) {
       formState.value = res;
+      tempFormState.groupName = res.bdSupplierGroup ? res.bdSupplierGroup.name : '';
       if (formState.value.bsStatus === 'B') {
         isDisable.value = true;
         showAudit.value = false;
@@ -391,9 +395,9 @@
       await formRef.value.validateFields();
       let res;
       if (supplierId.value) {
-        res = await save({ params: formState.value });
-      } else {
         res = await update({ params: formState.value });
+      } else {
+        res = await save({ params: formState.value });
       }
       await getSupplier(res.id);
       createMessage.success('操作成功');
@@ -412,7 +416,6 @@
     if (type == 'confirm') {
       let data;
       if (flag === 0) {
-        await save({ params: formState.value }); //保存操作
         data = await audit({ params: formState.value });
         isDisable.value = true;
         showAudit.value = false;
@@ -521,45 +524,50 @@
    * 省市区回显
    */
   const echoDistrict = async () => {
-    let arr: number[] = [];
-    let ssqData = cloneDeep(districtData.value);
-    if (formState.value.provincial) {
-      arr.push(formState.value.provincial);
-      if (formState.value.municipal) {
-        arr.push(formState.value.municipal);
-        let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
-        if (provincialIndex != -1) {
-          const municipalRes = await getCountryTree({
-            params: ssqData[provincialIndex].number || '',
-          });
-          municipalRes.forEach((item) => {
-            item.label = item.name;
-            item.value = item.id;
-            item.isLeaf = item.level == 3;
-          });
-          ssqData[provincialIndex].children = cloneDeep(municipalRes);
-          if (formState.value.district) {
-            arr.push(formState.value.district);
-            let municipalIndex = ssqData[provincialIndex].children!.findIndex(
-              (e) => e.id == formState.value.municipal,
-            );
-            if (municipalIndex != -1) {
-              const districtRes = await getCountryTree({
-                params: ssqData[provincialIndex].children![municipalIndex].number || '',
-              });
-              districtRes.forEach((item) => {
-                item.label = item.name;
-                item.value = item.id;
-                item.isLeaf = item.level == 3;
-              });
-              ssqData[provincialIndex].children![municipalIndex].children = cloneDeep(districtRes);
+    try {
+      let arr: number[] = [];
+      let ssqData = cloneDeep(districtData.value);
+      if (formState.value.provincial) {
+        arr.push(formState.value.provincial);
+        if (formState.value.municipal) {
+          arr.push(formState.value.municipal);
+          let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
+          if (provincialIndex != -1) {
+            const municipalRes = await getCountryTree({
+              params: ssqData[provincialIndex].number || '',
+            });
+            municipalRes.forEach((item) => {
+              item.label = item.name;
+              item.value = item.id;
+              item.isLeaf = item.level == 3;
+            });
+            ssqData[provincialIndex].children = cloneDeep(municipalRes);
+            if (formState.value.district) {
+              arr.push(formState.value.district);
+              let municipalIndex = ssqData[provincialIndex].children!.findIndex(
+                (e) => e.id == formState.value.municipal,
+              );
+              if (municipalIndex != -1) {
+                const districtRes = await getCountryTree({
+                  params: ssqData[provincialIndex].children![municipalIndex].number || '',
+                });
+                districtRes.forEach((item) => {
+                  item.label = item.name;
+                  item.value = item.id;
+                  item.isLeaf = item.level == 3;
+                });
+                ssqData[provincialIndex].children![municipalIndex].children =
+                  cloneDeep(districtRes);
+              }
             }
           }
         }
       }
+      districtData.value = cloneDeep(ssqData);
+      tempFormState.districtArr = arr;
+    } catch (e) {
+      console.log(e);
     }
-    districtData.value = cloneDeep(ssqData);
-    tempFormState.districtArr = arr;
   };
 
   /**

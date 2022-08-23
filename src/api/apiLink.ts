@@ -26,7 +26,9 @@ export enum Url {
   //供应商
   SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
   SUPPLIER_GET_ONE = '/stock/bd-supplier/query-one', //查询单个供应商
-  SUPPLIER_SAVE = '/stock/bd-supplier/save', //查询单个供应商
+  SUPPLIER_GET_ENTITY = '/stock/bd-supplier/query-dto', //获取供应商实体信息
+  SUPPLIER_SAVE = '/stock/bd-supplier/save', //保存单个供应商
+  SUPPLIER_UPDATE = '/stock/bd-supplier/update', //修改单个供应商
   SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
   SUPPLIER_BATCH_AUDIT = '/stock/bd-supplier/batch-audit', //供应商批量审核
   SUPPLIER_UN_AUDIT = '/stock/bd-supplier/un-audit', //供应反审核
@@ -113,6 +115,7 @@ export enum Url {
 
   //国家地区
   COUNTRY_TREE = '/stock/bd-country/getCountryByParentId',
+  GET_COUNTRY_ENTITY = '/stock/bd-country/query-dto',
 }
 
 export const TableColum = {
@@ -190,6 +193,20 @@ export const TableColum = {
     { field: 'address', title: '仓位地址', sortable: true },
     { field: 'mainBy', title: '仓位管理员', sortable: true },
     { field: 'phone', title: '联系电话', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //国家地区
+  GET_COUNTRY_ENTITY: [
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '编码', sortable: true },
+    { field: 'name', title: '名称', sortable: true },
+    { field: 'createTime', title: '创建时间', sortable: true },
+    { field: 'updateTime', title: '修改时间', sortable: true },
     {
       field: 'bsStatus',
       title: '数据状态',

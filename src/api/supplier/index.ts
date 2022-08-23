@@ -54,6 +54,22 @@ export function getSupplierData(
 }
 
 /**
+ * 获取选项
+ */
+export function getSupplierEntity(mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.SUPPLIER_GET_ENTITY,
+      data: {},
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
  * 保存供应商
  */
 export function save(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
@@ -75,7 +91,7 @@ export function save(json: RequestData<object>, mode: ErrorMessageMode = 'messag
 export function update(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.SUPPLIER_SAVE,
+      url: Url.SUPPLIER_UPDATE,
       data: json,
     },
     {
