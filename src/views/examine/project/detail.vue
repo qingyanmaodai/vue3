@@ -29,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入项目编码"
-                    :disabled="!!(formState.bsStatus === 'B' || formState.number)"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -295,6 +295,7 @@
           const data = await update({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
         }
+        formState.value.bsStatus = 'A';
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -303,12 +304,20 @@
       });
   };
   const onAudit = async () => {
-    const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
-    if (type === 'confirm') {
-      const data = await audit({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
-      createMessage.success('操作成功');
-    }
+    formRef.value
+      .validate()
+      .then(async () => {
+        const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
+        if (type === 'confirm') {
+          const data = await audit({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+          createMessage.success('操作成功');
+        }
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');

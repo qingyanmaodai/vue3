@@ -33,7 +33,7 @@
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
-            @delBatchEvent="deleteMatBatchEvent"
+            @delBatchEvent="deleteBatchEvent"
             @auditRowEvent="auditRowEvent"
             @auditBatchEvent="auditBatchEvent"
             @unAuditRowEvent="unAuditRowEvent"
@@ -86,7 +86,7 @@
     audit,
     auditBatch,
     delBatch,
-    delMatTableById,
+    delById,
     exportExcel,
     getDataList,
     getSearchOption,
@@ -103,7 +103,10 @@
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
+  import { Result } from "/#/axios";
+  import { useMessage } from '/@/hooks/web/useMessage';
 
+  const { createMessage } = useMessage();
   const go = useGo();
   const ASplitpanes = Splitpanes;
   const GridOptions = gridOptions;
@@ -254,22 +257,22 @@
     {
       type: 'primary',
       label: '审核',
-      onClick: (row) => {
-        auditEvent(row);
+      onClick: () => {
+        auditEvent();
       },
     },
     {
       type: 'default',
       label: '反审核',
-      onClick: (row) => {
-        unAuditEvent(row);
+      onClick: () => {
+        unAuditEvent();
       },
     },
     {
       type: 'danger',
       label: '批量删除',
-      onClick: (row) => {
-        delTableEvent(row);
+      onClick: () => {
+        delTableEvent();
       },
     },
   ];
@@ -297,25 +300,24 @@
   };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
-    await delMatTableById({ params: row.id });
+    await delById({ params: row.id });
     await getList();
   };
   //批量删除表格
-  const delTableEvent = (row) => {
-    tableRef.value.delTable(row);
+  const delTableEvent = () => {
+    tableRef.value.delTable([]);
   };
-  const deleteMatBatchEvent = async (row) => {
+  const deleteBatchEvent = async (row) => {
     await delBatch({ params: row });
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
     await audit({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     await getList();
+    createMessage.success('操作成功');
   };
 
   //审核事件
@@ -333,11 +335,10 @@
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
     await unAudit({
-      params: {
-        id: row?.id,
-      },
+      params: row,
     });
     await getList();
+    createMessage.success('操作成功');
   };
   //批量反审核
   const unAuditEvent = (row) => {
