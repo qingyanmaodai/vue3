@@ -79,6 +79,7 @@ export enum Url {
   ADD_EXA_PROJECT = '/stock/bd-examine-project/save', //新增
   QUERY_ONE_EXA_PROJECT = '/stock/bd-examine-project/query-one',
   UPDATE_EXA_PROJECT = '/stock/bd-examine-project/update',
+  DEL_EXA_PROJECT = '/stock/bd-examine-project/delete',
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',

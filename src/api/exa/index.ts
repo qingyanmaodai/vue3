@@ -14,10 +14,7 @@ export interface ExaProjectEntity extends PublicModel {
 /**
  * 获取表格信息
  */
-export function getDataList(
-  json: RequestData<SearchParams[]>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.GET_EXA_PROJECT_LIST,
@@ -47,10 +44,7 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加物料信息
  */
-export function add(
-  json: RequestData<ExaProjectEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function add(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ExaProjectEntity>(
     {
       url: Url.ADD_EXA_PROJECT,
@@ -65,10 +59,7 @@ export function add(
 /**
  * 编辑物料信息
  */
-export function update(
-  json: RequestData<ExaProjectEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function update(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ExaProjectEntity>(
     {
       url: Url.UPDATE_EXA_PROJECT,
@@ -81,7 +72,7 @@ export function update(
   );
 }
 /**
- * 审核物料信息
+ * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ExaProjectEntity>(
@@ -98,10 +89,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 /**
  * 批量审核物料信息
  */
-export function auditBatch(
-  json: RequestData<object>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function auditBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.BATCH_AUDIT_EXA_PROJECT,
@@ -131,25 +119,22 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 /**
  * 删除单条
  */
-export function delMatTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DEL_TABLE_LIST,
+      url: Url.DEL_EXA_PROJECT,
       data: json,
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: false,
+      isTransformResponse: true,
     },
   );
 }
 /**
  * 删除多条
  */
-export function delBatch(
-  json: RequestData<Array<string>>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.BATCH_DEL_EXA_PROJECT,
