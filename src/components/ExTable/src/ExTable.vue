@@ -37,19 +37,20 @@
       <template #number="{ row }">
         <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
       </template>
+      <template #SupplierLevel="{ row }">
+        <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
+      </template>
       <template #status="{ row }">
         <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-          row.bsStatus === 'A' ? '创建' : '已审核'
+          formatData(row.bsStatus, config['DATA_STATUS'])
         }}</Tag>
       </template>
       <template #open="{ row }">
         <Tag :color="row.isOpen === '1' ? 'processing' : 'default'" v-if="row.isOpen">{{
-          row.isOpen === 1 ? '启用' : '禁止'
+          formatData(row.isOpen, config['ENABLE_STATUS'])
         }}</Tag>
       </template>
-      <template #attr="{ row }"
-        >{{ row.attr === 'A' ? '自制' : row.attr === 'B' ? '外购' : '虚拟' }}
-      </template>
+      <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
       <template #operate="{ row }">
         <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
         <AButton
@@ -144,6 +145,7 @@
   import { importData } from '/@/api/public';
   // import { useRouter } from 'vue-router';
   // const router = useRouter();
+  import { config, configEntity } from '/@/utils/publicParamConfig'; //公共配置ts
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -204,6 +206,20 @@
   const init = (data) => {
     tableData.data = data;
   };
+
+  /**
+   * 格式化数据
+   * @param data
+   * @param source
+   */
+  const formatData = (data: string, source: configEntity[]) => {
+    let res;
+    if (source && source.length > 0) {
+      res = source.find((item) => item.value === data);
+    }
+    return res ? res.label : '';
+  };
+
   //新增
   const addTable = () => {
     emit('addEvent');

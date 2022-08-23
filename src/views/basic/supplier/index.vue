@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <a-splitPanes class="default-theme" style="padding: 15px; height: 100%">
       <a-pane :size="paneSize">
         <ex-tree
@@ -16,48 +16,51 @@
         />
       </a-pane>
       <a-pane :size="100 - paneSize">
-        <Search
-          ref="supplierSearchRef"
-          tableName="BdSupplier"
-          searchNo="编码"
-          searchName="供应商"
-          @getList="getSupplierList"
-          @resetEvent="resetTable"
-        />
-        <ExTable
-          :columns="supplierColumns"
-          :buttons="tableButtons"
-          :gridOptions="GridOptions"
-          ref="supplierTableRef"
-          @addEvent="tableAddEvent"
-          @editEvent="editTableEvent"
-          @deleteRowEvent="deleteRowTableEvent"
-          @delBatchEvent="deleteMatBatchEvent"
-          @auditRowEvent="auditRowEvent"
-          @auditBatchEvent="auditBatchEvent"
-          @unAuditRowEvent="unAuditRowEvent"
-          @unAuditBatchEvent="unAuditBatchEvent"
-          @exportTable="exportTable"
-          @importModelEvent="importModelEvent"
-          @refreshTable="getSupplierList"
-        />
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-        />
+        <div style="background-color: #fff; height: 100%">
+          <Search
+            ref="supplierSearchRef"
+            tableName="BdSupplier"
+            searchNo="编码"
+            searchName="供应商"
+            @getList="getSupplierList"
+            @resetEvent="resetTable"
+          />
+          <ExTable
+            :columns="supplierColumns"
+            :buttons="tableButtons"
+            :gridOptions="GridOptions"
+            ref="supplierTableRef"
+            @addEvent="tableAddEvent"
+            @editEvent="editTableEvent"
+            @deleteRowEvent="deleteRowTableEvent"
+            @delBatchEvent="deleteMatBatchEvent"
+            @auditRowEvent="auditRowEvent"
+            @auditBatchEvent="auditBatchEvent"
+            @unAuditRowEvent="unAuditRowEvent"
+            @unAuditBatchEvent="unAuditBatchEvent"
+            @exportTable="exportTable"
+            @importModelEvent="importModelEvent"
+            @refreshTable="getSupplierList"
+          />
+          <div>
+            <Pager
+              background
+              v-model:current-page="pages.currentPage"
+              v-model:page-size="pages.pageSize"
+              :total="pages.total"
+              :layouts="[
+                'PrevJump',
+                'PrevPage',
+                'JumpNumber',
+                'NextPage',
+                'NextJump',
+                'Sizes',
+                'FullJump',
+                'Total',
+              ]"
+              @page-change="tablePagerChange"
+          /></div>
+        </div>
       </a-pane>
     </a-splitPanes>
   </div>

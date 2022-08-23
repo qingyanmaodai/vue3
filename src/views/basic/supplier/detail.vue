@@ -288,7 +288,7 @@
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
   import { cloneDeep } from 'lodash-es';
-  import { CountryEntity, getCountryTree } from '/@/api/public';
+  import { CountryEntity, getCountryTree } from '/@/api/country';
 
   /* data */
 
@@ -387,7 +387,6 @@
     formState.value.district = tempFormState.districtArr[2]
       ? tempFormState.districtArr[2]
       : undefined; //区
-    console.log(formState.value);
     try {
       await formRef.value.validateFields();
       let res;
@@ -396,7 +395,6 @@
       } else {
         res = await update({ params: formState.value });
       }
-      console.log(res);
       await getSupplier(res.id);
       createMessage.success('操作成功');
     } catch (errorInfo) {
@@ -409,11 +407,12 @@
    * @param flag 0.审核 1.反审核
    */
   const handleAudit = async (flag: number) => {
-    let mess = flag === 1 ? '反审核' : '审核';
+    let mess = flag === 1 ? '反审核' : '保存并审核';
     const type = await VXETable.modal.confirm(`确定${mess}当前供应商吗?`);
     if (type == 'confirm') {
       let data;
       if (flag === 0) {
+        await save({ params: formState.value }); //保存操作
         data = await audit({ params: formState.value });
         isDisable.value = true;
         showAudit.value = false;
