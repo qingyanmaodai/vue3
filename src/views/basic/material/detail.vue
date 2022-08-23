@@ -5,15 +5,21 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-if="showSubmit">保存</Button>
-        <Button danger class="button" @click="onExam" v-if="showExam">审核</Button>
-        <Button danger class="button" @click="unExam" v-if="showUnExam">反审核</Button>
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="onExam" v-if="formState.bsStatus === 'A'"
+          >审核</Button
+        >
+        <Button danger class="button" @click="unExam" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
       </div>
     </LayoutHeader>
     <a-card class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="物料编码：" ref="number" name="number" class="item">
@@ -23,7 +29,7 @@
                     autocomplete="off"
                     v-model:value="formState.number"
                     placeholder="请输入物料编码"
-                    :disabled="hasId"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -36,7 +42,7 @@
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入物料名称"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -47,7 +53,7 @@
                     class="input"
                     v-model:value="formState.shortName"
                     placeholder="请输入简称"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -62,14 +68,14 @@
                   class="item"
                 >
                   <ExInput
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     autocomplete="off"
                     class="input"
                     placeholder="请选择基本单位"
                     v-model:value="formState.baseUnitName"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock('baseUnit')"
-                    @clear="onClear('baseUnit')"
+                    @clear="onClear(['baseUnitId', 'baseUnitName'])"
                   />
                 </a-form-item>
               </Col>
@@ -86,11 +92,11 @@
                     class="input"
                     placeholder="请选择物料分组"
                     label="物料分组"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.groupName"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onGroupSearch(formState.groupName)"
-                    @clear="onClear('group')"
+                    @clear="onClear(['groupId', 'groupName'])"
                   />
                 </a-form-item>
               </Col>
@@ -99,8 +105,8 @@
                   <Select
                     v-model:value="formState.attr"
                     class="select"
-                    :options="config.MATERIAL_ATTR"
-                    :disabled="showUnExam"
+                    :value="config.MATERIAL_ATTR[formState.attr] || 'A'"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -119,11 +125,11 @@
                     autocomplete="off"
                     placeholder="请选择重量单位"
                     label="重量单位"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.weightName"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock('weightUnit')"
-                    @clear="onClear('weightUnit')"
+                    @clear="onClear(['weightUnitId', 'weightName'])"
                   />
                 </a-form-item>
               </Col>
@@ -134,7 +140,7 @@
                     v-model:value="formState.netWeight"
                     :min="0"
                     :step="0.1"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -144,7 +150,7 @@
                     class="input"
                     v-model:value="formState.model"
                     placeholder="请输入规格型号"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -170,7 +176,7 @@
                     class="input"
                     v-model:value="formState.oldMatNumber"
                     placeholder="请输入旧物料编码"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -189,11 +195,20 @@
                     class="input"
                     placeholder="请选择仓库"
                     label="仓库"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.stockName"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock('stock')"
-                    @clear="onClear('stock')"
+                    @clear="
+                      onClear([
+                        'stockId',
+                        'stockName',
+                        'subStockId',
+                        'subStockName',
+                        'bdStockLocationId',
+                        'bdStockLocationName',
+                      ])
+                    "
                   />
                 </a-form-item>
               </Col>
@@ -210,11 +225,18 @@
                     class="input"
                     placeholder="请选择分仓"
                     label="分仓"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.subStockName"
-                    :disabled="hasSub"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock('sub')"
-                    @clear="onClear('sub')"
+                    @clear="
+                      onClear([
+                        'subStockId',
+                        'subStockName',
+                        'bdStockLocationId',
+                        'bdStockLocationName',
+                      ])
+                    "
                   />
                 </a-form-item>
               </Col>
@@ -231,11 +253,11 @@
                     class="input"
                     placeholder="请选择仓位"
                     label="仓位"
-                    :show="!showUnExam"
+                    :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStockLocationName"
-                    :disabled="hasLocation"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onStock('location')"
-                    @clear="onClear('location')"
+                    @clear="onClear(['bdStockLocationId', 'bdStockLocationName'])"
                   />
                 </a-form-item>
               </Col>
@@ -243,12 +265,12 @@
             <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <TextArea
+                  <a-textArea
                     v-model:value="formState.mark"
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="showUnExam"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -256,7 +278,7 @@
           </a-form>
         </TabPane>
         <TabPane key="2" tab="质量信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <div class="keyTwo">
               <Row>
                 <Col :span="8">
@@ -273,7 +295,7 @@
                         :checkedValue="1"
                         :unCheckedValue="0"
                         v-model:checked="formState.stockInExamine"
-                        :disabled="showUnExam"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </div>
                   </a-form-item>
@@ -292,7 +314,7 @@
                         :checkedValue="1"
                         :unCheckedValue="0"
                         v-model:checked="formState.produceExamine"
-                        :disabled="showUnExam"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </div>
                   </a-form-item>
@@ -311,7 +333,7 @@
                         :checkedValue="1"
                         :unCheckedValue="0"
                         v-model:checked="formState.stockOutExamine"
-                        :disabled="showUnExam"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </div>
                   </a-form-item>
@@ -327,7 +349,7 @@
                         :checkedValue="1"
                         :unCheckedValue="0"
                         v-model:checked="formState.enableSn"
-                        :disabled="showUnExam"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </div>
                   </a-form-item>
@@ -346,7 +368,7 @@
                         :checkedValue="1"
                         :unCheckedValue="0"
                         v-model:checked="formState.enableBatch"
-                        :disabled="showUnExam"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </div>
                   </a-form-item>
@@ -365,11 +387,11 @@
                       class="input"
                       placeholder="请选择检验方案"
                       label="检验方案"
-                      :show="!showUnExam"
+                      :show="formState.bsStatus !== 'B'"
                       v-model:value="formState.bdExamineName"
-                      :disabled="showUnExam"
+                      :disabled="formState.bsStatus === 'B'"
                       @search="onStock('plan')"
-                      @clear="onClear('plan')"
+                      @clear="onClear(['examineId', 'bdExamineName'])"
                     />
                   </a-form-item>
                 </Col>
@@ -380,7 +402,7 @@
                     <InputNumber
                       class="input"
                       v-model:value="formState.minStockNum"
-                      :disabled="showUnExam"
+                      :disabled="formState.bsStatus === 'B'"
                       :min="0" /></a-form-item
                 ></Col>
                 <Col :span="8">
@@ -388,7 +410,7 @@
                     <InputNumber
                       class="input"
                       v-model:value="formState.maxStockNum"
-                      :disabled="showUnExam"
+                      :disabled="formState.bsStatus === 'B'"
                       :min="0" /></a-form-item
                 ></Col>
                 <Col :span="8">
@@ -401,7 +423,7 @@
                     <InputNumber
                       class="input"
                       v-model:value="formState.safeStockNum"
-                      :disabled="showUnExam"
+                      :disabled="formState.bsStatus === 'B'"
                       :min="0" /></a-form-item
                 ></Col>
               </Row>
@@ -417,7 +439,7 @@
                       class="input"
                       v-model:value="formState.storagePeriod"
                       :min="0"
-                      :disabled="showUnExam"
+                      :disabled="formState.bsStatus === 'B'"
                     />
                   </a-form-item>
                 </Col>
@@ -426,7 +448,7 @@
           </a-form>
         </TabPane>
         <TabPane key="3" tab="其他信息">
-          <a-form :model="formState" :rules="formRules">
+          <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
                 <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
@@ -484,7 +506,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Card,
@@ -533,13 +555,14 @@
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
   const ACard = Card;
-  const TextArea = Input.TextArea;
+  const ATextArea = Input.TextArea;
 
   const router = useRouter();
   //空参数
@@ -550,6 +573,8 @@
   const visibleGroupModal: any = ref<boolean>(false);
   //弹窗类型
   let modalType = ref<string>('');
+  //表单ref
+  const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   //更新基础信息表头数据
@@ -566,26 +591,21 @@
   };
   //选择对应的基本信息弹框
   let chosenModal: String = '';
-  //审核状态
-  const hasSub = ref<boolean>(false); //分仓
-  const hasLocation = ref<boolean>(false); //仓位
-  const showUnExam = ref<boolean>(false); //反审核
-  const showExam = ref<boolean>(false); //审核
-  const showSubmit = ref<boolean>(true); //保存
 
+  //对应输入框绑定的值接口类型
+  const formData: MatProfileEntity = { id: undefined, number: '', name: '' };
   //初始化
-  const formState: UnwrapRef<MatProfileEntity> = reactive({
-    id: '0',
-    number: '',
-    name: '',
+  const formStateInit = reactive({
+    data: formData,
   });
+  const formState = toRef(formStateInit, 'data');
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
-  //重新物料分组赋值
+  //物料分组重新赋值
   const groupEvent = async () => {
     const result = await queryOneMatGroup({ params: groupSelectId || '0' });
     if (result) {
-      formState.groupId = result.id;
-      formState.groupName = result.name;
+      formState.value.groupId = result.id;
+      formState.value.groupName = result.name;
     }
   };
   groupEvent();
@@ -599,52 +619,17 @@
   //物料分组弹框
   const onGroupSearch = (name) => {
     visibleGroupModal.value = true;
-    formState.node = name;
-    if (formState.node == '') {
-      formState.node = undefined;
+    formState.value.node = name;
+    if (formState.value.node == '') {
+      formState.value.node = undefined;
     }
   };
-
   //点击清空图标清空事件
-  const onClear = (key: string) => {
-    switch (key) {
-      case 'baseUnit':
-        formState.baseUnitName = '';
-        formState.baseUnitId = '';
-        break;
-      case 'weightUnit':
-        formState.weightName = '';
-        formState.weightUnitId = '';
-        break;
-      case 'group':
-        formState.groupId = '';
-        formState.groupName = '';
-        break;
-      case 'stock':
-        formState.stockId = '';
-        formState.stockName = '';
-        formState.subStockId = '';
-        formState.subStockName = '';
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'sub':
-        formState.subStockId = '';
-        formState.subStockName = '';
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'location':
-        formState.bdStockLocationId = '';
-        formState.bdStockLocationName = '';
-        break;
-      case 'plan':
-        formState.examineId = '';
-        formState.bdExamineName = '';
-        break;
-    }
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = '';
+    });
   };
-  //获取仓库字段
   const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
@@ -726,10 +711,7 @@
     return res;
   };
 
-  //选择仓库后查询——联动
-  //key:在待用url中选择的
-  //colName:需要查询的名字，如编码，名称。。。
-  //id:输入的值
+  //选择仓库后查询——联动-----key:在待用url中选择的----colName:需要查询的名字，如编码，名称。。。---id:输入的值
   const getNextStock = async (key, colName, id) => {
     const res: any = await getPublicList(
       {
@@ -755,17 +737,17 @@
   const cellClickEvent = async (row) => {
     switch (chosenModal) {
       case 'baseUnit':
-        formState.baseUnitId = row.id;
-        formState.baseUnitName = row.name;
+        formState.value.baseUnitId = row.id;
+        formState.value.baseUnitName = row.name;
         break;
       case 'weightUnit':
-        formState.weightName = row.name;
-        formState.bdStockLocationName = '';
-        formState.weightUnitId = row.id;
+        formState.value.weightName = row.name;
+        formState.value.bdStockLocationName = '';
+        formState.value.weightUnitId = row.id;
         break;
       case 'stock':
-        formState.stockId = row.id;
-        formState.stockName = row.name;
+        formState.value.stockId = row.id;
+        formState.value.stockName = row.name;
         queryStockParam.subStock = {
           table: '',
           name: 'stockId',
@@ -777,11 +759,12 @@
           startWith: '',
           endWith: '',
         };
-        await getNextStock('stock', 'formState.stockId', formState.stockId);
+        await getNextStock('stock', 'formState.stockId', formState.value.stockId);
         break;
       case 'sub':
-        formState.subStockId = row.id;
-        formState.subStockName = row.name;
+        formState.value.subStockId = row.id;
+        formState.value.subStockName = row.name;
+        //存疑--待测试
         queryStockParam.stockLocation = {
           table: '',
           name: 'subStockId',
@@ -794,42 +777,25 @@
           endWith: '',
         };
         const stockByStock = await getNextStock('stock', 'id', row.stockId);
-        formState.stockId = stockByStock.records[0].id;
-        formState.stockName = stockByStock.records[0].name;
+        formState.value.stockId = stockByStock.records[0].id;
+        formState.value.stockName = stockByStock.records[0].name;
         break;
       case 'location':
-        formState.bdStockLocationId = row.id;
-        formState.bdStockLocationName = row.name;
-        queryStockParam.subStockName = {
-          table: '',
-          name: 'subStockId',
-          column: 'sub_stock_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
+        formState.value.bdStockLocationId = row.id;
+        formState.value.bdStockLocationName = row.name;
         const subStockByStockLocation = await getNextStock('sub', 'id', row.subStockId);
         const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        formState.subStockId = subStockByStockLocation.records[0].id;
-        formState.subStockName = subStockByStockLocation.records[0].name;
-        formState.stockId = stockByStockLocation.records[0].id;
-        formState.stockName = stockByStockLocation.records[0].name;
+        formState.value.subStockId = subStockByStockLocation.records[0].id;
+        formState.value.subStockName = subStockByStockLocation.records[0].name;
+        formState.value.stockId = stockByStockLocation.records[0].id;
+        formState.value.stockName = stockByStockLocation.records[0].name;
         break;
       case 'plan':
-        formState.examineId = row.id;
-        formState.bdExamineName = row.name;
+        formState.value.examineId = row.id;
+        formState.value.bdExamineName = row.name;
         break;
     }
     basicSearchRef.value.bSearch(false);
-    if (formState.stockId) {
-      hasSub.value = false;
-      if (formState.subStockId) {
-        hasLocation.value = false;
-      }
-    }
   };
 
   //获取物料分组数据
@@ -851,134 +817,55 @@
   };
   //物料分组弹框关
   const groupSelect = (value, node) => {
-    formState.node = node;
-    formState.groupName = formState.node;
-    formState.groupId = value;
+    formState.value.node = node;
+    formState.value.groupName = formState.value.node;
+    formState.value.groupId = value;
     visibleGroupModal.value = false;
   };
-  let getParams = () => {
-    let query = router.currentRoute.value.query;
-    console.log('query', query);
-  };
-  getParams();
 
   //接受参数
-  let rowId = useRoute().query.row?.toString();
-  let hasId = ref<boolean>(false);
+  let rowId = useRoute().query.row?.toString() || '';
 
-  //如果有id，进入编辑页面。没有id——新增
-  const getListById = async (id) => {
+  const getListById = async (rowId) => {
     if (rowId) {
-      id = rowId;
-      hasId.value = true;
-    }
-    const res: any = await getMatTableById({
-      params: id,
-    });
-    formState.number = res.number;
-    formState.name = res.name;
-    formState.shortName = res.shortName;
-    formState.baseUnitId = res.baseUnit.id;
-    formState.baseUnitName = res.baseUnit.name;
-    formState.groupId = res.bdMaterialGroup.id;
-    formState.groupName = res.bdMaterialGroup.name;
-    formState.attr = res.attr;
-    formState.netWeight = res.netWeight;
-    formState.model = res.model;
-    formState.bsStatus = res.bsStatus;
-    //创建状态
-    if (rowId && res.bsStatus === 'A') {
-      showExam.value = true;
-      showUnExam.value = false;
-    } else if (rowId && res.bsStatus === 'B') {
-      //审核状态
-      showExam.value = false;
-      showUnExam.value = true;
-      showSubmit.value = false;
-      hasSub.value = true;
-      hasLocation.value = true;
-    }
-    if (formState.bsStatus === 'A') {
-      formState.labelValue = '创建';
-    } else {
-      formState.labelValue = '已审核';
-    }
-    formState.oldMatNumber = res.oldMatNumber;
-    formState.mark = res.mark;
-    formState.stockId = res.stockId;
-    if (formState.stockId) {
-      formState.stockId = res.bdStock.id;
-      formState.stockName = res.bdStock.name;
-      queryStockParam.subStock = {
-        table: '',
-        name: 'stockId',
-        column: 'stock_id',
-        link: 'AND',
-        rule: 'EQ',
-        type: 'string',
-        val: res.bdStock.id,
-        startWith: '',
-        endWith: '',
-      };
-    }
-    formState.bdStock = res.bdStock;
-    formState.subStockId = res.subStockId;
-    if (formState.subStockId) {
-      formState.subStockId = res.bdSubStock.id;
-      formState.subStockName = res.bdSubStock.name;
-      queryStockParam.stockLocation = {
-        table: '',
-        name: 'subStockId',
-        column: 'sub_stock_id',
-        link: 'AND',
-        rule: 'EQ',
-        type: 'string',
-        val: res.bdSubStock.id,
-        startWith: '',
-        endWith: '',
-      };
-    }
-    formState.bdSubStock = res.bdSubStock;
-    formState.bdStockLocationId = res.bdStockLocationId;
-    if (formState.bdStockLocationId) {
-      formState.bdStockLocationId = res.bdStockLocation.id;
-      formState.bdStockLocationName = res.bdStockLocation.name;
-    }
-    formState.bdStockLocation = res.bdStockLocation;
-    formState.enableSn = res.enableSn;
-    formState.enableBatch = res.enableBatch;
-    formState.storagePeriod = res.storagePeriod;
-    formState.minStockNum = res.minStockNum;
-    formState.maxStockNum = res.minStockNum;
-    formState.safeStockNum = res.safeStockNum;
-    if (res.bdExamine != undefined && res.bdExamine.id) {
-      formState.examineId = res.bdExamine.id;
-      formState.bdExamineName = res.bdExamine.name;
-    }
-    formState.stockInExamine = res.stockInExamine;
-    formState.stockOutExamine = res.stockOutExamine;
-    formState.produceExamine = res.produceExamine;
-    formState.createTime = res.createTime;
-    formState.createBy = res.createBy;
-    formState.updateTime = res.updateTime;
-    formState.updateBy = res.updateBy;
-    formState.weightUnitId = res.weightUnitId;
-    if (formState.weightUnitId) {
-      formState.weightUnitId = res.weightUnit.id;
-      formState.weightName = res.weightUnit.name;
-    }
-  };
-  const stockHandle = async () => {
-    //修改
-    if (rowId) {
-      await getListById(rowId);
-      if (formState.bsStatus == 'B') {
-        hasSub.value = true;
-        hasLocation.value = true;
+      const res: any = await getMatTableById({ params: rowId });
+      formState.value = res;
+      formState.value.bdStockLocationId = res.bdStockLocation.id;
+      formState.value.bdStockLocationName = res.bdStockLocation.name;
+      if (formState.value.stockId) {
+        formState.value.stockId = res.bdStock.id;
+        formState.value.stockName = res.bdStock.name;
+        queryStockParam.subStock = {
+          table: '',
+          name: 'stockId',
+          column: 'stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: res.bdStock.id,
+          startWith: '',
+          endWith: '',
+        };
+      }
+      if (formState.value.subStockId) {
+        formState.value.subStockId = res.bdSubStock.id;
+        formState.value.subStockName = res.bdSubStock.name;
+        queryStockParam.stockLocation = {
+          table: '',
+          name: 'subStockId',
+          column: 'sub_stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: res.bdSubStock.id,
+          startWith: '',
+          endWith: '',
+        };
       }
     }
   };
-  stockHandle();
+  getListById(rowId);
+
   //搜索功能
   const searchList = async (type, keywords) => {
     let param: any = [];
@@ -999,173 +886,59 @@
   };
   //保存事件
   const onSubmit = async () => {
-    let newData = {
-      id: rowId,
-      number: formState.number,
-      name: formState.name,
-      shortName: formState.shortName,
-      baseUnitName: formState.baseUnitName,
-      baseUnitId: formState.baseUnitId,
-      groupName: formState.groupName,
-      groupId: formState.groupId,
-      attr: formState.attr,
-      netWeight: formState.netWeight,
-      model: formState.model,
-      bsStatus: formState.bsStatus,
-      oldMatNumber: formState.oldMatNumber,
-      mark: formState.mark,
-      stockName: formState.stockName,
-      stockId: formState.stockId,
-      subStockId: formState.subStockId,
-      subStockName: formState.subStockName,
-      bdStockLocationId: formState.bdStockLocationId,
-      bdStockLocationName: formState.bdStockLocationName,
-      enableSn: formState.enableSn,
-      enableBatch: formState.enableBatch,
-      storagePeriod: formState.storagePeriod,
-      minStockNum: formState.minStockNum,
-      maxStockNum: formState.maxStockNum,
-      safeStockNum: formState.safeStockNum,
-      examineId: formState.examineId,
-      bdExamineName: formState.bdExamineName,
-      stockInExamine: formState.stockInExamine,
-      stockOutExamine: formState.stockOutExamine,
-      produceExamine: formState.produceExamine,
-      createTime: formState.createTime,
-      createBy: formState.createBy,
-      updateTime: formState.updateTime,
-      updateBy: formState.updateBy,
-      weightUnitId: formState.weightUnitId,
-    };
-    if (!rowId) {
-      if (
-        !formState.name ||
-        !formState.number ||
-        !formState.baseUnitId ||
-        !formState.groupId ||
-        !formState.attr
-      ) {
-        createMessage.error('必填字段不能为空');
-      } else {
-        try {
-          const addList = await addMatTable({
-            params: newData,
-          });
-          if (addList.id != null) {
-            createMessage.success('添加成功');
-            // back();
-            showExam.value = true;
-            rowId = addList.id;
-            await getListById(rowId);
-          }
-        } catch (e) {
-          console.log('失败', e);
+    let data;
+    formRef.value
+      .validate()
+      .then(async () => {
+        if (!formState.value.id) {
+          data = await addMatTable({ params: formState.value });
+          // formState.value = Object.assign({}, formState.value, data);
+        } else {
+          data = await updateMatTable({ params: formState.value });
+          // formState.value = Object.assign({}, formState.value, data);
         }
-      }
-    } else {
-      newData.id = rowId;
-      if (
-        !formState.name ||
-        !formState.number ||
-        !formState.baseUnitId ||
-        !formState.groupId ||
-        !formState.attr
-      ) {
-        createMessage.error('必填字段不能为空');
-      } else {
-        try {
-          const updateList = async () => {
-            await updateMatTable({
-              params: newData,
-            });
-          };
-          await updateList();
-          createMessage.success('修改成功');
-          // back();
-        } catch (e) {
-          console.log('失败', e);
-        }
-      }
-    }
+        await getListById(data.id);
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
 
-  //点击新增时:控制审核与反审核按钮显示
-  const btnChecking = () => {
-    if (!rowId) {
-      showExam.value = false;
-      showUnExam.value = false;
-    }
-  };
   //审核功能
   const onExam = async () => {
-    const type = await VXETable.modal.confirm('您确定要审核当前物料吗?');
-    if (type == 'confirm') {
-      if (formState.labelValue === 'A' || formState.labelValue === '创建') {
-        try {
-          const auditEvent = async () => {
-            await auditMatTable({
-              params: {
-                id: rowId,
-              },
-            });
-          };
-          await auditEvent();
-          showSubmit.value = false;
-          showExam.value = false;
-          showUnExam.value = true;
-          hasSub.value = true;
-          hasLocation.value = true;
-          createMessage.success('审核成功');
-          await getListById(rowId);
-          // back();
-        } catch (e) {
-          console.log('失败', e);
-        }
-      }
-    } else {
-      createMessage.error('该物料已审核，无需再次审核');
-      // back();
+    formRef.value
+      .validate()
+      .then(async () => {
+    const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
+    if (type === 'confirm') {
+      const data = await auditMatTable({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
     }
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
   //反审核功能
   const unExam = async () => {
-    const type = await VXETable.modal.confirm('您确定要反审核当前物料吗?');
-    if (type == 'confirm') {
-      if (formState.labelValue === 'B' || formState.labelValue === '已审核') {
-        try {
-          const unAuditEvent = async () => {
-            await unAuditMatTable({
-              params: {
-                id: rowId,
-              },
-            });
-          };
-          await unAuditEvent();
-          showSubmit.value = true;
-          showExam.value = true;
-          showUnExam.value = false;
-          hasSub.value = false;
-          hasLocation.value = false;
-          createMessage.success('反审核成功');
-          await getListById(rowId);
-          // back();
-        } catch (e) {
-          console.log('失败', e);
-        }
-      } else {
-        createMessage.error('该物料已反审核，无需再次反审核');
-        // back();
-      }
+    const type = await VXETable.modal.confirm('您确定要反审核吗?');
+    if (type === 'confirm') {
+      const data = await unAuditMatTable({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      createMessage.success('操作成功');
     }
   };
+
   //返回上一页
   const back = () => {
     router.go(-1);
   };
   //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {
-    btnChecking();
-  });
+  onMounted(() => {});
 </script>
 <style scoped lang="less">
   .switchDiv {

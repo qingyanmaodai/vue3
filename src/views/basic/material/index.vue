@@ -103,6 +103,8 @@
   import { SearchParams } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  const { createMessage } = useMessage();
   import { useGo } from '/@/hooks/web/usePage';
 
   const go = useGo();
@@ -301,6 +303,7 @@
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
     await delMatTableById({ params: row.id });
+    createMessage.success('删除成功');
     await getList();
   };
   //批量删除表格
@@ -309,6 +312,7 @@
   };
   const deleteMatBatchEvent = async (row) => {
     await delMatTableBatch({ params: row });
+    createMessage.success('删除成功');
     await getList();
   };
   //审核单条
@@ -318,6 +322,7 @@
         id: row.id,
       },
     });
+    createMessage.success('审核成功');
     await getList();
   };
 
@@ -340,6 +345,7 @@
         id: row?.id,
       },
     });
+    createMessage.success('反审核成功');
     await getList();
   };
   //批量反审核

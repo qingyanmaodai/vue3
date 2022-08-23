@@ -1,24 +1,21 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface StockLocationProfileEntity {
+export interface StockLocationProfileEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
   stockId?: string;
+  stockName?: string;
+  subStockName?: string;
   subStockId?: string;
+  bdSubStock?: string;
   address?: string;
   erpCode?: string;
   info?: string;
   isDelete?: string;
   tenantId?: string;
-  bsStatus?: string;
-  mark?: string;
-  createTime?: string;
-  createBy?: string;
-  updateTime?: string;
-  updateBy?: string;
 }
 
 /**
