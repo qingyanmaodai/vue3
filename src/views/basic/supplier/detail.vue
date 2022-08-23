@@ -292,6 +292,7 @@
   const { createMessage } = useMessage();
   import { cloneDeep } from 'lodash-es';
   import { CountryEntity, getCountryTree } from '/@/api/country';
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
   /* data */
 
@@ -382,28 +383,32 @@
    * 保存事件
    */
   const onSubmit = async () => {
-    formState.value.provincial = tempFormState.districtArr[0]
-      ? tempFormState.districtArr[0]
-      : undefined; //省
-    formState.value.municipal = tempFormState.districtArr[1]
-      ? tempFormState.districtArr[1]
-      : undefined; //市
-    formState.value.district = tempFormState.districtArr[2]
-      ? tempFormState.districtArr[2]
-      : undefined; //区
-    try {
-      await formRef.value.validateFields();
-      let res;
-      if (supplierId.value) {
-        res = await update({ params: formState.value });
-      } else {
-        res = await save({ params: formState.value });
-      }
-      await getSupplier(res.id);
-      createMessage.success('操作成功');
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
-    }
+    //表单验证
+    formRef.value
+      .validate()
+      .then(async () => {
+        formState.value.provincial = tempFormState.districtArr[0]
+          ? tempFormState.districtArr[0]
+          : undefined; //省
+        formState.value.municipal = tempFormState.districtArr[1]
+          ? tempFormState.districtArr[1]
+          : undefined; //市
+        formState.value.district = tempFormState.districtArr[2]
+          ? tempFormState.districtArr[2]
+          : undefined; //区
+        let res;
+        if (supplierId.value) {
+          res = await update({ params: formState.value });
+        } else {
+          res = await save({ params: formState.value });
+        }
+        await getSupplier(res.id);
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
   };
 
   /**
@@ -414,20 +419,28 @@
     let mess = flag === 1 ? '反审核' : '保存并审核';
     const type = await VXETable.modal.confirm(`确定${mess}当前供应商吗?`);
     if (type == 'confirm') {
-      let data;
-      if (flag === 0) {
-        data = await audit({ params: formState.value });
-        isDisable.value = true;
-        showAudit.value = false;
-        showSave.value = false;
-      } else {
-        data = await unAudit({ params: formState.value });
-        isDisable.value = false;
-        showAudit.value = true;
-        showSave.value = true;
-      }
-      formState.value = Object.assign({}, formState.value, data);
-      createMessage.success('操作成功');
+      formRef.value
+        .validate()
+        .then(async () => {
+          let data;
+          if (flag === 0) {
+            data = await audit({ params: formState.value });
+            isDisable.value = true;
+            showAudit.value = false;
+            showSave.value = false;
+          } else {
+            data = await unAudit({ params: formState.value });
+            isDisable.value = false;
+            showAudit.value = true;
+            showSave.value = true;
+          }
+          formState.value = Object.assign({}, formState.value, data);
+          createMessage.success('操作成功');
+        })
+        .catch((error: ValidateErrorEntity<FormData>) => {
+          createMessage.error('数据校检不通过，请检查!');
+          console.log(error);
+        });
     }
   };
 
