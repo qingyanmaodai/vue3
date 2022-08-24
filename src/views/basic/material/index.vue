@@ -34,7 +34,7 @@
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
-            @delBatchEvent="deleteMatBatchEvent"
+            @delBatchEvent="deleteBatchEvent"
             @auditRowEvent="auditRowEvent"
             @auditBatchEvent="auditBatchEvent"
             @unAuditRowEvent="unAuditRowEvent"
@@ -309,21 +309,19 @@
   const delTableEvent = () => {
     tableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (rows: any[]) => {
+  const deleteBatchEvent = async (rows: any[]) => {
     //将数组中的所有id组成一个数组
     const ids = rows.map((item) => {
       return item.id;
     });
-    await delMatTableBatch({ params: ids });
-    createMessage.success('删除成功');
+    const res = await delMatTableBatch({ params: ids });
+    await tableRef.value.computeData(res);
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
     await auditMatTable({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     createMessage.success('审核成功');
     await getList();
@@ -347,9 +345,7 @@
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
     await unAuditMatTable({
-      params: {
-        id: row?.id,
-      },
+      params: row,
     });
     createMessage.success('反审核成功');
     await getList();
