@@ -169,8 +169,6 @@
 
   const visibleUploadModal: any = ref<boolean>(false);
   //批量审核弹框
-  // const isAudit = ref(false); //审核
-  // const unAudit = ref(false); //反审核
   let adResult = reactive({ data: {} }); //审核结果数据
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
@@ -237,7 +235,7 @@
   //删除单条
   const deleteRowEvent = async (row: any) => {
     //删除确认窗口
-    const type = await VXETable.modal.confirm('您确定要删除该数据?(【已审核】状态的信息不可删除)');
+    const type = await VXETable.modal.confirm('您确定要删除该数据?(【已审核】状态的数据不可删除)');
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
@@ -245,10 +243,10 @@
           try {
             emit('deleteRowEvent', row);
           } catch (e) {
-            console.log('删除单条失败', e);
+            console.log('删除单条数据失败', e);
           }
         } else {
-          createMessage.error('已审核的资料不可删除');
+          createMessage.error('已审核的数据不可删除');
         }
       }
     }
@@ -263,27 +261,27 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要删除所选的 ' + selectRecords.length + ' 条 数据?(【已审核】状态的信息不可删除)',
+          '您确定要删除所选的 ' + selectRecords.length + ' 条 数据?(【已审核】状态的数据不可删除)',
       });
       if (type === 'confirm') {
         okRow.push(...selectRecords);
         emit('delBatchEvent', okRow);
       }
     } else {
-      createMessage.warning('请至少勾选一条记录。');
+      createMessage.warning('请至少勾选一条数据。');
     }
   };
   //审核单条
   const auditRow = async (row) => {
     //VXETable自带的弹框
-    const type = await VXETable.modal.confirm('您确定要审该物料吗?(【已审核】状态的信息不可审核)');
+    const type = await VXETable.modal.confirm('您确定要审该数据吗?(【已审核】状态的数据不可审核)');
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
         try {
           emit('auditRowEvent', row);
         } catch (e) {
-          console.log('审核单条失败', e);
+          console.log('审核单条数据失败', e);
         }
       }
     }
@@ -291,7 +289,7 @@
   //反审核单条
   const unAuditRow = async (row) => {
     const type = await VXETable.modal.confirm(
-      '您确定要反审核该数据?(【审核】状态的信息不可反审核)',
+      '您确定要反审核该数据?(【审核】状态的数据不可反审核)',
     );
     const $grid = xGrid.value;
     if ($grid) {
@@ -299,7 +297,7 @@
         try {
           emit('unAuditRowEvent', row);
         } catch (e) {
-          console.log('反审核单条失败', e);
+          console.log('反审核单条数据失败', e);
         }
       }
     }
@@ -315,14 +313,14 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【已审核】状态的信息不可审核)',
+          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【已审核】状态的数据不可审核)',
       });
       if (type === 'confirm') {
         okRow.push(...selectRecords);
         emit('auditBatchEvent', okRow);
       }
     } else {
-      createMessage.warning('请至少勾选一条记录。');
+      createMessage.warning('请至少勾选一条数据。');
     }
   };
   //批量反审核
@@ -335,14 +333,14 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的信息不可反审核)',
+          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的数据不可反审核)',
       });
       if (type === 'confirm') {
         okRow.push(...selectRecords);
         emit('unAuditBatchEvent', okRow);
       }
     } else {
-      createMessage.warning('请至少勾选一条记录。');
+      createMessage.warning('请至少勾选一条数据。');
     }
   };
   //关闭审核/反审核结果的窗口
