@@ -68,18 +68,13 @@
       </template>
     </vxe-grid>
     <a-modal
-      v-model:visible="auditModal"
+      v-model:visible="resultModal"
       title="操作结果"
       :footer="null"
       width="800px"
       @cancel="closeRes"
     >
-      <div v-if="isAudit"
-        >审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
-      >
-      <div v-if="unAudit"
-        >反审核完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div
-      >
+      <div>操作完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div>
       <vxe-table
         border
         show-overflow
@@ -121,7 +116,6 @@
         <a-button type="primary" style="margin: 10px 10px" @click="importModelEvent"
           >下载模板</a-button
         >
-        <!--                      v-model:file-list="fileList"-->
         <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
           <a-button>
             <upload-outlined />
@@ -141,8 +135,6 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
-  // import { useRouter } from 'vue-router';
-  // const router = useRouter();
   import { config, configEntity } from '/@/utils/publicParamConfig'; //公共配置ts
 
   const { createMessage } = useMessage();
@@ -166,7 +158,7 @@
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
     (e: 'importModelEvent'): void;
-    (e: 'refreshTable'): void;
+    (e: 'refreshTable'): void; //刷新表格
     (e: 'auditRowEvent', row: any): void;
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
@@ -177,10 +169,10 @@
 
   const visibleUploadModal: any = ref<boolean>(false);
   //批量审核弹框
-  const isAudit = ref(false); //审核
-  const unAudit = ref(false); //反审核
+  // const isAudit = ref(false); //审核
+  // const unAudit = ref(false); //反审核
   let adResult = reactive({ data: {} }); //审核结果数据
-  const auditModal = ref(false); //审核结果弹框
+  const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
 
@@ -216,6 +208,21 @@
       res = source.find((item) => item.value === data);
     }
     return res ? res.label : '';
+  };
+  //操作结果输出
+  const computeData = (res) => {
+    if (res) {
+      adResult.data = res;
+      let arr = res;
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].info.status == 'Y') {
+          resY.value += 1;
+        } else {
+          resF.value += 1;
+        }
+      }
+      resultModal.value = true;
+    }
   };
 
   //新增
@@ -256,16 +263,10 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要删除所选的 ' +
-          selectRecords.length +
-          ' 条 数据?(【已审核】状态的信息不可删除,请检查后重新操作)',
+          '您确定要删除所选的 ' + selectRecords.length + ' 条 数据?(【已审核】状态的信息不可删除)',
       });
       if (type === 'confirm') {
-        for (let i = 0; i < selectRecords.length; i++) {
-          if (selectRecords[i].bsStatus !== 'B') {
-            okRow.push(selectRecords[i]);
-          }
-        }
+        okRow.push(...selectRecords);
         emit('delBatchEvent', okRow);
       }
     } else {
@@ -279,15 +280,10 @@
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
-        if (row.bsStatus == 'A') {
-          try {
-            emit('auditRowEvent', row);
-            row.bsStatus = 'B';
-          } catch (e) {
-            console.log('审核单条失败', e);
-          }
-        } else {
-          createMessage.error('当前状态不能完成【审核】操作');
+        try {
+          emit('auditRowEvent', row);
+        } catch (e) {
+          console.log('审核单条失败', e);
         }
       }
     }
@@ -300,40 +296,20 @@
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
-        if (row.bsStatus == 'B') {
-          try {
-            emit('unAuditRowEvent', row);
-            row.bsStatus = 'A';
-          } catch (e) {
-            console.log('反审核单条失败', e);
-          }
-        } else {
-          createMessage.error('当前状态不能完成【反审核】操作');
+        try {
+          emit('unAuditRowEvent', row);
+        } catch (e) {
+          console.log('反审核单条失败', e);
         }
       }
     }
   };
-  //批量审核或反审核结果输出
-  const computeData = (res) => {
-    if (res) {
-      adResult.data = res;
-      let arr = res;
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].info.status == 'Y') {
-          resY.value += 1;
-        } else {
-          resF.value += 1;
-        }
-      }
-      auditModal.value = true;
-      isAudit.value = true;
-    }
-  };
+
   //批量审核
   const auditTable = async () => {
+    let okRow: any[] = [];
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
-    let okRow: any[] = [];
     if (selectRecords.length > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
@@ -342,10 +318,7 @@
           '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【已审核】状态的信息不可审核)',
       });
       if (type === 'confirm') {
-        for (let i = 0; i < selectRecords.length; i++) {
-          okRow.push(selectRecords[i]);
-          $grid.getCheckboxRecords()[i].bsStatus = 'B';
-        }
+        okRow.push(...selectRecords);
         emit('auditBatchEvent', okRow);
       }
     } else {
@@ -362,13 +335,10 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的信息不可反审核)',
+          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的信息不可反审核)',
       });
       if (type === 'confirm') {
-        for (let i = 0; i < selectRecords.length; i++) {
-          okRow.push(selectRecords[i]);
-          $grid.getCheckboxRecords()[i].bsStatus = 'A';
-        }
+        okRow.push(...selectRecords);
         emit('unAuditBatchEvent', okRow);
       }
     } else {
@@ -377,8 +347,6 @@
   };
   //关闭审核/反审核结果的窗口
   const closeRes = () => {
-    unAudit.value = false;
-    isAudit.value = false;
     resY.value = 0;
     resF.value = 0;
   };

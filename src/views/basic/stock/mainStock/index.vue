@@ -19,7 +19,7 @@
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
         @deleteRowEvent="deleteRowTableEvent"
-        @delBatchEvent="deleteMatBatchEvent"
+        @delBatchEvent="deleteBatchEvent"
         @auditRowEvent="auditRowEvent"
         @auditBatchEvent="auditBatchEvent"
         @unAuditRowEvent="unAuditRowEvent"
@@ -194,50 +194,45 @@
   const delTableEvent = () => {
     tableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (rows: any[]) => {
+  const deleteBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    await delStockListBatch({ params: ids });
-    createMessage.success('删除成功');
+    const res = await delStockListBatch({ params: ids });
+    await tableRef.value.computeData(res);
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
     await auditStockList({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     createMessage.success('审核成功');
-    await getList();
-  };
-
-  //批量审核事件
-  const auditEvent = () => {
-    tableRef.value.auditTable();
-  };
-  let res: any = '';
-  const auditBatchEvent = async (rows: any[]) => {
-    const ids = rows.map((item) => {
-      return item.id;
-    });
-    res = await auditStockListBatch({
-      params: ids,
-    });
-    await tableRef.value.computeData(res);
     await getList();
   };
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
     await unAuditStockList({
-      params: {
-        id: row?.id,
-      },
+      params: row,
     });
     createMessage.success('反审核成功');
     await getList();
   };
+  //批量审核事件
+  const auditEvent = () => {
+    tableRef.value.auditTable();
+  };
+  const auditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    const res = await auditStockListBatch({
+      params: ids,
+    });
+    await tableRef.value.computeData(res);
+    await getList();
+  };
+
   //批量反审核
   const unAuditEvent = () => {
     tableRef.value.unAuditTable();
@@ -246,7 +241,7 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await unAuditStockListBatch({
+    const res = await unAuditStockListBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);

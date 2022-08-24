@@ -19,7 +19,7 @@
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
         @deleteRowEvent="deleteRowTableEvent"
-        @delBatchEvent="deleteMatBatchEvent"
+        @delBatchEvent="deleteBatchEvent"
         @auditRowEvent="auditRowEvent"
         @auditBatchEvent="auditBatchEvent"
         @unAuditRowEvent="unAuditRowEvent"
@@ -193,20 +193,18 @@
   const delTableEvent = () => {
     tableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (rows: any[]) => {
+  const deleteBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    await delSubStockListBatch({ params: ids });
-    createMessage.success('删除成功');
+    const res = await delSubStockListBatch({ params: ids });
+    await tableRef.value.computeData(res);
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
     await auditSubStockList({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     createMessage.success('审核成功');
     await getList();
@@ -230,9 +228,7 @@
   //单条反审核
   const unAuditRowEvent = async (row: any) => {
     await unAuditSubStockList({
-      params: {
-        id: row?.id,
-      },
+      params: row,
     });
     createMessage.success('反审核成功');
     await getList();
