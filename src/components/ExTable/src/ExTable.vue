@@ -222,7 +222,6 @@
       resultModal.value = true;
     }
   };
-
   //新增
   const addTable = () => {
     emit('addEvent');

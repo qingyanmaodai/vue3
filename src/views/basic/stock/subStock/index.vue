@@ -214,12 +214,11 @@
   const auditEvent = () => {
     tableRef.value.auditTable();
   };
-  let res: any = '';
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await auditSubStockListBatch({
+    const res = await auditSubStockListBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
@@ -241,7 +240,7 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await unAuditSubStockListBatch({
+    const res = await unAuditSubStockListBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);

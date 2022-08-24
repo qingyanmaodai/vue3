@@ -1,12 +1,18 @@
 <template>
   <div>
-    <a-modal
+    <vxe-modal
+      v-model="basicSearchDialog"
+      id="basicModal"
+      min-width="460"
+      min-height="200"
+      show-zoom
+      resize
+      remember
+      storage
+      transfer
       style="top: 20px"
-      v-model:visible="basicSearchDialog"
       width="70%"
-      centered
       :footer="null"
-      :maskClosable="false"
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
@@ -181,12 +187,12 @@
           @page-change="handlePageChange"
         />
       </a-form>
-    </a-modal>
+    </vxe-modal>
   </div>
 </template>
 <script lang="ts" setup>
   import {
-    Modal,
+    // Modal,
     Select,
     SelectOption,
     Button,
@@ -207,7 +213,7 @@
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
-  const AModal = Modal;
+  // const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
   const ASpace = Space;

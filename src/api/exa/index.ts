@@ -97,7 +97,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: false,
+      isTransformResponse: true,
     },
   );
 }

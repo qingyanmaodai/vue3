@@ -14,7 +14,26 @@
           @click="moreSearchEvent"
           >高级查询</a-button
         >
+        <a-button class="button" @click="demo1.value11 = true">完整功能的窗口</a-button>
       </a-form>
+      <vxe-modal
+        v-model="demo1.value11"
+        id="myModal6"
+        width="800"
+        height="400"
+        min-width="460"
+        min-height="320"
+        show-zoom
+        resize
+        remember
+        storage
+        transfer
+      >
+        <template #title>
+          <span style="color: red">完整功能的窗口（移动、拖动、状态保存）</span>
+          <span style="color: red">通过设置 transfer 将弹框容器插入 body</span>
+        </template>
+      </vxe-modal>
     </a-card>
   </div>
   <hr />
@@ -38,6 +57,9 @@
   const AForm = Form;
   const AInput = Input;
   const ACard = Card;
+  const demo1 = reactive({
+    value11: false,
+  });
   //高级查询组件ref
   const moreSearchRef: any = ref(null);
   const options = reactive({ data: [] });
