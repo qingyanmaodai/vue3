@@ -237,7 +237,7 @@
     formRef.value
       .validate()
       .then(async () => {
-        const type = await VXETable.modal.confirm('您确定要保存并审核当前物料吗?');
+        const type = await VXETable.modal.confirm('您确定要保存并审核当前数据吗?');
         if (type === 'confirm') {
           const data = await auditStockList({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
@@ -251,7 +251,7 @@
   };
   //反审核功能
   const unExam = async () => {
-    const type = await VXETable.modal.confirm('您确定要反审核当前物料吗?');
+    const type = await VXETable.modal.confirm('您确定要反审核当前数据吗?');
     if (type === 'confirm') {
       const data = await unAuditStockList({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
