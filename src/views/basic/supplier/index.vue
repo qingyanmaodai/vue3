@@ -132,15 +132,15 @@
     {
       type: 'primary',
       label: '审核',
-      onClick: (row) => {
-        tableAuditEvent(row);
+      onClick: () => {
+        tableAuditEvent();
       },
     },
     {
       type: 'default',
       label: '反审核',
-      onClick: (row) => {
-        tableUnAuditEvent(row);
+      onClick: () => {
+        tableUnAuditEvent();
       },
     },
     {
@@ -228,9 +228,7 @@
    */
   const auditRowEvent = async (row) => {
     await audit({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     await getSupplierList();
     createMessage.success('操作成功');
@@ -240,12 +238,15 @@
    * 表格批量审核事件
    * @param row
    */
-  const tableAuditEvent = (row) => {
-    supplierTableRef.value.auditTable(row);
+  const tableAuditEvent = () => {
+    supplierTableRef.value.auditTable();
   };
-  const auditBatchEvent = async (row) => {
+  const auditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     let res = await batchAuditSupplier({
-      params: row,
+      params: ids,
     });
     await supplierTableRef.value.computeData(res);
     await getSupplierList();
@@ -257,23 +258,25 @@
    */
   const unAuditRowEvent = async (row: any) => {
     await unAudit({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     await getSupplierList();
+    createMessage.success('操作成功');
   };
 
   /**
    * 表格批量反审核事件
    * @param row
    */
-  const tableUnAuditEvent = (row) => {
-    supplierTableRef.value.unAuditTable(row);
+  const tableUnAuditEvent = () => {
+    supplierTableRef.value.unAuditTable();
   };
-  const unAuditBatchEvent = async (row) => {
+  const unAuditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     let res = await batchUnAuditSupplier({
-      params: row,
+      params: ids,
     });
     await supplierTableRef.value.computeData(res);
     await getSupplierList();
@@ -289,7 +292,8 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    await batchDeleteSupplier({ params: ids });
+    let res = await batchDeleteSupplier({ params: ids });
+    await supplierTableRef.value.computeData(res);
     await getSupplierList();
   };
   /**
@@ -320,7 +324,7 @@
         exportSupplierData({
           params: {
             list: [],
-            fileName: '物料列表',
+            fileName: '供应商列表',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,

@@ -134,7 +134,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 }
 
 /**
- * 批量审核物料信息
+ * 批量审核
  */
 export function batchAuditSupplier(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
@@ -150,7 +150,7 @@ export function batchAuditSupplier(json: RequestData<object>, mode: ErrorMessage
 }
 
 /**
- * 批量反审核物料信息
+ * 批量反审核
  */
 export function batchUnAuditSupplier(
   json: RequestData<object>,

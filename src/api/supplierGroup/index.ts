@@ -41,7 +41,7 @@ export function addSupplierGroup(
   );
 }
 /**
- * 编辑物料分组
+ * 编辑分组
  */
 export function editSupplierGroup(
   json: RequestData<SupplierGroupEntity>,
@@ -59,7 +59,7 @@ export function editSupplierGroup(
   );
 }
 /**
- * 删除物料分组
+ * 删除分组
  */
 export function deleteSupplierGroup(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
