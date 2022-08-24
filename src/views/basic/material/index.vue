@@ -331,12 +331,11 @@
   const auditEvent = () => {
     tableRef.value.auditTable();
   };
-  let res: any = '';
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await auditMatTableBatch({
+    const res = await auditMatTableBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
@@ -358,7 +357,7 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await unAuditMatTableBatch({
+    const res = await unAuditMatTableBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
