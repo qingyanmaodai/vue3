@@ -82,6 +82,8 @@
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { gridOptions, supplierColumns } from '/@/components/ExTable/data'; //表格配置
   const GridOptions = gridOptions;
+  import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
+  const { createMessage } = useMessage();
   import { Pager } from 'vxe-table';
   import {
     audit,
@@ -144,8 +146,8 @@
     {
       type: 'danger',
       label: '批量删除',
-      onClick: (row) => {
-        tableBatchDelEvent(row);
+      onClick: () => {
+        tableBatchDelEvent();
       },
     },
   ];
@@ -231,6 +233,7 @@
       },
     });
     await getSupplierList();
+    createMessage.success('操作成功');
   };
 
   /**
@@ -238,7 +241,7 @@
    * @param row
    */
   const tableAuditEvent = (row) => {
-    console.log(row);
+    supplierTableRef.value.auditTable(row);
   };
   const auditBatchEvent = async (row) => {
     let res = await batchAuditSupplier({
@@ -255,7 +258,7 @@
   const unAuditRowEvent = async (row: any) => {
     await unAudit({
       params: {
-        id: row?.id,
+        id: row.id,
       },
     });
     await getSupplierList();
@@ -266,7 +269,7 @@
    * @param row
    */
   const tableUnAuditEvent = (row) => {
-    console.log(row);
+    supplierTableRef.value.unAuditTable(row);
   };
   const unAuditBatchEvent = async (row) => {
     let res = await batchUnAuditSupplier({
@@ -278,13 +281,15 @@
 
   /**
    * 表格批量删除事件
-   * @param row
    */
-  const tableBatchDelEvent = (row) => {
-    supplierTableRef.value.delTable(row);
+  const tableBatchDelEvent = () => {
+    supplierTableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (row) => {
-    await deleteSupplier({ params: row });
+  const deleteMatBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    await batchDeleteSupplier({ params: ids });
     await getSupplierList();
   };
   /**
@@ -292,7 +297,7 @@
    * @param row
    */
   const deleteRowTableEvent = async (row) => {
-    await batchDeleteSupplier({ params: row.id });
+    await deleteSupplier({ params: row.id });
     await getSupplierList();
   };
 
