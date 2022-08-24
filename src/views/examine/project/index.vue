@@ -324,8 +324,8 @@
   };
 
   //审核事件
-  const auditEvent = (row) => {
-    tableRef.value.auditTable(row);
+  const auditEvent = () => {
+    tableRef.value.auditTable();
   };
   let res: any = '';
   const auditBatchEvent = async (row) => {
