@@ -89,7 +89,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 /**
  * 批量审核物料信息
  */
-export function auditBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.BATCH_AUDIT_EXA_PROJECT,
