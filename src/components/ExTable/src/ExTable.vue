@@ -25,8 +25,13 @@
             >{{ button.label }}
           </AButton>
           <span style="float: right">
-            <AButton type="default" style="margin: 0 10px" @click="upTable">导入</AButton>
-            <AButton style="background-color: rgb(47, 64, 86); color: #fff" @click="exportTable"
+            <AButton type="default" style="margin: 0 10px" @click="upTable" v-show="isShowImport"
+              >导入</AButton
+            >
+            <AButton
+              style="background-color: rgb(47, 64, 86); color: #fff"
+              @click="exportTable"
+              v-show="isShowExport"
               >导出</AButton
             >
           </span>
@@ -149,6 +154,8 @@
     count: Number,
     treeSelectData: Number,
     show: Boolean,
+    isShowImport: Boolean,
+    isShowExport: Boolean,
     importConfig: String,
   });
   type Emits = {

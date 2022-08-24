@@ -15,6 +15,8 @@
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
+        :isShowImport="true"
+        :isShowExport="true"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -83,6 +85,10 @@
   const installPaneSize = ref<number>(16);
   //表格事件
   const tableRef: any = ref<String | null>(null);
+  // //显示【导入】按钮
+  // const isShowImport = ref(true);
+  // //显示【导出】按钮
+  // const isShowExport = ref(true);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //导入上传文件api
