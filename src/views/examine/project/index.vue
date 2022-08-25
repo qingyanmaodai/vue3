@@ -103,7 +103,6 @@
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
-  import { Result } from "/#/axios";
   import { useMessage } from '/@/hooks/web/useMessage';
 
   const { createMessage } = useMessage();
@@ -311,7 +310,8 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    await delBatch({ params: ids });
+    const res = await delBatch({ params: ids });
+    await tableRef.value.computeData(res);
     await getList();
   };
   //审核单条
@@ -346,12 +346,15 @@
     createMessage.success('操作成功');
   };
   //批量反审核
-  const unAuditEvent = (row) => {
-    tableRef.value.unAuditTable(row);
+  const unAuditEvent = () => {
+    tableRef.value.unAuditTable();
   };
-  const unAuditBatchEvent = async (row) => {
-    res = await unAuditBatch({
-      params: row,
+  const unAuditBatchEvent = async (rows) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    const res = await unAuditBatch({
+      params: ids,
     });
     await tableRef.value.computeData(res);
     await getList();
@@ -380,13 +383,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '物料列表',
+            fileName: '检验项目',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '物料列表信息.xls', data: res };
+            const data = { title: '检验项目.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

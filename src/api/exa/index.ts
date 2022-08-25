@@ -97,7 +97,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: false,
+      isTransformResponse: true,
     },
   );
 }
@@ -164,7 +164,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 /**
  * 批量反审核物料信息
  */
-export function unAuditBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.BATCH_UNAUDIT_EXA_PROJECT,
@@ -182,7 +182,7 @@ export function unAuditBatch(json: RequestData<object>, mode: ErrorMessageMode =
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_TABLE_LIST,
+      url: Url.EXPORT_EXA_PROJECT,
       data: json,
       responseType: 'blob',
     },
