@@ -49,7 +49,7 @@ export const gridOptions = reactive<VxeGridProps>({
 export const resultByBatchColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'info.title', title: '关键字' },
-  { field: 'info.status', title: '状态', slots: { default: 'status' } },
+  { field: 'info.status', title: '状态', slots: { default: 'batchStatus' } },
   { field: 'info.msg', title: '信息' },
   { field: 'info.type', title: '信息类型' },
 ];
