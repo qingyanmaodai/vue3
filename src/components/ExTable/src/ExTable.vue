@@ -12,7 +12,6 @@
     :treeSelectData="treeSelectData"
     show-overflow
     show-header-overflow
-    max-height="85%"
     height="83%"
     auto-resize
     :column-config="{ resizable: true }"
@@ -25,7 +24,7 @@
           :key="key"
           :danger="button.type === 'danger'"
           @click="button.onClick()"
-          style="margin-left: 10px"
+          style="margin-left: 2px; margin-right: 5px"
           >{{ button.label }}
         </AButton>
         <span style="float: right; padding-right: 10px">

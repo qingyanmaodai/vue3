@@ -29,4 +29,19 @@
   :deep(.vxe-icon--square:before) {
     border-color: #606266 !important;
   }
+  :deep(.vxe-toolbar) {
+    border-color: #606266 !important;
+  }
+  :deep(.vxe-icon--zoomout:before, .vxe-icon--zoomout:after) {
+    border-color: #606266 !important;
+  }
+  :deep(.vxe-icon--zoomout:after) {
+    border-color: #606266 !important;
+  }
+  :deep(.vxe-sort--desc-btn) {
+    border-color: #c0c4cc;
+  }
+  :deep(.vxe-sort--asc-btn) {
+    border-color: #c0c4cc;
+  }
 </style>
