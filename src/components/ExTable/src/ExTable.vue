@@ -1,135 +1,138 @@
 <template>
-  <div>
-    <vxe-grid
-      ref="xGrid"
-      v-bind="props.gridOptions"
-      :columns="props.columns"
-      :export-config="{}"
-      :data="tableData.data"
-      :show="props.show"
-      :treeSelectData="treeSelectData"
-      show-overflow="tooltip"
-      show-header-overflow
-      height="auto"
-      class="table"
-    >
-      <template #toolbar_buttons>
-        <div style="width: 100%">
-          <AButton
-            v-for="(button, key) in buttons"
-            :type="button.type !== 'danger' ? button.type : 'default'"
-            :key="key"
-            :danger="button.type === 'danger'"
-            @click="button.onClick()"
-            style="margin-right: 10px"
-            >{{ button.label }}
-          </AButton>
-          <span style="float: right">
-            <AButton type="default" style="margin: 0 10px" @click="upTable" v-show="isShowImport"
-              >导入</AButton
-            >
-            <AButton
-              style="background-color: rgb(47, 64, 86); color: #fff"
-              @click="exportTable"
-              v-show="isShowExport"
-              >导出</AButton
-            >
-          </span>
-        </div>
-      </template>
-      <template #number="{ row }">
-        <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
-      </template>
-      <template #SupplierLevel="{ row }">
-        <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
-      </template>
-      <template #status="{ row }">
-        <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-          formatData(row.bsStatus, config['DATA_STATUS'])
-        }}</Tag>
-      </template>
-      <template #open="{ row }">
-        <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
-          formatData(row.isOpen, config['ENABLE_STATUS'])
-        }}</Tag>
-      </template>
-      <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
-      <template #operate="{ row }">
-        <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
+  <!--  <div class="table">-->
+  <vxe-grid
+    style="padding-right: 2px"
+    border
+    ref="xGrid"
+    v-bind="props.gridOptions"
+    :columns="props.columns"
+    :export-config="{}"
+    :data="tableData.data"
+    :show="props.show"
+    :treeSelectData="treeSelectData"
+    show-overflow
+    show-header-overflow
+    height="83%"
+    auto-resize
+    :column-config="{ resizable: true }"
+  >
+    <template #toolbar_buttons>
+      <div style="width: 100%">
         <AButton
-          v-if="row.bsStatus === 'A'"
-          type="link"
-          class="link"
-          style="width: 54px"
-          @click="auditRow(row)"
-          >审核</AButton
-        >
-        <AButton v-if="row.bsStatus === 'B'" type="link" class="link" @click="unAuditRow(row)"
-          >反审核</AButton
-        >
-        <AButton type="link" class="link" danger @click="deleteRowEvent(row)" v-show="row.bsStatus"
-          >删除</AButton
-        >
-      </template>
-    </vxe-grid>
-    <a-modal
-      v-model:visible="resultModal"
-      title="操作结果"
-      :footer="null"
-      width="800px"
-      @cancel="closeRes"
-    >
-      <div>操作完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div>
-      <vxe-table
-        border
-        show-overflow
-        :row-style="rowStyle"
-        :row-config="{ isHover: true }"
-        :data="adResult.data"
+          v-for="(button, key) in buttons"
+          :type="button.type !== 'danger' ? button.type : 'default'"
+          :key="key"
+          :danger="button.type === 'danger'"
+          @click="button.onClick()"
+          style="margin-left: 2px; margin-right: 5px"
+          >{{ button.label }}
+        </AButton>
+        <span style="float: right; padding-right: 10px">
+          <AButton type="default" style="margin: 0 10px" @click="upTable" v-show="isShowImport"
+            >导入</AButton
+          >
+          <AButton
+            style="background-color: rgb(47, 64, 86); color: #fff"
+            @click="exportTable"
+            v-show="isShowExport"
+            >导出</AButton
+          >
+        </span>
+      </div>
+    </template>
+    <template #number="{ row }">
+      <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
+    </template>
+    <template #SupplierLevel="{ row }">
+      <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
+    </template>
+    <template #status="{ row }">
+      <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
+        formatData(row.bsStatus, config['DATA_STATUS'])
+      }}</Tag>
+    </template>
+    <template #open="{ row }">
+      <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
+        formatData(row.isOpen, config['ENABLE_STATUS'])
+      }}</Tag>
+    </template>
+    <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
+    <template #operate="{ row }">
+      <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
+      <AButton
+        v-if="row.bsStatus === 'A'"
+        type="link"
+        class="link"
+        style="width: 54px"
+        @click="auditRow(row)"
+        >审核</AButton
       >
-        <vxe-column type="seq" title="序号" width="60" />
-        <vxe-column field="info.title" title="关键字" width="180" />
-        <vxe-column field="info.status" title="状态" width="80">
-          <template #default="{ row }">
-            <Tag :color="row.info.status === 'Y' ? 'success' : 'error'" v-if="row.info.status">{{
-              row.info.status === 'Y' ? '成功' : '失败'
-            }}</Tag>
-          </template>
-        </vxe-column>
-        <vxe-column field="info.msg" title="信息" />
-        <vxe-column field="info.type" title="信息类型" width="80" />
-      </vxe-table>
-      <vxe-pager
-        background
-        :total="adResult.data.length"
-        :layouts="[
-          'PrevJump',
-          'PrevPage',
-          'JumpNumber',
-          'NextPage',
-          'NextJump',
-          'Sizes',
-          'FullJump',
-          'Total',
-        ]"
-      />
-    </a-modal>
+      <AButton v-if="row.bsStatus === 'B'" type="link" class="link" @click="unAuditRow(row)"
+        >反审核</AButton
+      >
+      <AButton type="link" class="link" danger @click="deleteRowEvent(row)" v-show="row.bsStatus"
+        >删除</AButton
+      >
+    </template>
+  </vxe-grid>
+  <a-modal
+    v-model:visible="resultModal"
+    title="操作结果"
+    :footer="null"
+    width="800px"
+    @cancel="closeRes"
+  >
+    <div>操作完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div>
+    <vxe-table
+      border
+      show-overflow
+      :row-style="rowStyle"
+      :row-config="{ isHover: true }"
+      :data="adResult.data"
+    >
+      <vxe-column type="seq" title="序号" width="60" />
+      <vxe-column field="info.title" title="关键字" width="180" />
+      <vxe-column field="info.status" title="状态" width="80">
+        <template #default="{ row }">
+          <Tag :color="row.info.status === 'Y' ? 'success' : 'error'" v-if="row.info.status">{{
+            row.info.status === 'Y' ? '成功' : '失败'
+          }}</Tag>
+        </template>
+      </vxe-column>
+      <vxe-column field="info.msg" title="信息" />
+      <vxe-column field="info.type" title="信息类型" width="80" />
+    </vxe-table>
+    <vxe-pager
+      background
+      :total="adResult.data.length"
+      :layouts="[
+        'PrevJump',
+        'PrevPage',
+        'JumpNumber',
+        'NextPage',
+        'NextJump',
+        'Sizes',
+        'FullJump',
+        'Total',
+      ]"
+    />
+  </a-modal>
 
-    <!--    action:	上传的地址  headers：设置上传的请求头部-->
-    <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
-      <span style="margin: 10px 10px">
-        <a-button type="primary" style="margin: 10px 10px" @click="importModelEvent"
-          >下载模板</a-button
-        >
-        <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
-          <a-button>
-            <upload-outlined />
-            上传文件
-          </a-button>
-        </a-upload>
-      </span>
-    </a-modal>
-  </div>
+  <!--    action:	上传的地址  headers：设置上传的请求头部-->
+  <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
+    <span style="margin: 10px 10px">
+      <a-button type="primary" style="margin: 10px 10px" @click="importModelEvent"
+        >下载模板</a-button
+      >
+      <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
+        <a-button>
+          <upload-outlined />
+          上传文件
+        </a-button>
+      </a-upload>
+    </span>
+  </a-modal>
+  <!--  </div>-->
 </template>
 
 <script lang="ts" setup>
@@ -475,6 +478,7 @@
     height: calc(100vh - 250px);
     max-height: 640px;
     padding: 0 5px;
+    //overflow: auto;
   }
   .button-group {
     margin: 5px 0;

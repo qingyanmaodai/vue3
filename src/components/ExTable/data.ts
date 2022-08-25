@@ -40,6 +40,12 @@ export const gridOptions = reactive<VxeGridProps>({
     slots: {
       buttons: 'toolbar_buttons',
     },
+    zoom: true,
+    // zoom: {
+    //   iconIn: 'vxe-icon--upload',
+    //   iconOut: 'vxe-icon--zoomout',
+    // },
+    custom: true,
   },
   //表头数据
   columns: [],

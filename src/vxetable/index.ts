@@ -5,7 +5,7 @@ import {
   VXETable,
 
   // 表格功能
-  Footer,
+  // Footer,
   Icon,
   Filter,
   Edit,
@@ -52,7 +52,7 @@ VXETable.setup({ i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, k
 export function setupVxeTable(app: App) {
   // 表格功能
   app
-    .use(Footer)
+    // .use(Footer)
     .use(Icon)
     .use(Filter)
     .use(Edit)
