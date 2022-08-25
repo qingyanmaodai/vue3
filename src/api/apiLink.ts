@@ -83,6 +83,8 @@ export enum Url {
   UPDATE_EXA_PROJECT = '/stock/bd-examine-project/update',
   DEL_EXA_PROJECT = '/stock/bd-examine-project/delete',
   EXPORT_EXA_PROJECT = '/stock/bd-examine-project/export-list',
+  IMPORT_EXA_PROJECT = '/stock/bd-examine-project/import-model',
+  UPLOAD_EXA_PROJECT = 'http://192.168.200.136:9999/stock/bd-examine-project/import-list',
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',

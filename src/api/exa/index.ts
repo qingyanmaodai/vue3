@@ -213,7 +213,7 @@ export function importExcel(
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL,
+      url: Url.IMPORT_EXA_PROJECT,
       data: json,
       responseType: 'blob',
     },
