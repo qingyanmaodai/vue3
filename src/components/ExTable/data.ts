@@ -52,7 +52,13 @@ export const gridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
-
+export const resultByBatchColumns = [
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'info.title', title: '关键字' },
+  { field: 'info.status', title: '状态', slots: { default: 'batchStatus' } },
+  { field: 'info.msg', title: '信息' },
+  { field: 'info.type', title: '信息类型' },
+];
 /*物料列表表头*/
 export const matColumns = [
   { type: 'checkbox', width: 50 },

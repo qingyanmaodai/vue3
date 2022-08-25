@@ -15,8 +15,6 @@
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
-        :isShowImport="true"
-        :isShowExport="true"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -87,10 +85,6 @@
   const tableRef: any = ref<String | null>(null);
   //查询组件
   const searchRef: any = ref<String | null>(null);
-  // //显示【导入】按钮
-  // const isShowImport = ref(true);
-  // //显示【导出】按钮
-  // const isShowExport = ref(true);
   //导入上传文件api
   let importConfig = ref<string>('IMPORT_STOCK_LIST');
   //分页信息

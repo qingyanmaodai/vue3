@@ -75,33 +75,34 @@
       >
     </template>
   </vxe-grid>
-  <a-modal
-    v-model:visible="resultModal"
-    title="操作结果"
-    :footer="null"
-    width="800px"
-    @cancel="closeRes"
+  <vxe-modal
+    v-model="resultModal"
+    id="resultByBatchModal"
+    :position="{ top: 40 }"
+    show-zoom
+    resize
+    width="50%"
+    @close="closeRes"
   >
     <div>操作完成，共{{ adResult.data.length }}条数据，成功{{ resY }}条，失败{{ resF }}条。</div>
-    <vxe-table
+    <vxe-grid
       border
       show-overflow
       :row-style="rowStyle"
       :row-config="{ isHover: true }"
+      v-bind="props.gridOptions"
+      :columns="resultByBatchColumns"
       :data="adResult.data"
     >
-      <vxe-column type="seq" title="序号" width="60" />
-      <vxe-column field="info.title" title="关键字" width="180" />
-      <vxe-column field="info.status" title="状态" width="80">
-        <template #default="{ row }">
-          <Tag :color="row.info.status === 'Y' ? 'success' : 'error'" v-if="row.info.status">{{
-            row.info.status === 'Y' ? '成功' : '失败'
-          }}</Tag>
-        </template>
-      </vxe-column>
-      <vxe-column field="info.msg" title="信息" />
-      <vxe-column field="info.type" title="信息类型" width="80" />
-    </vxe-table>
+      <template #batchStatus="{ row }">
+        <Tag :color="row.info.status === 'Y' ? 'success' : 'error'" v-if="row.info.status">{{
+          row.info.status === 'Y' ? '成功' : '失败'
+        }}</Tag>
+      </template>
+    </vxe-grid>
+    <template #title>
+      <span>操作结果</span>
+    </template>
     <vxe-pager
       background
       :total="adResult.data.length"
@@ -116,12 +117,14 @@
         'Total',
       ]"
     />
-  </a-modal>
+  </vxe-modal>
 
-  <!--    action:	上传的地址  headers：设置上传的请求头部-->
-  <a-modal v-model:visible="visibleUploadModal" title="上传文件" :footer="null" width="500px">
-    <span style="margin: 10px 10px">
-      <a-button type="primary" style="margin: 10px 10px" @click="importModelEvent"
+  <vxe-modal v-model="visibleUploadModal" width="400px" :position="{ top: 40 }">
+    <template #title>
+      <span>上传文件</span>
+    </template>
+    <div class="modalCenter" style="text-align: center">
+      <a-button type="primary" style="margin: 10px 20px" @click="importModelEvent"
         >下载模板</a-button
       >
       <a-upload :beforeUpload="beforeUpload" :customRequest="uploadFile" @change="handleChange">
@@ -130,16 +133,19 @@
           上传文件
         </a-button>
       </a-upload>
-    </span>
-  </a-modal>
+    </div>
+    <br />
+    <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
+  </vxe-modal>
   <!--  </div>-->
 </template>
 
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import { Tag, Button, Modal, Upload, message } from 'ant-design-vue';
+  import { Tag, Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
+  import { resultByBatchColumns } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
@@ -147,7 +153,6 @@
 
   const { createMessage } = useMessage();
   const AButton = Button;
-  const AModal = Modal;
   const AUpload = Upload;
 
   const props = defineProps({
@@ -157,8 +162,14 @@
     count: Number,
     treeSelectData: Number,
     show: Boolean,
-    isShowImport: Boolean,
-    isShowExport: Boolean,
+    isShowImport: {
+      type: Boolean,
+      default: true,
+    },
+    isShowExport: {
+      type: Boolean,
+      default: true,
+    },
     importConfig: String,
   });
   type Emits = {
