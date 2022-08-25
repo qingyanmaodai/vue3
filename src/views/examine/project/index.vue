@@ -383,13 +383,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '物料列表',
+            fileName: '检验项目',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '物料列表信息.xls', data: res };
+            const data = { title: '检验项目.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
