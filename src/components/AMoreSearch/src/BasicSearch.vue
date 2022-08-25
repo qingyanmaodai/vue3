@@ -2,13 +2,10 @@
   <div>
     <vxe-modal
       v-model="basicSearchDialog"
-      :position="{ top: '40px' }"
       show-zoom
       resize
-      :lockView="false"
-      :mask="false"
+      :position="{ top: 40 }"
       width="50%"
-      :showFooter="false"
       @cancel="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">

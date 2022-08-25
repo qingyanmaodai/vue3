@@ -24,3 +24,9 @@
   // Listening to page changes and dynamically changing site titles
   useTitle();
 </script>
+
+<style lang="less" scoped>
+  :deep(.vxe-icon--square:before) {
+    border-color: #606266 !important;
+  }
+</style>

@@ -2,12 +2,9 @@
   <vxe-modal
     v-model="moreSearchDialog"
     id="moreSearchModal"
-    :position="{ top: '40px' }"
     show-zoom
     resize
-    :lockView="false"
-    :mask="false"
-    :showFooter="false"
+    :position="{ top: 40 }"
     width="50%"
     @cancel="handleClose"
   >
@@ -548,7 +545,7 @@
     getSearchParams,
   });
 </script>
-<style scoped>
+<style lang="less" scoped>
   .x-button {
     margin: 10px 5px 0 5px;
   }
@@ -557,4 +554,7 @@
     justify-content: center;
     align-items: center;
   }
+  //&:before {
+  //  border-color: #606266 !important;
+  //}
 </style>
