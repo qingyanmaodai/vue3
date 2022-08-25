@@ -479,4 +479,12 @@
   });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  :deep(.ant-card-body) {
+    padding: inherit !important;
+  }
+  .tree-button {
+    margin: auto;
+    display: block;
+  }
+</style>
