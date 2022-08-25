@@ -1,7 +1,7 @@
 <template>
   <!--  <div class="table">-->
   <vxe-grid
-    style="padding-right: 1px"
+    style="padding-right: 2px"
     border
     ref="xGrid"
     v-bind="props.gridOptions"
@@ -12,7 +12,7 @@
     :treeSelectData="treeSelectData"
     show-overflow
     show-header-overflow
-    height="85%"
+    height="83%"
     auto-resize
     :column-config="{ resizable: true }"
   >
