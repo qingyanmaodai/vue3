@@ -29,6 +29,7 @@
             :columns="exaColumns"
             :buttons="buttons"
             :gridOptions="GridOptions"
+            :importConfig="importConfig"
             ref="tableRef"
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
@@ -111,6 +112,8 @@
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
+  //导入上传文件api
+  let importConfig = ref<string>('UPLOAD_EXA_PROJECT');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   //查询组件
@@ -367,7 +370,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '物料信息导入模板.xls', data: res };
+            const data = { title: '检验项目导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
