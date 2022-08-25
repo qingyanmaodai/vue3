@@ -1,12 +1,19 @@
 <template>
   <div>
-    <a-modal
-      style="top: 20px"
+<!--      show-zoom
+      resize
+      remember
+      storage
+      transfer
+      center
+      top="20px"-->
+    <vxe-modal
+      v-model="moreSearchDialog"
+      id="moreSearchModal"
+      min-width="460"
+      min-height="320"
       title="高级查询"
-      close-on-click-modal="false"
-      center="true"
-      v-model:visible="moreSearchDialog"
-      width="65%"
+      width="50%"
       :footer="null"
       @cancel="handleClose"
     >
@@ -186,7 +193,6 @@
           <a-form-item style="margin: 5px 5px" :name="['searches', index, 'link']">
             <a-select
               v-model:value="search.link"
-              placeholder="并且"
               :options="optionsLink"
               style="width: 70px"
               :filterOption="filterOption"
@@ -213,7 +219,7 @@
           </span>
         </a-form-item>
       </a-form>
-    </a-modal>
+    </vxe-modal>
     <BasicSearch
       style="top: 20px"
       @openSearch="openSearch"
@@ -232,7 +238,6 @@
     FormItem,
     Input,
     InputSearch,
-    Modal,
     Select,
     SelectOption,
     Space,
@@ -242,16 +247,21 @@
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { unitGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import dragModal from '/@/utils/dragModal';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import dayjs, { Dayjs } from 'dayjs';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { SearchParams, Url, TableColum } from '/@/api/apiLink';
+  import {
+    SearchParams,
+    Url,
+    TableColum,
+    SearchLink,
+    SearchMatchType,
+    SearchDataType,
+  } from '/@/api/apiLink';
   import { config } from '/@/utils/publicParamConfig';
   const { createMessage } = useMessage();
   const APlusOutlined = PlusOutlined;
-  const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
   const ASpace = Space;
@@ -326,12 +336,12 @@
       keywords = {
         column: 'name',
         endWith: '',
-        link: 'AND',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
         name: 'name',
-        rule: 'LIKE',
         startWith: '',
         table: '',
-        type: 'string',
         val: '',
       };
     }
@@ -387,14 +397,14 @@
         startWith: undefined,
         endWith: undefined,
         fieldName: '请选择',
-        rule: 'LIKE',
         date: undefined,
         treeData: undefined,
         checkData: undefined,
         val: '',
         labelValue: '',
-        link: 'AND',
-        type: 'string',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
         key: Date.now(),
         name: undefined,
         column: undefined,
@@ -425,12 +435,10 @@
       data.treeData = cloneDeep(res);
     }
   };
-
   //基础信息弹框--打开放大镜
   const onSearch = async (data) => {
     nowCheckData.data = data;
     const res = await publicEvent(data);
-    console.log(res, 'asasa');
     basicSearchRef.value.initList(res);
     basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]);
     basicSearchRef.value.bSearch(true);
@@ -468,10 +476,6 @@
     if (cacheQueryArr.data.length > 0) {
       dynamicValidateForm.searches = cloneDeep(cacheQueryArr.data);
     }
-    setTimeout(() => {
-      //移动拖拽
-      dragModal();
-    }, 1000);
   };
 
   //查询按钮
@@ -524,14 +528,14 @@
     dynamicValidateForm.searches.push({
       startWith: undefined,
       fieldName: '请选择',
-      rule: 'LIKE',
       val: '',
       date: undefined,
       checkData: undefined,
       endWith: undefined,
-      link: 'AND',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
       labelValue: '',
-      type: 'string',
       key: Date.now(),
       name: undefined,
       column: undefined,

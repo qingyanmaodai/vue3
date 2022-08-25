@@ -31,6 +31,8 @@
             :gridOptions="GridOptions"
             :importConfig="importConfig"
             ref="tableRef"
+            :isShowImport="true"
+            :isShowExport="true"
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
@@ -120,6 +122,10 @@
   const treeRef: any = ref<String | null>(null);
   //空参数
   const paramsNull = { params: '' };
+  // //显示【导入】按钮
+  // const isShowImport = ref(true);
+  // //显示【导出】按钮
+  // const isShowExport = ref(true);
   //分组数据
   let treeData = ref<TreeItem[]>([]);
   //导入上传文件api
@@ -331,12 +337,11 @@
   const auditEvent = () => {
     tableRef.value.auditTable();
   };
-  let res: any = '';
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await auditMatTableBatch({
+    const res = await auditMatTableBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
@@ -358,7 +363,7 @@
     const ids = rows.map((item) => {
       return item.id;
     });
-    res = await unAuditMatTableBatch({
+    const res = await unAuditMatTableBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
