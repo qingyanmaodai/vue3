@@ -1,6 +1,7 @@
 <template>
   <!--  <div class="table">-->
   <vxe-grid
+    style="padding-right: 1px"
     border
     ref="xGrid"
     v-bind="props.gridOptions"
@@ -23,10 +24,10 @@
           :key="key"
           :danger="button.type === 'danger'"
           @click="button.onClick()"
-          style="margin-right: 10px"
+          style="margin-left: 10px"
           >{{ button.label }}
         </AButton>
-        <span style="float: right">
+        <span style="float: right; padding-right: 10px">
           <AButton type="default" style="margin: 0 10px" @click="upTable" v-show="isShowImport"
             >导入</AButton
           >
