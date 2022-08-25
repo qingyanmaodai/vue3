@@ -285,7 +285,11 @@
   import { useRoute, useRouter } from 'vue-router'; //路由
   const router = useRouter();
   import { getOneSupplier, save, update, audit, unAudit, SupplierEntity } from '/@/api/supplier'; //供应商api
-  import { getSupplierGroupTree, SupplierGroupEntity } from '/@/api/supplierGroup'; //供应商分组api
+  import {
+    getSupplierGroupTree,
+    queryOneSupplierGroup,
+    SupplierGroupEntity,
+  } from '/@/api/supplierGroup'; //供应商分组api
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
@@ -333,6 +337,7 @@
   });
   const formRef: any = ref<String | null>(null); //表单引用对象
   const supplierId = ref<string>(''); //路由参数，供应商Id
+  const selectGroupId = ref<string>(''); //路由参数，供应商分组Id
   const treeData = ref<TreeItem>([]); //供应商分组数据
   const countryData = ref<CountryEntity[]>([]); //国家数据
   const districtData = ref<CountryEntity[]>([]); //地区数据
@@ -350,6 +355,7 @@
    */
   onMounted(() => {
     supplierId.value = useRoute().query.row?.toString() || '';
+    selectGroupId.value = router.currentRoute.value.query.groupId?.toString() || '';
     init(); //页面初始化
   });
 
@@ -357,6 +363,13 @@
     await getCountry();
     if (supplierId.value) {
       await getSupplier();
+    } else {
+      //获取供应商分组
+      const result = await queryOneSupplierGroup({ params: selectGroupId.value || '0' });
+      if (result) {
+        formState.value.groupId = result.id;
+        tempFormState.groupName = result.name || '';
+      }
     }
     isShowDistrict.value = true;
   };

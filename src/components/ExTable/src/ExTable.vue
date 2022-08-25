@@ -375,6 +375,7 @@
     } else {
       createMessage.warning(`不支持以 .${type} 扩展类型的文件或图片上传!`);
       file.status = 'error';
+      file.onError();
       return false;
     }
   };

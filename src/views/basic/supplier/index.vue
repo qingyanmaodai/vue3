@@ -236,7 +236,6 @@
 
   /**
    * 表格批量审核事件
-   * @param row
    */
   const tableAuditEvent = () => {
     supplierTableRef.value.auditTable();
@@ -266,7 +265,6 @@
 
   /**
    * 表格批量反审核事件
-   * @param row
    */
   const tableUnAuditEvent = () => {
     supplierTableRef.value.unAuditTable();
@@ -376,6 +374,7 @@
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
     console.log(selectedKeys, data);
+    getSupplierList();
   };
 
   /**
