@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%; padding: 15px">
     <div style="background-color: #fff; height: 100%">
       <Search
         ref="searchRef"

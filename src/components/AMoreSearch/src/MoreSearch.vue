@@ -309,16 +309,18 @@
     const searchParams: SearchParams[] = [];
     if (searchKeywords && searchKeywords.length > 0) {
       for (let i = 0; i < searchKeywords.length; i++) {
-        searchParams.push({
-          table: formState.tableName,
-          name: JSON.parse(searchKeywords[i].fieldName).propName,
-          column: JSON.parse(searchKeywords[i].fieldName).fieldName,
-          link: searchKeywords[i].link,
-          rule: searchKeywords[i].rule,
-          type: searchKeywords[i].string,
-          date: dayjs(dayjs(searchKeywords[i].date).valueOf()).format('YYYY-MM-DD'),
-          val: searchKeywords[i].val,
-        });
+        if (searchKeywords[i].fieldName !== '请选择') {
+          searchParams.push({
+            table: formState.tableName,
+            name: JSON.parse(searchKeywords[i].fieldName).propName,
+            column: JSON.parse(searchKeywords[i].fieldName).fieldName,
+            link: searchKeywords[i].link,
+            rule: searchKeywords[i].rule,
+            type: searchKeywords[i].string,
+            date: dayjs(dayjs(searchKeywords[i].date).valueOf()).format('YYYY-MM-DD'),
+            val: searchKeywords[i].val,
+          });
+        }
       }
     }
     return searchParams;
@@ -482,14 +484,14 @@
     //保留查询条件
     cacheQueryArr.data = cloneDeep(dynamicValidateForm.searches);
     searchKeywords = dynamicValidateForm.searches;
-    if (searchKeywords.length > 0) {
-      for (let i = 0; i < searchKeywords.length; i++) {
-        if (searchKeywords[i].fieldName === '请选择') {
-          createMessage.error('查询条件缺失，请选择查询条件');
-          return;
-        }
-      }
-    }
+    // if (searchKeywords.length > 0) {
+    //   for (let i = 0; i < searchKeywords.length; i++) {
+    //     if (searchKeywords[i].fieldName === '请选择') {
+    //       createMessage.error('查询条件缺失，请选择查询条件');
+    //       return;
+    //     }
+    //   }
+    // }
     emit('moreListEvent');
   };
 

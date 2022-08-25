@@ -830,8 +830,27 @@
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
-      formState.value.bdStockLocationId = res.bdStockLocation.id;
-      formState.value.bdStockLocationName = res.bdStockLocation.name;
+      if (res.baseUnit) {
+        formState.value.baseUnitId = res.baseUnit.id;
+        formState.value.baseUnitName = res.baseUnit.name;
+      }
+      if (res.bdStockLocation) {
+        formState.value.bdStockLocationId = res.bdStockLocation.id;
+        formState.value.bdStockLocationName = res.bdStockLocation.name;
+      }
+      if (res.bdExamine) {
+        formState.value.bdExamineName = res.bdExamine.name;
+        formState.value.examineId = res.bdExamine.id;
+      }
+      if (res.weightUnit) {
+        formState.value.weightUnitId = res.weightUnit.id;
+        formState.value.weightName = res.weightUnit.name;
+      }
+      if (res.bdMaterialGroup) {
+        formState.value.groupId = res.bdMaterialGroup.id;
+        formState.value.groupName = res.bdMaterialGroup.name;
+      }
+
       if (formState.value.stockId) {
         formState.value.stockId = res.bdStock.id;
         formState.value.stockName = res.bdStock.name;

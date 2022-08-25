@@ -11,6 +11,7 @@ export interface MatProfileEntity extends PublicModel {
   baseUnitId?: string;
   groupId?: string | undefined;
   groupName?: string;
+  bdMaterialGroup?: object;
   attr?: string;
   weightUnitId?: string;
   weightName?: string;
@@ -19,15 +20,15 @@ export interface MatProfileEntity extends PublicModel {
   oldMatNumber?: number;
   node?: string;
   stockId?: string;
-  bdStock?: string;
+  bdStock?: object;
   subStockId?: string;
   stockName?: string;
   subStockName?: string;
-  bdStockLocation?: string;
+  bdStockLocation?: object;
   labelValue?: string;
   examineId?: string;
   bdExamineName?: string;
-  bdSubStock?: string;
+  bdSubStock?: object;
   bdStockLocationId?: string;
   bdStockLocationName?: string;
   enableSn?: number;
@@ -39,6 +40,7 @@ export interface MatProfileEntity extends PublicModel {
   stockInExamine?: number;
   stockOutExamine?: number;
   produceExamine?: number;
+  bdExamine?: object;
 }
 /**
  * 获取表格信息

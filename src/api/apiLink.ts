@@ -123,7 +123,6 @@ export enum Url {
 export const TableColum = {
   //基本单位表头
   GET_TABLE_UNIT: [
-    { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '单位编码', sortable: true },
     { field: 'name', title: '单位名称', sortable: true },
@@ -156,7 +155,6 @@ export const TableColum = {
   ],
   //仓库
   GET_STOCK_LIST: [
-    { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '仓库编码', sortable: true },
     { field: 'name', title: '仓库名称', sortable: true },
@@ -172,7 +170,6 @@ export const TableColum = {
   ],
   //分仓
   GET_SUB_LIST: [
-    { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '分仓编码', sortable: true },
     { field: 'name', title: '分仓名称', sortable: true },
@@ -188,7 +185,6 @@ export const TableColum = {
   ],
   //仓位
   GET_LOCATION_LIST: [
-    { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '仓位编码', sortable: true },
     { field: 'name', title: '仓位名称', sortable: true },
@@ -209,6 +205,21 @@ export const TableColum = {
     { field: 'name', title: '名称', sortable: true },
     { field: 'createTime', title: '创建时间', sortable: true },
     { field: 'updateTime', title: '修改时间', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+  //检验方案
+  GET_EXA_PROJECT_OPTIONS_LIST: [
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '项目编码', sortable: true },
+    { field: 'name', title: '项目名称', sortable: true },
+    // { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
+    { field: 'description', title: '描述', sortable: true },
+    // { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
     {
       field: 'bsStatus',
       title: '数据状态',
