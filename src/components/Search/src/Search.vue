@@ -19,14 +19,7 @@
   </div>
   <hr />
   <!--    高级查询弹框     -->
-  <MoreSearch
-    style="top: 20px"
-    :options="options.data"
-    title="高级查询"
-    ref="moreSearchRef"
-    @moreListEvent="moreListEvent"
-    @resetEvent="resetEvent"
-  />
+  <MoreSearch ref="moreSearchRef" @moreListEvent="moreListEvent" @resetEvent="resetEvent" />
 </template>
 <script lang="ts" setup>
   import { Button, Card, Form, Input } from 'ant-design-vue';
@@ -40,7 +33,7 @@
   const ACard = Card;
   //高级查询组件ref
   const moreSearchRef: any = ref(null);
-  const options = reactive({ data: [] });
+  // const options = reactive({ data: [] });
   const props = defineProps({
     tableName: {
       type: String,

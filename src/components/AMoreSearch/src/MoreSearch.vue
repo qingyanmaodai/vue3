@@ -1,22 +1,17 @@
 <template>
-  <div>
-<!--      show-zoom
-      resize
-      remember
-      storage
-      transfer
-      center
-      top="20px"-->
-    <vxe-modal
-      v-model="moreSearchDialog"
-      id="moreSearchModal"
-      min-width="460"
-      min-height="320"
-      title="高级查询"
-      width="50%"
-      :footer="null"
-      @cancel="handleClose"
-    >
+  <vxe-modal
+    v-model="moreSearchDialog"
+    id="moreSearchModal"
+    :position="{ top: '40px' }"
+    show-zoom
+    resize
+    :lockView="false"
+    :mask="false"
+    :showFooter="false"
+    width="50%"
+    @cancel="handleClose"
+  >
+    <div class="form-style">
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
         <a-space
           v-for="(search, index) in dynamicValidateForm.searches"
@@ -210,25 +205,26 @@
             @click="removeSearch(index)"
             ><MinusOutlined
           /></a-button> </a-space
-        ><br /><hr />
-        <a-form-item>
-          <span style="display: flex; float: right">
-            <a-button class="x-button" @click="resetEvent">重置</a-button>
-            <a-button type="primary" class="x-button" @click="handleCel">取消</a-button>
-            <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
-          </span>
-        </a-form-item>
+        ><br />
       </a-form>
-    </vxe-modal>
-    <BasicSearch
-      style="top: 20px"
-      @openSearch="openSearch"
-      @cellClickEvent="cellClickEvent"
-      :gridOptions="unitGridOptions"
-      title="基础信息查询"
-      ref="basicSearchRef"
-    />
-  </div>
+    </div>
+    <template #title>
+      <span>高级查询</span>
+    </template>
+    <span style="display: flex; float: right">
+      <a-button class="x-button" @click="resetEvent">重置</a-button>
+      <a-button type="primary" class="x-button" @click="handleCel">取消</a-button>
+      <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
+    </span>
+  </vxe-modal>
+  <BasicSearch
+    style="top: 20px"
+    @openSearch="openSearch"
+    @cellClickEvent="cellClickEvent"
+    :gridOptions="unitGridOptions"
+    title="基础信息查询"
+    ref="basicSearchRef"
+  />
 </template>
 <script lang="ts" setup>
   import {
@@ -555,5 +551,10 @@
 <style scoped>
   .x-button {
     margin: 10px 5px 0 5px;
+  }
+  .form-style {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
