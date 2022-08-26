@@ -44,6 +44,27 @@ export enum Url {
   SUPPLIER_GROUP_GET_ONE = '/stock/bd-supplier-group/query-one', //查询单个供应商分组
   SUPPLIER_GROUP_GET_TREE = '/stock/bd-supplier-group/tree', //获取供应商分组
 
+  //客户
+  CUSTOMER_GET_DATA = '/stock/bd-customer/list', //获取客户列表
+  CUSTOMER_GET_ONE = '/stock/bd-customer/query-one', //查询单个客户
+  CUSTOMER_GET_ENTITY = '/stock/bd-customer/query-dto', //获取客户实体信息
+  CUSTOMER_SAVE = '/stock/bd-customer/save', //保存单个客户
+  CUSTOMER_UPDATE = '/stock/bd-customer/update', //修改单个客户
+  CUSTOMER_AUDIT = '/stock/bd-customer/audit', //客户审核
+  CUSTOMER_BATCH_AUDIT = '/stock/bd-customer/batch-audit', //客户批量审核
+  CUSTOMER_UN_AUDIT = '/stock/bd-customer/un-audit', //客户反审核
+  CUSTOMER_BATCH_UN_AUDIT = '/stock/bd-customer/batch-un-audit', //客户批量反审核
+  CUSTOMER_DELETE = '/stock/bd-customer/delete', //客户删除
+  CUSTOMER_BATCH_DELETE = '/stock/bd-customer/batch-delete', //客户批量删除
+  CUSTOMER_EXPORT_DATA = '/stock/bd-customer/export-list', //客户导出
+  CUSTOMER_IMPORT = 'http://192.168.200.136:9999/stock/bd-customer/import-list', //客户导入
+  CUSTOMER_IMPORT_MODEL = '/stock/bd-customer/import-model', //客户导入模板下载
+  CUSTOMER_GROUP_ADD = '/stock/bd-customer-group/save', //新增客户分组
+  CUSTOMER_GROUP_UPDATE = '/stock/bd-customer-group/update', //修改客户分组
+  CUSTOMER_GROUP_DELETE = '/stock/bd-customer-group/delete', //删除客户分组
+  CUSTOMER_GROUP_GET_ONE = '/stock/bd-customer-group/query-one', //查询单个客户分组
+  CUSTOMER_GROUP_GET_TREE = '/stock/bd-customer-group/tree', //获取客户分组
+
   //共用--实体信息--搜索的下拉框
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //基本单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
