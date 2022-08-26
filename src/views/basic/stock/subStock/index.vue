@@ -10,7 +10,6 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        style="margin-left: 15px"
         :columns="subStockColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
