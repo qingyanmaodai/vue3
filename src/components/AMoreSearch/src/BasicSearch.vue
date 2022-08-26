@@ -158,8 +158,11 @@
           >
             <template #status="{ row }">
               <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-                row.bsStatus === 'A' ? '创建' : '已审核'
+                formatData(row.bsStatus, config['DATA_STATUS'])
               }}</Tag>
+            </template>
+            <template #bsType="{ row }">
+              <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
             </template>
           </vxe-grid>
         </a-form-item>
@@ -202,7 +205,7 @@
   } from 'ant-design-vue';
   import { reactive, ref } from 'vue';
   import { VxeGridEvents, VxeGridInstance, Pager } from 'vxe-table';
-  import { config } from '/@/utils/publicParamConfig';
+  import { config, configEntity } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs, { Dayjs } from 'dayjs';
   import { getPublicList } from '/@/api/public';
@@ -244,6 +247,14 @@
   const tableData = ref<any>([]);
   //弹框
   const basicSearchDialog = ref(false);
+  //格式化数据
+  const formatData = (data: string | number, source: configEntity[]) => {
+    let res;
+    if (source && source.length > 0) {
+      res = source.find((item) => item.value === data);
+    }
+    return res ? res.label : '';
+  };
   //详情页查询字段数据——渲染数据
   const init = (data) => {
     optionsUnitFieldName.data = data;

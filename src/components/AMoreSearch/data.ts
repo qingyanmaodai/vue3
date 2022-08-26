@@ -38,6 +38,7 @@ export const unitColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单位编码', sortable: true },
   { field: 'name', title: '单位名称', sortable: true },
+  { field: 'bsType', title: '单位类型', slots: { default: 'bsType' }, sortable: true },
   {
     field: 'createBy',
     title: '创建人',

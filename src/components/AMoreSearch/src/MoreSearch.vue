@@ -327,22 +327,24 @@
   };
   //基本信息公共组件--获取基本信息表格信息
   const publicEvent = async (keywords) => {
+    let paramArr: any = [];
     if (!keywords) {
-      keywords = {
-        column: 'name',
-        endWith: '',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        name: 'name',
-        startWith: '',
-        table: '',
-        val: '',
-      };
+      paramArr.push(keywords);
     }
+    paramArr.push({
+      column: 'bs_status',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'bsStatus',
+      startWith: '',
+      table: '',
+      val: 'B',
+    });
     return await getPublicList(
       {
-        params: [keywords],
+        params: paramArr,
       },
       //选择分类的接口地址，如基本单位。。
       selectOption.data.requestUrl,
@@ -556,7 +558,4 @@
     justify-content: center;
     align-items: center;
   }
-  //&:before {
-  //  border-color: #606266 !important;
-  //}
 </style>
