@@ -85,6 +85,21 @@ export enum Url {
   EXPORT_EXA_PROJECT = '/stock/bd-examine-project/export-list',
   IMPORT_EXA_PROJECT = '/stock/bd-examine-project/import-model',
   UPLOAD_EXA_PROJECT = 'http://192.168.200.136:9999/stock/bd-examine-project/import-list',
+  //检验规则
+  GET_EXA_RULE_OPTIONS_LIST = '/stock/bd-examine-rule/query-dto', //检验规则实体
+  GET_EXA_RULE_LIST = '/stock/bd-examine-rule/list',
+  ADD_EXA_RULE = '/stock/bd-examine-rule/save',
+  UPDATE_EXA_RULE = '/stock/bd-examine-rule/update',
+  AUDIT_EXA_RULE = '/stock/bd-examine-rule/audit',
+  BATCH_AUDIT_EXA_RULE = '/stock/bd-examine-rule/batch-audit',
+  QUERY_ONE_EXA_RULE = '/stock/bd-examine-rule/query-one',
+  DEL_EXA_RULE = '/stock/bd-examine-rule/delete',
+  BATCH_DEL_EXA_RULE = '/stock/bd-examine-rule/batch-delete',
+  UNAUDIT_EXA_RULE = '/stock/bd-examine-rule/un-audit',
+  BATCH_UNAUDIT_EXA_RULE = '/stock/bd-examine-rule/batch-un-audit',
+  EXPORT_EXA_RULE = '/stock/bd-examine-rule/export-list',
+  IMPORT_EXA_RULE = '/stock/bd-examine-rule/import-model',
+  UPLOAD_EXA_RULE = 'http://192.168.200.136:9999/stock/bd-examine-rule/import-list',
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',
@@ -221,6 +236,23 @@ export const TableColum = {
     { field: 'name', title: '项目名称', sortable: true },
     // { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
     { field: 'description', title: '描述', sortable: true },
+    // { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+
+  GET_EXA_RULE_OPTIONS_LIST: [
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '规则编码', sortable: true },
+    { field: 'name', title: '规则名称', sortable: true },
+    // { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
+    { field: 'min', title: '最小数', sortable: true },
+    { field: 'max', title: '最大数', sortable: true },
+    { field: 'percent', title: '抽检百分比', sortable: true },
     // { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
     {
       field: 'bsStatus',
