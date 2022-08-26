@@ -31,13 +31,17 @@ export const config = {
   ENABLE_STATUS: [
     {
       value: 0,
-      label: '关闭',
+      label: '停用',
     },
     {
       value: 1,
       label: '开启',
     },
   ],
+  ENABLE_STATUS_SPE: {
+    0: '停用',
+    1: '启用',
+  },
   //  数据业务状态
   DATA_STATUS: [
     {

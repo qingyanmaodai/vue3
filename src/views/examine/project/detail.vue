@@ -109,8 +109,8 @@
                 <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
                   <div class="switchDiv">
                     <Switch
-                      checked-children="启用"
-                      un-checked-children="禁用"
+                      :checked-children="config.ENABLE_STATUS_SPE[1]"
+                      :un-checked-children="config.ENABLE_STATUS_SPE[0]"
                       :checkedValue="1"
                       :unCheckedValue="0"
                       v-model:checked="formState.isOpen"
