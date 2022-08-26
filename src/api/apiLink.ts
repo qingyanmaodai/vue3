@@ -18,7 +18,6 @@ export enum Url {
   GET_TABLE_BY_ID = '/stock/bd-material/getOneMaterial',
   DEL_TABLE_LIST = '/stock/bd-material/delete',
   BATCH_DEL_TABLE_LIST = '/stock/bd-material/batch-delete',
-  // GET_TABLE_UNIT_LIST = '/mainStock/bd-unit/list',
   EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
@@ -45,7 +44,7 @@ export enum Url {
   SUPPLIER_GROUP_GET_TREE = '/stock/bd-supplier-group/tree', //获取供应商分组
 
   //共用--实体信息--搜索的下拉框
-  GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //基本单位查询字段
+  GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //计量（基本）单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
   GET_SUB_LIST = '/stock/bd-sub-stock/query-dto', //获取分仓实体信息
   GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
@@ -120,14 +119,30 @@ export enum Url {
   //国家地区
   COUNTRY_TREE = '/stock/bd-country/getCountryByParentId',
   GET_COUNTRY_ENTITY = '/stock/bd-country/query-dto',
-}
 
+  //计量单位
+  AUDIT_UNIT_LIST = '/stock/bd-unit/audit', //审核
+  BATCH_AUDIT_UNIT_LIST = '/stock/bd-unit/batch-audit', //批量审核
+  UN_AUDIT_UNIT_LIST = '/stock/bd-unit/un-audit', //反审核
+  UN_BATCH_AUDIT_UNIT_LIST = '/stock/bd-unit/batch-un-audit', //批量反审核
+  DELETE_UNIT_LIST = '/stock/bd-unit/delete', //删除
+  BATCH_DELETE_UNIT_LIST = '/stock/bd-unit/batch-delete', //批量删除
+  GET_PAGE_UNIT_LIST = '/stock/bd-unit/list', //分页查询--获取仓库列表
+  GET_ONE_UNIT_LIST = '/stock/bd-unit/query-one', //查询单条
+  IMPORT_UNIT_LIST = 'http://192.168.200.136:9999/stock/bd-unit/import-list', //导入
+  IMPORT_MODEL_UNIT = '/stock/bd-unit/import-model', //导入模板下载
+  EXPORT_UNIT_LIST = '/stock/bd-unit/export-list', //导出
+  ADD_UNIT_LIST = '/stock/bd-unit/save', //添加
+  UPDATE_UNIT_LIST = '/stock/bd-unit/update', //编辑
+}
+//用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
-  //基本单位表头
+  //计量（基本）单位表头
   GET_TABLE_UNIT: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '单位编码', sortable: true },
     { field: 'name', title: '单位名称', sortable: true },
+    { field: 'bsType', title: '单位类型', slots: { default: 'bsType' }, sortable: true },
     {
       field: 'createBy',
       title: '创建人',
@@ -229,6 +244,7 @@ export const TableColum = {
       slots: { default: 'status' },
     },
   ],
+  //计量单位
 };
 
 export enum SearchLink {
