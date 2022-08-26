@@ -161,4 +161,15 @@ export const config = {
       label: 'D级',
     },
   ],
+  //单位类型
+  UNIT_TYPE: [
+    {
+      value: 'A',
+      label: '基本单位',
+    },
+    {
+      value: 'B',
+      label: '重量单位',
+    },
+  ],
 };

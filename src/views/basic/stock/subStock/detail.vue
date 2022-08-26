@@ -258,8 +258,10 @@
     if (rowId) {
       const res: any = await getSubStockListById({ params: rowId });
       formState.value = res;
-      formState.value.stockId = res.bdStock.id;
-      formState.value.stockName = res.bdStock.name;
+      if (res.bdStock) {
+        formState.value.stockId = res.bdStock.id;
+        formState.value.stockName = res.bdStock.name;
+      }
     }
   };
   getListById(rowId);

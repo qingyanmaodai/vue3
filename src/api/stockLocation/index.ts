@@ -214,21 +214,6 @@ export function delStockLocationListBatch(
   );
 }
 /**
- * 基本单位查询字段
- */
-// export function getStockLocationListUnit(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-//   return defHttp.post<Result>(
-//     {
-//       url: Url.GET_STOCK_LOCATION_UNIT,
-//       data: json,
-//     },
-//     {
-//       errorMessageMode: mode,
-//       isTransformResponse: true,
-//     },
-//   );
-// }
-/**
  * 导出表格数据
  */
 export function exportStockLocationList(

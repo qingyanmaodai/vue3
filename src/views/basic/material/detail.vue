@@ -105,7 +105,7 @@
                   <Select
                     v-model:value="formState.attr"
                     class="select"
-                    :value="config.MATERIAL_ATTR[formState.attr] || 'A'"
+                    :options="config.MATERIAL_ATTR"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -543,7 +543,6 @@
     addMatTable,
     auditMatTable,
     getMatTableById,
-    getMatTableUnit,
     MatProfileEntity,
     unAuditMatTable,
     updateMatTable,
@@ -551,6 +550,7 @@
   import { getStockOption } from '/@/api/mainStock';
   import { getSubOption } from '/@/api/subStock';
   import { getLocationOption } from '/@/api/stockLocation';
+  import { getUnitOption } from '/@/api/unit';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
@@ -593,7 +593,7 @@
   let chosenModal: String = '';
 
   //对应输入框绑定的值接口类型
-  const formData: MatProfileEntity = { id: undefined, number: '', name: '' };
+  const formData: MatProfileEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -661,7 +661,7 @@
     } else {
       try {
         let arr: any = [];
-        let data = await getMatTableUnit(paramsNull);
+        let data = await getUnitOption(paramsNull);
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
@@ -850,7 +850,6 @@
         formState.value.groupId = res.bdMaterialGroup.id;
         formState.value.groupName = res.bdMaterialGroup.name;
       }
-
       if (formState.value.stockId) {
         formState.value.stockId = res.bdStock.id;
         formState.value.stockName = res.bdStock.name;

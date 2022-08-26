@@ -270,7 +270,7 @@
         exportStockList({
           params: {
             list: getParams,
-            fileName: '仓库料列表',
+            fileName: '仓库列表',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,

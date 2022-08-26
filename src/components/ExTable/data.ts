@@ -52,6 +52,29 @@ export const gridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
+//操作结果
+export const resultGridOptions = reactive<VxeGridProps>({
+  border: true,
+  align: 'center',
+  loading: false,
+  columnConfig: {
+    resizable: true,
+  },
+  rowConfig: {
+    isHover: true,
+  },
+  //操作按钮
+  toolbarConfig: {
+    zoom: true,
+    custom: true,
+  },
+  //表头数据
+  columns: [],
+  //表格数据
+  data: [],
+});
+
+/*批量操作结果*/
 export const resultByBatchColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'info.title', title: '关键字' },
@@ -187,6 +210,42 @@ export const exaColumns = [
   { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
   { field: 'description', title: '描述', sortable: true },
   { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
+//计量单位
+export const unitColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单位编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '单位名称', sortable: true },
+  { field: 'bsType', title: '单位类型', slots: { default: 'bsType' }, sortable: true },
+  {
+    field: 'createBy',
+    title: '创建人',
+    sortable: true,
+  },
+  {
+    field: 'createTime',
+    title: '创建日期',
+    sortable: true,
+  },
+  {
+    field: 'updateBy',
+    title: '修改人',
+    sortable: true,
+  },
+  {
+    field: 'updateTime',
+    title: '修改日期',
+    sortable: true,
+  },
   {
     field: 'bsStatus',
     title: '数据状态',

@@ -220,36 +220,7 @@ export function delMatTableBatch(
     },
   );
 }
-/**
- * 基本单位查询字段
- */
-export function getMatTableUnit(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_TABLE_UNIT,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 基本单位查询
- */
-// export function getMatTableUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-//   return defHttp.post<Result>(
-//     {
-//       url: Url.GET_TABLE_UNIT_LIST,
-//       data: json,
-//     },
-//     {
-//       errorMessageMode: mode,
-//       isTransformResponse: true,
-//     },
-//   );
-// }
+
 /**
  * 导出表格数据
  */

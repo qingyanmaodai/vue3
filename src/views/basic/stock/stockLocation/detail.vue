@@ -260,8 +260,11 @@
   const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
+        let arr: any = [];
         let data = await getStockOption(paramsNull);
-        basicSearchRef.value.init(data);
+        arr = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
       } catch (e) {
         console.log('获取仓库选项字段失败', e);
       }
@@ -270,7 +273,7 @@
         let arr: any = [];
         let data = await getSubOption(paramsNull);
         arr = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'stock_id');
+        arr = arr.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
       } catch (e) {
         console.log('获取分仓选项字段失败', e);
@@ -429,10 +432,8 @@
       .then(async () => {
         if (!formState.value.id) {
           data = await addStockLocationList({ params: formState.value });
-          // formState.value = Object.assign({}, formState.value, data);
         } else {
           data = await updateStockLocationList({ params: formState.value });
-          // formState.value = Object.assign({}, formState.value, data);
         }
         await getListById(data.id);
         createMessage.success('操作成功');

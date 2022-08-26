@@ -177,7 +177,6 @@
     updateStockList,
   } from '/@/api/mainStock';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import {getSubStockListById} from "/@/api/subStock";
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;

@@ -203,21 +203,6 @@ export function delSubStockListBatch(
   );
 }
 /**
- * 基本单位查询字段
- */
-// export function getSubStockListUnit(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-//   return defHttp.post<Result>(
-//     {
-//       url: Url.GET_SUB_STOCK_UNIT,
-//       data: json,
-//     },
-//     {
-//       errorMessageMode: mode,
-//       isTransformResponse: true,
-//     },
-//   );
-// }
-/**
  * 导出表格数据
  */
 export function exportSubStockList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
