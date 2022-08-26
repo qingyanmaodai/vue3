@@ -82,6 +82,8 @@
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { gridOptions, supplierColumns } from '/@/components/ExTable/data'; //表格配置
   const GridOptions = gridOptions;
+  import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
+  const { createMessage } = useMessage();
   import { Pager } from 'vxe-table';
   import {
     audit,
@@ -130,22 +132,22 @@
     {
       type: 'primary',
       label: '审核',
-      onClick: (row) => {
-        tableAuditEvent(row);
+      onClick: () => {
+        tableAuditEvent();
       },
     },
     {
       type: 'default',
       label: '反审核',
-      onClick: (row) => {
-        tableUnAuditEvent(row);
+      onClick: () => {
+        tableUnAuditEvent();
       },
     },
     {
       type: 'danger',
       label: '批量删除',
-      onClick: (row) => {
-        tableBatchDelEvent(row);
+      onClick: () => {
+        tableBatchDelEvent();
       },
     },
   ];
@@ -226,23 +228,24 @@
    */
   const auditRowEvent = async (row) => {
     await audit({
-      params: {
-        id: row.id,
-      },
+      params: row,
     });
     await getSupplierList();
+    createMessage.success('操作成功');
   };
 
   /**
    * 表格批量审核事件
-   * @param row
    */
-  const tableAuditEvent = (row) => {
-    console.log(row);
+  const tableAuditEvent = () => {
+    supplierTableRef.value.auditTable();
   };
-  const auditBatchEvent = async (row) => {
+  const auditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     let res = await batchAuditSupplier({
-      params: row,
+      params: ids,
     });
     await supplierTableRef.value.computeData(res);
     await getSupplierList();
@@ -254,23 +257,24 @@
    */
   const unAuditRowEvent = async (row: any) => {
     await unAudit({
-      params: {
-        id: row?.id,
-      },
+      params: row,
     });
     await getSupplierList();
+    createMessage.success('操作成功');
   };
 
   /**
    * 表格批量反审核事件
-   * @param row
    */
-  const tableUnAuditEvent = (row) => {
-    console.log(row);
+  const tableUnAuditEvent = () => {
+    supplierTableRef.value.unAuditTable();
   };
-  const unAuditBatchEvent = async (row) => {
+  const unAuditBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
     let res = await batchUnAuditSupplier({
-      params: row,
+      params: ids,
     });
     await supplierTableRef.value.computeData(res);
     await getSupplierList();
@@ -278,13 +282,16 @@
 
   /**
    * 表格批量删除事件
-   * @param row
    */
-  const tableBatchDelEvent = (row) => {
-    supplierTableRef.value.delTable(row);
+  const tableBatchDelEvent = () => {
+    supplierTableRef.value.delTable();
   };
-  const deleteMatBatchEvent = async (row) => {
-    await deleteSupplier({ params: row });
+  const deleteMatBatchEvent = async (rows: any[]) => {
+    const ids = rows.map((item) => {
+      return item.id;
+    });
+    let res = await batchDeleteSupplier({ params: ids });
+    await supplierTableRef.value.computeData(res);
     await getSupplierList();
   };
   /**
@@ -292,7 +299,7 @@
    * @param row
    */
   const deleteRowTableEvent = async (row) => {
-    await batchDeleteSupplier({ params: row.id });
+    await deleteSupplier({ params: row.id });
     await getSupplierList();
   };
 
@@ -315,7 +322,7 @@
         exportSupplierData({
           params: {
             list: [],
-            fileName: '物料列表',
+            fileName: '供应商列表',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
@@ -367,6 +374,7 @@
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
     console.log(selectedKeys, data);
+    getSupplierList();
   };
 
   /**
@@ -471,4 +479,12 @@
   });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  :deep(.ant-card-body) {
+    padding: inherit !important;
+  }
+  .tree-button {
+    margin: auto;
+    display: block;
+  }
+</style>
