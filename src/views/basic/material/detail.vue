@@ -911,10 +911,8 @@
       .then(async () => {
         if (!formState.value.id) {
           data = await addMatTable({ params: formState.value });
-          // formState.value = Object.assign({}, formState.value, data);
         } else {
           data = await updateMatTable({ params: formState.value });
-          // formState.value = Object.assign({}, formState.value, data);
         }
         await getListById(data.id);
         createMessage.success('操作成功');

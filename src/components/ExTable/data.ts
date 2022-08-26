@@ -207,7 +207,7 @@ export const stockLocationColumns = [
 ];
 
 //检验项目
-export const exaColumns = [
+export const exaProjectColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '项目编码', slots: { default: 'number' }, sortable: true },
@@ -215,6 +215,25 @@ export const exaColumns = [
   { field: 'bdExamineGroup.name', title: '检验类别', sortable: true },
   { field: 'description', title: '描述', sortable: true },
   { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
+//检验规则
+export const exaRuleColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '规则编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '规则名称', sortable: true },
+  { field: 'min', title: '最小值', sortable: true },
+  { field: 'max', title: '最大值', sortable: true },
+  { field: 'percent', title: '抽检百分比', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',
