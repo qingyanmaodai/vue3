@@ -510,12 +510,15 @@
   .form-body {
     padding: 20px;
   }
-  :deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
-    color: #409eff;
-    border-color: #409eff;
-  }
-  :deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
-    color: #409eff;
-    border-color: #409eff;
+  //:deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
+  //  color: #409eff;
+  //  border-color: #409eff;
+  //}
+  //:deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
+  //  color: #409eff;
+  //  border-color: #409eff;
+  //}
+  :deep(.vxe-toolbar .vxe-tools--operate) {
+    margin-right: 10px;
   }
 </style>
