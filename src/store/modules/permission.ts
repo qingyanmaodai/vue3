@@ -221,7 +221,7 @@ export const usePermissionStore = defineStore({
             routeList2 = (await getMenuList()).menu as AppRouteRecordRaw[];
             remove(routeList2, (menu) => {
               const meta = menu.meta;
-              return meta.title === '首页';
+              return meta.title === '首页' || menu.name === 'isystem';
             });
             routeList2.forEach((menu) => {
               menu.meta.orderNo = 3;

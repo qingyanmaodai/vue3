@@ -165,7 +165,7 @@
     Switch,
     TabPane,
     Tabs,
-    InputNumber
+    InputNumber,
   } from 'ant-design-vue';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -200,6 +200,9 @@
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
+    percent: [{ required: true, message: '请输入检验百分比' }],
+    min: [{ required: true, message: '请输入检验最小数' }],
+    max: [{ required: true, message: '请输入检验最大数' }],
   });
   //接受参数
   const dataId = useRoute().query.row?.toString();

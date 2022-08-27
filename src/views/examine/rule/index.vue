@@ -118,7 +118,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BdExamineRule.update_time'],
+        descList: ['update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
