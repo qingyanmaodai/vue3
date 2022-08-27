@@ -21,4 +21,6 @@ export enum PageEnum {
   EXA_PROJECT_DETAIL = '/examine/project/detail',
   //计量单位详情页
   UNIT_DETAIL = '/basic/unit/detail',
+  //抽检规则详情页
+  EXA_RULE_DETAIL = '/examine/rule/detail',
 }

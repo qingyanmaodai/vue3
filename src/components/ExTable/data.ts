@@ -111,30 +111,58 @@ export const matColumns = [
 export const supplierColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '编码', slots: { default: 'number' }, sortable: true },
-  { field: 'name', title: '供应商', sortable: true },
-  // { field: 'shortName', title: '供应商简称', sortable: true },
-  // { field: 'contact', title: '联系人', sortable: true },
-  // { field: 'phone', title: '联系电话', sortable: true },
-  // { field: 'main_by', title: '负责人', sortable: true },
-  // { field: 'address', title: '地址', sortable: true },
+  { field: 'number', title: '编码', width: 120, slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '供应商', sortable: true, width: 120 },
+  { field: 'shortName', title: '供应商简称', sortable: true, width: 120 },
+  { field: 'contact', title: '联系人', sortable: true, width: 120 },
+  { field: 'phone', title: '联系电话', sortable: true, width: 120 },
+  { field: 'main_by', title: '负责人', sortable: true, width: 120 },
+  { field: 'address', title: '地址', sortable: true, width: 120 },
   {
     field: 'level',
     title: '等级',
     sortable: true,
     slots: { default: 'SupplierLevel' },
+    width: 120,
   },
-  { field: 'bdCountryCountry.name', title: '国家', sortable: true },
-  { field: 'bdCountryProvincial.name', title: '省', sortable: true },
-  { field: 'bdCountryMunicipal.name', title: '市', sortable: true },
-  { field: 'bdCountryDistrict.name', title: '区', sortable: true },
-  { field: 'bdSupplierGroup.name', title: '供应商分组', sortable: true },
-  { field: 'createTime', title: '创建日期', sortable: true },
-  { field: 'updateTime', title: '修改日期', sortable: true },
+  { field: 'bdCountryCountry.name', title: '国家', sortable: true, width: 120 },
+  { field: 'bdCountryProvincial.name', title: '省', sortable: true, width: 120 },
+  { field: 'bdCountryMunicipal.name', title: '市', sortable: true, width: 120 },
+  { field: 'bdCountryDistrict.name', title: '区', sortable: true, width: 120 },
+  { field: 'bdSupplierGroup.name', title: '供应商分组', sortable: true, width: 120 },
+  { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+  { field: 'updateTime', title: '修改日期', sortable: true, width: 160 },
   {
     field: 'bsStatus',
     title: '业务状态',
     slots: { default: 'status' },
+    width: 120,
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
+/*客户列表表头*/
+export const customerColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '编码', width: 120, slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '客户', sortable: true, width: 120 },
+  { field: 'shortName', title: '客户简称', sortable: true, width: 120 },
+  { field: 'contact', title: '联系人', sortable: true, width: 120 },
+  { field: 'phone', title: '联系电话', sortable: true, width: 120 },
+  { field: 'address', title: '地址', sortable: true, width: 120 },
+  { field: 'bdCountryCountry.name', title: '国家', sortable: true, width: 120 },
+  { field: 'bdCountryProvincial.name', title: '省', sortable: true, width: 120 },
+  { field: 'bdCountryMunicipal.name', title: '市', sortable: true, width: 120 },
+  { field: 'bdCountryDistrict.name', title: '区', sortable: true, width: 120 },
+  { field: 'bdCustomerGroup.name', title: '客户分组', sortable: true, width: 120 },
+  { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+  { field: 'updateTime', title: '修改日期', sortable: true, width: 160 },
+  {
+    field: 'bsStatus',
+    title: '业务状态',
+    slots: { default: 'status' },
+    width: 120,
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
@@ -202,7 +230,7 @@ export const stockLocationColumns = [
 ];
 
 //检验项目
-export const exaColumns = [
+export const exaProjectColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '项目编码', slots: { default: 'number' }, sortable: true },
@@ -246,6 +274,18 @@ export const unitColumns = [
     title: '修改日期',
     sortable: true,
   },
+];
+
+//检验规则
+export const exaRuleColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '规则编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '规则名称', sortable: true },
+  { field: 'min', title: '最小值', sortable: true },
+  { field: 'max', title: '最大值', sortable: true },
+  { field: 'percent', title: '抽检百分比', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',

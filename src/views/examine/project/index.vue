@@ -26,7 +26,7 @@
             @resetEvent="resetTable"
           />
           <ExTable
-            :columns="exaColumns"
+            :columns="exaProjectColumns"
             :buttons="buttons"
             :gridOptions="GridOptions"
             :importConfig="importConfig"
@@ -94,12 +94,12 @@
     importFile,
     unAudit,
     unAuditBatch,
-  } from '/@/api/exa';
+  } from '/@/api/exaProject';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, exaColumns } from '/@/components/ExTable/data';
+  import { gridOptions, exaProjectColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';

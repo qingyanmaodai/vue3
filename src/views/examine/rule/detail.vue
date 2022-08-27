@@ -47,25 +47,47 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  label="项目类别："
-                  v-model:value="formState.groupId"
-                  ref="groupId"
-                  name="groupId"
-                  class="item"
-                >
-                  <ExInput
-                    autocomplete="off"
-                    class="input"
-                    placeholder="请选择项目类别"
-                    label="项目类别"
-                    :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.groupName"
-                    :disabled="formState.bsStatus === 'B'"
-                    @search="onGroupSearch(formState.groupName)"
-                    @clear="onClear(['groupId', 'groupName'])"
-                  />
+                <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
+                  <div class="switchDiv">
+                    <Switch
+                      :checked-children="config.ENABLE_STATUS_SPE[1]"
+                      :un-checked-children="config.ENABLE_STATUS_SPE[0]"
+                      :checkedValue="1"
+                      :unCheckedValue="0"
+                      v-model:checked="formState.isOpen"
+                      :disabled="formState.bsStatus === 'B'"
+                    />
+                  </div>
                 </a-form-item>
+              </Col>
+            </Row>
+            <Row>
+              <Col :span="8">
+                <a-form-item label="最小数：" ref="min" name="min" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.min"
+                    :disabled="formState.bsStatus === 'B'"
+                    :min="1"
+                /></a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item label="最大数：" ref="max" name="max" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.max"
+                    :disabled="formState.bsStatus === 'B'"
+                    :min="1"
+                /></a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item label="百分比%：" ref="percent" name="percent" class="item">
+                  <InputNumber
+                    class="input"
+                    v-model:value="formState.percent"
+                    :disabled="formState.bsStatus === 'B'"
+                    :min="1"
+                /></a-form-item>
               </Col>
             </Row>
             <Row>
@@ -82,41 +104,14 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="检验描述：" ref="description" name="description" class="item">
-                  <a-textArea
-                    v-model:value="formState.description"
-                    placeholder="请添加描述"
-                    :rows="3"
-                    class="textArea"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    placeholder="请添加备注"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
                   />
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
-                  <div class="switchDiv">
-                    <Switch
-                      :checked-children="config.ENABLE_STATUS_SPE[1]"
-                      :un-checked-children="config.ENABLE_STATUS_SPE[0]"
-                      :checkedValue="1"
-                      :unCheckedValue="0"
-                      v-model:checked="formState.isOpen"
-                      :disabled="formState.bsStatus === 'B'"
-                    />
-                  </div>
                 </a-form-item>
               </Col>
             </Row>
@@ -154,21 +149,6 @@
         </TabPane>
       </Tabs>
     </a-card>
-    <!--  点击分组弹框  -->
-    <a-modal v-model:visible="visibleGroupModal" title="检验类别">
-      <a-tree-select
-        loading
-        show-search
-        v-model:value="formState.groupId"
-        style="width: 100%"
-        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-        placeholder="请选择物料分组"
-        treeNodeFilterProp="title"
-        tree-default-expand-all
-        :treeData="treeData"
-        @change="groupSelect"
-      />
-    </a-modal>
   </div>
 </template>
 <script lang="ts" setup>
@@ -181,45 +161,35 @@
     FormItem,
     Input,
     LayoutHeader,
-    Modal,
     Row,
     Switch,
     TabPane,
     Tabs,
-    TreeSelect,
+    InputNumber
   } from 'ant-design-vue';
-  import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { TreeItem } from '/@/components/Tree';
-  import { add, audit, unAudit, ExaProjectEntity, getOneById, update } from '/@/api/exaProject';
-  import { cloneDeep } from 'lodash-es';
+  import { add, audit, unAudit, ExaRuleEntity, getOneById, update } from '/@/api/exaRule';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
-  import { ExaProjectGroupEntity, queryOneExaGroup, treeExaGroup } from '/@/api/exaProjectGroup';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   const { createMessage } = useMessage();
-  const AModal = Modal;
   const AForm = Form;
   const AFormItem = FormItem;
-  const ATreeSelect = TreeSelect;
   const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
   const formRef = ref();
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
-  //分组弹框visible
-  const visibleGroupModal: any = ref<boolean>(false);
-  //审核状态
-  let groupSelectId = router.currentRoute.value.query.groupId?.toString();
-  const formData: ExaProjectEntity = {
+  const formData: ExaRuleEntity = {
     id: undefined,
     number: '',
     name: '',
-    isOpen: 1,
-    groupId: undefined,
+    min: 1,
+    max: 10,
+    percent: 1,
   };
   //初始化
   const formStateInit = reactive({
@@ -227,61 +197,10 @@
   });
   const formState = toRef(formStateInit, 'data');
   //重新物料分组赋值
-  const groupEvent = async () => {
-    const result = await queryOneExaGroup({
-      params: groupSelectId || formState.value.groupId || '',
-    });
-    if (result) {
-      formState.value.groupId = result.id == '0' ? '' : result.id;
-      formState.value.groupName = result.name;
-    } else {
-      formState.value.groupId = undefined;
-      formState.value.groupName = undefined;
-    }
-  };
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
   });
-
-  //分组弹框
-  const onGroupSearch = (name) => {
-    visibleGroupModal.value = true;
-    formState.value.groupName = name;
-    if (formState.value.groupName == '') {
-      formState.value.groupName = undefined;
-    }
-  };
-
-  //点击清空图标清空事件
-  const onClear = (key: string[]) => {
-    key.forEach((e) => {
-      formState.value[e] = '';
-    });
-  };
-  //获取物料分组数据
-  let treeData = ref<TreeItem[]>([]);
-  const getGroup = async () => {
-    const tree = await treeExaGroup({ params: '0' });
-    runTree(tree);
-    treeData.value = cloneDeep(tree);
-  };
-  getGroup();
-  const runTree = (tree: ExaProjectGroupEntity[]) => {
-    tree.forEach((item) => {
-      item.title = item.name;
-      item.value = item.id;
-      item.key = item.id;
-      runTree(item.children || []);
-    });
-  };
-  //物料分组弹框关
-  const groupSelect = (value, node) => {
-    formState.value.groupName = node[0] || '';
-    formState.value.groupId = value;
-    visibleGroupModal.value = false;
-  };
-
   //接受参数
   const dataId = useRoute().query.row?.toString();
   const onSubmit = async () => {
@@ -335,10 +254,7 @@
     if (dataId) {
       await getOneById({ params: dataId }).then(async (res) => {
         formState.value = res;
-        await groupEvent();
       });
-    } else {
-      await groupEvent();
     }
   };
   init();
