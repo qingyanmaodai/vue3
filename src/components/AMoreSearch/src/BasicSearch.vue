@@ -5,7 +5,7 @@
       show-zoom
       resize
       :position="{ top: 40 }"
-      width="50%"
+      width="55%"
       @close="handleClose"
     >
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
