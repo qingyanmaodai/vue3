@@ -264,16 +264,14 @@ export const unitColumns = [
     title: '创建日期',
     sortable: true,
   },
+  { field: 'mark', title: '备注', sortable: true },
   {
-    field: 'updateBy',
-    title: '修改人',
+    field: 'bsStatus',
+    title: '数据状态',
     sortable: true,
+    slots: { default: 'status' },
   },
-  {
-    field: 'updateTime',
-    title: '修改日期',
-    sortable: true,
-  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //检验规则
