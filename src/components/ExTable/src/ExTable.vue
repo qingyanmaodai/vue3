@@ -93,7 +93,7 @@
       show-overflow
       :row-style="rowStyle"
       :row-config="{ isHover: true }"
-      v-bind="resultGridOptions"
+      v-bind="ResultGridOptions"
       :columns="resultByBatchColumns"
       :data="adResult.data"
     >
@@ -157,6 +157,7 @@
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
+  const ResultGridOptions = resultGridOptions;
 
   const props = defineProps({
     gridOptions: Object,
