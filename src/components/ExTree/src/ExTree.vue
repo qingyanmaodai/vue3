@@ -1,7 +1,7 @@
 <template>
   <AModal
     :visible="visibleGroupModal"
-    title="物料分组"
+    :title="prop.title"
     :maskClosable="false"
     :cancelText="false"
     :closable="false"
@@ -32,7 +32,7 @@
   </AModal>
   <AModal
     :visible="visibleDeleteGroupModal"
-    title="删除物料分组"
+    :title="'删除' + prop.title"
     :maskClosable="false"
     :cancelText="false"
     :closable="false"
@@ -88,6 +88,10 @@
   const prop1 = basicProps;
   const prop2 = {
     tableName: {
+      type: String,
+      default: '',
+    },
+    title: {
       type: String,
       default: '',
     },
