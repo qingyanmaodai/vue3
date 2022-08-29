@@ -64,6 +64,29 @@ export enum Url {
   CUSTOMER_GROUP_GET_ONE = '/stock/bd-customer-group/query-one', //查询单个客户分组
   CUSTOMER_GROUP_GET_TREE = '/stock/bd-customer-group/tree', //获取客户分组
 
+  //员工
+  EMPLOYEE_GET_DATA = '/stock/bd-employee/list', //获取员工列表
+  EMPLOYEE_GET_ONE = '/stock/bd-employee/query-one', //查询单个员工
+  EMPLOYEE_GET_ENTITY = '/stock/bd-employee/query-dto', //获取员工实体信息
+  EMPLOYEE_SAVE = '/stock/bd-employee/save', //保存单个员工
+  EMPLOYEE_UPDATE = '/stock/bd-employee/update', //修改单个员工
+  EMPLOYEE_AUDIT = '/stock/bd-employee/audit', //员工审核
+  EMPLOYEE_BATCH_AUDIT = '/stock/bd-employee/batch-audit', //员工批量审核
+  EMPLOYEE_UN_AUDIT = '/stock/bd-employee/un-audit', //员工反审核
+  EMPLOYEE_BATCH_UN_AUDIT = '/stock/bd-employee/batch-un-audit', //员工批量反审核
+  EMPLOYEE_DELETE = '/stock/bd-employee/delete', //员工删除
+  EMPLOYEE_BATCH_DELETE = '/stock/bd-employee/batch-delete', //员工批量删除
+  EMPLOYEE_EXPORT_DATA = '/stock/bd-employee/export-list', //员工导出
+  EMPLOYEE_IMPORT = 'http://192.168.200.136:9999/stock/bd-employee/import-list', //员工导入
+  EMPLOYEE_IMPORT_MODEL = '/stock/bd-employee/import-model', //员工导入模板下载
+
+  //部门
+  DEPT_ADD = '/stock/bd-department/save', //新增员工分组
+  DEPT_UPDATE = '/stock/bd-department/update', //修改员工分组
+  DEPT_DELETE = '/stock/bd-department/delete', //删除员工分组
+  DEPT_GET_ONE = '/stock/bd-department/query-one', //查询单个员工分组
+  DEPT_GET_TREE = '/stock/bd-department/tree', //获取员工分组
+
   //共用--实体信息--搜索的下拉框
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //计量（基本）单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
@@ -120,6 +143,21 @@ export enum Url {
   EXPORT_EXA_RULE = '/stock/bd-examine-rule/export-list',
   IMPORT_EXA_RULE = '/stock/bd-examine-rule/import-model',
   UPLOAD_EXA_RULE = 'http://192.168.200.136:9999/stock/bd-examine-rule/import-list',
+  //检验方案
+  GET_EXA_SCHEME_LIST = '/stock/bd-examine/list',
+  AUDIT_EXA_SCHEME = '/stock/bd-examine/audit',
+  BATCH_AUDIT_EXA_SCHEME = '/stock/bd-examine/batch-audit',
+  UNAUDIT_EXA_SCHEME = '/stock/bd-examine/un-audit',
+  BATCH_UNAUDIT_EXA_SCHEME = '/stock/bd-examine/batch-un-audit',
+  BATCH_DEL_EXA_SCHEME = '/stock/bd-examine/batch-delete',
+  GET_EXA_SCHEME_OPTIONS_LIST = '/stock/bd-examine/query-dto',
+  ADD_EXA_SCHEME = '/stock/bd-examine/save',
+  QUERY_ONE_EXA_SCHEME = '/stock/bd-examine/query-one',
+  UPDATE_EXA_SCHEME = '/stock/bd-examine/update',
+  DEL_EXA_SCHEME = '/stock/bd-examine/delete',
+  EXPORT_EXA_SCHEME = '/stock/bd-examine/export-list',
+  IMPORT_EXA_SCHEME = '/stock/bd-examine/import-model',
+  UPLOAD_EXA_SCHEME = 'http://192.168.200.136:9999/stock/bd-examine/import-list',
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',
