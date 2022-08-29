@@ -23,7 +23,7 @@
                 placeholder="请输入或选择关键字"
                 style="width: 200px"
                 :filterOption="filterOption"
-                @focus="handleFocus"
+                @change="handleChange"
                 @select="selectOne(search)"
               >
                 <a-select-option
@@ -101,8 +101,10 @@
                 style="width: 200px"
                 onfocus="this.blur();"
                 placeholder="请选择输入..."
-                v-model:value="search.val"
+                v-model:value="search.labelValue"
                 :filterOption="filterOption"
+                @click="onSearch(search)"
+                @search="onSearch(search)"
               />
               <a-space
                 direction="vertical"
@@ -134,15 +136,11 @@
                 allow-clear
                 tree-default-expand-all
                 :tree-data="search.treeData"
-              >
-                <template #title="{ title }">
-                  <template>{{ title }}</template>
-                </template>
-              </a-tree-select>
+              />
             </a-form-item>
             <span style="margin-left: 10px">
               <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
-              <a-button type="primary" class="x-button" @click="basicSearch">查询</a-button>
+              <a-button type="primary" class="x-button" @click="basicSearchEvent">查询</a-button>
             </span>
           </a-space>
         </div>
@@ -188,6 +186,14 @@
       </template>
     </vxe-modal>
   </div>
+  <!--  基础信息查询-->
+  <BasicSearch
+    v-if="isShowModel"
+    @openSearch="openSearch"
+    @basicClickEvent="basicClickEvent"
+    :gridOptions="unitGridOptions"
+    ref="basicSearchRef"
+  />
 </template>
 <script lang="ts" setup>
   import {
@@ -210,6 +216,8 @@
   import dayjs, { Dayjs } from 'dayjs';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { unitGridOptions } from '/@/components/AMoreSearch/data';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -221,14 +229,15 @@
   const ASelectOption = SelectOption;
   const ADatePicker = DatePicker;
   const ATreeSelect = TreeSelect;
-
+  import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink';
   const optionsUnitFieldName = reactive<any>({ data: [] });
 
   type Emits = {
-    (event: 'cellClickEvent', data: object): void;
-    (event: 'getListUnitEvent', keywords: object): void;
-    (event: 'openSearch', keywords: object): void;
-    (event: 'searchList', type: string, keywords: object): void;
+    (event: 'basicClickEvent', data: object): void; //表格双击事件
+    (event: 'getListUnitEvent', keywords: object): void; //获取下拉框字段
+    (event: 'openSearch', keywords: object): void; //打开基本信息弹框以及获取基本信息数据
+    (event: 'onSearch', data: object): void; //基本单位的的选择框点击事件
+    (event: 'searchList', type: string, keywords: object): void; //详情页的基本信息搜索
   };
   //获取父组件的数据
   const props = defineProps({
@@ -237,7 +246,15 @@
     tableData: String,
     modalType: String,
   });
-
+  //1111---开始---基础信息查询的弹框
+  const isShowModel = ref<boolean>(false);
+  //判断输入框controlType类型，改变后面输入框的类型
+  const selectOption: any = reactive({ data: {} });
+  //选择框data
+  const nowCheckData: any = reactive({ data: {} });
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref(null);
+  //1111--结束---基础信息查询的弹框
   const xGrid = ref<VxeGridInstance>();
   //判断窗体类型
   let isUnit = ref<string>();
@@ -269,7 +286,71 @@
   const initCols = (data) => {
     tableCols.value = data;
   };
-
+  //----开始-----基础信息查询的弹框
+  //基本信息公共组件--获取基本信息表格信息
+  const publicEvent = async (keywords) => {
+    let paramArr: any = [];
+    if (keywords) {
+      paramArr.push(keywords);
+    }
+    paramArr.push({
+      column: 'bs_status',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'bsStatus',
+      startWith: '',
+      table: '',
+      val: 'B',
+    });
+    return await getPublicList(
+      {
+        params: paramArr,
+      },
+      //选择分类的接口地址，如基本单位。。
+      selectOption.data.requestUrl,
+    );
+  };
+  //基本信息表格双击事件
+  const basicClickEvent = (row) => {
+    nowCheckData.data.val = row.id;
+    nowCheckData.data.labelValue = row.name;
+    basicSearchRef.value.bSearch(false);
+  };
+  //改变选择的字段数据
+  const handleChange = (value: string) => {
+    selectOption.data = JSON.parse(value);
+  };
+  const onSearch = async (data) => {
+    nowCheckData.data = data; //输入框的值
+    isShowModel.value = true;
+    const res = await publicEvent(data); //获取数据
+    basicSearchRef.value.initList(res); //表格数据
+    basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
+    basicSearchRef.value.bSearch(true); //打开弹框
+    await getTableUnit();
+  };
+  const openSearch = async (keywords) => {
+    const res = await publicEvent(keywords);
+    basicSearchRef.value.initList(res);
+  };
+  const getTableUnit = async () => {
+    try {
+      const data: any = await getPublicList(
+        {
+          params: [],
+        },
+        Url[selectOption.data.queryConfig],
+      );
+      let arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.getListUnitEvent(arr);
+    } catch (e) {
+      console.log('高级查询获取基本信息字段失败', e);
+    }
+  };
+  //----结束-----基础信息查询的弹框
   //表格内容
   const initList = (data) => {
     tableData.value = data.records;
@@ -289,13 +370,14 @@
   //双击单元格事件
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
-    emit('cellClickEvent', row.row);
+    emit('basicClickEvent', row.row);
   };
   interface Search {
     startWith: string | undefined;
     fieldName: string | undefined;
     rule: string | undefined;
     val: string | undefined;
+    labelValue: string | undefined;
     treeData?: object[] | undefined;
     date?: Dayjs;
     endWith: string | undefined;
@@ -311,6 +393,7 @@
         fieldName: '请选择',
         rule: 'LIKE',
         val: '',
+        labelValue: '',
         date: undefined,
         treeData: undefined,
         controlType: 'string',
@@ -320,9 +403,7 @@
       },
     ],
   });
-  const handleFocus = () => {
-    console.log('focus');
-  };
+
   const filterOption = (input: string, option: any) => {
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
@@ -359,7 +440,7 @@
     dynamicValidateForm.searches.length = 1;
   };
   //查询按钮
-  const basicSearch = (type, keywords) => {
+  const basicSearchEvent = (type, keywords) => {
     type = props.modalType;
     dynamicValidateForm.searches.map((r) => {
       if (r.date) {
@@ -410,7 +491,14 @@
     pages.currentPage = currentPage;
     pages.pageSize = pageSize;
   };
-  defineExpose({ init, bSearch, basicSearch, initList, initCols, initSearch, getListUnitEvent });
+  defineExpose({
+    init,
+    bSearch,
+    initList,
+    initCols,
+    initSearch,
+    getListUnitEvent,
+  });
 </script>
 <style scoped lang="less">
   .x-button {
