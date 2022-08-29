@@ -98,11 +98,9 @@
     pages.pageSize = pageSize;
     await getList(currentPage);
   };
-  //空参数
-  const paramsNull = { params: '' };
   //获取高级查询字段数据
   const getOptions = async () => {
-    const moreSearchData = await getSubOption(paramsNull);
+    const moreSearchData = await getSubOption({ params: '' });
     searchRef.value.getOptions(moreSearchData);
   };
   getOptions();

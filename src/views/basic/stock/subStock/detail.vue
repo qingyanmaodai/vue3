@@ -223,8 +223,6 @@
   const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref(null);
-  //空参数
-  const paramsNull = { params: '' };
 
   const formRules = reactive({
     name: [{ required: true, message: '请输入分仓名称' }],
@@ -290,14 +288,14 @@
     basicSearchRef.value.bSearch(true);
     basicSearchRef.value.initList(data);
     basicSearchRef.value.initCols(stockColumns);
-    await getTableUnit();
+    await getStockTableOption();
     return res;
   };
-  //获取基本单位字段
-  const getTableUnit = async () => {
+  //获取基本信息字段
+  const getStockTableOption = async () => {
     try {
       let arr: any = [];
-      let data = await getStockOption(paramsNull);
+      let data = await getStockOption({ params: '' });
       arr = cloneDeep(data);
       arr = arr.filter((e) => e.fieldName != 'bs_status');
       basicSearchRef.value.init(arr);

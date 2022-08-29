@@ -118,8 +118,6 @@
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
   const treeRef: any = ref<String | null>(null);
-  //空参数
-  const paramsNull = { params: '' };
 
   //分组数据
   let treeData = ref<TreeItem[]>([]);
@@ -211,7 +209,7 @@
   };
   //获取高级查询字段数据
   const getOptions = async () => {
-    const moreSearchData = await getMatOption(paramsNull);
+    const moreSearchData = await getMatOption({ params: '' });
     searchRef.value.getOptions(moreSearchData);
   };
   getOptions();

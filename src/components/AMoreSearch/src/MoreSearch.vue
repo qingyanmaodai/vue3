@@ -348,8 +348,8 @@
   const selectConfigOption = (data) => {
     if (data !== '' && data !== '请选择') return JSON.parse(data).queryConfig;
   };
-  //获取基本单位字段
-  const getTableUnit = async () => {
+  //获取基本信息字段
+  const getPublicListOption = async () => {
     try {
       const data: any = await getPublicList(
         {
@@ -432,7 +432,7 @@
     basicSearchRef.value.initList(res); //表格数据
     basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
     basicSearchRef.value.bSearch(true); //打开弹框
-    await getTableUnit();
+    await getPublicListOption();
   };
   //打开基本信息弹框
   const openSearch = async (keywords) => {

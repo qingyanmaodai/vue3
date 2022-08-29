@@ -329,13 +329,13 @@
     childBasicSearchRef.value.initList(res); //表格数据
     childBasicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
     childBasicSearchRef.value.bSearch(true); //打开弹框
-    await getTableUnit();
+    await getPublicListOption();
   };
   const openSearch = async (keywords) => {
     const res = await publicEvent(keywords);
     childBasicSearchRef.value.initList(res);
   };
-  const getTableUnit = async () => {
+  const getPublicListOption = async () => {
     try {
       const data: any = await getPublicList(
         {

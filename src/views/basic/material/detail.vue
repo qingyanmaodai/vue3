@@ -563,8 +563,6 @@
   const ATextArea = Input.TextArea;
 
   const router = useRouter();
-  //空参数
-  const paramsNull = { params: '' };
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //物料分组弹框visible
@@ -631,7 +629,7 @@
   const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
-        let data = await getStockOption(paramsNull);
+        let data = await getStockOption({ params: '' });
         basicSearchRef.value.init(data);
       } catch (e) {
         console.log('获取仓库选项字段失败', e);
@@ -639,7 +637,7 @@
     } else if (key == 'sub') {
       try {
         let arr: any = [];
-        let data = await getSubOption(paramsNull);
+        let data = await getSubOption({ params: '' });
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
@@ -649,7 +647,7 @@
     } else if (key == 'location') {
       try {
         let arr: any = [];
-        let data = await getLocationOption(paramsNull);
+        let data = await getLocationOption({ params: '' });
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'sub_stock_id' && e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
@@ -659,7 +657,7 @@
     } else {
       try {
         let arr: any = [];
-        let data = await getUnitOption(paramsNull);
+        let data = await getUnitOption({ params: '' });
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);

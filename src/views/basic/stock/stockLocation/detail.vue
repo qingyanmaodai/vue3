@@ -213,8 +213,6 @@
   const ATextArea = Input.TextArea;
 
   const router = useRouter();
-  //空参数
-  const paramsNull = { params: '' };
   const activeKey = ref<string>('1');
   //弹窗类型
   let modalType = ref<string>('');
@@ -259,7 +257,7 @@
     if (key == 'stock') {
       try {
         let arr: any = [];
-        let data = await getStockOption(paramsNull);
+        let data = await getStockOption({ params: '' });
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
@@ -269,7 +267,7 @@
     } else if (key == 'sub') {
       try {
         let arr: any = [];
-        let data = await getSubOption(paramsNull);
+        let data = await getSubOption({ params: '' });
         arr = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
