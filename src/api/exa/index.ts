@@ -1,15 +1,30 @@
-import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
+import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface ExaProjectEntity extends PublicModel {
+export interface ExaEntity extends PublicModel {
   id: string | undefined;
   number: string;
   name: string;
   isOpen?: number;
   description?: string;
-  groupId?: string | undefined;
-  groupName?: string;
+  examineType?: string;
+  business?: string;
+  ruleId?: string;
+  ruleName?: string;
+}
+export interface ExaDetailEntity extends PublicModel {
+  id: string | undefined;
+  number: string;
+  name: string;
+  seq: number;
+  min?: number;
+  max?: number;
+  refer?: string;
+  require: number;
+  description?: string;
+  parentId?: string;
+  examine?: ExaEntity;
 }
 /**
  * 获取表格信息
@@ -17,7 +32,7 @@ export interface ExaProjectEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_PROJECT_LIST,
+      url: Url.GET_EXA_SCHEME_LIST,
       data: json,
     },
     {
@@ -32,7 +47,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_PROJECT_OPTIONS_LIST,
+      url: Url.GET_EXA_SCHEME_OPTIONS_LIST,
       data: json,
     },
     {
@@ -44,10 +59,10 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加物料信息
  */
-export function add(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaProjectEntity>(
+export function add(json: RequestData<ExaEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<ExaEntity>(
     {
-      url: Url.ADD_EXA_PROJECT,
+      url: Url.ADD_EXA_SCHEME,
       data: json,
     },
     {
@@ -59,10 +74,10 @@ export function add(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMode 
 /**
  * 编辑物料信息
  */
-export function update(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaProjectEntity>(
+export function update(json: RequestData<ExaEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<ExaEntity>(
     {
-      url: Url.UPDATE_EXA_PROJECT,
+      url: Url.UPDATE_EXA_SCHEME,
       data: json,
     },
     {
@@ -75,9 +90,9 @@ export function update(json: RequestData<ExaProjectEntity>, mode: ErrorMessageMo
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaProjectEntity>(
+  return defHttp.post<ExaEntity>(
     {
-      url: Url.AUDIT_EXA_PROJECT,
+      url: Url.AUDIT_EXA_SCHEME,
       data: json,
     },
     {
@@ -92,7 +107,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_EXA_PROJECT,
+      url: Url.BATCH_AUDIT_EXA_SCHEME,
       data: json,
     },
     {
@@ -105,9 +120,9 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
  * 查询单条
  */
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaProjectEntity>(
+  return defHttp.post<ExaEntity>(
     {
-      url: Url.QUERY_ONE_EXA_PROJECT,
+      url: Url.QUERY_ONE_EXA_SCHEME,
       data: json,
     },
     {
@@ -122,7 +137,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DEL_EXA_PROJECT,
+      url: Url.DEL_EXA_SCHEME,
       data: json,
     },
     {
@@ -137,7 +152,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DEL_EXA_PROJECT,
+      url: Url.BATCH_DEL_EXA_SCHEME,
       data: json,
     },
     {
@@ -150,9 +165,9 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaProjectEntity>(
+  return defHttp.post<ExaEntity>(
     {
-      url: Url.UNAUDIT_EXA_PROJECT,
+      url: Url.UNAUDIT_EXA_SCHEME,
       data: json,
     },
     {
@@ -167,7 +182,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_UNAUDIT_EXA_PROJECT,
+      url: Url.BATCH_UNAUDIT_EXA_SCHEME,
       data: json,
     },
     {
@@ -182,7 +197,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_EXA_PROJECT,
+      url: Url.EXPORT_EXA_SCHEME,
       data: json,
       responseType: 'blob',
     },
@@ -193,27 +208,12 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
   );
 }
 /**
- * 导入物料数据
- */
-export function importExcel(
-  params: UploadFileParams,
-  onUploadProgress: (progressEvent: ProgressEvent) => void,
-) {
-  return defHttp.uploadFile<any>(
-    {
-      url: Url.IMPORT_MATERIAL,
-      onUploadProgress,
-    },
-    params,
-  );
-}
-/**
  * 导入的下载模板
  */
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_EXA_PROJECT,
+      url: Url.IMPORT_EXA_SCHEME,
       data: json,
       responseType: 'blob',
     },

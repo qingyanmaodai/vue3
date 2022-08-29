@@ -120,6 +120,21 @@ export enum Url {
   EXPORT_EXA_RULE = '/stock/bd-examine-rule/export-list',
   IMPORT_EXA_RULE = '/stock/bd-examine-rule/import-model',
   UPLOAD_EXA_RULE = 'http://192.168.200.136:9999/stock/bd-examine-rule/import-list',
+  //检验方案
+  GET_EXA_SCHEME_LIST = '/stock/bd-examine/list',
+  AUDIT_EXA_SCHEME = '/stock/bd-examine/audit',
+  BATCH_AUDIT_EXA_SCHEME = '/stock/bd-examine/batch-audit',
+  UNAUDIT_EXA_SCHEME = '/stock/bd-examine/un-audit',
+  BATCH_UNAUDIT_EXA_SCHEME = '/stock/bd-examine/batch-un-audit',
+  BATCH_DEL_EXA_SCHEME = '/stock/bd-examine/batch-delete',
+  GET_EXA_SCHEME_OPTIONS_LIST = '/stock/bd-examine/query-dto',
+  ADD_EXA_SCHEME = '/stock/bd-examine/save',
+  QUERY_ONE_EXA_SCHEME = '/stock/bd-examine/query-one',
+  UPDATE_EXA_SCHEME = '/stock/bd-examine/update',
+  DEL_EXA_SCHEME = '/stock/bd-examine/delete',
+  EXPORT_EXA_SCHEME = '/stock/bd-examine/export-list',
+  IMPORT_EXA_SCHEME = '/stock/bd-examine/import-model',
+  UPLOAD_EXA_SCHEME = 'http://192.168.200.136:9999/stock/bd-examine/import-list',
 
   //分仓管理
   AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',

@@ -289,6 +289,23 @@ export const exaRuleColumns = [
     title: '数据状态',
     sortable: true,
     slots: { default: 'status' },
+  }
+];
+
+//检验方案
+export const exaSchemeColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '方案编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '方案名称', sortable: true },
+  { field: 'description', title: '描述', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  { field: 'isOpen', title: '启用状态', sortable: true, slots: { default: 'open' } },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];

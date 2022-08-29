@@ -23,4 +23,6 @@ export enum PageEnum {
   UNIT_DETAIL = '/basic/unit/detail',
   //抽检规则详情页
   EXA_RULE_DETAIL = '/examine/rule/detail',
+  //检验方案详情页
+  EXA_SCHEME_DETAIL = '/examine/scheme/detail',
 }
