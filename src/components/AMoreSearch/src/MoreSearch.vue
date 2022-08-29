@@ -165,11 +165,7 @@
               allow-clear
               tree-default-expand-all
               :tree-data="search.treeData"
-            >
-              <template #title="{ title }">
-                <template>{{ title }}</template>
-              </template>
-            </a-tree-select>
+            />
           </a-form-item>
 
           <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'endWith']">-->
@@ -214,12 +210,11 @@
       <a-button type="primary" class="x-button" @click="moreSearch">查询</a-button>
     </span>
   </vxe-modal>
+  <!--  基础信息查询-->
   <BasicSearch
-    style="top: 20px"
     @openSearch="openSearch"
-    @cellClickEvent="cellClickEvent"
+    @basicClickEvent="basicClickEvent"
     :gridOptions="unitGridOptions"
-    title="基础信息查询"
     ref="basicSearchRef"
   />
 </template>
@@ -243,7 +238,6 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import dayjs, { Dayjs } from 'dayjs';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import {
     SearchParams,
     Url,
@@ -253,7 +247,6 @@
     SearchDataType,
   } from '/@/api/apiLink';
   import { config } from '/@/utils/publicParamConfig';
-  const { createMessage } = useMessage();
   const APlusOutlined = PlusOutlined;
   const AForm = Form;
   const AFormItem = FormItem;
@@ -327,22 +320,24 @@
   };
   //基本信息公共组件--获取基本信息表格信息
   const publicEvent = async (keywords) => {
-    if (!keywords) {
-      keywords = {
-        column: 'name',
-        endWith: '',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        name: 'name',
-        startWith: '',
-        table: '',
-        val: '',
-      };
+    let paramArr: any = [];
+    if (keywords) {
+      paramArr.push(keywords);
     }
+    paramArr.push({
+      column: 'bs_status',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'bsStatus',
+      startWith: '',
+      table: '',
+      val: 'B',
+    });
     return await getPublicList(
       {
-        params: [keywords],
+        params: paramArr,
       },
       //选择分类的接口地址，如基本单位。。
       selectOption.data.requestUrl,
@@ -432,11 +427,11 @@
   };
   //基础信息弹框--打开放大镜
   const onSearch = async (data) => {
-    nowCheckData.data = data;
-    const res = await publicEvent(data);
-    basicSearchRef.value.initList(res);
-    basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]);
-    basicSearchRef.value.bSearch(true);
+    nowCheckData.data = data; //输入框的值
+    const res = await publicEvent(data); //获取数据
+    basicSearchRef.value.initList(res); //表格数据
+    basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
+    basicSearchRef.value.bSearch(true); //打开弹框
     await getTableUnit();
   };
   //打开基本信息弹框
@@ -445,7 +440,7 @@
     basicSearchRef.value.initList(res);
   };
   //基本信息表格双击事件
-  const cellClickEvent = (row) => {
+  const basicClickEvent = (row) => {
     nowCheckData.data.val = row.id;
     nowCheckData.data.labelValue = row.name;
     basicSearchRef.value.bSearch(false);
@@ -556,7 +551,4 @@
     justify-content: center;
     align-items: center;
   }
-  //&:before {
-  //  border-color: #606266 !important;
-  //}
 </style>

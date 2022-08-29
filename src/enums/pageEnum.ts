@@ -23,6 +23,10 @@ export enum PageEnum {
   STOCK_LOCATION_DETAIL_AND_EDIT = '/basic/stock/stockLocation/detail',
   //检验项目详情页
   EXA_PROJECT_DETAIL = '/examine/project/detail',
+  //计量单位详情页
+  UNIT_DETAIL = '/basic/unit/detail',
   //抽检规则详情页
   EXA_RULE_DETAIL = '/examine/rule/detail',
+  //检验方案详情页
+  EXA_SCHEME_DETAIL = '/examine/scheme/detail',
 }

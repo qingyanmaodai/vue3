@@ -170,10 +170,8 @@
       </Tabs>
     </a-card>
     <BasicSearch
-      style="top: 20px"
-      @cellClickEvent="cellClickEvent"
+      @basicClickEvent="basicClickEvent"
       @openSearch="openSearch"
-      title="基础信息查询"
       ref="basicSearchRef"
       :gridOptions="unitGridOptions"
     />
@@ -258,8 +256,10 @@
     if (rowId) {
       const res: any = await getSubStockListById({ params: rowId });
       formState.value = res;
-      formState.value.stockId = res.bdStock.id;
-      formState.value.stockName = res.bdStock.name;
+      if (res.bdStock) {
+        formState.value.stockId = res.bdStock.id;
+        formState.value.stockName = res.bdStock.name;
+      }
     }
   };
   getListById(rowId);
@@ -306,7 +306,7 @@
     }
   };
   //基本信息表格双击事件
-  const cellClickEvent = (row) => {
+  const basicClickEvent = (row) => {
     formState.value.stockId = row.id;
     formState.value.stockName = row.name;
     basicSearchRef.value.bSearch(false);

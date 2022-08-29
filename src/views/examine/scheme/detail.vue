@@ -22,26 +22,26 @@
           <a-form ref="formRef" :model="formState" :rules="formRules">
             <Row>
               <Col :span="8">
-                <a-form-item label="项目编码：" ref="number" name="number" class="item">
+                <a-form-item label="方案编码：" ref="number" name="number" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入项目编码"
+                    placeholder="请输入方案编码"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="项目名称：" ref="name" name="name" class="item">
+                <a-form-item label="方案名称：" ref="name" name="name" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入项目名称"
+                    placeholder="请输入方案名称"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -63,31 +63,39 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="最小数：" ref="min" name="min" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.min"
+                <a-form-item label="检验类型：" ref="examineType" name="examineType" class="item">
+                  <Select
+                    v-model:value="formState.examineType"
+                    class="select"
+                    :options="config.EXAMINE_SCHEME_TYPE"
                     :disabled="formState.bsStatus === 'B'"
-                    :min="1"
-                /></a-form-item>
+                  />
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="最大数：" ref="max" name="max" class="item">
-                  <InputNumber
+                <a-form-item label="抽检规则：" ref="ruleId" name="ruleId" class="item">
+                  <ExInput
+                    autocomplete="off"
                     class="input"
-                    v-model:value="formState.max"
+                    placeholder="请选择抽检规则"
+                    label="抽检规则"
+                    :show="formState.bsStatus !== 'B'"
+                    :value="formState.ruleName"
                     :disabled="formState.bsStatus === 'B'"
-                    :min="1"
-                /></a-form-item>
+                    @search="onRule()"
+                    @clear="onClear(['ruleId', 'ruleName'])"
+                  />
+                </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="百分比%：" ref="percent" name="percent" class="item">
-                  <InputNumber
-                    class="input"
-                    v-model:value="formState.percent"
+                <a-form-item label="业务类型：" ref="business" name="business" class="item">
+                  <Select
+                    v-model:value="formState.business"
+                    class="select"
+                    :options="config.EXAMINE_BUSINESS"
                     :disabled="formState.bsStatus === 'B'"
-                    :min="1"
-                /></a-form-item>
+                  />
+                </a-form-item>
               </Col>
             </Row>
             <Row>
@@ -100,6 +108,17 @@
                     :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
                     name="bsStatus"
                     :disabled="true"
+                  />
+                </a-form-item>
+              </Col>
+              <Col :span="8">
+                <a-form-item label="方案描述：" ref="description" name="description" class="item">
+                  <a-textArea
+                    v-model:value="formState.description"
+                    placeholder="请添加方案描述:"
+                    :rows="3"
+                    class="textArea"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -149,6 +168,12 @@
         </TabPane>
       </Tabs>
     </a-card>
+    <BasicSearch
+      @basicClickEvent="onRuleClickEvent"
+      @openSearch="openSearch"
+      ref="basicSearchRef"
+      :gridOptions="unitGridOptions"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -166,14 +191,21 @@
     TabPane,
     Tabs,
     InputNumber,
+    Select,
   } from 'ant-design-vue';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, ExaRuleEntity, getOneById, update } from '/@/api/exaRule';
+  import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { getDataList, getSearchOption } from '/@/api/exaRule';
+  import { unitGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
+  import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -183,13 +215,17 @@
   const formRef = ref();
   //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
-  const formData: ExaRuleEntity = {
+  const basicSearchRef: any = ref(null);
+  const formData: ExaEntity = {
     id: undefined,
     number: '',
     name: '',
-    min: 1,
-    max: 10,
-    percent: 1,
+    isOpen: 1,
+    description: '',
+    examineType: 'A',
+    business: 'A',
+    ruleId: '',
+    ruleName: '',
   };
   //初始化
   const formStateInit = reactive({
@@ -200,10 +236,62 @@
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
-    percent: [{ required: true, message: '请输入检验百分比' }],
-    min: [{ required: true, message: '请输入检验最小数' }],
-    max: [{ required: true, message: '请输入检验最大数' }],
+    ruleId: [{ required: true, message: '请选择抽检规则' }],
+    business: [{ required: true, message: '请选择抽检规则' }],
+    examineType: [{ required: true, message: '请选择抽检规则' }],
   });
+  //点击清空图标清空事件
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = '';
+    });
+  };
+  const openSearch = async () => {
+    const res = await onRule();
+    basicSearchRef.value.initList(res);
+  };
+  //基本信息表格双击事件
+  const onRuleClickEvent = (row) => {
+    formState.value.ruleId = row.id;
+    formState.value.ruleName = row.name;
+    basicSearchRef.value.bSearch(false);
+  };
+  //打开放大镜
+  const onRule = async () => {
+    const res: any = await getDataList({
+      params: [
+        {
+          table: '',
+          name: 'bsStatus',
+          column: 'bs_status',
+          link: SearchLink.AND,
+          rule: SearchMatchType.EQ,
+          type: SearchDataType.string,
+          val: 'B',
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    let data = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initList(data);
+    basicSearchRef.value.initCols(exaRuleColumns);
+    await getRuleOption();
+    return res;
+  };
+  //获取基本单位字段
+  const getRuleOption = async () => {
+    try {
+      let arr: any = [];
+      let data = await getSearchOption({ params: '' });
+      arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.init(arr);
+    } catch (e) {
+      console.log('获取基本信息字段失败', e);
+    }
+  };
   //接受参数
   const dataId = useRoute().query.row?.toString();
   const onSubmit = async () => {

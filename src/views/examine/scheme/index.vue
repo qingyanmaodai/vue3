@@ -4,15 +4,15 @@
       <Search
         ref="searchRef"
         tableName="BdExamineRule"
-        searchNo="规则编码"
-        searchName="规则名称"
+        searchNo="方案编码"
+        searchName="方案名称"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
-        :columns="exaRuleColumns"
+        :columns="exaSchemeColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
@@ -53,7 +53,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="examine-rule-index">
+<script setup lang="ts" name="examine-scheme-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -69,10 +69,10 @@
     importFile,
     unAudit,
     unAuditBatch,
-  } from '/@/api/exaRule';
+  } from '/@/api/exa';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, exaRuleColumns } from '/@/components/ExTable/data';
+  import { gridOptions, exaSchemeColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -85,7 +85,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('UPLOAD_EXA_RULE');
+  let importConfig = ref<string>('UPLOAD_EXA_SCHEME');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   //查询组件
@@ -173,7 +173,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.EXA_RULE_DETAIL,
+      path: PageEnum.EXA_SCHEME_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -182,7 +182,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.EXA_RULE_DETAIL,
+      path: PageEnum.EXA_SCHEME_DETAIL,
       query: {
         row: row.id,
       },
@@ -258,7 +258,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '抽检规则导入模板.xls', data: res };
+            const data = { title: '检验方案导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -274,13 +274,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '抽检规则',
+            fileName: '检验方案',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '抽检规则.xls', data: res };
+            const data = { title: '检验方案.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

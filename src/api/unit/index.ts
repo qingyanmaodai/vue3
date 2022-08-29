@@ -2,30 +2,23 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface SubStockProfileEntity extends PublicModel {
+export interface UnitProfileEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
-  address?: string;
-  bsProperty?: string;
   info?: string;
-  isDefault?: string;
   isDelete?: string;
-  mainBy?: string;
-  phone?: string;
   tenantId?: string;
-  // bdStock?: string;
-  stockId?: string;
-  stockName?: string;
+  bsType?: string;
 }
 
 /**
- * 获取分仓选项
+ * 基本（计量）单位查询字段
  */
-export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function getUnitOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_SUB_LIST,
+      url: Url.GET_TABLE_UNIT,
       data: json,
     },
     {
@@ -37,13 +30,13 @@ export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode =
 /**
  * 获取表格信息
  */
-export function getSubStockTable(
+export function getUnitTable(
   json: RequestData<SearchParams[]>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_SUB_STOCK_LIST,
+      url: Url.GET_PAGE_UNIT_LIST,
       data: json,
     },
     {
@@ -53,15 +46,15 @@ export function getSubStockTable(
   );
 }
 /**
- * 添加分仓信息
+ * 添加计量单位信息
  */
-export function addSubStockList(
-  json: RequestData<SubStockProfileEntity>,
+export function addUnitList(
+  json: RequestData<UnitProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.ADD_SUB_STOCK_LIST,
+      url: Url.ADD_UNIT_LIST,
       data: json,
     },
     {
@@ -71,15 +64,15 @@ export function addSubStockList(
   );
 }
 /**
- * 编辑分仓信息
+ * 编辑计量单位信息
  */
-export function updateSubStockList(
-  json: RequestData<SubStockProfileEntity>,
+export function updateUnitList(
+  json: RequestData<UnitProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.UPDATE_SUB_STOCK_LIST,
+      url: Url.UPDATE_UNIT_LIST,
       data: json,
     },
     {
@@ -89,12 +82,12 @@ export function updateSubStockList(
   );
 }
 /**
- * 审核分仓信息
+ * 审核计量单位信息
  */
-export function auditSubStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function auditUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.AUDIT_SUB_STOCK_LIST,
+      url: Url.AUDIT_UNIT_LIST,
       data: json,
     },
     {
@@ -104,48 +97,45 @@ export function auditSubStockList(json: RequestData<object>, mode: ErrorMessageM
   );
 }
 /**
- * 批量审核分仓信息
+ * 批量审核计量单位信息
  */
-export function auditSubStockListBatch(
+export function auditUnitListBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.BATCH_AUDIT_UNIT_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 反审核计量单位信息
+ */
+export function unAuditUnitList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UN_AUDIT_UNIT_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 批量反审核计量单位信息
+ */
+export function unAuditUnitListBatch(
   json: RequestData<object>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_SUB_STOCK_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 反审核分仓信息
- */
-export function unAuditSubStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
-    {
-      url: Url.UN_AUDIT_SUB_STOCK_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 批量反审核分仓信息
- */
-export function unAuditSubStockListBatch(
-  json: RequestData<object>,
-  mode: ErrorMessageMode = 'message',
-) {
-  return defHttp.post<Result>(
-    {
-      url: Url.UN_BATCH_AUDIT_SUB_STOCK_LIST,
+      url: Url.UN_BATCH_AUDIT_UNIT_LIST,
       data: json,
     },
     {
@@ -157,10 +147,10 @@ export function unAuditSubStockListBatch(
 /**
  * 查询单条
  */
-export function getSubStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function getUnitListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ID_SUB_STOCK_LIST,
+      url: Url.GET_ONE_UNIT_LIST,
       data: json,
     },
     {
@@ -172,10 +162,10 @@ export function getSubStockListById(json: RequestData<string>, mode: ErrorMessag
 /**
  * 删除单条
  */
-export function delSubStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function delUnitListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_SUB_STOCK_LIST,
+      url: Url.DELETE_UNIT_LIST,
       data: json,
     },
     {
@@ -187,13 +177,13 @@ export function delSubStockListById(json: RequestData<string>, mode: ErrorMessag
 /**
  * 删除多条
  */
-export function delSubStockListBatch(
+export function delUnitListBatch(
   json: RequestData<Array<string>>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_SUB_STOCK_LIST,
+      url: Url.BATCH_DELETE_UNIT_LIST,
       data: json,
     },
     {
@@ -202,13 +192,14 @@ export function delSubStockListBatch(
     },
   );
 }
+
 /**
  * 导出表格数据
  */
-export function exportSubStockList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function exportUnitList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_SUB_STOCK_LIST,
+      url: Url.EXPORT_UNIT_LIST,
       data: json,
       responseType: 'blob',
     },
@@ -222,10 +213,10 @@ export function exportSubStockList(json: RequestData<any>, mode: ErrorMessageMod
 /**
  * 导入的下载模板
  */
-export function importSubStockModel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function importUnitModel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_SUB_STOCK_LIST,
+      url: Url.IMPORT_MODEL_UNIT,
       data: json,
       responseType: 'blob',
     },

@@ -17,14 +17,14 @@
     :column-config="{ resizable: true }"
   >
     <template #toolbar_buttons>
-      <div style="width: 100%">
+      <div style="width: 100%; margin-left: 10px">
         <AButton
           v-for="(button, key) in buttons"
           :type="button.type !== 'danger' ? button.type : 'default'"
           :key="key"
           :danger="button.type === 'danger'"
           @click="button.onClick()"
-          style="margin-left: 2px; margin-right: 5px"
+          style="margin-right: 5px"
           >{{ button.label }}
         </AButton>
         <span style="float: right; padding-right: 10px">
@@ -50,6 +50,9 @@
       <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
         formatData(row.bsStatus, config['DATA_STATUS'])
       }}</Tag>
+    </template>
+    <template #bsType="{ row }">
+      <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
     </template>
     <template #open="{ row }">
       <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
@@ -96,7 +99,7 @@
       show-overflow
       :row-style="rowStyle"
       :row-config="{ isHover: true }"
-      v-bind="props.gridOptions"
+      v-bind="ResultGridOptions"
       :columns="resultByBatchColumns"
       :data="adResult.data"
     >
@@ -151,7 +154,7 @@
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
   import { Tag, Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
-  import { resultByBatchColumns } from '/@/components/ExTable/data';
+  import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
@@ -160,6 +163,7 @@
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
+  const ResultGridOptions = resultGridOptions;
 
   const props = defineProps({
     gridOptions: Object,
@@ -513,12 +517,15 @@
   .form-body {
     padding: 20px;
   }
-  :deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
-    color: #409eff;
-    border-color: #409eff;
-  }
-  :deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
-    color: #409eff;
-    border-color: #409eff;
+  //:deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
+  //  color: #409eff;
+  //  border-color: #409eff;
+  //}
+  //:deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
+  //  color: #409eff;
+  //  border-color: #409eff;
+  //}
+  :deep(.vxe-toolbar .vxe-tools--operate) {
+    margin-right: 10px;
   }
 </style>

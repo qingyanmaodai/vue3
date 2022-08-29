@@ -50,7 +50,7 @@ export const config = {
     },
     {
       value: 'B',
-      label: '审核',
+      label: '已审核',
     },
   ],
   //  数据业务状态
@@ -193,6 +193,43 @@ export const config = {
     {
       value: 'E',
       label: '普通员工',
+    },
+  ],
+  //单位类型
+  UNIT_TYPE: [
+    {
+      value: 'A',
+      label: '基本单位',
+    },
+    {
+      value: 'B',
+      label: '重量单位',
+    },
+  ],
+  //物料属性
+  EXAMINE_SCHEME_TYPE: [
+    {
+      value: 'A',
+      label: '全检',
+    },
+    {
+      value: 'B',
+      label: '抽检',
+    },
+  ],
+  //检验业务类型
+  EXAMINE_BUSINESS: [
+    {
+      value: 'A',
+      label: '采购检验',
+    },
+    {
+      value: 'B',
+      label: '成品检验',
+    },
+    {
+      value: 'C',
+      label: '发货检验',
     },
   ],
 };

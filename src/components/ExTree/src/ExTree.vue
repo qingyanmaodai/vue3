@@ -50,7 +50,7 @@
       <a-row
         style="
           width: 100%;
-          padding: 5px;
+          padding: 2% 1%;
           margin: auto;
           justify-content: center;
           align-items: center;

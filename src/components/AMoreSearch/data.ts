@@ -38,6 +38,7 @@ export const unitColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单位编码', sortable: true },
   { field: 'name', title: '单位名称', sortable: true },
+  { field: 'bsType', title: '单位类型', slots: { default: 'bsType' }, sortable: true },
   {
     field: 'createBy',
     title: '创建人',
@@ -115,6 +116,23 @@ export const planColumns = [
   { field: 'name', title: '方案名称', sortable: true },
   { field: 'updateBy', title: '修改人员', sortable: true },
   { field: 'updateTime', title: '修改时间', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+];
+//检验规则
+export const exaRuleColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '规则编码', sortable: true },
+  { field: 'name', title: '规则名称', sortable: true },
+  { field: 'min', title: '最小值', sortable: true },
+  { field: 'max', title: '最大值', sortable: true },
+  { field: 'percent', title: '抽检百分比', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
   {
     field: 'bsStatus',
     title: '数据状态',
