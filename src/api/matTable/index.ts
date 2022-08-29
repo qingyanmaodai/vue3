@@ -9,7 +9,7 @@ export interface MatProfileEntity extends PublicModel {
   shortName?: string;
   baseUnitName?: string;
   baseUnitId?: string;
-  groupId?: string | undefined;
+  groupId?: string;
   groupName?: string;
   bdMaterialGroup?: object;
   attr?: string;

@@ -60,13 +60,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item
-                  label="基本单位:"
-                  v-model:value="formState.baseUnitId"
-                  ref="baseUnitId"
-                  name="baseUnitId"
-                  class="item"
-                >
+                <a-form-item label="基本单位:" ref="baseUnitId" name="baseUnitId" class="item">
                   <ExInput
                     :show="formState.bsStatus !== 'B'"
                     autocomplete="off"
@@ -80,13 +74,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  label="物料分组："
-                  v-model:value="formState.groupId"
-                  ref="groupId"
-                  name="groupId"
-                  class="item"
-                >
+                <a-form-item label="物料分组：" ref="groupId" name="groupId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -113,13 +101,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item
-                  label="重量单位："
-                  ref="weightUnitId"
-                  name="weightUnitId"
-                  class="item"
-                  v-model:value="formState.weightUnitId"
-                >
+                <a-form-item label="重量单位：" ref="weightUnitId" name="weightUnitId" class="item">
                   <ExInput
                     class="input"
                     autocomplete="off"
@@ -137,7 +119,6 @@
                 <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
                   <InputNumber
                     class="input"
-                    v-model:value="formState.netWeight"
                     :min="0"
                     :step="0.1"
                     :disabled="formState.bsStatus === 'B'"
@@ -183,13 +164,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item
-                  label="仓库："
-                  ref="stockId"
-                  name="stockId"
-                  class="item"
-                  v-model:value="formState.stockId"
-                >
+                <a-form-item label="仓库：" ref="stockId" name="stockId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -213,13 +188,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  v-model:value="formState.subStockId"
-                  label="分仓："
-                  ref="subStockId"
-                  name="subStockId"
-                  class="item"
-                >
+                <a-form-item label="分仓：" ref="subStockId" name="subStockId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -242,7 +211,6 @@
               </Col>
               <Col :span="8">
                 <a-form-item
-                  v-model:value="formState.bdStockLocationId"
                   label="仓位："
                   ref="bdStockLocationId"
                   name="bdStockLocationId"
@@ -375,7 +343,6 @@
                 </Col>
                 <Col :span="8">
                   <a-form-item
-                    v-model:value="formState.examineId"
                     label="检验方案"
                     ref="bdExamineId"
                     name="bdExamineId"
@@ -813,7 +780,7 @@
   };
   //物料分组弹框关
   const groupSelect = (value, node) => {
-    formState.value.node = node;
+    formState.value.node = node ? node[0] : '';
     formState.value.groupName = formState.value.node;
     formState.value.groupId = value;
     visibleGroupModal.value = false;

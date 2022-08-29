@@ -67,7 +67,6 @@
                   ref="stockId"
                   name="stockId"
                   class="item"
-                  v-model:value="formState.stockId"
                 >
                   <ExInput
                     autocomplete="off"
@@ -88,7 +87,6 @@
                   ref="subStockId"
                   name="subStockId"
                   class="item"
-                  v-model:value="formState.subStockId"
                 >
                   <ExInput
                     autocomplete="off"

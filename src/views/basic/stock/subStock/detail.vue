@@ -52,7 +52,6 @@
                   ref="stockId"
                   name="stockId"
                   class="item"
-                  v-model:value="formState.stockId"
                 >
                   <ExInput
                     autocomplete="off"
