@@ -170,10 +170,8 @@
       </Tabs>
     </a-card>
     <BasicSearch
-      style="top: 20px"
-      @cellClickEvent="cellClickEvent"
+      @basicClickEvent="basicClickEvent"
       @openSearch="openSearch"
-      title="基础信息查询"
       ref="basicSearchRef"
       :gridOptions="unitGridOptions"
     />
@@ -308,7 +306,7 @@
     }
   };
   //基本信息表格双击事件
-  const cellClickEvent = (row) => {
+  const basicClickEvent = (row) => {
     formState.value.stockId = row.id;
     formState.value.stockName = row.name;
     basicSearchRef.value.bSearch(false);

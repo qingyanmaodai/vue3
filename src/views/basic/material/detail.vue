@@ -495,11 +495,9 @@
       />
     </a-modal>
     <BasicSearch
-      style="top: 20px"
       :modalType="modalType"
-      @cellClickEvent="cellClickEvent"
+      @basicClickEvent="basicClickEvent"
       @searchList="searchList"
-      title="基础信息查询"
       ref="basicSearchRef"
       :gridOptions="unitGridOptions"
     />
@@ -734,7 +732,7 @@
     return res;
   };
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
-  const cellClickEvent = async (row) => {
+  const basicClickEvent = async (row) => {
     switch (chosenModal) {
       case 'baseUnit':
         formState.value.baseUnitId = row.id;
