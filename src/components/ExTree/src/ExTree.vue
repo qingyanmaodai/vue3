@@ -160,13 +160,13 @@
   const setSelectedKeys = (keys: string[]) => {
     tree.value.setSelectedKeys(keys);
   };
-  const getSearchParams = (): SearchParams[] => {
+  const getSearchParams = (name = 'groupId', column = 'group_id'): SearchParams[] => {
     const searchParams: SearchParams[] = [];
     if (tree.value.getSelectedKeys() && tree.value.getSelectedKeys().length > 0) {
       searchParams.push({
         table: formState.tableName,
-        name: 'groupId',
-        column: 'group_id',
+        name: name,
+        column: column,
         link: SearchLink.AND,
         rule: SearchMatchType.EQ,
         type: SearchDataType.string,

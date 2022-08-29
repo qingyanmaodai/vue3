@@ -144,6 +144,31 @@ export const customerColumns = [
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
+/*人员列表表头*/
+export const employeeColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '编码', width: 120, slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '人员', sortable: true, width: 120 },
+  { field: 'sex', title: '性别', sortable: true, width: 120, slots: { default: 'sex' } },
+  { field: 'job', title: '职位', sortable: true, width: 120, slots: { default: 'job' } },
+  { field: 'bdDepartment.name', title: '部门', sortable: true, width: 120 },
+  { field: 'phone', title: '联系电话', sortable: true, width: 120 },
+  { field: 'address', title: '地址', sortable: true, width: 120 },
+  { field: 'email', title: '邮箱', sortable: true, width: 120 },
+  { field: 'birthday', title: '出生日期', sortable: true, width: 160 },
+  { field: 'entryDate', title: '入职日期', sortable: true, width: 160 },
+  { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+  { field: 'updateTime', title: '修改日期', sortable: true, width: 160 },
+  {
+    field: 'bsStatus',
+    title: '业务状态',
+    slots: { default: 'status' },
+    width: 120,
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
 /*仓库列表表头*/
 export const stockColumns = [
   { type: 'checkbox', width: 50 },

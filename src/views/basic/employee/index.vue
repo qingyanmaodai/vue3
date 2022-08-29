@@ -6,8 +6,8 @@
           :toolbar="true"
           :search="true"
           :tree-data="treeData"
-          ref="customerGroupTreeRef"
-          title="客户分组"
+          ref="employeeGroupTreeRef"
+          title="部门组织"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
           @addSubEvent="addGroupSubEvent"
@@ -18,18 +18,18 @@
       <a-pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%">
           <Search
-            ref="customerSearchRef"
-            tableName="BdCustomer"
+            ref="employeeSearchRef"
+            tableName="BdEmployee"
             searchNo="编码"
-            searchName="客户"
-            @getList="getCustomerList"
+            searchName="人员"
+            @getList="getEmployeeList"
             @resetEvent="resetTable"
           />
           <ExTable
-            :columns="customerColumns"
+            :columns="employeeColumns"
             :buttons="tableButtons"
             :gridOptions="GridOptions"
-            ref="customerTableRef"
+            ref="employeeTableRef"
             @addEvent="tableAddEvent"
             @editEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
@@ -40,7 +40,7 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @refreshTable="getCustomerList"
+            @refreshTable="getEmployeeList"
           />
           <div>
             <Pager
@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="basic-customer">
+<script setup lang="ts" name="basic-employee">
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
@@ -80,38 +80,38 @@
   import { Search } from '/@/components/Search'; //查询组件
   import { TreeItem } from '/@/components/Tree';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
-  import { gridOptions, customerColumns } from '/@/components/ExTable/data'; //表格配置
+  import { gridOptions, employeeColumns } from '/@/components/ExTable/data'; //表格配置
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
   import { Pager } from 'vxe-table';
   import {
     audit,
-    batchAuditCustomer,
-    batchUnAuditCustomer,
-    deleteCustomer,
-    getCustomerData,
+    batchAuditEmployee,
+    batchUnAuditEmployee,
+    deleteEmployee,
+    getEmployeeData,
     unAudit,
-    batchDeleteCustomer,
-    exportCustomerData,
-    customerImportModel,
-    getCustomerEntity,
-  } from '/@/api/customer';
+    batchDeleteEmployee,
+    exportEmployeeData,
+    employeeImportModel,
+    getEmployeeEntity,
+  } from '/@/api/employee';
   import {
-    addCustomerGroup,
-    editCustomerGroup,
-    deleteCustomerGroup,
-    queryOneCustomerGroup,
-    getCustomerGroupTree,
-    CustomerGroupEntity,
-  } from '/@/api/customerGroup';
+    addDept,
+    editDept,
+    deleteDept,
+    queryOneDept,
+    getDeptTree,
+    DepartmentEntity,
+  } from '/@/api/department';
   import { SearchParams } from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
-  const customerSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
-  const customerTableRef: any = ref<String | null>(null); //表格组件引用ref
-  const customerGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
+  const employeeSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
+  const employeeTableRef: any = ref<String | null>(null); //表格组件引用ref
+  const employeeGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
   //分页参数
@@ -155,28 +155,30 @@
   /* method */
 
   /**
-   * 获取客户列表
+   * 获取人员列表
    * @param currPage
    * @param pageSize
    */
-  const getCustomerList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getEmployeeList = async (currPage = 1, pageSize = pages.pageSize) => {
     console.log(currPage, pageSize);
     ParamsData = [];
     if (
-      customerGroupTreeRef.value.getSearchParams() &&
-      customerGroupTreeRef.value.getSearchParams().length > 0
+      employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id') &&
+      employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id').length > 0
     ) {
-      ParamsData = ParamsData.concat(customerGroupTreeRef.value.getSearchParams());
+      ParamsData = ParamsData.concat(
+        employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id'),
+      );
     }
     if (
-      customerSearchRef.value.getSearchParams() &&
-      customerSearchRef.value.getSearchParams().length > 0
+      employeeSearchRef.value.getSearchParams() &&
+      employeeSearchRef.value.getSearchParams().length > 0
     ) {
-      ParamsData = ParamsData.concat(customerSearchRef.value.getSearchParams());
+      ParamsData = ParamsData.concat(employeeSearchRef.value.getSearchParams());
     }
 
     //表格查询
-    const res: any = await getCustomerData({
+    const res: any = await getEmployeeData({
       params: ParamsData,
       orderByBean: {
         descList: ['update_time'],
@@ -187,8 +189,8 @@
     pages.total = res.total;
     pages.currentPage = currPage;
     let data = res.records;
-    customerTableRef.value.init(data);
-    customerSearchRef.value.moreSearchClose();
+    employeeTableRef.value.init(data);
+    employeeSearchRef.value.moreSearchClose();
   };
 
   /**
@@ -200,9 +202,9 @@
    * 表格新增数据
    */
   const tableAddEvent = () => {
-    let groupId = customerGroupTreeRef.value.getSelectedKeys();
+    let groupId = employeeGroupTreeRef.value.getSelectedKeys();
     routerGo({
-      path: PageEnum.CUSTOMER_DETAIL, //客户详情页
+      path: PageEnum.EMPLOYEE_DETAIL, //人员详情页
       //需要带到详情页的参数
       query: {
         groupId: groupId == '' ? '' : groupId,
@@ -215,7 +217,7 @@
    */
   const editTableEvent = (row) => {
     routerGo({
-      path: PageEnum.CUSTOMER_DETAIL, //客户详情页
+      path: PageEnum.EMPLOYEE_DETAIL, //人员详情页
       query: {
         row: row.id,
       },
@@ -230,7 +232,7 @@
     await audit({
       params: row,
     });
-    await getCustomerList();
+    await getEmployeeList();
     createMessage.success('操作成功');
   };
 
@@ -238,17 +240,17 @@
    * 表格批量审核事件
    */
   const tableAuditEvent = () => {
-    customerTableRef.value.auditTable();
+    employeeTableRef.value.auditTable();
   };
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    let res = await batchAuditCustomer({
+    let res = await batchAuditEmployee({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    await employeeTableRef.value.computeData(res);
+    await getEmployeeList();
   };
 
   /**
@@ -259,7 +261,7 @@
     await unAudit({
       params: row,
     });
-    await getCustomerList();
+    await getEmployeeList();
     createMessage.success('操作成功');
   };
 
@@ -267,50 +269,50 @@
    * 表格批量反审核事件
    */
   const tableUnAuditEvent = () => {
-    customerTableRef.value.unAuditTable();
+    employeeTableRef.value.unAuditTable();
   };
   const unAuditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    let res = await batchUnAuditCustomer({
+    let res = await batchUnAuditEmployee({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    await employeeTableRef.value.computeData(res);
+    await getEmployeeList();
   };
 
   /**
    * 表格批量删除事件
    */
   const tableBatchDelEvent = () => {
-    customerTableRef.value.delTable();
+    employeeTableRef.value.delTable();
   };
   const deleteMatBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    let res = await batchDeleteCustomer({ params: ids });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    let res = await batchDeleteEmployee({ params: ids });
+    await employeeTableRef.value.computeData(res);
+    await getEmployeeList();
   };
   /**
    * 表格删除事件
    * @param row
    */
   const deleteRowTableEvent = async (row) => {
-    await deleteCustomer({ params: row.id });
-    await getCustomerList();
+    await deleteEmployee({ params: row.id });
+    await getEmployeeList();
   };
 
   /**
    * 刷新表格数据
    */
   const resetTable = () => {
-    customerGroupTreeRef.value.setSelectedKeys([]);
-    customerSearchRef.value.formState.wlNo = null;
-    customerSearchRef.value.formState.wlName = null;
-    getCustomerList();
+    employeeGroupTreeRef.value.setSelectedKeys([]);
+    employeeSearchRef.value.formState.wlNo = null;
+    employeeSearchRef.value.formState.wlName = null;
+    getEmployeeList();
   };
 
   /**
@@ -319,16 +321,16 @@
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        exportCustomerData({
+        exportEmployeeData({
           params: {
             list: [],
-            fileName: '客户列表',
+            fileName: '人员列表',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '客户列表信息.xls', data: res };
+            const data = { title: '人员列表信息.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -344,11 +346,11 @@
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        customerImportModel({
+        employeeImportModel({
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '客户信息导入模板.xls', data: res };
+            const data = { title: '人员信息导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -362,8 +364,8 @@
    * 获取高级查询下拉框
    */
   const getOptions = async () => {
-    const moreSearchData = await getCustomerEntity();
-    customerSearchRef.value.getOptions(moreSearchData);
+    const moreSearchData = await getEmployeeEntity();
+    employeeSearchRef.value.getOptions(moreSearchData);
   };
   getOptions();
 
@@ -374,19 +376,19 @@
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
     console.log(selectedKeys, data);
-    getCustomerList();
+    getEmployeeList();
   };
 
   /**
-   * 新增客户分组
+   * 新增人员分组
    */
   const addGroupEvent = () => {
-    customerGroupTreeRef.value.resetGroupFormData();
+    employeeGroupTreeRef.value.resetGroupFormData();
     OptGroupHook.submitGroup = async () => {
-      await addCustomerGroup({
+      await addDept({
         params: {
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: employeeGroupTreeRef.value.groupFormData.number,
+          name: employeeGroupTreeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
@@ -394,23 +396,23 @@
   };
 
   /**
-   * 编辑客户分组
+   * 编辑人员分组
    * @param node
    */
   const editGroupEvent = async (node: TreeItem) => {
-    const result = await queryOneCustomerGroup({ params: node.key?.toString() || '0' });
+    const result = await queryOneDept({ params: node.key?.toString() || '0' });
     if (result) {
-      customerGroupTreeRef.value.groupFormData.number = result.number;
-      customerGroupTreeRef.value.groupFormData.name = result.name;
-      customerGroupTreeRef.value.groupFormData.id = result.id;
-      customerGroupTreeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      employeeGroupTreeRef.value.groupFormData.number = result.number;
+      employeeGroupTreeRef.value.groupFormData.name = result.name;
+      employeeGroupTreeRef.value.groupFormData.id = result.id;
+      employeeGroupTreeRef.value.groupFormData.parent = { id: result.id, name: result.name };
     }
     OptGroupHook.submitGroup = async () => {
-      await editCustomerGroup({
+      await editDept({
         params: {
           id: node.key?.toString() || '0',
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: employeeGroupTreeRef.value.groupFormData.number,
+          name: employeeGroupTreeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
@@ -418,30 +420,30 @@
   };
 
   /**
-   * 新增客户下级分组
+   * 新增人员下级分组
    * @param node
    */
   const addGroupSubEvent = (node: TreeItem) => {
-    customerGroupTreeRef.value.resetGroupFormData();
-    customerGroupTreeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    employeeGroupTreeRef.value.resetGroupFormData();
+    employeeGroupTreeRef.value.groupFormData.parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
-      await addCustomerGroup({
+      await addDept({
         params: {
           parentId: node.key?.toString() || '0',
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: employeeGroupTreeRef.value.groupFormData.number,
+          name: employeeGroupTreeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
     };
   };
   /**
-   * 删除客户分组
+   * 删除人员分组
    * @param node
    */
   const deleteGroupEvent = (node: TreeItem) => {
     OptGroupHook.submitGroup = async () => {
-      await deleteCustomerGroup({ params: node.key ? node.key.toString() : '' });
+      await deleteDept({ params: node.key ? node.key.toString() : '' });
       await refreshTree();
     };
   };
@@ -449,7 +451,7 @@
    * 刷新树
    */
   const refreshTree = async () => {
-    const tree = await getCustomerGroupTree({ params: '0' });
+    const tree = await getDeptTree({ params: '0' });
     runTree(tree);
     treeData.value = tree;
   };
@@ -457,7 +459,7 @@
    * 初始化树
    * @param tree
    */
-  const runTree = (tree: CustomerGroupEntity[]) => {
+  const runTree = (tree: DepartmentEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
       item.key = item.id;
@@ -469,13 +471,13 @@
    */
   onMounted(() => {
     refreshTree();
-    getCustomerList();
+    getEmployeeList();
   });
   /**
    * 被keep-alive 缓存的组件激活时调用
    */
   onActivated(() => {
-    getCustomerList();
+    getEmployeeList();
   });
 </script>
 

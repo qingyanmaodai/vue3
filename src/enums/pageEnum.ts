@@ -9,6 +9,10 @@ export enum PageEnum {
   ERROR_LOG_PAGE = '/error-log/list',
   //供应商详情页
   SUPPLIER_DETAIL = '/basic/supplier/detail',
+  //人员详情页
+  EMPLOYEE_DETAIL = '/basic/employee/detail',
+  //客户详情页
+  CUSTOMER_DETAIL = '/basic/customer/detail',
   //物料信息详情页
   MATERIAL_ADD_AND_EDIT = '/basic/material/detail',
   //仓库详情页

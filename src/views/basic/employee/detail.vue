@@ -24,64 +24,63 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入客户编码"
+                    placeholder="请输入人员编码"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="客户名称：" ref="name" name="name" class="item">
+                <a-form-item label="人员名称：" ref="name" name="name" class="item">
                   <Input
                     allowClear
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入客户名称"
+                    placeholder="请输入人员名称"
                     :disabled="isDisable"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="简称：" ref="shortName" name="shortName" class="item">
-                  <Input
+                <a-form-item label="性别：" ref="shortName" name="shortName" class="item">
+                  <a-select
                     allowClear
                     class="input"
-                    v-model:value="formState.shortName"
-                    placeholder="请输入简称"
                     :disabled="isDisable"
+                    v-model:value="formState.sex"
+                    show-search
+                    placeholder="请选择"
+                    :options="config.GENDER"
+                    :filter-option="filterOption"
                   />
                 </a-form-item>
               </Col>
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="国家：" ref="country" name="country" class="item">
-                  <a-select
+                <a-form-item label="联系电话：" ref="phone" name="phone" class="item">
+                  <Input
                     allowClear
                     class="input"
+                    autocomplete="off"
+                    v-model:value="formState.phone"
+                    name="name"
+                    placeholder="请输入联系电话"
                     :disabled="isDisable"
-                    v-model:value="formState.country"
-                    show-search
-                    placeholder="请选择"
-                    :options="countryData"
-                    :filter-option="filterOption"
-                    @change="countryHandleChange"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="地区：" ref="districtArr" name="districtArr" class="item">
-                  <a-cascader
+                <a-form-item label="邮箱：" ref="email" name="email" class="item">
+                  <Input
                     allowClear
-                    v-if="isShowDistrict"
-                    style="width: 16rem; height: 2rem; margin: 0 60px 0 2px"
+                    class="input"
+                    autocomplete="off"
+                    v-model:value="formState.email"
+                    name="name"
+                    placeholder="请输入邮箱"
                     :disabled="isDisable"
-                    v-model:value="tempFormState.districtArr"
-                    :options="districtData"
-                    :load-data="loadDistrictData"
-                    change-on-select
-                    placeholder="请选择"
                   />
                 </a-form-item>
               </Col>
@@ -99,34 +98,23 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="联系人：" ref="contact" name="contact" class="item">
-                  <Input
+                <a-form-item label="职位：" ref="job" name="job" class="item">
+                  <a-select
                     allowClear
                     class="input"
-                    autocomplete="off"
-                    v-model:value="formState.contact"
-                    placeholder="请输入联系人"
                     :disabled="isDisable"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="联系电话：" ref="phone" name="phone" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
-                    v-model:value="formState.phone"
-                    name="name"
-                    placeholder="请输入联系电话"
-                    :disabled="isDisable"
+                    v-model:value="formState.job"
+                    show-search
+                    placeholder="请选择"
+                    :options="config.JOB"
+                    :filter-option="filterOption"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item
-                  label="客户分组："
-                  v-model:value="formState.groupId"
+                  label="部门："
+                  v-model:value="formState.deptId"
                   ref="groupName"
                   name="groupName"
                   class="item"
@@ -134,8 +122,8 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择客户分组"
-                    label="客户分组"
+                    placeholder="请选择部门"
+                    label="部门"
                     :show="!isDisable"
                     v-model:value="tempFormState.groupName"
                     :disabled="isDisable"
@@ -144,8 +132,28 @@
                   />
                 </a-form-item>
               </Col>
+              <Col :span="8">
+                <a-form-item label="出生日期：" ref="birthday" name="birthday" class="item">
+                  <a-date-picker
+                    class="input"
+                    v-model:value="formState.birthday"
+                    placeholder="请选择时间..."
+                    :disabled="isDisable"
+                  />
+                </a-form-item>
+              </Col>
             </Row>
             <Row>
+              <Col :span="8">
+                <a-form-item label="入职日期：" ref="entryDate" name="entryDate" class="item">
+                  <a-date-picker
+                    class="input"
+                    v-model:value="formState.entryDate"
+                    placeholder="请选择时间..."
+                    :disabled="isDisable"
+                  />
+                </a-form-item>
+              </Col>
               <Col :span="8">
                 <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
                   <Input
@@ -158,6 +166,8 @@
                   />
                 </a-form-item>
               </Col>
+            </Row>
+            <Row>
               <Col :span="8">
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <TextArea
@@ -204,15 +214,15 @@
         </TabPane>
       </Tabs>
     </a-card>
-    <!--  客户分组弹框  -->
-    <a-modal v-model:visible="customerGroupModel" title="客户分组" ref="node">
+    <!--  部门弹框  -->
+    <a-modal v-model:visible="employeeGroupModel" title="部门" ref="node">
       <a-tree-select
         loading
         show-search
-        v-model:value="formState.groupId"
+        v-model:value="formState.deptId"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-        placeholder="请选择客户分组"
+        placeholder="请选择部门"
         treeNodeFilterProp="title"
         tree-default-expand-all
         :treeData="treeData"
@@ -227,6 +237,7 @@
     Button,
     Card,
     Col,
+    DatePicker,
     Form,
     FormItem,
     Input,
@@ -237,7 +248,6 @@
     TabPane,
     Tabs,
     TreeSelect,
-    Cascader,
   } from 'ant-design-vue'; //ant组件
   const AModal = Modal;
   const AForm = Form;
@@ -246,24 +256,19 @@
   const ATreeSelect = TreeSelect;
   const ACard = Card;
   const ASelect = Select;
-  const ACascader = Cascader;
+  const ADatePicker = DatePicker;
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { config } from '/@/utils/publicParamConfig'; //公共配置ts
   import { useRoute, useRouter } from 'vue-router'; //路由
   const router = useRouter();
-  import { getOneCustomer, save, update, audit, unAudit, CustomerEntity } from '/@/api/customer'; //客户api
-  import {
-    getCustomerGroupTree,
-    queryOneCustomerGroup,
-    CustomerGroupEntity,
-  } from '/@/api/customerGroup'; //客户分组api
+  import { getOneEmployee, save, update, audit, unAudit, EmployeeEntity } from '/@/api/employee';
+  import { getDeptTree, queryOneDept, DepartmentEntity } from '/@/api/department'; //部门api
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
   import { cloneDeep } from 'lodash-es';
-  import { CountryEntity, getCountryTree } from '/@/api/country';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
   /* data */
@@ -274,23 +279,22 @@
     districtArr: number[];
   };
   const tempFormState: UnwrapRef<tempForm> = reactive({
-    groupName: '', //客户分组名称
+    groupName: '', //部门名称
     districtArr: [], //地区数组
   });
   //表单初始数据
-  const formData: UnwrapRef<CustomerEntity> = {
+  const formData: UnwrapRef<EmployeeEntity> = {
     id: undefined,
     number: undefined,
     name: undefined,
-    shortName: undefined,
-    contact: undefined,
+    sex: undefined,
+    job: undefined,
+    deptId: undefined,
     phone: undefined,
+    email: undefined,
     address: undefined,
-    country: undefined,
-    provincial: undefined,
-    municipal: undefined,
-    district: undefined,
-    groupId: undefined,
+    birthday: undefined,
+    entryDate: undefined,
   };
   const formInitState = reactive({ data: formData });
 
@@ -298,21 +302,18 @@
 
   //表单必填规则配置
   const formRules = reactive({
-    name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
-    number: [{ required: true, message: '请输入客户编码', trigger: 'blur' }],
+    name: [{ required: true, message: '请输入人员名称', trigger: 'blur' }],
+    number: [{ required: true, message: '请输入人员编码', trigger: 'blur' }],
   });
   const formRef: any = ref<String | null>(null); //表单引用对象
-  const customerId = ref<string>(''); //路由参数，客户Id
-  const selectGroupId = ref<string>(''); //路由参数，客户分组Id
-  const treeData = ref<TreeItem>([]); //客户分组数据
-  const countryData = ref<CountryEntity[]>([]); //国家数据
-  const districtData = ref<CountryEntity[]>([]); //地区数据
-  const customerGroupModel = ref<boolean>(false); //客户分组弹框显示状态
+  const employeeId = ref<string>(''); //路由参数，人员Id
+  const selectGroupId = ref<string>(''); //路由参数，部门Id
+  const treeData = ref<TreeItem>([]); //部门数据
+  const employeeGroupModel = ref<boolean>(false); //部门弹框显示状态
   const showAudit = ref<boolean>(true); //显示审核/反审核按钮
   const showSave = ref<boolean>(true); //显示保存按钮
   const activeTabs = ref<string>('basicInfo'); //当前激活板块
   const isDisable = ref<boolean>(false); //表单禁用状态
-  const isShowDistrict = ref<boolean>(false); //是否显示地区组件
 
   /* method */
 
@@ -320,41 +321,37 @@
    * 页面加载
    */
   onMounted(() => {
-    customerId.value = useRoute().query.row?.toString() || '';
+    employeeId.value = useRoute().query.row?.toString() || '';
     selectGroupId.value = router.currentRoute.value.query.groupId?.toString() || '';
     init(); //页面初始化
   });
 
   const init = async () => {
-    await getCountry();
-    if (customerId.value) {
-      await getCustomer();
+    if (employeeId.value) {
+      await getEmployee();
     } else {
-      //获取客户分组
-      const result = await queryOneCustomerGroup({ params: selectGroupId.value || '0' });
+      //获取部门
+      const result = await queryOneDept({ params: selectGroupId.value || '0' });
       if (result) {
-        formState.value.groupId = result.id;
+        formState.value.deptId = result.id;
         tempFormState.groupName = result.name || '';
       }
     }
-    isShowDistrict.value = true;
   };
 
   /**
-   * 获取客户详细信息
+   * 获取人员详细信息
    */
-  const getCustomer = async (supId = customerId.value) => {
-    const res: any = await getOneCustomer(supId);
+  const getEmployee = async (entityId = employeeId.value) => {
+    const res: any = await getOneEmployee(entityId);
     if (res) {
       formState.value = res;
-      tempFormState.groupName = res.bdCustomerGroup ? res.bdCustomerGroup.name : '';
+      tempFormState.groupName = res.bdDepartment ? res.bdDepartment.name : '';
       if (formState.value.bsStatus === 'B') {
         isDisable.value = true;
         showAudit.value = false;
         showSave.value = false;
       }
-      //回显地区信息
-      await echoDistrict();
     }
   };
 
@@ -366,22 +363,13 @@
     formRef.value
       .validate()
       .then(async () => {
-        formState.value.provincial = tempFormState.districtArr[0]
-          ? tempFormState.districtArr[0]
-          : undefined; //省
-        formState.value.municipal = tempFormState.districtArr[1]
-          ? tempFormState.districtArr[1]
-          : undefined; //市
-        formState.value.district = tempFormState.districtArr[2]
-          ? tempFormState.districtArr[2]
-          : undefined; //区
         let res;
-        if (customerId.value) {
+        if (employeeId.value) {
           res = await update({ params: formState.value });
         } else {
           res = await save({ params: formState.value });
         }
-        await getCustomer(res.id);
+        await getEmployee(res.id);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -396,7 +384,7 @@
    */
   const handleAudit = async (flag: number) => {
     let mess = flag === 1 ? '反审核' : '保存并审核';
-    const type = await VXETable.modal.confirm(`确定${mess}当前客户吗?`);
+    const type = await VXETable.modal.confirm(`确定${mess}当前人员吗?`);
     if (type == 'confirm') {
       formRef.value
         .validate()
@@ -424,15 +412,7 @@
   };
 
   /**
-   * 国家选择框change事件
-   * @param data
-   */
-  const countryHandleChange = (data) => {
-    console.log(data);
-  };
-
-  /**
-   * 国家选择框过滤
+   * 选择框过滤
    * @param input
    * @param option
    */
@@ -441,132 +421,38 @@
   };
 
   /**
-   * 客户分组弹框
+   * 部门弹框
    */
   const onGroupSearch = () => {
     getTree(); //获取分组数据
-    customerGroupModel.value = true;
+    employeeGroupModel.value = true;
   };
 
   /**
-   * 客户分组选择事件
+   * 部门选择事件
    * @param value
    * @param node
    */
   const groupSelect = (value, node) => {
     tempFormState.groupName = node ? node[0] : '';
-    formState.value.groupId = value;
-    customerGroupModel.value = false;
+    formState.value.deptId = value;
+    employeeGroupModel.value = false;
   };
 
   /**
-   * 获取客户分组树
+   * 获取部门树
    */
   const getTree = async () => {
-    const tree = await getCustomerGroupTree({ params: '0' });
+    const tree = await getDeptTree({ params: '0' });
     runTree(tree);
     treeData.value = cloneDeep(tree);
-  };
-
-  /**
-   * 获取国家地区
-   */
-  const getCountry = async () => {
-    const res = await getCountryTree({ params: '-1' });
-    if (res.length > 0) {
-      res.forEach((item) => {
-        item.label = item.name;
-        item.value = item.id;
-      });
-      countryData.value = cloneDeep(res); //国家数据;
-      formState.value.country = countryData.value[0].id; //默认选中第一条
-      const data = await getCountryTree({ params: countryData.value[0].number || '' });
-      if (res.length > 0) {
-        data.forEach((item) => {
-          item.label = item.name;
-          item.value = item.id;
-          item.isLeaf = false;
-        });
-        districtData.value = data;
-      }
-    }
-  };
-
-  /**
-   * 获取地区数据
-   */
-  const loadDistrictData = async (selectedOptions) => {
-    const targetOption = selectedOptions[selectedOptions.length - 1];
-    targetOption.loading = true;
-    //懒加载
-    const res = await getCountryTree({ params: targetOption.number });
-    if (res.length > 0) {
-      res.forEach((item) => {
-        item.label = item.name;
-        item.value = item.id;
-        item.isLeaf = item.level == 3;
-      });
-      targetOption.children = res;
-      districtData.value = [...districtData.value]; //地区数据
-    }
-    targetOption.loading = false;
-  };
-
-  /**
-   * 省市区回显
-   */
-  const echoDistrict = async () => {
-    try {
-      let arr: number[] = [];
-      let ssqData = cloneDeep(districtData.value);
-      if (formState.value.provincial) {
-        arr.push(formState.value.provincial);
-        if (formState.value.municipal) {
-          arr.push(formState.value.municipal);
-          let provincialIndex = ssqData.findIndex((e) => e.id == formState.value.provincial);
-          if (provincialIndex != -1) {
-            const municipalRes = await getCountryTree({
-              params: ssqData[provincialIndex].number || '',
-            });
-            municipalRes.forEach((item) => {
-              item.label = item.name;
-              item.value = item.id;
-              item.isLeaf = item.level == 3;
-            });
-            ssqData[provincialIndex].children = cloneDeep(municipalRes);
-            if (formState.value.district) {
-              arr.push(formState.value.district);
-              let municipalIndex = ssqData[provincialIndex].children!.findIndex(
-                (e) => e.id == formState.value.municipal,
-              );
-              if (municipalIndex != -1) {
-                const districtRes = await getCountryTree({
-                  params: ssqData[provincialIndex].children![municipalIndex].number || '',
-                });
-                districtRes.forEach((item) => {
-                  item.label = item.name;
-                  item.value = item.id;
-                  item.isLeaf = item.level == 3;
-                });
-                ssqData[provincialIndex].children![municipalIndex].children =
-                  cloneDeep(districtRes);
-              }
-            }
-          }
-        }
-      }
-      districtData.value = cloneDeep(ssqData);
-      tempFormState.districtArr = arr;
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   /**
    * 初始化树
    * @param tree
    */
-  const runTree = (tree: CustomerGroupEntity[] | CountryEntity[]) => {
+  const runTree = (tree: DepartmentEntity[]) => {
     tree.forEach((item) => {
       item.title = item.name;
       item.value = item.id;
@@ -579,7 +465,7 @@
    * 清空事件
    */
   const onClear = () => {
-    formState.value.groupId = '';
+    formState.value.deptId = '';
     tempFormState.groupName = '';
   };
 

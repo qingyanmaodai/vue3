@@ -161,4 +161,38 @@ export const config = {
       label: 'D级',
     },
   ],
+  //性别
+  GENDER: [
+    {
+      value: 0,
+      label: '女',
+    },
+    {
+      value: 1,
+      label: '男',
+    },
+  ],
+  //职位
+  JOB: [
+    {
+      value: 'A',
+      label: '董事长',
+    },
+    {
+      value: 'B',
+      label: '经理',
+    },
+    {
+      value: 'C',
+      label: '主管',
+    },
+    {
+      value: 'D',
+      label: '组长',
+    },
+    {
+      value: 'E',
+      label: '普通员工',
+    },
+  ],
 };

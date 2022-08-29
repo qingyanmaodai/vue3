@@ -56,6 +56,12 @@
         formatData(row.isOpen, config['ENABLE_STATUS'])
       }}</Tag>
     </template>
+    <template #sex="{ row }">
+      <Tag>{{ formatData(row.sex, config['GENDER']) }}</Tag>
+    </template>
+    <template #job="{ row }">
+      <Tag>{{ formatData(row.job, config['JOB']) }}</Tag>
+    </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
