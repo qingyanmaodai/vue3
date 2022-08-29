@@ -50,7 +50,7 @@ export const config = {
     },
     {
       value: 'B',
-      label: '审核',
+      label: '已审核',
     },
   ],
   //  数据业务状态
