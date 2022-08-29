@@ -192,7 +192,7 @@
     @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
     :gridOptions="unitGridOptions"
-    ref="basicSearchRef"
+    ref="childBasicSearchRef"
   />
 </template>
 <script lang="ts" setup>
@@ -253,7 +253,7 @@
   //选择框data
   const nowCheckData: any = reactive({ data: {} });
   //基础信息查询组件ref
-  const basicSearchRef: any = ref(null);
+  const childBasicSearchRef: any = ref(null);
   //1111--结束---基础信息查询的弹框
   const xGrid = ref<VxeGridInstance>();
   //判断窗体类型
@@ -316,7 +316,7 @@
   const basicClickEvent = (row) => {
     nowCheckData.data.val = row.id;
     nowCheckData.data.labelValue = row.name;
-    basicSearchRef.value.bSearch(false);
+    childBasicSearchRef.value.bSearch(false);
   };
   //改变选择的字段数据
   const handleChange = (value: string) => {
@@ -326,14 +326,14 @@
     nowCheckData.data = data; //输入框的值
     isShowModel.value = true;
     const res = await publicEvent(data); //获取数据
-    basicSearchRef.value.initList(res); //表格数据
-    basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
-    basicSearchRef.value.bSearch(true); //打开弹框
+    childBasicSearchRef.value.initList(res); //表格数据
+    childBasicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
+    childBasicSearchRef.value.bSearch(true); //打开弹框
     await getTableUnit();
   };
   const openSearch = async (keywords) => {
     const res = await publicEvent(keywords);
-    basicSearchRef.value.initList(res);
+    childBasicSearchRef.value.initList(res);
   };
   const getTableUnit = async () => {
     try {
@@ -345,7 +345,7 @@
       );
       let arr = cloneDeep(data);
       arr = arr.filter((e) => e.fieldName != 'bs_status');
-      basicSearchRef.value.getListUnitEvent(arr);
+      childBasicSearchRef.value.getListUnitEvent(arr);
     } catch (e) {
       console.log('高级查询获取基本信息字段失败', e);
     }
