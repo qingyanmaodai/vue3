@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
       <a style="font-size: 1.4rem; font-weight: bold; color: #000; line-height: 60px" @click="back"
         ><RollbackOutlined /> 返回</a
@@ -190,7 +190,6 @@
     Switch,
     TabPane,
     Tabs,
-    InputNumber,
     Select,
   } from 'ant-design-vue';
   import { BasicSearch } from '/@/components/AMoreSearch';
@@ -379,7 +378,7 @@
   .content {
     border: 1px solid #e5e7eb;
     margin: 10px;
-    height: 80vh;
+    height: calc(100% - 80px);
   }
   .button {
     margin: 15px;
