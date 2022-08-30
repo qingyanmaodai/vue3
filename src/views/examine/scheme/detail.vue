@@ -17,156 +17,181 @@
       </div>
     </LayoutHeader>
     <a-card class="content">
-      <Tabs v-model:activeKey="activeKey" class="tabs">
-        <TabPane key="1" tab="基本信息">
-          <a-form ref="formRef" :model="formState" :rules="formRules">
-            <Row>
-              <Col :span="8">
-                <a-form-item label="方案编码：" ref="number" name="number" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
-                    v-model:value="formState.number"
-                    placeholder="请输入方案编码"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="方案名称：" ref="name" name="name" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
-                    v-model:value="formState.name"
-                    name="name"
-                    placeholder="请输入方案名称"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
-                  <div class="switchDiv">
-                    <Switch
-                      :checked-children="config.ENABLE_STATUS_SPE[1]"
-                      :un-checked-children="config.ENABLE_STATUS_SPE[0]"
-                      :checkedValue="1"
-                      :unCheckedValue="0"
-                      v-model:checked="formState.isOpen"
-                      :disabled="formState.bsStatus === 'B'"
-                    />
-                  </div>
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item label="检验类型：" ref="examineType" name="examineType" class="item">
-                  <Select
-                    v-model:value="formState.examineType"
-                    class="select"
-                    :options="config.EXAMINE_SCHEME_TYPE"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="抽检规则：" ref="ruleId" name="ruleId" class="item">
-                  <ExInput
-                    autocomplete="off"
-                    class="input"
-                    placeholder="请选择抽检规则"
-                    label="抽检规则"
-                    :show="formState.bsStatus !== 'B'"
-                    :value="formState.ruleName"
-                    :disabled="formState.bsStatus === 'B'"
-                    @search="onRule()"
-                    @clear="onClear(['ruleId', 'ruleName'])"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="业务类型：" ref="business" name="business" class="item">
-                  <Select
-                    v-model:value="formState.business"
-                    class="select"
-                    :options="config.EXAMINE_BUSINESS"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
-                  <Input
-                    allowClear
-                    class="input"
-                    autocomplete="off"
-                    :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
-                    name="bsStatus"
-                    :disabled="true"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="方案描述：" ref="description" name="description" class="item">
-                  <a-textArea
-                    v-model:value="formState.description"
-                    placeholder="请添加方案描述:"
-                    :rows="3"
-                    class="textArea"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="备注：" ref="mark" name="mark" class="item">
-                  <a-textArea
-                    v-model:value="formState.mark"
-                    placeholder="请添加备注"
-                    :rows="3"
-                    class="textArea"
-                    :disabled="formState.bsStatus === 'B'"
-                  />
-                </a-form-item>
-              </Col>
-            </Row>
-          </a-form>
-        </TabPane>
-        <TabPane key="2" tab="其他信息">
-          <a-form ref="formRef" :model="formState" :rules="formRules">
-            <Row>
-              <Col :span="8">
-                <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
-                  <Input class="input" v-model:value="formState.createTime" disabled />
-                </a-form-item>
-              </Col>
-              <Col :span="8">
-                <a-form-item label="创建人：" ref="createBy" name="createBy" class="item">
-                  <Input class="input" v-model:value="formState.createBy" disabled />
-                </a-form-item>
-              </Col>
-            </Row>
-            <Row>
-              <Col :span="8">
-                <a-form-item label="修改时间：" ref="updateTime" name="updateTime" class="item">
-                  <Input
-                    class="input"
-                    v-model:value="formState.updateTime"
-                    disabled
-                  /> </a-form-item
-              ></Col>
-              <Col :span="8">
-                <a-form-item label="修改人：" ref="updateBy" name="updateBy" class="item">
-                  <Input class="input" v-model:value="formState.updateBy" disabled /> </a-form-item
-              ></Col>
-            </Row>
-          </a-form>
-        </TabPane>
-      </Tabs>
+      <a-splitpanes class="default-theme" horizontal style="width: 100%">
+        <pane :size="paneSize" style="background-color: #fff">
+          <Tabs v-model:activeKey="activeKey" class="tabs">
+            <TabPane key="1" tab="基本信息">
+              <a-form ref="formRef" :model="formState" :rules="formRules">
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="方案编码：" ref="number" name="number" class="item">
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        v-model:value="formState.number"
+                        placeholder="请输入方案编码"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="方案名称：" ref="name" name="name" class="item">
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        v-model:value="formState.name"
+                        name="name"
+                        placeholder="请输入方案名称"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
+                      <div class="switchDiv">
+                        <Switch
+                          :checked-children="config.ENABLE_STATUS_SPE[1]"
+                          :un-checked-children="config.ENABLE_STATUS_SPE[0]"
+                          :checkedValue="1"
+                          :unCheckedValue="0"
+                          v-model:checked="formState.isOpen"
+                          :disabled="formState.bsStatus === 'B'"
+                        />
+                      </div>
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item
+                      label="检验类型："
+                      ref="examineType"
+                      name="examineType"
+                      class="item"
+                    >
+                      <Select
+                        v-model:value="formState.examineType"
+                        class="select"
+                        :options="config.EXAMINE_SCHEME_TYPE"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="抽检规则：" ref="ruleId" name="ruleId" class="item">
+                      <ExInput
+                        autocomplete="off"
+                        class="input"
+                        placeholder="请选择抽检规则"
+                        label="抽检规则"
+                        :show="formState.bsStatus !== 'B'"
+                        :value="formState.ruleName"
+                        :disabled="formState.bsStatus === 'B'"
+                        @search="onRule()"
+                        @clear="onClear(['ruleId', 'ruleName'])"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="业务类型：" ref="business" name="business" class="item">
+                      <Select
+                        v-model:value="formState.business"
+                        class="select"
+                        :options="config.EXAMINE_BUSINESS"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                        name="bsStatus"
+                        :disabled="true"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item
+                      label="方案描述："
+                      ref="description"
+                      name="description"
+                      class="item"
+                    >
+                      <a-textArea
+                        v-model:value="formState.description"
+                        placeholder="请添加方案描述:"
+                        :rows="3"
+                        class="textArea"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="备注：" ref="mark" name="mark" class="item">
+                      <a-textArea
+                        v-model:value="formState.mark"
+                        placeholder="请添加备注"
+                        :rows="3"
+                        class="textArea"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+              </a-form>
+            </TabPane>
+            <TabPane key="2" tab="其他信息">
+              <a-form ref="formRef" :model="formState" :rules="formRules">
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
+                      <Input class="input" v-model:value="formState.createTime" disabled />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="创建人：" ref="createBy" name="createBy" class="item">
+                      <Input class="input" v-model:value="formState.createBy" disabled />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="修改时间：" ref="updateTime" name="updateTime" class="item">
+                      <Input
+                        class="input"
+                        v-model:value="formState.updateTime"
+                        disabled
+                      /> </a-form-item
+                  ></Col>
+                  <Col :span="8">
+                    <a-form-item label="修改人：" ref="updateBy" name="updateBy" class="item">
+                      <Input
+                        class="input"
+                        v-model:value="formState.updateBy"
+                        disabled
+                      /> </a-form-item
+                  ></Col>
+                </Row>
+              </a-form>
+            </TabPane>
+          </Tabs>
+        </pane>
+        <pane :size="100 - paneSize">
+          <ExVxeTable
+            :columns="ruleOfExaColumns"
+            :gridOptions="RuleOfExaGridOptions"
+            ref="vxeTableRef"
+          />
+        </pane>
+      </a-splitpanes>
     </a-card>
     <BasicSearch
       @basicClickEvent="onRuleClickEvent"
@@ -177,6 +202,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExVxeTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
@@ -192,8 +218,11 @@
     Tabs,
     Select,
   } from 'ant-design-vue';
+  import { Pane, Splitpanes } from 'splitpanes';
+  import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExInput } from '/@/components/ExInput';
+  import { ExVxeTable } from '/@/components/ExVxeTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
@@ -206,15 +235,18 @@
   import { unitGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
+  const ASplitpanes = Splitpanes;
+  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const paneSize = ref<number>(25);
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
   const formRef = ref();
-  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   const basicSearchRef: any = ref(null);
+  const vxeTableRef: any = ref<String | null>(null);
   const formData: ExaEntity = {
     id: undefined,
     number: '',
@@ -239,6 +271,7 @@
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
   });
+
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {

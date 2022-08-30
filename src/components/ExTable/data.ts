@@ -314,7 +314,7 @@ export const exaRuleColumns = [
     title: '数据状态',
     sortable: true,
     slots: { default: 'status' },
-  }
+  },
 ];
 
 //检验方案
