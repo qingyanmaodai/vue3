@@ -1,6 +1,4 @@
 <template>
-  <vxe-button @click="insertRowEvent">新增行</vxe-button>
-  <vxe-button @click="$refs.xTable.removeCheckboxRow()">删除选中</vxe-button>
   <vxe-grid
     border
     ref="xGrid"
@@ -24,6 +22,8 @@
           style="margin-right: 5px"
           >{{ button.label }}
         </AButton>
+        <vxe-button @click="insertRowEvent">新增行</vxe-button>
+        <vxe-button @click="removeRowEvent">删除选中</vxe-button>
       </div>
     </template>
     <template #status="{ row }">
@@ -77,6 +77,11 @@
     const record = {};
     const { row: newRow } = await $grid.insert(record);
     await $grid.setEditCell(newRow, 'name');
+  };
+  //删除行
+  const removeRowEvent = () => {
+    const $grid: any = xGrid.value;
+    $grid.removeCheckboxRow();
   };
 </script>
 <style scoped lang="less">
