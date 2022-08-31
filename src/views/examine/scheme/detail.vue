@@ -259,6 +259,10 @@
     ruleId: '',
     ruleName: '',
   };
+  type Emits = {
+    (event: 'saveDataEvent'): void;
+  };
+  const emit = defineEmits<Emits>();
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -338,6 +342,9 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
+        //--------------------------------------------------测试--------------保存
+        emit('saveDataEvent');
+
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -379,6 +386,7 @@
         formState.value = res;
       });
     }
+    //测试用的-------------------表格-------------
     formState.value.desc = {
       id: '1563371283141058562',
       name: '1234wefr',
@@ -387,7 +395,7 @@
       id: '',
       name: '',
     };
-    vxeTableRef.value.init(formState.value); //测试用的-------------------表格-------------
+    // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
   };
   init();
   //刚进入页面——加载完后，需要执行的方法
