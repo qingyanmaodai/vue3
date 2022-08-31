@@ -6,13 +6,36 @@
     max-height="100%"
     v-bind="props.gridOptions"
     :columns="props.columns"
+    :data="tableInitData"
+    :edit-rules="editRules"
     :export-config="{}"
   >
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
-        <vxe-button @click="insertRowEvent">新增行</vxe-button>
-        <vxe-button @click="removeRowEvent">删除选中</vxe-button>
+        <vxe-button
+          status="primary"
+          v-show="props.isShowInsertRow"
+          size="mini"
+          @click="insertRowEvent"
+          >新增行</vxe-button
+        >
+        <vxe-button
+          status="danger"
+          v-show="props.isShowRemoveRow"
+          size="mini"
+          @click="removeRowEvent"
+          >删除行</vxe-button
+        >
       </div>
+    </template>
+    <template #model="{ row, column }">
+      <a-input-search
+        onfocus="this.blur();"
+        placeholder="请选择输入..."
+        v-model:value="row.name"
+        @click="onSearch(row, column)"
+        @search="onSearch(row, column)"
+      />
     </template>
     <template #status="{ row }">
       <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
@@ -20,14 +43,22 @@
       }}</Tag>
     </template>
   </vxe-grid>
+  <BasicSearch
+    @openSearch="openSearch"
+    @basicClickEvent="basicClickEvent"
+    :gridOptions="unitGridOptions"
+    ref="basicSearchRef"
+  />
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
   import { Tag, Button, Upload, message } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { config, configEntity } from '/@/utils/publicParamConfig'; //公共配置ts
+  import { config, configEntity } from '/@/utils/publicParamConfig';
+  import { cloneDeep } from 'lodash-es';
+  import {SearchDataType, SearchLink, SearchMatchType, TableColum, Url} from "/@/api/apiLink"; //公共配置ts
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -40,18 +71,97 @@
     height: Number,
     treeSelectData: Number,
     show: Boolean,
-    isShowImport: {
+    isShowInsertRow: {
       type: Boolean,
       default: true,
     },
-    isShowExport: {
+    isShowRemoveRow: {
       type: Boolean,
       default: true,
     },
     importConfig: String,
+    editRules: String,
   });
-
+  import { getPublicList } from '/@/api/public';
+  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  //选择框data
+  const nowCheckData: any = reactive({ data: {} });
+  const nowCheckRow: any = reactive({ data: {} });
+  //判断输入框controlType类型，改变后面输入框的类型
+  const selectOption: any = reactive({ data: {} });
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref(null);
+  const onSearch = async (data, column) => {
+    console.log(data, column, 'asas')
+    nowCheckData.data = column; //输入框的值
+    nowCheckRow.data = data; //输入框的值
+    const res = await publicEvent(undefined, column); //获取数据
+    basicSearchRef.value.initList(res); //表格数据
+    basicSearchRef.value.initCols(TableColum[column.params.select]); //表头
+    basicSearchRef.value.bSearch(true); //打开弹框
+    await getPublicListOption(column);
+  };
+  const getPublicListOption = async (column: any) => {
+    try {
+      const data: any = await getPublicList(
+        {
+          params: [],
+        },
+        Url[column.params.select],
+      );
+      let arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.getListUnitEvent(arr);
+    } catch (e) {
+      console.log('高级查询获取基本信息字段失败', e);
+    }
+  };
+  //打开基本信息弹框
+  const openSearch = async (keywords) => {
+    const res = await publicEvent(keywords, nowCheckData.data);
+    basicSearchRef.value.initList(res);
+  };
+  //基本信息表格双击事件
+  const basicClickEvent = (row) => {
+    console.log(nowCheckData.data, row);
+    nowCheckRow.data[nowCheckData.data.field] = row.name;
+    // nowCheckData.data.val = row.id;
+    // nowCheckData.data.labelValue = row.name;
+    basicSearchRef.value.bSearch(false);
+  };
+  const publicEvent = async (keywords, column) => {
+    let paramArr: any = [];
+    if (keywords) {
+      paramArr.push(keywords);
+    }
+    paramArr.push({
+      column: 'bs_status',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'bsStatus',
+      startWith: '',
+      table: '',
+      val: 'B',
+    });
+    return await getPublicList(
+      {
+        params: paramArr,
+      },
+      //选择分类的接口地址，如基本单位。。
+      Url[column.params.list],
+    );
+  };
   const xGrid = ref<VxeGridInstance>();
+  //数据初始化
+  const tableInit = reactive<any>({ data: [] });
+  const tableInitData = toRef(tableInit, 'data');
+  const init = (data) => {
+    tableInitData.value.push(data);
+    tableInitData.value = cloneDeep(tableInitData.value);
+  };
   //格式化数据
   const formatData = (data: string | number, source: configEntity[]) => {
     let res;
@@ -66,12 +176,16 @@
     const record = {};
     const { row: newRow } = await $grid.insert(record);
     await $grid.setEditCell(newRow, 'name');
+    console.log(tableInitData.value);
   };
   //删除行
   const removeRowEvent = () => {
     const $grid: any = xGrid.value;
     $grid.removeCheckboxRow();
   };
+  defineExpose({
+    init,
+  });
 </script>
 <style scoped lang="less">
   .table {
