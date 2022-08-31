@@ -62,7 +62,7 @@ export const ruleOfExaColumns = [
     editRender: { name: '$input', props: { type: 'date' } },
   },
   {
-    field: 'desc',
+    field: 'desc.name',
     title: '弹框型',
     sortable: true,
     params: {
@@ -76,7 +76,7 @@ export const ruleOfExaColumns = [
     },
   },
   {
-    field: 'desc1',
+    field: 'desc1.name',
     title: '弹框型1',
     sortable: true,
     params: {

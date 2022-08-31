@@ -32,7 +32,7 @@
       <a-input-search
         onfocus="this.blur();"
         placeholder="请选择输入..."
-        v-model:value="row.name"
+        v-model:value="row[sliceBasicProp(column.field)].name"
         @click="onSearch(row, column)"
         @search="onSearch(row, column)"
       />
@@ -86,14 +86,12 @@
   import { unitGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   //选择框data
-  const nowCheckData: any = reactive({ data: {} });
-  const nowCheckRow: any = reactive({ data: {} });
-  //判断输入框controlType类型，改变后面输入框的类型
-  const selectOption: any = reactive({ data: {} });
+  const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
+  const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   //基础信息查询组件ref
   const basicSearchRef: any = ref(null);
   const onSearch = async (data, column) => {
-    console.log(data, column, 'asas')
+    console.log(data, column, 'asas');
     nowCheckData.data = column; //输入框的值
     nowCheckRow.data = data; //输入框的值
     const res = await publicEvent(undefined, column); //获取数据
@@ -125,9 +123,14 @@
   //基本信息表格双击事件
   const basicClickEvent = (row) => {
     console.log(nowCheckData.data, row);
-    nowCheckRow.data[nowCheckData.data.field] = row.name;
+    let prop = sliceBasicProp(nowCheckData.data.field);
+    nowCheckRow.data[prop] = {
+      id: row.id,
+      name: row.name,
+    };
     // nowCheckData.data.val = row.id;
     // nowCheckData.data.labelValue = row.name;
+    console.log(tableInitData.value, 'asasqas');
     basicSearchRef.value.bSearch(false);
   };
   const publicEvent = async (keywords, column) => {
@@ -159,6 +162,7 @@
   const tableInit = reactive<any>({ data: [] });
   const tableInitData = toRef(tableInit, 'data');
   const init = (data) => {
+    console.log(data, 'asa');
     tableInitData.value.push(data);
     tableInitData.value = cloneDeep(tableInitData.value);
   };
@@ -169,6 +173,9 @@
       res = source.find((item) => item.value === data);
     }
     return res ? res.label : '';
+  };
+  const sliceBasicProp = (data: string) => {
+    return data.slice(0, -5);
   };
   //新增行
   const insertRowEvent = async () => {

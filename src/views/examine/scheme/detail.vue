@@ -379,6 +379,14 @@
         formState.value = res;
       });
     }
+    formState.value.desc = {
+      id: '1563371283141058562',
+      name: '1234wefr',
+    };
+    formState.value.desc1 = {
+      id: '',
+      name: '',
+    };
     vxeTableRef.value.init(formState.value); //测试用的-------------------表格-------------
   };
   init();
