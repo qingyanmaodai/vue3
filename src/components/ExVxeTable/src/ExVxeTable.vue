@@ -2,26 +2,14 @@
   <vxe-grid
     border
     ref="xGrid"
+    class="table"
+    max-height="100%"
     v-bind="props.gridOptions"
     :columns="props.columns"
     :export-config="{}"
-    show-overflow
-    show-header-overflow
-    height="50%"
-    auto-resize
-    :column-config="{ resizable: true }"
   >
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
-        <AButton
-          v-for="(button, key) in buttons"
-          :type="button.type !== 'danger' ? button.type : 'default'"
-          :key="key"
-          :danger="button.type === 'danger'"
-          @click="button.onClick()"
-          style="margin-right: 5px"
-          >{{ button.label }}
-        </AButton>
         <vxe-button @click="insertRowEvent">新增行</vxe-button>
         <vxe-button @click="removeRowEvent">删除选中</vxe-button>
       </div>
@@ -49,6 +37,7 @@
     columns: Array,
     buttons: Array,
     count: Number,
+    height: Number,
     treeSelectData: Number,
     show: Boolean,
     isShowImport: {
@@ -87,11 +76,9 @@
 <style scoped lang="less">
   .table {
     background-color: #fff;
-    border-bottom: none;
     width: 100%;
-    height: calc(100vh - 250px);
-    max-height: 640px;
-    padding: 0 5px;
+    margin: 0;
+    padding: 0;
   }
   :deep(.vxe-toolbar .vxe-tools--operate) {
     margin-right: 10px;

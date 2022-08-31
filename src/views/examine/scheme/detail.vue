@@ -17,8 +17,8 @@
       </div>
     </LayoutHeader>
     <a-card class="content">
-      <a-splitpanes class="default-theme" horizontal style="width: 100%">
-        <pane :size="paneSize" style="background-color: #fff">
+      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 210px)">
+        <pane :size="100 - paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
               <a-form ref="formRef" :model="formState" :rules="formRules">
@@ -184,7 +184,7 @@
             </TabPane>
           </Tabs>
         </pane>
-        <pane :size="100 - paneSize">
+        <pane :size="paneSize" style="padding-bottom: -40px">
           <ExVxeTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
@@ -237,7 +237,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
-  const paneSize = ref<number>(25);
+  const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;
   const ACard = Card;
@@ -412,6 +412,10 @@
     border: 1px solid #e5e7eb;
     margin: 10px;
     height: calc(100% - 80px);
+  }
+  :deep(.vxe-grid) {
+    font-size: 14px;
+    height: 100%;
   }
   .button {
     margin: 15px;
