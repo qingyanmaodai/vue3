@@ -189,6 +189,7 @@
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
+            :editRules="formRules"
           />
         </pane>
       </a-splitpanes>
@@ -263,7 +264,6 @@
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
-  //重新物料分组赋值
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
@@ -379,6 +379,7 @@
         formState.value = res;
       });
     }
+    vxeTableRef.value.init(formState.value); //测试用的-------------------表格-------------
   };
   init();
   //刚进入页面——加载完后，需要执行的方法
