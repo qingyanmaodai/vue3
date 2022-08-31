@@ -32,14 +32,14 @@ export const ruleOfExaColumns = [
   {
     field: 'number',
     title: '项目编码',
-    editRender: { name: 'input', attrs: { placeholder: '请输入项目编码' } },
+    editRender: { name: '$input', attrs: { placeholder: '请输入项目编码' } },
   },
   {
     field: 'name',
     title: '项目名称',
     clearable: true,
     sortable: true,
-    editRender: { name: 'input', attrs: { placeholder: '请输入项目名称' } },
+    editRender: { name: '$input', attrs: { placeholder: '请输入项目名称' } },
   },
   {
     field: 'bdExamineGroup.name',
@@ -57,8 +57,6 @@ export const ruleOfExaColumns = [
     field: 'isOpen',
     title: '时间型',
     sortable: true,
-    // clearable: true,
-    // transfer: true,
     editRender: { name: '$input', props: { type: 'date' } },
   },
   {
@@ -71,7 +69,6 @@ export const ruleOfExaColumns = [
     },
     editRender: { name: '$input', props: { type: 'modal' } },
     slots: {
-      // 使用 JSX 渲染
       edit: 'model',
     },
   },
@@ -81,18 +78,12 @@ export const ruleOfExaColumns = [
     sortable: true,
     params: {
       list: 'GET_EXA_PROJECT_LIST',
-      select: 'GET_EXA_PROJECT_OPTIONS_LIST',
+      select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
     },
     editRender: { name: '$input', props: { type: 'modal' } },
     slots: {
       // 使用 JSX 渲染
       edit: 'model',
     },
-  },
-  {
-    field: 'bsStatus',
-    title: '数据状态',
-    sortable: true,
-    slots: { default: 'status' },
   },
 ];
