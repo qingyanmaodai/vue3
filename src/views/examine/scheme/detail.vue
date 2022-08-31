@@ -190,6 +190,8 @@
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
             :editRules="formRules"
+            @cellClickTableEvent="cellClickTableEvent"
+            :isShowIcon="formState.bsStatus !== 'B'"
           />
         </pane>
       </a-splitpanes>
@@ -269,8 +271,8 @@
   });
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({
-    name: [{ required: true, message: '请输入物料名称' }],
-    number: [{ required: true, message: '请输入物料编码' }],
+    name: [{ required: true, message: '请输入方案名称' }],
+    number: [{ required: true, message: '请输入方案编码' }],
     ruleId: [{ required: true, message: '请选择抽检规则' }],
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
@@ -397,6 +399,15 @@
     };
     // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
   };
+  //row-弹框中的双击行数据------data-当前行
+  const cellClickTableEvent = (row, data) => {
+    console.log('传值', row, data);
+    data.name = row.name;
+    data.number = row.number;
+    data.min = row.min;
+    data.max = row.max;
+  };
+
   init();
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {});

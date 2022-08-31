@@ -32,7 +32,7 @@
       <ExInput
         onfocus="this.blur();"
         placeholder="请选择输入..."
-        :show="true"
+        :show="props.isShowIcon"
         v-model:value="row[sliceBasicProp(column.field)].name"
         @click="onSearch(row, column)"
         @search="onSearch(row, column)"
@@ -60,6 +60,7 @@
   const props = defineProps({
     gridOptions: Object,
     columns: Array,
+    isShowIcon: Boolean,
     isShowInsertRow: {
       type: Boolean,
       default: true,
@@ -68,8 +69,12 @@
       type: Boolean,
       default: true,
     },
-    editRules: String, //校验规则
+    editRules: Object, //校验规则
   });
+  const emit = defineEmits<Emits>();
+  type Emits = {
+    (event: 'cellClickTableEvent', row, data): void; //查询
+  };
 
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
@@ -120,14 +125,16 @@
   const sliceBasicProp = (data: string) => {
     return data.slice(0, -5);
   };
+
   //基本信息表格双击事件
   const basicClickEvent = (row) => {
+    emit('cellClickTableEvent', row, nowCheckRow.data);
     let prop = sliceBasicProp(nowCheckData.data.field);
     nowCheckRow.data[prop] = {
       id: row.id,
       name: row.name,
     };
-    console.log(nowCheckRow.data,'111111', prop);
+    console.log(nowCheckRow.data, '111111', prop);
     console.log(tableInitData.value, 'asasqas');
     basicSearchRef.value.bSearch(false);
   };
@@ -197,6 +204,9 @@
   });
 </script>
 <style scoped lang="less">
+  :deep(.disableProp) {
+    background-color: #dcdcdc;
+  }
   .table {
     background-color: #fff;
     width: 100%;
