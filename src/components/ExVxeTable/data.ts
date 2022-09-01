@@ -32,14 +32,14 @@ export const ruleOfExaColumns = [
   {
     field: 'number',
     title: '项目编码',
-    editRender: { name: 'input', attrs: { placeholder: '请输入项目编码' } },
+    // editRender: { name: '$input', attrs: { placeholder: '请输入项目编码' } },
   },
   {
     field: 'name',
     title: '项目名称',
-    clearable: true,
     sortable: true,
-    editRender: { name: 'input', attrs: { placeholder: '请输入项目名称' } },
+    className: 'disableProp',
+    // editRender: { name: '$input', attrs: { placeholder: '请输入项目名称' } },
   },
   {
     field: 'bdExamineGroup.name',
@@ -48,8 +48,14 @@ export const ruleOfExaColumns = [
     editRender: { name: '$select', options: [], attrs: { placeholder: '请输入检验类别' } },
   },
   {
-    field: 'description',
-    title: '数字型',
+    field: 'min',
+    title: '数字型-最小数',
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
+  },
+  {
+    field: 'max',
+    title: '数字型-最大数',
     sortable: true,
     editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
   },
@@ -57,8 +63,6 @@ export const ruleOfExaColumns = [
     field: 'isOpen',
     title: '时间型',
     sortable: true,
-    // clearable: true,
-    // transfer: true,
     editRender: { name: '$input', props: { type: 'date' } },
   },
   {
@@ -69,9 +73,8 @@ export const ruleOfExaColumns = [
       list: 'GET_EXA_RULE_LIST',
       select: 'GET_EXA_RULE_OPTIONS_LIST',
     },
-    editRender: { name: '$input', props: { type: 'modal' } },
+    editRender: { name: '$input' },
     slots: {
-      // 使用 JSX 渲染
       edit: 'model',
     },
   },
@@ -80,19 +83,12 @@ export const ruleOfExaColumns = [
     title: '弹框型1',
     sortable: true,
     params: {
-      list: 'GET_EXA_PROJECT_LIST',
-      select: 'GET_EXA_PROJECT_OPTIONS_LIST',
+      list: 'GET_EXA_PROJECT_LIST', //弹框表格数据
+      select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
     },
-    editRender: { name: '$input', props: { type: 'modal' } },
+    editRender: { name: '$input' },
     slots: {
-      // 使用 JSX 渲染
       edit: 'model',
     },
-  },
-  {
-    field: 'bsStatus',
-    title: '数据状态',
-    sortable: true,
-    slots: { default: 'status' },
   },
 ];

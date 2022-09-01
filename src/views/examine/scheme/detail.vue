@@ -17,7 +17,7 @@
       </div>
     </LayoutHeader>
     <a-card class="content">
-      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 210px)">
+      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 190px)">
         <pane :size="100 - paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
@@ -184,12 +184,14 @@
             </TabPane>
           </Tabs>
         </pane>
-        <pane :size="paneSize" style="padding-bottom: -40px">
+        <pane :size="paneSize" style="padding-bottom: -90px">
           <ExVxeTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
             :editRules="formRules"
+            @cellClickTableEvent="cellClickTableEvent"
+            :isShowIcon="formState.bsStatus !== 'B'"
           />
         </pane>
       </a-splitpanes>
@@ -259,14 +261,18 @@
     ruleId: '',
     ruleName: '',
   };
+  type Emits = {
+    (event: 'saveDataEvent'): void;
+  };
+  const emit = defineEmits<Emits>();
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({
-    name: [{ required: true, message: '请输入物料名称' }],
-    number: [{ required: true, message: '请输入物料编码' }],
+    name: [{ required: true, message: '请输入方案名称' }],
+    number: [{ required: true, message: '请输入方案编码' }],
     ruleId: [{ required: true, message: '请选择抽检规则' }],
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
@@ -338,6 +344,9 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
+        //--------------------------------------------------测试--------------保存-------------------
+        emit('saveDataEvent');
+
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -379,6 +388,7 @@
         formState.value = res;
       });
     }
+    //测试用的-------------------表格------------------------------现在获取数据的接口没有这两个参数
     formState.value.desc = {
       id: '1563371283141058562',
       name: '1234wefr',
@@ -387,8 +397,17 @@
       id: '',
       name: '',
     };
-    vxeTableRef.value.init(formState.value); //测试用的-------------------表格-------------
+    // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
   };
+  //row-弹框中的双击行数据------data-当前行--------------------------------------
+  const cellClickTableEvent = (row, data) => {
+    console.log('传值', row, data);
+    data.name = row.name;
+    data.number = row.number;
+    data.min = row.min;
+    data.max = row.max;
+  };
+
   init();
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {});

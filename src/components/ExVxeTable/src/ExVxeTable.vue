@@ -29,18 +29,12 @@
       </div>
     </template>
     <template #model="{ row, column }">
-      <a-input-search
-        onfocus="this.blur();"
-        placeholder="请选择输入..."
+      <ExInput
+        :show="props.isShowIcon"
         v-model:value="row[sliceBasicProp(column.field)].name"
-        @click="onSearch(row, column)"
         @search="onSearch(row, column)"
+        @clear="onClear(row, column)"
       />
-    </template>
-    <template #status="{ row }">
-      <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-        formatData(row.bsStatus, config['DATA_STATUS'])
-      }}</Tag>
     </template>
   </vxe-grid>
   <BasicSearch
@@ -53,24 +47,17 @@
 
 <script lang="ts" setup>
   import { reactive, ref, toRef } from 'vue';
-  import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import { Tag, Button, Upload, message } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { config, configEntity } from '/@/utils/publicParamConfig';
+  import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
-  import {SearchDataType, SearchLink, SearchMatchType, TableColum, Url} from "/@/api/apiLink"; //公共配置ts
-
-  const { createMessage } = useMessage();
-  const AButton = Button;
-
+  import { ExInput } from '/@/components/ExInput';
+  import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
+  import { getPublicList } from '/@/api/public';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   const props = defineProps({
     gridOptions: Object,
     columns: Array,
-    buttons: Array,
-    count: Number,
-    height: Number,
-    treeSelectData: Number,
-    show: Boolean,
+    isShowIcon: Boolean,
     isShowInsertRow: {
       type: Boolean,
       default: true,
@@ -79,27 +66,39 @@
       type: Boolean,
       default: true,
     },
-    importConfig: String,
-    editRules: String,
+    editRules: Object, //校验规则
   });
-  import { getPublicList } from '/@/api/public';
-  import { basicGridOptions } from '/@/components/AMoreSearch/data';
-  import { BasicSearch } from '/@/components/AMoreSearch';
   //选择框data
+  const emit = defineEmits<Emits>();
+  type Emits = {
+    (event: 'cellClickTableEvent', row, data): void; //查询
+  };
+
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
-  //基础信息查询组件ref
-  const basicSearchRef: any = ref(null);
+  const basicSearchRef: any = ref(null); //基础信息查询组件ref
+  const xGrid = ref<VxeGridInstance>();
+  const tableInit = reactive<any>({ data: [] }); //数据初始化
+
+  const tableInitData = toRef(tableInit, 'data');
+  //获取表格初始值
+  const init = (data) => {
+    console.log(data, 'asa');
+    tableInitData.value.push(data);
+    tableInitData.value = cloneDeep(tableInitData.value);
+  };
+
+  //打开弹框，获取数据
   const onSearch = async (data, column) => {
-    console.log(data, column, 'asas');
-    nowCheckData.data = column; //输入框的值
-    nowCheckRow.data = data; //输入框的值
-    const res = await publicEvent(undefined, column); //获取数据
+    nowCheckData.data = column; //输入框column.field
+    nowCheckRow.data = data; //当前选中行数据
+    const res = await publicEvent(undefined, column); //表格获取数据
     basicSearchRef.value.initList(res); //表格数据
     basicSearchRef.value.initCols(TableColum[column.params.select]); //表头
     basicSearchRef.value.bSearch(true); //打开弹框
-    await getPublicListOption(column);
+    await getPublicListOption(column); //基本信息查询下拉框
   };
+  //基本信息查询下拉框
   const getPublicListOption = async (column: any) => {
     try {
       const data: any = await getPublicList(
@@ -115,24 +114,29 @@
       console.log('高级查询获取基本信息字段失败', e);
     }
   };
-  //打开基本信息弹框
+  //基本信息弹框中需要的数据
   const openSearch = async (keywords) => {
     const res = await publicEvent(keywords, nowCheckData.data);
     basicSearchRef.value.initList(res);
   };
+  //截取基本属性
+  const sliceBasicProp = (data: string) => {
+    return data.slice(0, -5);
+  };
+
   //基本信息表格双击事件
   const basicClickEvent = (row) => {
-    console.log(nowCheckData.data, row);
+    emit('cellClickTableEvent', row, nowCheckRow.data);
     let prop = sliceBasicProp(nowCheckData.data.field);
     nowCheckRow.data[prop] = {
       id: row.id,
       name: row.name,
     };
-    // nowCheckData.data.val = row.id;
-    // nowCheckData.data.labelValue = row.name;
+    console.log(nowCheckRow.data, '111111', prop);
     console.log(tableInitData.value, 'asasqas');
     basicSearchRef.value.bSearch(false);
   };
+  //基本信息数据查询
   const publicEvent = async (keywords, column) => {
     let paramArr: any = [];
     if (keywords) {
@@ -157,44 +161,50 @@
       Url[column.params.list],
     );
   };
-  const xGrid = ref<VxeGridInstance>();
-  //数据初始化
-  const tableInit = reactive<any>({ data: [] });
-  const tableInitData = toRef(tableInit, 'data');
-  const init = (data) => {
-    console.log(data, 'asa');
-    tableInitData.value.push(data);
-    tableInitData.value = cloneDeep(tableInitData.value);
-  };
+
   //格式化数据
-  const formatData = (data: string | number, source: configEntity[]) => {
-    let res;
-    if (source && source.length > 0) {
-      res = source.find((item) => item.value === data);
-    }
-    return res ? res.label : '';
-  };
-  const sliceBasicProp = (data: string) => {
-    return data.slice(0, -5);
+  // const formatData = (data: string | number, source: configEntity[]) => {
+  //   let res;
+  //   if (source && source.length > 0) {
+  //     res = source.find((item) => item.value === data);
+  //   }
+  //   return res ? res.label : '';
+  // };
+
+  //点击清空图标清空事件
+  const onClear = (data, column) => {
+    data[sliceBasicProp(column.field)] = {
+      id: '',
+      name: '',
+    };
   };
   //新增行
   const insertRowEvent = async () => {
     const $grid: any = xGrid.value;
     const record = {};
     const { row: newRow } = await $grid.insert(record);
-    await $grid.setEditCell(newRow, 'name');
-    console.log(tableInitData.value);
+    tableInitData.value.push(newRow);
+    console.log('tableInitData.value', tableInitData.value);
   };
   //删除行
   const removeRowEvent = () => {
     const $grid: any = xGrid.value;
     $grid.removeCheckboxRow();
   };
+  //保存数据
+  const saveDataEvent = () => {
+    const data = tableInitData.value;
+    console.log('baocun--data', data);
+  };
   defineExpose({
     init,
+    saveDataEvent,
   });
 </script>
 <style scoped lang="less">
+  :deep(.disableProp) {
+    background-color: rgb(245 245 245);
+  }
   .table {
     background-color: #fff;
     width: 100%;
