@@ -30,11 +30,8 @@
     </template>
     <template #model="{ row, column }">
       <ExInput
-        onfocus="this.blur();"
-        placeholder="请选择输入..."
         :show="props.isShowIcon"
         v-model:value="row[sliceBasicProp(column.field)].name"
-        @click="onSearch(row, column)"
         @search="onSearch(row, column)"
         @clear="onClear(row, column)"
       />
@@ -205,7 +202,7 @@
 </script>
 <style scoped lang="less">
   :deep(.disableProp) {
-    background-color: #dcdcdc;
+    background-color: rgb(245 245 245);
   }
   .table {
     background-color: #fff;

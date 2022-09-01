@@ -17,7 +17,7 @@
       </div>
     </LayoutHeader>
     <a-card class="content">
-      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 210px)">
+      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 190px)">
         <pane :size="100 - paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
@@ -184,7 +184,7 @@
             </TabPane>
           </Tabs>
         </pane>
-        <pane :size="paneSize" style="padding-bottom: -40px">
+        <pane :size="paneSize" style="padding-bottom: -90px">
           <ExVxeTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
@@ -344,7 +344,7 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
-        //--------------------------------------------------测试--------------保存
+        //--------------------------------------------------测试--------------保存-------------------
         emit('saveDataEvent');
 
         createMessage.success('操作成功');
@@ -388,7 +388,7 @@
         formState.value = res;
       });
     }
-    //测试用的-------------------表格-------------
+    //测试用的-------------------表格------------------------------现在获取数据的接口没有这两个参数
     formState.value.desc = {
       id: '1563371283141058562',
       name: '1234wefr',
@@ -399,7 +399,7 @@
     };
     // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
   };
-  //row-弹框中的双击行数据------data-当前行
+  //row-弹框中的双击行数据------data-当前行--------------------------------------
   const cellClickTableEvent = (row, data) => {
     console.log('传值', row, data);
     data.name = row.name;
