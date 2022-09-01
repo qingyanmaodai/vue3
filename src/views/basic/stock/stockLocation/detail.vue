@@ -62,12 +62,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item
-                  label="所属仓库："
-                  ref="stockId"
-                  name="stockId"
-                  class="item"
-                >
+                <a-form-item label="所属仓库：" ref="stockId" name="stockId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -77,15 +72,15 @@
                     v-model:value="formState.stockName"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onStock('stock')"
-                    @clear="onClear(['stockId', 'stockName', 'subStockId', 'subStockName'])"
+                    @clear="onClear(['stockId', 'stockName', 'compartmentId', 'compartmentName'])"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
                 <a-form-item
                   label="所属分仓："
-                  ref="subStockId"
-                  name="subStockId"
+                  ref="compartmentId"
+                  name="compartmentId"
                   class="item"
                 >
                   <ExInput
@@ -94,10 +89,10 @@
                     placeholder="请选择所属分仓"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.subStockName"
+                    v-model:value="formState.compartmentName"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onStock('sub')"
-                    @clear="onClear(['subStockId', 'subStockName'])"
+                    @clear="onClear(['compartmentId', 'compartmentName'])"
                   />
                 </a-form-item>
               </Col>
@@ -165,7 +160,7 @@
       @basicClickEvent="basicClickEvent"
       @searchList="searchList"
       ref="basicSearchRef"
-      :gridOptions="unitGridOptions"
+      :gridOptions="basicGridOptions"
     />
   </div>
 </template>
@@ -186,7 +181,7 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { unitGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { config } from '/@/utils/publicParamConfig';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
@@ -242,7 +237,7 @@
     name: [{ required: true, message: '请输入仓位名称' }],
     number: [{ required: true, message: '请输入仓位编码' }],
     stockId: [{ required: true, message: '请输入所属仓库' }],
-    subStockId: [{ required: true, message: '请输入所属分仓' }],
+    compartmentId: [{ required: true, message: '请输入所属分仓' }],
   });
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -278,7 +273,7 @@
   let queryStockParam = reactive({
     subStock: {},
     stockLocation: {},
-    subStockName: {},
+    compartmentName: {},
     stockName: {},
   });
   //输入框点击放大镜事件
@@ -360,8 +355,8 @@
         await getNextStock('stock', 'formState.stockId', formState.value.stockId);
         break;
       case 'sub':
-        formState.value.subStockId = row.id;
-        formState.value.subStockName = row.name;
+        formState.value.compartmentId = row.id;
+        formState.value.compartmentName = row.name;
         const stockByStock = await getNextStock('stock', 'id', row.stockId);
         formState.value.stockId = stockByStock.records[0].id;
         formState.value.stockName = stockByStock.records[0].name;
@@ -396,12 +391,12 @@
         params: rowId,
       });
       formState.value = res;
-      if (formState.value.subStockId) {
-        formState.value.subStockId = res.bdSubStock.id;
-        formState.value.subStockName = res.bdSubStock.name;
+      if (formState.value.compartmentId) {
+        formState.value.compartmentId = res.bdSubStock.id;
+        formState.value.compartmentName = res.bdSubStock.name;
         queryStockParam.stockLocation = {
           table: '',
-          name: 'subStockId',
+          name: 'compartmentId',
           column: 'sub_stock_id',
           link: 'AND',
           rule: 'EQ',

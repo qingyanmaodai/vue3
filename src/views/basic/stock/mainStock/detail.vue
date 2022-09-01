@@ -47,15 +47,17 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="负责人：" ref="mainBy" name="mainBy" class="item">
-                  <Input
-                    allowClear
-                    class="input"
+                <a-form-item label="责任人：" ref="locationId" name="locationId" class="item">
+                  <ExInput
                     autocomplete="off"
-                    v-model:value="formState.mainBy"
-                    name="name"
-                    placeholder="请输入负责人"
+                    class="input"
+                    placeholder="请选择责任人"
+                    label="责任人"
+                    :show="formState.bsStatus !== 'B'"
+                    v-model:value="formState.empName"
                     :disabled="formState.bsStatus === 'B'"
+                    @search="onSearch('EMP')"
+                    @clear="onClear('EMP')"
                   />
                 </a-form-item>
               </Col>
@@ -147,6 +149,13 @@
         </TabPane>
       </Tabs>
     </a-card>
+    <BasicSearch
+      :modalType="modalType"
+      @basicClickEvent="basicClickEvent"
+      @searchList="searchList"
+      ref="basicSearchRef"
+      :gridOptions="basicGridOptions"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -163,6 +172,7 @@
     TabPane,
     Tabs,
   } from 'ant-design-vue';
+  import { BasicSearch } from '/@/components/AMoreSearch';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { VXETable } from 'vxe-table';
@@ -177,6 +187,10 @@
     updateStockList,
   } from '/@/api/mainStock';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import { ExInput } from '/@/components/ExInput';
+  import { getPublicList } from '/@/api/public';
+  import { getEmployeeEntity } from '/@/api/employee/index';
+  import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -189,6 +203,9 @@
     name: [{ required: true, message: '请输入仓库名称' }],
     number: [{ required: true, message: '请输入仓库编码' }],
   });
+  //基础信息查询组件ref
+  const basicSearchRef = ref<any>(null);
+  const modalType = ref<string>(''); //当前显示基础信息弹框类型
   //初始化
   const formData: StockProfileEntity = {
     id: undefined,
@@ -208,6 +225,7 @@
     if (rowId) {
       const res: any = await getOneStockById({ params: rowId });
       formState.value = res;
+      formState.value.empName = res.bdEmployee ? res.bdEmployee.name : '';
     }
   };
   getListById(rowId);
@@ -255,6 +273,94 @@
       const data = await unAuditStockList({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
       createMessage.success('操作成功');
+    }
+  };
+  /**
+   * 基本信息弹框表头数据
+   * @param key
+   */
+  const getInitCols = (key: any) => {
+    const colConfig = {
+      EMP: employeeColumns,
+    };
+    return colConfig[key];
+  };
+  /**
+   * 基本信息弹框选放大镜事件
+   */
+  const onSearch: any = async (key) => {
+    modalType.value = key;
+    await getBasicSelectData(key);
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: 'AND',
+            rule: 'EQ',
+            type: 'string',
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    let dataCols = getInitCols(key);
+    let dataList = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
+    return res;
+  };
+  /**
+   * 基础资料弹框查询事件
+   * @param type
+   * @param keywords
+   */
+  const searchList = async (type, keywords) => {
+    let param: any = [];
+    if (keywords) {
+      param.push(keywords);
+    }
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: param,
+        },
+        config.PUBLIC_REQUEST_URL[type],
+      ),
+    );
+  };
+
+  /**
+   * 基础资料弹框双击选择事件
+   * @param row
+   */
+  const basicClickEvent = async (row) => {
+    switch (modalType.value) {
+      case 'EMP':
+        formState.value.empId = row.id;
+        formState.value.empName = row.name;
+        break;
+    }
+    basicSearchRef.value.bSearch(false);
+  };
+  /**
+   * 基础信息弹框获取下拉框数据
+   * @param key
+   */
+  const getBasicSelectData = async (key: string) => {
+    try {
+      if (key == 'EMP') {
+        let data = await getEmployeeEntity();
+        basicSearchRef.value.init(data);
+      }
+    } catch (e) {
+      console.log('获取选项字段失败', e);
     }
   };
   //返回上一页

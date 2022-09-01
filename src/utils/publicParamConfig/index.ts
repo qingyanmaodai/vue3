@@ -11,6 +11,7 @@ export const config = {
     sub: '/stock/bd-sub-stock/list', //分仓
     location: '/stock/bd-stock-location/list', //仓位
     plan: '/stock/bd-examine/list', //检验方案
+    EMP: '/stock/bd-employee/list', //负责人
   },
   //物料属性
   MATERIAL_ATTR: [

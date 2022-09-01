@@ -214,7 +214,7 @@
   <BasicSearch
     @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
-    :gridOptions="unitGridOptions"
+    :gridOptions="basicGridOptions"
     ref="basicSearchRef"
   />
 </template>
@@ -233,7 +233,7 @@
   } from 'ant-design-vue';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';

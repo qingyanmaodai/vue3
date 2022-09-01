@@ -11,12 +11,14 @@ export interface SubStockProfileEntity extends PublicModel {
   info?: string;
   isDefault?: string;
   isDelete?: string;
-  mainBy?: string;
+  empId?: string;
+  empName?: string;
   phone?: string;
   tenantId?: string;
   // bdStock?: string;
   stockId?: string;
   stockName?: string;
+  bdEmployee?: object;
 }
 
 /**

@@ -198,7 +198,7 @@
       @basicClickEvent="onRuleClickEvent"
       @openSearch="openSearch"
       ref="basicSearchRef"
-      :gridOptions="unitGridOptions"
+      :gridOptions="basicGridOptions"
     />
   </div>
 </template>
@@ -233,7 +233,7 @@
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { getDataList, getSearchOption } from '/@/api/exaRule';
-  import { unitGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;

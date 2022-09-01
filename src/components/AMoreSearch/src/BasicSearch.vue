@@ -191,7 +191,7 @@
     v-if="isShowModel"
     @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
-    :gridOptions="unitGridOptions"
+    :gridOptions="basicGridOptions"
     ref="childBasicSearchRef"
   />
 </template>
@@ -217,7 +217,7 @@
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;

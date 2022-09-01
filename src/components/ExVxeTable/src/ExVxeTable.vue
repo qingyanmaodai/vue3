@@ -46,7 +46,7 @@
   <BasicSearch
     @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
-    :gridOptions="unitGridOptions"
+    :gridOptions="basicGridOptions"
     ref="basicSearchRef"
   />
 </template>
@@ -83,7 +83,7 @@
     editRules: String,
   });
   import { getPublicList } from '/@/api/public';
-  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   //选择框data
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
