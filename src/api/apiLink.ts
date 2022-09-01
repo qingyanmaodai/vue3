@@ -166,7 +166,7 @@ export enum Url {
   UN_BATCH_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-un-audit',
   DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/delete',
   BATCH_DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-delete',
-  GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/getPageList', //获取分仓列表
+  GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/list', //获取分仓列表
   GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/getOne', //查询单条
   IMPORT_SUB_STOCK_LIST = 'http://192.168.200.136:9999/stock/bd-sub-stock/import-list',
   IMPORT_MODEL_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-model',
@@ -181,7 +181,7 @@ export enum Url {
   UN_BATCH_AUDIT_STOCK_LOCATION = '/stock/bd-stock-location/batch-un-audit',
   DELETE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/delete',
   BATCH_DELETE_STOCK_LOCATION = '/stock/bd-stock-location/batch-delete',
-  GET_PAGE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getPageList', //获取仓位列表
+  GET_PAGE_STOCK_LOCATION_LIST = '/stock/bd-stock-location/list', //获取仓位列表
   // GET_LIST_STOCK_LOCATION = '/stock/bd-stock-location/list', //分页查询
   GET_ID_STOCK_LOCATION_LIST = '/stock/bd-stock-location/getOne', //查询单条
   IMPORT_STOCK_LOCATION_LIST = 'http://192.168.200.136:9999/stock/bd-stock-location/import-list',
@@ -250,7 +250,7 @@ export const TableColum = {
     { field: 'number', title: '仓库编码', sortable: true },
     { field: 'name', title: '仓库名称', sortable: true },
     { field: 'address', title: '仓库地址', sortable: true },
-    { field: 'mainBy', title: '仓库管理员', sortable: true },
+    { field: 'bdEmployee.name', title: '仓库管理员', sortable: true },
     { field: 'phone', title: '联系电话', sortable: true },
     {
       field: 'bsStatus',
@@ -265,7 +265,7 @@ export const TableColum = {
     { field: 'number', title: '分仓编码', sortable: true },
     { field: 'name', title: '分仓名称', sortable: true },
     { field: 'address', title: '仓库地址', sortable: true },
-    { field: 'mainBy', title: '仓库管理员', sortable: true },
+    { field: 'bdEmployee.name', title: '仓库管理员', sortable: true },
     { field: 'phone', title: '联系电话', sortable: true },
     {
       field: 'bsStatus',
@@ -280,7 +280,7 @@ export const TableColum = {
     { field: 'number', title: '仓位编码', sortable: true },
     { field: 'name', title: '仓位名称', sortable: true },
     { field: 'address', title: '仓位地址', sortable: true },
-    { field: 'mainBy', title: '仓位管理员', sortable: true },
+    { field: 'bdEmployee.name', title: '仓位管理员', sortable: true },
     { field: 'phone', title: '联系电话', sortable: true },
     {
       field: 'bsStatus',

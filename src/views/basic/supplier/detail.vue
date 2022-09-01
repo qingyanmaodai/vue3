@@ -81,13 +81,17 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="责任人：" ref="mainBy" name="mainBy" class="item">
-                  <Input
-                    allowClear
+                <a-form-item label="责任人：" ref="locationId" name="locationId" class="item">
+                  <ExInput
+                    autocomplete="off"
                     class="input"
-                    v-model:value="formState.mainBy"
-                    placeholder="请输入责任人"
-                    :disabled="isDisable"
+                    placeholder="请选择责任人"
+                    label="责任人"
+                    :show="formState.bsStatus !== 'B'"
+                    v-model:value="tempFormState.empName"
+                    :disabled="formState.bsStatus === 'B'"
+                    @search="onSearch('EMP')"
+                    @clear="onClear('EMP')"
                   />
                 </a-form-item>
               </Col>
@@ -171,7 +175,7 @@
                     v-model:value="tempFormState.groupName"
                     :disabled="isDisable"
                     @search="onGroupSearch"
-                    @clear="onClear"
+                    @clear="onClear('GROUP')"
                   />
                 </a-form-item>
               </Col>
@@ -250,6 +254,13 @@
         @change="groupSelect"
       />
     </a-modal>
+    <BasicSearch
+      :modalType="modalType"
+      @basicClickEvent="basicClickEvent"
+      @searchList="searchList"
+      ref="basicSearchRef"
+      :gridOptions="basicGridOptions"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -283,6 +294,7 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { config } from '/@/utils/publicParamConfig'; //公共配置ts
   import { useRoute, useRouter } from 'vue-router'; //路由
+  import { BasicSearch } from '/@/components/AMoreSearch';
   const router = useRouter();
   import { getOneSupplier, save, update, audit, unAudit, SupplierEntity } from '/@/api/supplier'; //供应商api
   import {
@@ -290,6 +302,8 @@
     queryOneSupplierGroup,
     SupplierGroupEntity,
   } from '/@/api/supplierGroup'; //供应商分组api
+  import { getEmployeeEntity } from '/@/api/employee/index';
+  import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
@@ -297,6 +311,7 @@
   import { cloneDeep } from 'lodash-es';
   import { CountryEntity, getCountryTree } from '/@/api/country';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import { getPublicList } from '/@/api/public';
 
   /* data */
 
@@ -304,11 +319,16 @@
   type tempForm = {
     groupName: string;
     districtArr: number[];
+    empName: string;
   };
   const tempFormState: UnwrapRef<tempForm> = reactive({
     groupName: '', //供应商分组名称
     districtArr: [], //地区数组
+    empName: '', //责任人名称
   });
+  //基础信息查询组件ref
+  const basicSearchRef = ref<any>(null);
+  const modalType = ref<string>(''); //当前显示基础信息弹框类型
   //表单初始数据
   const formData: UnwrapRef<SupplierEntity> = {
     id: undefined,
@@ -317,7 +337,7 @@
     shortName: undefined,
     contact: undefined,
     phone: undefined,
-    mainBy: undefined,
+    empId: undefined,
     address: undefined,
     country: undefined,
     provincial: undefined,
@@ -382,6 +402,7 @@
     if (res) {
       formState.value = res;
       tempFormState.groupName = res.bdSupplierGroup ? res.bdSupplierGroup.name : '';
+      tempFormState.empName = res.bdEmployee ? res.bdEmployee.name : '';
       if (formState.value.bsStatus === 'B') {
         isDisable.value = true;
         showAudit.value = false;
@@ -472,6 +493,98 @@
    */
   const filterOption = (input: string, option: any) => {
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+  };
+
+  /**
+   * 基本信息弹框表头数据
+   * @param key
+   */
+  const getInitCols = (key: any) => {
+    const colConfig = {
+      EMP: employeeColumns,
+    };
+    return colConfig[key];
+  };
+
+  /**
+   * 基本信息弹框选放大镜事件
+   */
+  const onSearch: any = async (key) => {
+    modalType.value = key;
+    await getBasicSelectData(key);
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: 'AND',
+            rule: 'EQ',
+            type: 'string',
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    let dataCols = getInitCols(key);
+    let dataList = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
+    return res;
+  };
+
+  /**
+   * 基础信息弹框获取下拉框数据
+   * @param key
+   */
+  const getBasicSelectData = async (key: string) => {
+    try {
+      if (key == 'EMP') {
+        let data = await getEmployeeEntity();
+        basicSearchRef.value.init(data);
+      }
+    } catch (e) {
+      console.log('获取选项字段失败', e);
+    }
+  };
+
+  /**
+   * 基础资料弹框查询事件
+   * @param type
+   * @param keywords
+   */
+  const searchList = async (type, keywords) => {
+    let param: any = [];
+    if (keywords) {
+      param.push(keywords);
+    }
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: param,
+        },
+        config.PUBLIC_REQUEST_URL[type],
+      ),
+    );
+  };
+
+  /**
+   * 基础资料弹框双击选择事件
+   * @param row
+   */
+  const basicClickEvent = async (row) => {
+    switch (modalType.value) {
+      case 'EMP':
+        formState.value.empId = row.id;
+        tempFormState.empName = row.name;
+        break;
+    }
+    basicSearchRef.value.bSearch(false);
   };
 
   /**
@@ -612,9 +725,14 @@
   /**
    * 清空事件
    */
-  const onClear = () => {
-    formState.value.groupId = '';
-    tempFormState.groupName = '';
+  const onClear = (type) => {
+    if (type === 'GROUP') {
+      formState.value.groupId = '';
+      tempFormState.groupName = '';
+    } else if (type === 'EMP') {
+      formState.value.empId = '';
+      tempFormState.empName = '';
+    }
   };
 
   const back = () => {

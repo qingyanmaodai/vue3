@@ -178,32 +178,32 @@
                       onClear([
                         'stockId',
                         'stockName',
-                        'subStockId',
-                        'subStockName',
-                        'bdStockLocationId',
-                        'bdStockLocationName',
+                        'compartmentId',
+                        'compartmentName',
+                        'locationId',
+                        'locationName',
                       ])
                     "
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="分仓：" ref="subStockId" name="subStockId" class="item">
+                <a-form-item label="分仓：" ref="compartmentId" name="compartmentId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
                     placeholder="请选择分仓"
                     label="分仓"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.subStockName"
+                    v-model:value="formState.compartmentName"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onStock('sub')"
                     @clear="
                       onClear([
-                        'subStockId',
-                        'subStockName',
-                        'bdStockLocationId',
-                        'bdStockLocationName',
+                        'compartmentId',
+                        'compartmentName',
+                        'locationId',
+                        'locationName',
                       ])
                     "
                   />
@@ -212,8 +212,8 @@
               <Col :span="8">
                 <a-form-item
                   label="仓位："
-                  ref="bdStockLocationId"
-                  name="bdStockLocationId"
+                  ref="locationId"
+                  name="locationId"
                   class="item"
                 >
                   <ExInput
@@ -222,10 +222,10 @@
                     placeholder="请选择仓位"
                     label="仓位"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.bdStockLocationName"
+                    v-model:value="formState.locationName"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onStock('location')"
-                    @clear="onClear(['bdStockLocationId', 'bdStockLocationName'])"
+                    @clear="onClear(['locationId', 'locationName'])"
                   />
                 </a-form-item>
               </Col>
@@ -466,7 +466,7 @@
       @basicClickEvent="basicClickEvent"
       @searchList="searchList"
       ref="basicSearchRef"
-      :gridOptions="unitGridOptions"
+      :gridOptions="basicGridOptions"
     />
   </div>
 </template>
@@ -493,7 +493,7 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import {
-    unitGridOptions,
+    basicGridOptions,
     planColumns,
     stockColumns,
     subStockColumns,
@@ -637,7 +637,7 @@
   let queryStockParam = reactive({
     subStock: {},
     stockLocation: {},
-    subStockName: {},
+    compartmentName: {},
     stockName: {},
   });
   //输入框点击放大镜事件
@@ -705,7 +705,7 @@
         break;
       case 'weightUnit':
         formState.value.weightName = row.name;
-        formState.value.bdStockLocationName = '';
+        formState.value.locationName = '';
         formState.value.weightUnitId = row.id;
         break;
       case 'stock':
@@ -725,12 +725,12 @@
         await getNextStock('stock', 'formState.stockId', formState.value.stockId);
         break;
       case 'sub':
-        formState.value.subStockId = row.id;
-        formState.value.subStockName = row.name;
+        formState.value.compartmentId = row.id;
+        formState.value.compartmentName = row.name;
         //存疑--待测试
         queryStockParam.stockLocation = {
           table: '',
-          name: 'subStockId',
+          name: 'compartmentId',
           column: 'sub_stock_id',
           link: 'AND',
           rule: 'EQ',
@@ -744,12 +744,12 @@
         formState.value.stockName = stockByStock.records[0].name;
         break;
       case 'location':
-        formState.value.bdStockLocationId = row.id;
-        formState.value.bdStockLocationName = row.name;
-        const subStockByStockLocation = await getNextStock('sub', 'id', row.subStockId);
+        formState.value.locationId = row.id;
+        formState.value.locationName = row.name;
+        const subStockByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
         const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        formState.value.subStockId = subStockByStockLocation.records[0].id;
-        formState.value.subStockName = subStockByStockLocation.records[0].name;
+        formState.value.compartmentId = subStockByStockLocation.records[0].id;
+        formState.value.compartmentName = subStockByStockLocation.records[0].name;
         formState.value.stockId = stockByStockLocation.records[0].id;
         formState.value.stockName = stockByStockLocation.records[0].name;
         break;
@@ -798,8 +798,8 @@
         formState.value.baseUnitName = res.baseUnit.name;
       }
       if (res.bdStockLocation) {
-        formState.value.bdStockLocationId = res.bdStockLocation.id;
-        formState.value.bdStockLocationName = res.bdStockLocation.name;
+        formState.value.locationId = res.bdStockLocation.id;
+        formState.value.locationName = res.bdStockLocation.name;
       }
       if (res.bdExamine) {
         formState.value.bdExamineName = res.bdExamine.name;
@@ -828,12 +828,12 @@
           endWith: '',
         };
       }
-      if (formState.value.subStockId) {
-        formState.value.subStockId = res.bdSubStock.id;
-        formState.value.subStockName = res.bdSubStock.name;
+      if (formState.value.compartmentId) {
+        formState.value.compartmentId = res.bdSubStock.id;
+        formState.value.compartmentName = res.bdSubStock.name;
         queryStockParam.stockLocation = {
           table: '',
-          name: 'subStockId',
+          name: 'compartmentId',
           column: 'sub_stock_id',
           link: 'AND',
           rule: 'EQ',

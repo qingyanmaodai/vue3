@@ -9,7 +9,7 @@ export interface SupplierEntity extends PublicModel {
   shortName?: string;
   contact?: string;
   phone?: string;
-  mainBy?: string;
+  empId?: string;
   address?: string;
   country?: string;
   provincial?: number;

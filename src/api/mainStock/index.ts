@@ -11,9 +11,11 @@ export interface StockProfileEntity extends PublicModel {
   info?: string;
   isDefault?: string;
   isDelete?: string;
-  mainBy?: string;
+  empId?: string;
+  empName?: string;
   phone?: string;
   tenantId?: number;
+  bdEmployee?: object;
 }
 /**
  * 获取仓库选项

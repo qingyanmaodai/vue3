@@ -42,7 +42,7 @@
   <BasicSearch
     @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
-    :gridOptions="unitGridOptions"
+    :gridOptions="basicGridOptions"
     ref="basicSearchRef"
   />
 </template>
@@ -55,7 +55,7 @@
   import { Button } from 'ant-design-vue';
   import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
   import { getPublicList } from '/@/api/public';
-  import { unitGridOptions } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   const AButton = Button;
   const props = defineProps({
@@ -72,6 +72,7 @@
     },
     editRules: Object, //校验规则
   });
+  //选择框data
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data): void; //查询

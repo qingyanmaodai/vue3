@@ -17,7 +17,7 @@ export interface DataItem {
   updateBy: string; //修改人
   updateTime: string; //修改日期
 }
-export const unitGridOptions = reactive<VxeGridProps>({
+export const basicGridOptions = reactive<VxeGridProps>({
   border: true,
   height: 400,
   align: 'center',
@@ -72,7 +72,7 @@ export const stockColumns = [
   { field: 'number', title: '仓库编码', sortable: true },
   { field: 'name', title: '仓库名称', sortable: true },
   { field: 'address', title: '仓库地址', sortable: true },
-  { field: 'mainBy', title: '仓库管理员', sortable: true },
+  { field: 'bdEmployee.name', title: '仓库管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },
   {
     field: 'bsStatus',
@@ -87,7 +87,7 @@ export const subStockColumns = [
   { field: 'number', title: '分仓编码', sortable: true },
   { field: 'name', title: '分仓名称', sortable: true },
   { field: 'address', title: '仓库地址', sortable: true },
-  { field: 'mainBy', title: '仓库管理员', sortable: true },
+  { field: 'bdEmployee.name', title: '仓库管理员', sortable: true },
   { field: 'phone', title: '联系电话', sortable: true },
   {
     field: 'bsStatus',
@@ -132,6 +132,22 @@ export const exaRuleColumns = [
   { field: 'min', title: '最小值', sortable: true },
   { field: 'max', title: '最大值', sortable: true },
   { field: 'percent', title: '抽检百分比', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+];
+//人员档案
+export const employeeColumns = [
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '编码', sortable: true },
+  { field: 'name', title: '人员名称', sortable: true },
+  { field: 'entryDate', title: '入职日期', sortable: true },
+  { field: 'birthday', title: '出生日期', sortable: true },
+  { field: 'address', title: '地址', sortable: true },
   { field: 'mark', title: '备注', sortable: true },
   {
     field: 'bsStatus',
