@@ -261,10 +261,10 @@
     ruleId: '',
     ruleName: '',
   };
-  type Emits = {
-    (event: 'saveDataEvent'): void;
-  };
-  const emit = defineEmits<Emits>();
+  // type Emits = {
+  //   (event: 'saveDataEvent'): void;
+  // };
+  // const emit = defineEmits<Emits>();
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -345,8 +345,9 @@
         }
         formState.value.bsStatus = 'A';
         //--------------------------------------------------测试--------------保存-------------------
-        emit('saveDataEvent');
-
+        vxeTableRef.value.saveDataEvent();
+        // emit('saveDataEvent');
+        console.log('aocun------------tableData------');
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -397,7 +398,7 @@
       id: '',
       name: '',
     };
-    // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
+    vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
   };
   //row-弹框中的双击行数据------data-当前行--------------------------------------
   const cellClickTableEvent = (row, data) => {

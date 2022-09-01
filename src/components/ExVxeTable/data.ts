@@ -12,6 +12,11 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   rowConfig: {
     isHover: true,
   },
+  sortConfig: {
+    trigger: 'cell',
+    defaultSort: { field: 'number', order: 'asc' },
+    orders: ['asc', 'desc', null],
+  },
   editConfig: { trigger: 'dblclick', mode: 'cell', showStatus: true },
   //操作按钮
   toolbarConfig: {
@@ -28,10 +33,13 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
 //检验方案
 export const ruleOfExaColumns = [
   { type: 'checkbox', width: 50 },
-  { type: 'seq', title: '序号', width: 50 },
+  { type: 'seq', title: ' ', width: 50 },
+  { field: 'sort', title: '顺序号', sortable: true, editRender: { name: '$input' } },
   {
     field: 'number',
     title: '项目编码',
+    sortable: true,
+    className: 'disableProp',
     // editRender: { name: '$input', attrs: { placeholder: '请输入项目编码' } },
   },
   {

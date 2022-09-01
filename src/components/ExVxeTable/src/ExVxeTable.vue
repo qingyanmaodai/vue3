@@ -12,19 +12,21 @@
   >
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
-        <vxe-button
-          status="primary"
+        <a-button
+          type="primary"
+          ghost
           v-show="props.isShowInsertRow"
-          size="mini"
+          size="small"
           @click="insertRowEvent"
-          >新增行</vxe-button
+          >新增行</a-button
         >
-        <vxe-button
-          status="danger"
+        <a-button
+          style="margin-left: 10px"
+          danger
           v-show="props.isShowRemoveRow"
-          size="mini"
+          size="small"
           @click="removeRowEvent"
-          >删除行</vxe-button
+          >删除行</a-button
         >
       </div>
     </template>
@@ -46,14 +48,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
+  import { Button } from 'ant-design-vue';
   import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
   import { getPublicList } from '/@/api/public';
   import { unitGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
+  const AButton = Button;
   const props = defineProps({
     gridOptions: Object,
     columns: Array,
@@ -133,6 +137,7 @@
     };
     console.log(nowCheckRow.data, '111111', prop);
     console.log(tableInitData.value, 'asasqas');
+    sortEventNum();
     basicSearchRef.value.bSearch(false);
   };
   //基本信息数据查询
@@ -169,6 +174,14 @@
   //   }
   //   return res ? res.label : '';
   // };
+  //单元格有值时自动排序
+  const sortEventNum = () => {
+    const $grid: any = xGrid.value;
+    if (nowCheckRow.data.number) {
+      $grid.sort('number', 'asc');
+    }
+  };
+  // sortEventNum();
 
   //点击清空图标清空事件
   const onClear = (data, column) => {
@@ -192,6 +205,7 @@
   };
   //保存数据
   const saveDataEvent = () => {
+    // data = tableInitData.value;
     const data = tableInitData.value;
     console.log('baocun--data', data);
   };
@@ -199,10 +213,13 @@
     init,
     saveDataEvent,
   });
+
+  onMounted(() => {
+  });
 </script>
 <style scoped lang="less">
   :deep(.disableProp) {
-    background-color: rgb(245 245 245);
+    background-color: rgb(225 225 224);
   }
   .table {
     background-color: #fff;
