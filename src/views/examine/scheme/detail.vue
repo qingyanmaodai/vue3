@@ -16,9 +16,9 @@
         >
       </div>
     </LayoutHeader>
-    <a-card class="content">
-      <a-splitpanes class="default-theme" horizontal style="height: calc(100vh - 190px)">
-        <pane :size="100 - paneSize" style="background-color: #fff">
+    <div class="content">
+      <a-splitpanes class="default-theme" horizontal>
+        <pane :size="paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
               <a-form ref="formRef" :model="formState" :rules="formRules">
@@ -184,7 +184,7 @@
             </TabPane>
           </Tabs>
         </pane>
-        <pane :size="paneSize" style="padding-bottom: -90px">
+        <pane :size="100 - paneSize">
           <ExBasicTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
@@ -196,7 +196,7 @@
           />
         </pane>
       </a-splitpanes>
-    </a-card>
+    </div>
     <BasicSearch
       @basicClickEvent="onRuleClickEvent"
       @openSearch="openSearch"
@@ -210,7 +210,6 @@
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
-    Card,
     Col,
     Form,
     FormItem,
@@ -244,7 +243,6 @@
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;
-  const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
   const formRef = ref();
@@ -455,6 +453,11 @@
     border: 1px solid #e5e7eb;
     margin: 10px;
     height: calc(100% - 80px);
+    background-color: #fff;
+    padding: 10px;
+  }
+  .default-theme {
+    //height: calc(100% - 80px);
   }
   :deep(.vxe-grid) {
     font-size: 14px;

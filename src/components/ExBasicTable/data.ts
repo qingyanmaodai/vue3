@@ -12,11 +12,11 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   rowConfig: {
     isHover: true,
   },
-  sortConfig: {
-    trigger: 'cell',
-    defaultSort: { field: 'sort', order: 'asc' },
-    orders: ['asc', 'desc', null],
-  },
+  // sortConfig: {
+  //   trigger: 'cell',
+  //   defaultSort: { field: 'sort', order: 'asc' },
+  //   orders: ['asc', 'desc', null],
+  // },
   editConfig: { trigger: 'dblclick', mode: 'cell', showStatus: true },
   //操作按钮
   toolbarConfig: {
@@ -39,13 +39,14 @@ export const ruleOfExaColumns = [
     title: '顺序号',
     width: 100,
     sortable: true,
-    editRender: { name: '$input' },
+    // editRender: { name: '$input' },
     fixed: 'left',
   },
   {
     field: 'number',
     title: '项目编码',
     sortable: true,
+    width: 1000,
     className: 'disableProp',
     // editRender: { name: '$input', attrs: { placeholder: '请输入项目编码' } },
   },
@@ -53,6 +54,7 @@ export const ruleOfExaColumns = [
     field: 'name',
     title: '项目名称',
     sortable: true,
+    width: 100,
     className: 'disableProp',
     // editRender: { name: '$input', attrs: { placeholder: '请输入项目名称' } },
   },
@@ -60,6 +62,7 @@ export const ruleOfExaColumns = [
     field: 'selectOne',
     title: '下拉选择类型',
     sortable: true,
+    width: 100,
     slots: { default: 'selectOne' },
   },
   {
@@ -67,14 +70,14 @@ export const ruleOfExaColumns = [
     title: '数字型-单价',
     sortable: true,
     width: 100,
-    editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
+    // editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
   },
   {
     field: 'max',
     title: '数字型-数量',
     sortable: true,
     width: 100,
-    editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
+    // editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
   },
   {
     field: 'sum',
@@ -88,7 +91,7 @@ export const ruleOfExaColumns = [
     title: '时间型',
     sortable: true,
     width: 100,
-    editRender: { name: '$input', props: { type: 'date' } },
+    // editRender: { name: '$input', props: { type: 'date' } },
   },
   {
     field: 'desc.name',
@@ -99,7 +102,7 @@ export const ruleOfExaColumns = [
       list: 'GET_EXA_RULE_LIST',
       select: 'GET_EXA_RULE_OPTIONS_LIST',
     },
-    editRender: { name: '$input' },
+    // editRender: { name: '$input' },
     slots: {
       edit: 'model',
     },
@@ -113,7 +116,7 @@ export const ruleOfExaColumns = [
       list: 'GET_EXA_PROJECT_LIST', //弹框表格数据
       select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
     },
-    editRender: { name: '$input' },
+    // editRender: { name: '$input' },
     slots: {
       edit: 'model',
     },

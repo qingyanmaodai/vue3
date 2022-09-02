@@ -2,37 +2,33 @@
   <vxe-grid
     border
     ref="xGrid"
-    class="table"
-    max-height="100%"
+    height="auto"
     show-overflow
     show-header-overflow
-    auto-resize
     v-bind="props.gridOptions"
     :columns="props.columns"
     :data="tableInitData"
     :edit-rules="editRules"
-    :export-config="{}"
     @edit-closed="editClosed"
+    auto-resize
   >
     <template #toolbar_buttons>
-      <div style="width: 100%; margin-left: 10px">
-        <a-button
-          type="primary"
-          ghost
-          v-show="props.isShowInsertRow"
-          size="small"
-          @click="insertRowEvent"
-          >新增行</a-button
-        >
-        <a-button
-          style="margin-left: 10px"
-          danger
-          v-show="props.isShowRemoveRow"
-          size="small"
-          @click="removeRowEvent"
-          >删除行</a-button
-        >
-      </div>
+      <a-button
+        type="primary"
+        ghost
+        v-show="props.isShowInsertRow"
+        size="small"
+        @click="insertRowEvent"
+        >新增行</a-button
+      >
+      <a-button
+        style="margin-left: 10px"
+        danger
+        v-show="props.isShowRemoveRow"
+        size="small"
+        @click="removeRowEvent"
+        >删除行</a-button
+      >
     </template>
     <template #model="{ row, column }">
       <ExInput
@@ -62,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, PropType, reactive, ref, toRef } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
@@ -72,6 +68,7 @@
   import { getPublicList } from '/@/api/public';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
+  import { VxeTablePropTypes } from 'vxe-table/types/all';
   const AButton = Button;
   const props = defineProps({
     gridOptions: Object,
@@ -85,7 +82,7 @@
       type: Boolean,
       default: true,
     },
-    editRules: Object, //校验规则
+    editRules: Object as PropType<VxeTablePropTypes.EditRules>, //校验规则
     sunAmount: String,
     fieldName: {
       type: String,
@@ -106,7 +103,10 @@
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const basicSearchRef: any = ref(null); //基础信息查询组件ref
   const xGrid = ref<VxeGridInstance>();
-  const tableInit = reactive<any>({ data: [] }); //数据初始化
+  const tableData: any[] = [];
+  const tableInit = reactive({
+    data: tableData,
+  }); //数据初始化
 
   const tableInitData = toRef(tableInit, 'data');
   //获取表格初始值
@@ -226,8 +226,8 @@
   const insertRowEvent = async () => {
     const $grid: any = xGrid.value;
     const record = {};
-    const { row: newRow } = await $grid.insert(record);
-    tableInitData.value.push(newRow);
+    const { row: newRow } = await $grid.insertAt(record, -1);
+    // tableInitData.value.push(newRow);
     console.log('tableInitData.value', tableInitData.value);
   };
 
@@ -252,12 +252,6 @@
 <style scoped lang="less">
   :deep(.disableProp) {
     background-color: rgb(225 225 224);
-  }
-  .table {
-    background-color: #fff;
-    width: 100%;
-    margin: 0;
-    padding: 0;
   }
   :deep(.vxe-toolbar .vxe-tools--operate) {
     margin-right: 10px;
