@@ -10,7 +10,7 @@ export interface StockLocationProfileEntity extends PublicModel {
   stockName?: string;
   compartmentName?: string;
   compartmentId?: string;
-  bdSubStock?: string;
+  bdStockCompartment?: string;
   address?: string;
   erpCode?: string;
   info?: string;

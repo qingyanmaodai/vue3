@@ -214,7 +214,7 @@ export const stockColumns = [
 ];
 
 /*分仓列表表头*/
-export const subStockColumns = [
+export const stockCompartmentColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '分仓编码', slots: { default: 'number' }, sortable: true },
@@ -241,7 +241,7 @@ export const stockLocationColumns = [
   { field: 'number', title: '仓位编码', slots: { default: 'number' }, sortable: true },
   { field: 'name', title: '仓位名称', sortable: true },
   { field: 'bdStock.name', title: '所属仓库', sortable: true },
-  { field: 'bdSubStock.name', title: '所属分仓', sortable: true },
+  { field: 'bdStockCompartment.name', title: '所属分仓', sortable: true },
   { field: 'address', title: '地址', sortable: true },
   { field: 'mark', title: '备注', sortable: true },
   { field: 'createTime', title: '创建日期', sortable: true },

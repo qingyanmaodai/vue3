@@ -181,12 +181,12 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { basicGridOptions, stockColumns, subStockColumns } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions, stockColumns, stockCompartmentColumns } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { config } from '/@/utils/publicParamConfig';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { getStockOption } from '/@/api/mainStock';
-  import { getSubOption } from '/@/api/subStock';
+  import { getSubOption } from '/@/api/stockCompartment';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
@@ -216,7 +216,7 @@
   const getCurrentCols = (key: any) => {
     const colConfig = {
       stock: stockColumns,
-      sub: subStockColumns,
+      sub: stockCompartmentColumns,
     };
     return colConfig[key];
   };
@@ -271,7 +271,7 @@
   };
   //弹窗类型
   let queryStockParam = reactive({
-    subStock: {},
+    stockCompartment: {},
     stockLocation: {},
     compartmentName: {},
     stockName: {},
@@ -341,7 +341,7 @@
       case 'stock':
         formState.value.stockId = row.id;
         formState.value.stockName = row.name;
-        queryStockParam.subStock = {
+        queryStockParam.stockCompartment = {
           table: '',
           name: 'stockId',
           column: 'stock_id',
@@ -373,7 +373,7 @@
     let param: any = [];
     param.push(keywords);
     if (type == 'sub') {
-      param.push(queryStockParam.subStock);
+      param.push(queryStockParam.stockCompartment);
     }
     basicSearchRef.value.initList(
       await getPublicList(
@@ -392,16 +392,16 @@
       });
       formState.value = res;
       if (formState.value.compartmentId) {
-        formState.value.compartmentId = res.bdSubStock.id;
-        formState.value.compartmentName = res.bdSubStock.name;
+        formState.value.compartmentId = res.bdStockCompartment.id;
+        formState.value.compartmentName = res.bdStockCompartment.name;
         queryStockParam.stockLocation = {
           table: '',
           name: 'compartmentId',
-          column: 'sub_stock_id',
+          column: 'stock_compartment_id',
           link: 'AND',
           rule: 'EQ',
           type: 'string',
-          val: res.bdSubStock.id,
+          val: res.bdStockCompartment.id,
           startWith: '',
           endWith: '',
         };

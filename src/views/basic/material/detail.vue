@@ -199,23 +199,13 @@
                     :disabled="formState.bsStatus === 'B'"
                     @search="onStock('sub')"
                     @clear="
-                      onClear([
-                        'compartmentId',
-                        'compartmentName',
-                        'locationId',
-                        'locationName',
-                      ])
+                      onClear(['compartmentId', 'compartmentName', 'locationId', 'locationName'])
                     "
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  label="仓位："
-                  ref="locationId"
-                  name="locationId"
-                  class="item"
-                >
+                <a-form-item label="仓位：" ref="locationId" name="locationId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -496,7 +486,7 @@
     basicGridOptions,
     planColumns,
     stockColumns,
-    subStockColumns,
+    stockCompartmentColumns,
     locationColumns,
     unitColumns,
   } from '/@/components/AMoreSearch/data';
@@ -513,7 +503,7 @@
     updateMatTable,
   } from '/@/api/matTable';
   import { getStockOption } from '/@/api/mainStock';
-  import { getSubOption } from '/@/api/subStock';
+  import { getSubOption } from '/@/api/stockCompartment';
   import { getLocationOption } from '/@/api/stockLocation';
   import { getUnitOption } from '/@/api/unit';
   import { getPublicList } from '/@/api/public';
@@ -546,7 +536,7 @@
       baseUnit: unitColumns,
       weightUnit: unitColumns,
       stock: stockColumns,
-      sub: subStockColumns,
+      sub: stockCompartmentColumns,
       location: locationColumns,
       plan: planColumns,
     };
@@ -616,7 +606,7 @@
         let arr: any = [];
         let data = await getLocationOption({ params: '' });
         arr = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'sub_stock_id' && e.fieldName != 'stock_id');
+        arr = arr.filter((e) => e.fieldName != 'stock_compartment_id' && e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
       } catch (e) {
         console.log('获取仓位选项字段失败', e);
@@ -635,7 +625,7 @@
   };
   //弹窗类型
   let queryStockParam = reactive({
-    subStock: {},
+    stockCompartment: {},
     stockLocation: {},
     compartmentName: {},
     stockName: {},
@@ -711,7 +701,7 @@
       case 'stock':
         formState.value.stockId = row.id;
         formState.value.stockName = row.name;
-        queryStockParam.subStock = {
+        queryStockParam.stockCompartment = {
           table: '',
           name: 'stockId',
           column: 'stock_id',
@@ -731,7 +721,7 @@
         queryStockParam.stockLocation = {
           table: '',
           name: 'compartmentId',
-          column: 'sub_stock_id',
+          column: 'stock_compartment_id',
           link: 'AND',
           rule: 'EQ',
           type: 'string',
@@ -746,10 +736,10 @@
       case 'location':
         formState.value.locationId = row.id;
         formState.value.locationName = row.name;
-        const subStockByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
+        const stockCompartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
         const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        formState.value.compartmentId = subStockByStockLocation.records[0].id;
-        formState.value.compartmentName = subStockByStockLocation.records[0].name;
+        formState.value.compartmentId = stockCompartmentByStockLocation.records[0].id;
+        formState.value.compartmentName = stockCompartmentByStockLocation.records[0].name;
         formState.value.stockId = stockByStockLocation.records[0].id;
         formState.value.stockName = stockByStockLocation.records[0].name;
         break;
@@ -816,7 +806,7 @@
       if (formState.value.stockId) {
         formState.value.stockId = res.bdStock.id;
         formState.value.stockName = res.bdStock.name;
-        queryStockParam.subStock = {
+        queryStockParam.stockCompartment = {
           table: '',
           name: 'stockId',
           column: 'stock_id',
@@ -829,16 +819,16 @@
         };
       }
       if (formState.value.compartmentId) {
-        formState.value.compartmentId = res.bdSubStock.id;
-        formState.value.compartmentName = res.bdSubStock.name;
+        formState.value.compartmentId = res.bdStockCompartment.id;
+        formState.value.compartmentName = res.bdStockCompartment.name;
         queryStockParam.stockLocation = {
           table: '',
           name: 'compartmentId',
-          column: 'sub_stock_id',
+          column: 'stock_compartment_id',
           link: 'AND',
           rule: 'EQ',
           type: 'string',
-          val: res.bdSubStock.id,
+          val: res.bdStockCompartment.id,
           startWith: '',
           endWith: '',
         };
@@ -852,7 +842,7 @@
     let param: any = [];
     param.push(keywords);
     if (type == 'sub') {
-      param.push(queryStockParam.subStock);
+      param.push(queryStockParam.stockCompartment);
     } else if (type == 'location') {
       param.push(queryStockParam.stockLocation);
     }

@@ -90,7 +90,7 @@ export enum Url {
   //共用--实体信息--搜索的下拉框
   GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //计量（基本）单位查询字段
   GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
-  GET_SUB_LIST = '/stock/bd-sub-stock/query-dto', //获取分仓实体信息
+  GET_SUB_LIST = '/stock/bd-stock-compartment/query-dto', //获取分仓实体信息
   GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
 
   //仓库管理
@@ -160,19 +160,19 @@ export enum Url {
   UPLOAD_EXA_SCHEME = 'http://192.168.200.136:9999/stock/bd-examine/import-list',
 
   //分仓管理
-  AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/audit',
-  BATCH_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-audit',
-  UN_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/un-audit',
-  UN_BATCH_AUDIT_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-un-audit',
-  DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/delete',
-  BATCH_DELETE_SUB_STOCK_LIST = '/stock/bd-sub-stock/batch-delete',
-  GET_PAGE_SUB_STOCK_LIST = '/stock/bd-sub-stock/list', //获取分仓列表
-  GET_ID_SUB_STOCK_LIST = '/stock/bd-sub-stock/getOne', //查询单条
-  IMPORT_SUB_STOCK_LIST = 'http://192.168.200.136:9999/stock/bd-sub-stock/import-list',
-  IMPORT_MODEL_SUB_STOCK_LIST = '/stock/bd-sub-stock/import-model',
-  EXPORT_SUB_STOCK_LIST = '/stock/bd-sub-stock/export-list',
-  ADD_SUB_STOCK_LIST = '/stock/bd-sub-stock/save',
-  UPDATE_SUB_STOCK_LIST = '/stock/bd-sub-stock/update',
+  AUDIT_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/audit',
+  BATCH_AUDIT_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/batch-audit',
+  UN_AUDIT_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/un-audit',
+  UN_BATCH_AUDIT_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/batch-un-audit',
+  DELETE_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/delete',
+  BATCH_DELETE_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/batch-delete',
+  GET_PAGE_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/list', //获取分仓列表
+  GET_ID_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/getOne', //查询单条
+  IMPORT_STOCK_COMPARTMENT_LIST = 'http://192.168.200.136:9999/stock/bd-stock-compartment/import-list',
+  IMPORT_MODEL_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/import-model',
+  EXPORT_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/export-list',
+  ADD_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/save',
+  UPDATE_STOCK_COMPARTMENT_LIST = '/stock/bd-stock-compartment/update',
 
   //仓位管理
   AUDIT_STOCK_LOCATION_LIST = '/stock/bd-stock-location/audit',

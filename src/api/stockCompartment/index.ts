@@ -2,7 +2,7 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface SubStockProfileEntity extends PublicModel {
+export interface StockCompartmentProfileEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -39,13 +39,13 @@ export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode =
 /**
  * 获取表格信息
  */
-export function getSubStockTable(
+export function getStockCompartmentTable(
   json: RequestData<SearchParams[]>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_SUB_STOCK_LIST,
+      url: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -57,13 +57,13 @@ export function getSubStockTable(
 /**
  * 添加分仓信息
  */
-export function addSubStockList(
-  json: RequestData<SubStockProfileEntity>,
+export function addStockCompartmentList(
+  json: RequestData<StockCompartmentProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.ADD_SUB_STOCK_LIST,
+      url: Url.ADD_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -75,13 +75,13 @@ export function addSubStockList(
 /**
  * 编辑分仓信息
  */
-export function updateSubStockList(
-  json: RequestData<SubStockProfileEntity>,
+export function updateStockCompartmentList(
+  json: RequestData<StockCompartmentProfileEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.UPDATE_SUB_STOCK_LIST,
+      url: Url.UPDATE_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -93,10 +93,10 @@ export function updateSubStockList(
 /**
  * 审核分仓信息
  */
-export function auditSubStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function auditStockCompartmentList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.AUDIT_SUB_STOCK_LIST,
+      url: Url.AUDIT_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -108,13 +108,13 @@ export function auditSubStockList(json: RequestData<object>, mode: ErrorMessageM
 /**
  * 批量审核分仓信息
  */
-export function auditSubStockListBatch(
+export function auditStockCompartmentListBatch(
   json: RequestData<object>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_SUB_STOCK_LIST,
+      url: Url.BATCH_AUDIT_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -126,10 +126,10 @@ export function auditSubStockListBatch(
 /**
  * 反审核分仓信息
  */
-export function unAuditSubStockList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function unAuditStockCompartmentList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_AUDIT_SUB_STOCK_LIST,
+      url: Url.UN_AUDIT_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -141,13 +141,13 @@ export function unAuditSubStockList(json: RequestData<object>, mode: ErrorMessag
 /**
  * 批量反审核分仓信息
  */
-export function unAuditSubStockListBatch(
+export function unAuditStockCompartmentListBatch(
   json: RequestData<object>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_SUB_STOCK_LIST,
+      url: Url.UN_BATCH_AUDIT_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -159,10 +159,13 @@ export function unAuditSubStockListBatch(
 /**
  * 查询单条
  */
-export function getSubStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function getStockCompartmentListById(
+  json: RequestData<string>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ID_SUB_STOCK_LIST,
+      url: Url.GET_ID_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -174,10 +177,13 @@ export function getSubStockListById(json: RequestData<string>, mode: ErrorMessag
 /**
  * 删除单条
  */
-export function delSubStockListById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+export function delStockCompartmentListById(
+  json: RequestData<string>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_SUB_STOCK_LIST,
+      url: Url.DELETE_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -189,13 +195,13 @@ export function delSubStockListById(json: RequestData<string>, mode: ErrorMessag
 /**
  * 删除多条
  */
-export function delSubStockListBatch(
+export function delStockCompartmentListBatch(
   json: RequestData<Array<string>>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_SUB_STOCK_LIST,
+      url: Url.BATCH_DELETE_STOCK_COMPARTMENT_LIST,
       data: json,
     },
     {
@@ -207,10 +213,13 @@ export function delSubStockListBatch(
 /**
  * 导出表格数据
  */
-export function exportSubStockList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function exportStockCompartmentList(
+  json: RequestData<any>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_SUB_STOCK_LIST,
+      url: Url.EXPORT_STOCK_COMPARTMENT_LIST,
       data: json,
       responseType: 'blob',
     },
@@ -224,10 +233,13 @@ export function exportSubStockList(json: RequestData<any>, mode: ErrorMessageMod
 /**
  * 导入的下载模板
  */
-export function importSubStockModel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+export function importStockCompartmentModel(
+  json: RequestData<any>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_SUB_STOCK_LIST,
+      url: Url.IMPORT_MODEL_STOCK_COMPARTMENT_LIST,
       data: json,
       responseType: 'blob',
     },

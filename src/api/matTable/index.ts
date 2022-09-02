@@ -28,7 +28,7 @@ export interface MatProfileEntity extends PublicModel {
   labelValue?: string;
   examineId?: string;
   bdExamineName?: string;
-  bdSubStock?: object;
+  bdStockCompartment?: object;
   locationId?: string;
   locationName?: string;
   enableSn?: number;

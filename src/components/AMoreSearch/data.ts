@@ -81,7 +81,7 @@ export const stockColumns = [
     slots: { default: 'status' },
   },
 ];
-export const subStockColumns = [
+export const stockCompartmentColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '分仓编码', sortable: true },

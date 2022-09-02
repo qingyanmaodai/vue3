@@ -194,13 +194,13 @@
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
-    addSubStockList,
-    auditSubStockList,
-    getSubStockListById,
-    SubStockProfileEntity,
-    unAuditSubStockList,
-    updateSubStockList,
-  } from '/@/api/subStock';
+    addStockCompartmentList,
+    auditStockCompartmentList,
+    getStockCompartmentListById,
+    StockCompartmentProfileEntity,
+    unAuditStockCompartmentList,
+    updateStockCompartmentList,
+  } from '/@/api/stockCompartment';
   import { basicGridOptions, employeeColumns, stockColumns } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { config } from '/@/utils/publicParamConfig';
@@ -228,7 +228,7 @@
     stockId: [{ required: true, message: '请输入所属仓库' }],
   });
   //初始化
-  const formData: SubStockProfileEntity = {
+  const formData: StockCompartmentProfileEntity = {
     id: undefined,
     number: '',
     name: '',
@@ -250,7 +250,7 @@
   //获取初始值
   const getListById = async (rowId) => {
     if (rowId) {
-      const res: any = await getSubStockListById({ params: rowId });
+      const res: any = await getStockCompartmentListById({ params: rowId });
       formState.value = res;
       formState.value.stockName = res.bdStock ? res.bdStock.name : '';
       formState.value.empName = res.bdEmployee ? res.bdEmployee.name : '';
@@ -407,9 +407,9 @@
       .validate()
       .then(async () => {
         if (!formState.value.id) {
-          data = await addSubStockList({ params: formState.value });
+          data = await addStockCompartmentList({ params: formState.value });
         } else {
-          data = await updateSubStockList({ params: formState.value });
+          data = await updateStockCompartmentList({ params: formState.value });
         }
         await getListById(data.id);
         createMessage.success('操作成功');
@@ -427,7 +427,7 @@
       .then(async () => {
         const type = await VXETable.modal.confirm('您确定要保存并审核当前数据吗?');
         if (type === 'confirm') {
-          const data = await auditSubStockList({ params: formState.value });
+          const data = await auditStockCompartmentList({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
           createMessage.success('操作成功');
         }
@@ -441,7 +441,7 @@
   const unExam = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核当前数据吗?');
     if (type === 'confirm') {
-      const data = await unAuditSubStockList({ params: formState.value });
+      const data = await unAuditStockCompartmentList({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
       createMessage.success('操作成功');
     }

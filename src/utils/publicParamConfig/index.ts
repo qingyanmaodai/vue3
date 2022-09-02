@@ -8,7 +8,7 @@ export const config = {
     baseUnit: '/stock/bd-unit/list', //基本单位
     weightUnit: '/stock/bd-unit/list', //重量单位
     stock: '/stock/bd-stock/list', //仓库
-    sub: '/stock/bd-sub-stock/list', //分仓
+    sub: '/stock/bd-stock-compartment/list', //分仓
     location: '/stock/bd-stock-location/list', //仓位
     plan: '/stock/bd-examine/list', //检验方案
     EMP: '/stock/bd-employee/list', //负责人

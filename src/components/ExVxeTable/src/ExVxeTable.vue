@@ -215,8 +215,7 @@
     saveDataEvent,
   });
 
-  onMounted(() => {
-  });
+  onMounted(() => {});
 </script>
 <style scoped lang="less">
   :deep(.disableProp) {
