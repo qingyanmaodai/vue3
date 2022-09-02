@@ -185,12 +185,13 @@
           </Tabs>
         </pane>
         <pane :size="paneSize" style="padding-bottom: -90px">
-          <ExVxeTable
+          <ExBasicTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
             :editRules="formRules"
             @cellClickTableEvent="cellClickTableEvent"
+            @countAmount="countAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
           />
         </pane>
@@ -205,7 +206,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExVxeTable/data';
+  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExBasicTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
@@ -225,7 +226,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExInput } from '/@/components/ExInput';
-  import { ExVxeTable } from '/@/components/ExVxeTable';
+  import { ExBasicTable } from '/@/components/ExBasicTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
@@ -344,10 +345,8 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
-        //--------------------------------------------------测试--------------保存-------------------
-        vxeTableRef.value.saveDataEvent();
-        // emit('saveDataEvent');
-        console.log('aocun------------tableData------');
+        //--------------------------------------------------测试--------------保存-------------------ok
+        console.log('拿到表格数据', vxeTableRef.value.tableInitData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -383,6 +382,7 @@
   const back = () => {
     router.go(-1);
   };
+
   const init = async () => {
     if (dataId) {
       await getOneById({ params: dataId }).then(async (res) => {
@@ -392,21 +392,35 @@
     //测试用的-------------------表格------------------------------现在获取数据的接口没有这两个参数
     formState.value.desc = {
       id: '1563371283141058562',
-      name: '1234wefr',
+      name: '32222',
     };
     formState.value.desc1 = {
       id: '',
       name: '',
     };
-    vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------
+    // formState.value.sum = 'sunAmount';
+    vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------ok
   };
-  //row-弹框中的双击行数据------data-当前行--------------------------------------
-  const cellClickTableEvent = (row, data) => {
-    console.log('传值', row, data);
-    data.name = row.name;
-    data.number = row.number;
-    data.min = row.min;
-    data.max = row.max;
+  //-------------------------------------------计算合计---ok
+  const countAmount = (row) => {
+    if (row.min && row.max) {
+      row.sum = row.min * row.max;
+      return row;
+    }
+  };
+  //row-弹框中的双击行数据------data-当前行--------------------------------------ok
+  const cellClickTableEvent = (row, data, column) => {
+    if (column == 'desc') {
+      data.min = row.min;
+      data.max = row.max;
+      countAmount(row);
+      data.sum = row.sum;
+      console.log('是desc');
+    } else {
+      data.name = row.name;
+      data.number = row.number;
+      console.log('是desc1');
+    }
   };
 
   init();

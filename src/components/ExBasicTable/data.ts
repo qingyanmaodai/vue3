@@ -14,7 +14,7 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   },
   sortConfig: {
     trigger: 'cell',
-    defaultSort: { field: 'number', order: 'asc' },
+    defaultSort: { field: 'sort', order: 'asc' },
     orders: ['asc', 'desc', null],
   },
   editConfig: { trigger: 'dblclick', mode: 'cell', showStatus: true },
@@ -32,9 +32,16 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
 
 //检验方案
 export const ruleOfExaColumns = [
-  { type: 'checkbox', width: 50 },
-  { type: 'seq', title: ' ', width: 50 },
-  { field: 'sort', title: '顺序号', sortable: true, editRender: { name: '$input' } },
+  { type: 'checkbox', width: 50, fixed: 'left' },
+  { type: 'seq', title: ' ', width: 50, fixed: 'left' },
+  {
+    field: 'sort',
+    title: '顺序号',
+    width: 100,
+    sortable: true,
+    editRender: { name: '$input' },
+    fixed: 'left',
+  },
   {
     field: 'number',
     title: '项目编码',
@@ -50,32 +57,43 @@ export const ruleOfExaColumns = [
     // editRender: { name: '$input', attrs: { placeholder: '请输入项目名称' } },
   },
   {
-    field: 'bdExamineGroup.name',
+    field: 'selectOne',
     title: '下拉选择类型',
     sortable: true,
-    editRender: { name: '$select', options: [], attrs: { placeholder: '请输入检验类别' } },
+    slots: { default: 'selectOne' },
   },
   {
     field: 'min',
-    title: '数字型-最小数',
+    title: '数字型-单价',
     sortable: true,
+    width: 100,
     editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
   },
   {
     field: 'max',
-    title: '数字型-最大数',
+    title: '数字型-数量',
     sortable: true,
+    width: 100,
     editRender: { name: '$input', props: { type: 'number', min: 1, max: 120 } },
   },
   {
-    field: 'isOpen',
+    field: 'sum',
+    title: '数字型-总价',
+    sortable: true,
+    width: 100,
+    slots: { default: 'sum' },
+  },
+  {
+    field: 'time',
     title: '时间型',
     sortable: true,
+    width: 100,
     editRender: { name: '$input', props: { type: 'date' } },
   },
   {
     field: 'desc.name',
     title: '弹框型',
+    width: 100,
     sortable: true,
     params: {
       list: 'GET_EXA_RULE_LIST',
@@ -90,6 +108,7 @@ export const ruleOfExaColumns = [
     field: 'desc1.name',
     title: '弹框型1',
     sortable: true,
+    width: 100,
     params: {
       list: 'GET_EXA_PROJECT_LIST', //弹框表格数据
       select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
