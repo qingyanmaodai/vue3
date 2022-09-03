@@ -12,19 +12,13 @@
     auto-resize
   >
     <template #toolbar_buttons>
-      <a-button
-        type="primary"
-        ghost
-        v-show="props.isShowInsertRow"
-        size="small"
-        @click="insertRowEvent"
+      <a-button type="primary" ghost v-show="props.isShowInsertRow" @click="insertRowEvent"
         >新增行</a-button
       >
       <a-button
         style="margin-left: 10px"
         danger
         v-show="props.isShowRemoveRow"
-        size="small"
         @click="removeRowEvent"
         >删除行</a-button
       >
@@ -258,7 +252,7 @@
     width: 100%;
   }
   //:deep(.vxe-button.type--button.is--circle) {
-  //  width: 1em;
+  //  width: 2em;
   //  height: 2em;
   //  min-width: 20px;
   //  min-height: 20px;
