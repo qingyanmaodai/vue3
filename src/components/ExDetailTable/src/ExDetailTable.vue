@@ -9,7 +9,6 @@
     :columns="props.columns"
     :data="tableInitData"
     :edit-rules="editRules"
-    @edit-closed="editClosed"
     auto-resize
   >
     <template #toolbar_buttons>
@@ -38,15 +37,11 @@
         @clear="onClear(row, column)"
       />
     </template>
-    <template #sum="{ row }">
-      <a style="color: #0960bd">{{ row.sum }}</a>
+    <template #sum="{ row, column }">
+      <a style="color: #0960bd">{{ calc(row, column) }}</a>
     </template>
-    <template #selectOne="{ row, column }">
-      <vxe-select
-        v-model="row[sliceBasicProp(column.field)]"
-        :options="config.EXAMINE_BUSINESS"
-        transfer
-      />
+    <template #select="{ row }">
+      <vxe-select v-model="row.select" :options="config.EXAMINE_BUSINESS" transfer />
     </template>
   </vxe-grid>
   <BasicSearch
@@ -93,25 +88,24 @@
       default: 'asc',
     },
   });
-  //选择框data
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'countAmount', data): void; //编辑单元格自动计算总价
   };
+  const tableFullData = ref<object[]>([]); //表格数据
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const basicSearchRef: any = ref(null); //基础信息查询组件ref
   const xGrid = ref<VxeGridInstance>();
   const tableData: any[] = [];
+  //数据初始化
   const tableInit = reactive({
     data: tableData,
-  }); //数据初始化
-
+  });
   const tableInitData = toRef(tableInit, 'data');
-  //获取表格初始值
+  //从详情页获取表格初始值
   const init = (data) => {
-    console.log('获取初始值', data);
     tableInitData.value.push(data);
     tableInitData.value = cloneDeep(tableInitData.value);
   };
@@ -160,8 +154,7 @@
       id: row.id,
       name: row.name,
     };
-    console.log(nowCheckRow.data, '111111', prop);
-    console.log('tableInitData.value', tableInitData.value);
+    console.log(nowCheckRow.data, '基本信息表格双击', prop);
     basicSearchRef.value.bSearch(false);
   };
 
@@ -201,19 +194,25 @@
   // };
 
   //只对 edit-config 配置时有效，单元格编辑状态下被关闭时会触发该事件-----------获取当前行
-  const editClosed = (row) => {
-    console.log('row.row', row.row);
-    emit('countAmount', row.row); //计算
-    sortColumEvent(row.row); //排序
+  // const editClosed = (row) => {
+  //   emit('countAmount', row.row); //计算
+  //   // sortColumEvent(row.row); //排序
+  //   saveDataEvent();
+  // };
+  const calc = (row, column) => {
+    emit('countAmount', row); //计算
+    // sortColumEvent(row.row); //排序
+    saveDataEvent();
+    return row[column.field];
   };
 
   // 单元格有值时自动排序---字段名：fieldName，排序方式：order
-  const sortColumEvent = (data) => {
-    const $grid: any = xGrid.value;
-    if (data) {
-      $grid.sort(props.fieldName, props.order);
-    }
-  };
+  // const sortColumEvent = (data) => {
+  //   const $grid: any = xGrid.value;
+  //   if (data) {
+  //     $grid.sort(props.fieldName, props.order);
+  //   }
+  // };
 
   //点击清空图标清空事件
   const onClear = (data, column) => {
@@ -223,12 +222,10 @@
     };
   };
   //新增行
-  const insertRowEvent = async () => {
+  const insertRowEvent = () => {
     const $grid: any = xGrid.value;
     const record = {};
-    const { row: newRow } = await $grid.insertAt(record, -1);
-    // tableInitData.value.push(newRow);
-    console.log('tableInitData.value', tableInitData.value);
+    $grid.insertAt(record, -1);
   };
 
   //删除行
@@ -238,13 +235,14 @@
   };
   //保存数据
   const saveDataEvent = () => {
-    const data = tableInitData.value;
-    console.log('保存--data', data);
+    const $grid: any = xGrid.value;
+    const tableData = $grid.getTableData();
+    tableFullData.value = tableData.fullData;
   };
   defineExpose({
     init,
     saveDataEvent,
-    tableInitData,
+    tableFullData,
   });
 
   onMounted(() => {});
@@ -259,4 +257,14 @@
   :deep(.ant-select) {
     width: 100%;
   }
+  //:deep(.vxe-button.type--button.is--circle) {
+  //  width: 1em;
+  //  height: 2em;
+  //  min-width: 20px;
+  //  min-height: 20px;
+  //}
+  //:deep(.vxe-button.type--button) {
+  //  width: 10em;
+  //  height: 15em;
+  //}
 </style>

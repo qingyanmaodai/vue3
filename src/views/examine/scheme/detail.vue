@@ -185,7 +185,7 @@
           </Tabs>
         </pane>
         <pane :size="100 - paneSize">
-          <ExBasicTable
+          <ExDetailTable
             :columns="ruleOfExaColumns"
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
@@ -206,7 +206,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExBasicTable/data';
+  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
@@ -225,7 +225,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExInput } from '/@/components/ExInput';
-  import { ExBasicTable } from '/@/components/ExBasicTable';
+  import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
@@ -343,8 +343,9 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
-        //--------------------------------------------------测试--------------保存-------------------ok
-        console.log('拿到表格数据', vxeTableRef.value.tableInitData);
+        //--------------------------------------------------测试---拿到table数据-----------保存-------------------ok
+        const tableFullData = vxeTableRef.value.tableFullData;
+        console.log('拿到表格数据', tableFullData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -387,18 +388,8 @@
         formState.value = res;
       });
     }
-    //测试用的-------------------表格------------------------------现在获取数据的接口没有这两个参数
-    formState.value.desc = {
-      id: '1563371283141058562',
-      name: '32222',
-    };
-    formState.value.desc1 = {
-      id: '',
-      name: '',
-    };
-    // formState.value.sum = 'sunAmount';
-    vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------ok
   };
+  // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------ok
   //-------------------------------------------计算合计---ok
   const countAmount = (row) => {
     if (row.min && row.max) {
@@ -413,11 +404,9 @@
       data.max = row.max;
       countAmount(row);
       data.sum = row.sum;
-      console.log('是desc');
     } else {
       data.name = row.name;
       data.number = row.number;
-      console.log('是desc1');
     }
   };
 
