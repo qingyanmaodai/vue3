@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
       <a style="font-size: 1.4rem; font-weight: bold; color: #000; line-height: 60px" @click="back"
         ><RollbackOutlined /> 返回</a
@@ -16,7 +16,7 @@
         >
       </div>
     </LayoutHeader>
-    <a-card class="content">
+    <div class="content">
       <Tabs v-model:activeKey="activeKey" class="tabs">
         <TabPane key="1" tab="基本信息">
           <a-form ref="formRef" :model="formState" :rules="formRules">
@@ -435,7 +435,7 @@
           </a-form>
         </TabPane>
       </Tabs>
-    </a-card>
+    </div>
     <!--  点击物料分组弹框  -->
     <a-modal v-model:visible="visibleGroupModal" title="物料分组" ref="node">
       <a-tree-select
@@ -464,7 +464,6 @@
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
-    Card,
     Col,
     Form,
     FormItem,
@@ -516,7 +515,6 @@
   const AForm = Form;
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
-  const ACard = Card;
   const ATextArea = Input.TextArea;
 
   const router = useRouter();
@@ -936,7 +934,9 @@
   .content {
     border: 1px solid #e5e7eb;
     margin: 10px;
-    height: 80vh;
+    height: calc(100% - 80px);
+    background-color: #fff;
+    padding: 10px;
   }
   .button {
     margin: 15px;

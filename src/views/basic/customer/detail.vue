@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
       <a style="font-size: 1.4rem; font-weight: bold; color: #000; line-height: 60px" @click="back"
         ><RollbackOutlined /> 返回</a
@@ -12,7 +12,7 @@
         <Button danger class="button" @click="handleAudit(1)" v-show="!showAudit">反审核</Button>
       </div>
     </LayoutHeader>
-    <a-card class="content">
+    <div class="content">
       <Tabs v-model:activeKey="activeTabs" class="tabs">
         <TabPane key="basicInfo" tab="基本信息">
           <a-form :model="formState" :rules="formRules" ref="formRef">
@@ -203,7 +203,7 @@
           </a-form>
         </TabPane>
       </Tabs>
-    </a-card>
+    </div>
     <!--  客户分组弹框  -->
     <a-modal v-model:visible="customerGroupModel" title="客户分组" ref="node">
       <a-tree-select
@@ -225,7 +225,6 @@
   import { onMounted, reactive, ref, toRef, UnwrapRef } from 'vue';
   import {
     Button,
-    Card,
     Col,
     Form,
     FormItem,
@@ -244,7 +243,6 @@
   const TextArea = Input.TextArea;
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
-  const ACard = Card;
   const ASelect = Select;
   const ACascader = Cascader;
   import { ExInput } from '/@/components/ExInput';
@@ -608,7 +606,9 @@
   .content {
     border: 1px solid #e5e7eb;
     margin: 10px;
-    height: 80vh;
+    background-color: #fff;
+    padding: 10px;
+    height: calc(100% - 80px);
   }
   .button {
     margin: 15px;

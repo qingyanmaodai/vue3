@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card class="search" style="background-color: #fff">
+    <div class="search" style="background-color: #fff">
       <a-form :model="formState" ref="formRef" v-model="formRef">
         <span>{{ searchNo }}</span>
         <a-input class="input" v-model:value="formState.wlNo" />
@@ -15,14 +15,14 @@
           >高级查询</a-button
         >
       </a-form>
-    </a-card>
+    </div>
   </div>
   <hr />
   <!--    高级查询弹框     -->
   <MoreSearch ref="moreSearchRef" @moreListEvent="moreListEvent" @resetEvent="resetEvent" />
 </template>
 <script lang="ts" setup>
-  import { Button, Card, Form, Input } from 'ant-design-vue';
+  import { Button, Form, Input } from 'ant-design-vue';
   import { MoreSearch } from '/@/components/AMoreSearch';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
@@ -30,7 +30,6 @@
   const AButton = Button;
   const AForm = Form;
   const AInput = Input;
-  const ACard = Card;
   //高级查询组件ref
   const moreSearchRef: any = ref(null);
   // const options = reactive({ data: [] });
@@ -139,7 +138,7 @@
 <style scoped lang="less">
   .search {
     display: flex;
-    height: 90px;
+    height: 75px;
     padding: 10px;
   }
   .input {
