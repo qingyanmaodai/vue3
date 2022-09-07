@@ -43,6 +43,10 @@ export const config = {
     0: '停用',
     1: '启用',
   },
+  YES_OR_NO: {
+    0: '否',
+    1: '是',
+  },
   //  数据业务状态
   DATA_STATUS: [
     {

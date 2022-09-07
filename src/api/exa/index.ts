@@ -1,6 +1,7 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import {ExaProjectEntity} from "/@/api/exaProject";
 
 export interface ExaEntity extends PublicModel {
   id: string | undefined;
@@ -12,6 +13,9 @@ export interface ExaEntity extends PublicModel {
   business?: string;
   ruleId?: string;
   ruleName?: string;
+  bdExamineRule?: object;
+  bsStatus?: string;
+  bdExamineDetailList?: ExaDetailEntity[];
 }
 export interface ExaDetailEntity extends PublicModel {
   id: string | undefined;
@@ -21,9 +25,12 @@ export interface ExaDetailEntity extends PublicModel {
   min?: number;
   max?: number;
   refer?: string;
-  require: number;
+  isOpen?: number;
+  bsStatus?: string;
+  isRequire: number;
   description?: string;
   parentId?: string;
+  bdExamineProject?: ExaProjectEntity;
   examine?: ExaEntity;
 }
 /**
@@ -120,7 +127,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
  * 查询单条
  */
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<ExaEntity>(
+  return defHttp.post<Result>(
     {
       url: Url.QUERY_ONE_EXA_SCHEME,
       data: json,

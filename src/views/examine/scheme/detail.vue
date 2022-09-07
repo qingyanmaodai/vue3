@@ -186,13 +186,12 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="ruleOfExaColumns"
+            :columns="exaProjectOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             ref="vxeTableRef"
-            :editRules="formRules"
-            @cellClickTableEvent="cellClickTableEvent"
-            @countAmount="countAmount"
+            @changeSwitch="changeSwitch"
             :isShowIcon="formState.bsStatus !== 'B'"
+            :disabledTable="formState.bsStatus === 'B'"
           />
         </pane>
       </a-splitpanes>
@@ -206,7 +205,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ruleOfExaGridOptions, ruleOfExaColumns } from '/@/components/ExDetailTable/data';
+  import {
+    ruleOfExaGridOptions,
+    exaProjectOfDetailColumns,
+  } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
@@ -228,7 +230,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
+  import { add, audit, unAudit, ExaEntity, getOneById, update, ExaDetailEntity } from '/@/api/exa';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -237,6 +239,7 @@
   import { getDataList, getSearchOption } from '/@/api/exaRule';
   import { basicGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
+  import { getStockCompartmentListById } from '/@/api/stockCompartment';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -260,10 +263,6 @@
     ruleId: '',
     ruleName: '',
   };
-  // type Emits = {
-  //   (event: 'saveDataEvent'): void;
-  // };
-  // const emit = defineEmits<Emits>();
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -331,10 +330,15 @@
   };
   //接受参数
   const dataId = useRoute().query.row?.toString();
+  //保存
   const onSubmit = async () => {
     formRef.value
       .validate()
       .then(async () => {
+        const tableFullData = vxeTableRef.value.saveDataEvent();
+        if (tableFullData) {
+          formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+        }
         if (!formState.value.id) {
           const data = await add({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
@@ -343,9 +347,6 @@
           formState.value = Object.assign({}, formState.value, data);
         }
         formState.value.bsStatus = 'A';
-        //--------------------------------------------------测试---拿到table数据-----------保存-------------------ok
-        const tableFullData = vxeTableRef.value.tableFullData;
-        console.log('拿到表格数据', tableFullData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -381,35 +382,35 @@
   const back = () => {
     router.go(-1);
   };
-
+  //获取初始值
   const init = async () => {
     if (dataId) {
-      await getOneById({ params: dataId }).then(async (res) => {
-        formState.value = res;
-      });
+      const res: any = await getOneById({ params: dataId });
+      formState.value = res;
+      if (formState.value.ruleId) {
+        formState.value.ruleId = res.bdExamineRule ? res.bdExamineRule.id : '';
+        formState.value.ruleName = res.bdExamineRule ? res.bdExamineRule.name : '';
+      }
+      if (formState.value.bdExamineDetailList){
+        formState.value.bdExamineDetailList.map(r => {
+          if(!r.bdExamineProject){
+            r.bdExamineProject = {
+              id: '',
+              name: '',
+              number: '',
+            }
+            return r;
+          }
+        })
+      }
+      vxeTableRef.value.init(formState.value.bdExamineDetailList);
     }
   };
-  // vxeTableRef.value.init(formState.value); //测试用的-----将数据传到--------------表格-------------ok
-  //-------------------------------------------计算合计---ok
-  const countAmount = (row) => {
-    if (row.min && row.max) {
-      row.sum = row.min * row.max;
-      return row;
-    }
+  //设置Switch默认
+  const changeSwitch = (obj) => {
+    obj.isOpen = 1;
+    obj.isRequire = 1;
   };
-  //row-弹框中的双击行数据------data-当前行--------------------------------------ok
-  const cellClickTableEvent = (row, data, column) => {
-    if (column == 'desc') {
-      data.min = row.min;
-      data.max = row.max;
-      countAmount(row);
-      data.sum = row.sum;
-    } else {
-      data.name = row.name;
-      data.number = row.number;
-    }
-  };
-
   init();
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {});

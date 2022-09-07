@@ -175,7 +175,6 @@
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
-    Card,
     Col,
     Form,
     FormItem,
@@ -204,7 +203,6 @@
   const AForm = Form;
   const AFormItem = FormItem;
   const ATreeSelect = TreeSelect;
-  const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
   const formRef = ref();

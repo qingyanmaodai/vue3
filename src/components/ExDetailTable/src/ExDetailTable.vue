@@ -9,6 +9,7 @@
     :columns="props.columns"
     :data="tableInitData"
     :edit-rules="editRules"
+    @edit-closed="editClosed"
     auto-resize
   >
     <template #toolbar_buttons>
@@ -31,11 +32,27 @@
         @clear="onClear(row, column)"
       />
     </template>
-    <template #sum="{ row, column }">
-      <a style="color: #0960bd">{{ calc(row, column) }}</a>
+    <template #sum="{ row }">
+      <!--          <a style="color: #0960bd">{{ calc(row, column) }}</a>-->
+      <a style="color: #0960bd">{{ row.sum }}</a>
     </template>
-    <template #select="{ row }">
-      <vxe-select v-model="row.select" :options="config.EXAMINE_BUSINESS" transfer />
+    <template #open="{ row }">
+      <Switch
+        :checked-children="config.YES_OR_NO[1]"
+        :un-checked-children="config.YES_OR_NO[0]"
+        :checkedValue="1"
+        :unCheckedValue="0"
+        v-model:checked="row.isOpen"
+      />
+    </template>
+    <template #isRequire="{ row }">
+      <Switch
+        :checked-children="config.YES_OR_NO[1]"
+        :un-checked-children="config.YES_OR_NO[0]"
+        :checkedValue="1"
+        :unCheckedValue="0"
+        v-model:checked="row.isRequire"
+      />
     </template>
   </vxe-grid>
   <BasicSearch
@@ -51,7 +68,7 @@
   import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
-  import { Button } from 'ant-design-vue';
+  import { Button, Switch } from 'ant-design-vue';
   import { config } from '/@/utils/publicParamConfig';
   import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
   import { getPublicList } from '/@/api/public';
@@ -64,6 +81,10 @@
     columns: Array,
     isShowIcon: Boolean,
     isShowInsertRow: {
+      type: Boolean,
+      default: true,
+    },
+    disabledTable: {
       type: Boolean,
       default: true,
     },
@@ -86,6 +107,7 @@
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'countAmount', data): void; //编辑单元格自动计算总价
+    (event: 'changeSwitch', obj): void; //编辑单元格自动计算总价
   };
   const tableFullData = ref<object[]>([]); //表格数据
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
@@ -100,8 +122,10 @@
   const tableInitData = toRef(tableInit, 'data');
   //从详情页获取表格初始值
   const init = (data) => {
-    tableInitData.value.push(data);
+    console.log(data, 'aa');
+    tableInitData.value.push(...data);
     tableInitData.value = cloneDeep(tableInitData.value);
+    tableFullData.value = cloneDeep(tableInitData.value);
   };
 
   //打开弹框，获取数据
@@ -145,10 +169,10 @@
     emit('cellClickTableEvent', row, nowCheckRow.data, sliceBasicProp(nowCheckData.data.field));
     let prop = sliceBasicProp(nowCheckData.data.field);
     nowCheckRow.data[prop] = {
-      id: row.id,
+      number: row.number,
       name: row.name,
+      id: row.id,
     };
-    console.log(nowCheckRow.data, '基本信息表格双击', prop);
     basicSearchRef.value.bSearch(false);
   };
 
@@ -178,7 +202,7 @@
     );
   };
 
-  //格式化数据
+  // 格式化数据
   // const formatData = (data: string | number, source: configEntity[]) => {
   //   let res;
   //   if (source && source.length > 0) {
@@ -188,17 +212,18 @@
   // };
 
   //只对 edit-config 配置时有效，单元格编辑状态下被关闭时会触发该事件-----------获取当前行
-  // const editClosed = (row) => {
-  //   emit('countAmount', row.row); //计算
+  const editClosed = (row) => {
+    emit('countAmount', row.row); //计算
+    // sortColumEvent(row.row); //排序
+    // saveDataEvent();
+  };
+
+  // const calc = (row, column) => {
+  //   emit('countAmount', row); //计算
   //   // sortColumEvent(row.row); //排序
   //   saveDataEvent();
+  //   return row[column.field];
   // };
-  const calc = (row, column) => {
-    emit('countAmount', row); //计算
-    // sortColumEvent(row.row); //排序
-    saveDataEvent();
-    return row[column.field];
-  };
 
   // 单元格有值时自动排序---字段名：fieldName，排序方式：order
   // const sortColumEvent = (data) => {
@@ -211,28 +236,41 @@
   //点击清空图标清空事件
   const onClear = (data, column) => {
     data[sliceBasicProp(column.field)] = {
-      id: '',
+      number: '',
       name: '',
+      id: '',
     };
   };
   //新增行
   const insertRowEvent = () => {
     const $grid: any = xGrid.value;
-    const record = {};
+    let obj = {};
+    emit('changeSwitch', obj);
+    const record = obj;
     $grid.insertAt(record, -1);
   };
-
   //删除行
   const removeRowEvent = () => {
     const $grid: any = xGrid.value;
     $grid.removeCheckboxRow();
   };
-  //保存数据
-  const saveDataEvent = () => {
+  // //不可编辑
+  // const disableRowEvent = () => {
+  //   const $grid: any = xGrid.value;
+  //   $grid.beforeEditMethod();
+  // };
+  // const editDisabledEvent: VxeGridEvents.EditDisabled = () => {
+  //   console.log('禁止编辑')
+  // }
+  //获取表格数据
+  const saveDataEvent = (): object[] => {
+    let tableData: any = '';
     const $grid: any = xGrid.value;
-    const tableData = $grid.getTableData();
+    tableData = $grid.getTableData();
     tableFullData.value = tableData.fullData;
+    return tableFullData.value;
   };
+
   defineExpose({
     init,
     saveDataEvent,
@@ -251,14 +289,4 @@
   :deep(.ant-select) {
     width: 100%;
   }
-  //:deep(.vxe-button.type--button.is--circle) {
-  //  width: 2em;
-  //  height: 2em;
-  //  min-width: 20px;
-  //  min-height: 20px;
-  //}
-  //:deep(.vxe-button.type--button) {
-  //  width: 10em;
-  //  height: 15em;
-  //}
 </style>

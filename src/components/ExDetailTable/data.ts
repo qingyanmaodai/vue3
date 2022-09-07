@@ -125,3 +125,74 @@ export const ruleOfExaColumns = [
     },
   },
 ];
+
+//检验方案详情
+export const exaProjectOfDetailColumns = [
+  { type: 'checkbox', width: 50, fixed: 'left' },
+  { type: 'seq', title: '行号', width: 50, fixed: 'left' },
+  {
+    field: 'sort',
+    title: '顺序',
+    sortable: true,
+    width: 120,
+    fixed: 'left',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+  },
+  // { field: 'number', title: '编码', width: 150, editRender: { name: '$input' } },
+  // { field: 'name', title: '检验详情名称', width: 150, editRender: { name: '$input' } },
+  {
+    field: 'bdExamineProject.number',
+    title: '检验项目编码',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdExamineProject.name',
+    title: '检验项目名称',
+    sortable: true,
+    width: 150,
+    params: {
+      list: 'GET_EXA_PROJECT_LIST', //检验项目表格数据
+      select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
+    field: 'min',
+    title: '最小值',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'float' } },
+  },
+  {
+    field: 'max',
+    title: '最大值',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'float' } },
+  },
+  { field: 'refer', title: '参考数据', width: 120, editRender: { name: '$input' } },
+  {
+    field: 'description',
+    title: '检验描述',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+  },
+  {
+    field: 'isRequire',
+    title: '是否必要',
+    width: 120,
+    slots: { default: 'isRequire' },
+  },
+  {
+    field: 'isOpen',
+    title: '是否启用',
+    width: 120,
+    slots: { default: 'open' },
+  },
+];
