@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="basic-customer">
+<script setup lang="ts" name="basic-customer-index">
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
