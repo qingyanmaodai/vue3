@@ -21,20 +21,20 @@ import {
   // Tooltip,
   Toolbar,
   Pager,
-  // Form,
-  // FormItem,
-  // FormGather,
-  // Checkbox,
-  // CheckboxGroup,
-  // Radio,
-  // RadioGroup,
-  // RadioButton,
-  // Switch,
+  Form,
+  FormItem,
+  FormGather,
+  Checkbox,
+  CheckboxGroup,
+  Radio,
+  RadioGroup,
+  RadioButton,
+  Switch,
   Input,
   Select,
-  // Optgroup,
-  // Option,
-  // Textarea,
+  Optgroup,
+  Option,
+  Textarea,
   Button,
   Modal,
   // List,
@@ -68,20 +68,20 @@ export function setupVxeTable(app: App) {
     // .use(Tooltip)
     .use(Toolbar)
     .use(Pager)
-    // .use(Form)
-    // .use(FormItem)
-    // .use(FormGather)
-    // .use(Checkbox)
-    // .use(CheckboxGroup)
-    // .use(Radio)
-    // .use(RadioGroup)
-    // .use(RadioButton)
-    // .use(Switch)
+    .use(Form)
+    .use(FormItem)
+    .use(FormGather)
+    .use(Checkbox)
+    .use(CheckboxGroup)
+    .use(Radio)
+    .use(RadioGroup)
+    .use(RadioButton)
+    .use(Switch)
     .use(Input)
     .use(Select)
-    // .use(Optgroup)
-    // .use(Option)
-    // .use(Textarea)
+    .use(Optgroup)
+    .use(Option)
+    .use(Textarea)
     .use(Button)
     .use(Modal)
     // .use(List)
