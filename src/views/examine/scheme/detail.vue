@@ -188,10 +188,13 @@
           <ExDetailTable
             :columns="exaProjectOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
+            :editRules="formRules"
             ref="vxeTableRef"
+            :detailTableData="detailTableData"
             @changeSwitch="changeSwitch"
+            @getJudgeClickData="getJudgeClickData"
             :isShowIcon="formState.bsStatus !== 'B'"
-            :disabledTable="formState.bsStatus === 'B'"
+            :isDisableButton="formState.bsStatus === 'B'"
           />
         </pane>
       </a-splitpanes>
@@ -230,7 +233,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, ExaEntity, getOneById, update, ExaDetailEntity } from '/@/api/exa';
+  import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -239,7 +242,6 @@
   import { getDataList, getSearchOption } from '/@/api/exaRule';
   import { basicGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
-  import { getStockCompartmentListById } from '/@/api/stockCompartment';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -263,18 +265,23 @@
     ruleId: '',
     ruleName: '',
   };
+
+  const detailTableData:any = ref<object[]>([]); //表格数据
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
+  const project = 'bdExamineProject.number';
+
   const formRules = reactive({
     name: [{ required: true, message: '请输入方案名称' }],
     number: [{ required: true, message: '请输入方案编码' }],
     ruleId: [{ required: true, message: '请选择抽检规则' }],
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
-  });
+  })
+  formRules[project] = [{ required: true, message: '请选择检验项目' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -330,13 +337,19 @@
   };
   //接受参数
   const dataId = useRoute().query.row?.toString();
+
   //保存
   const onSubmit = async () => {
     formRef.value
       .validate()
       .then(async () => {
-        const tableFullData = vxeTableRef.value.saveDataEvent();
+        const tableFullData = vxeTableRef.value.getDetailData();
+        const validAllErrMapData = await vxeTableRef.value.getValidAllData();
         if (tableFullData) {
+          if(validAllErrMapData){
+            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
+            return
+          }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
         if (!formState.value.id) {
@@ -360,8 +373,23 @@
       .then(async () => {
         const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
         if (type === 'confirm') {
+          const tableFullData = vxeTableRef.value.getDetailData();
+          const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+          if (tableFullData) {
+            if(validAllErrMapData){
+              await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
+              return
+            }
+            formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+          }
           const data = await audit({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
+          if (data.bsStatus === 'B' && tableFullData) {
+            tableFullData.map((e) => {
+              e.bsStatus = 'B';
+              return e;
+            });
+          }
           createMessage.success('操作成功');
         }
       })
@@ -373,8 +401,18 @@
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
+      const tableFullData = vxeTableRef.value.getDetailData();
+      if (tableFullData) {
+        formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+      }
       const data = await unAudit({ params: formState.value });
       formState.value = Object.assign({}, formState.value, data);
+      if (data.bsStatus === 'A' && tableFullData) {
+        tableFullData.map((e) => {
+          e.bsStatus = 'A';
+          return e;
+        });
+      }
       createMessage.success('操作成功');
     }
   };
@@ -391,29 +429,38 @@
         formState.value.ruleId = res.bdExamineRule ? res.bdExamineRule.id : '';
         formState.value.ruleName = res.bdExamineRule ? res.bdExamineRule.name : '';
       }
-      if (formState.value.bdExamineDetailList){
-        formState.value.bdExamineDetailList.map(r => {
-          if(!r.bdExamineProject){
+      if (formState.value.bdExamineDetailList) {
+        formState.value.bdExamineDetailList.map((r) => {
+          r.bsStatus = formState.value.bsStatus;
+          if (!r.bdExamineProject) {
             r.bdExamineProject = {
               id: '',
               name: '',
               number: '',
-            }
+            };
             return r;
           }
-        })
+        });
       }
-      vxeTableRef.value.init(formState.value.bdExamineDetailList);
+      detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
     }
   };
+
+  //获取判断双击赋值事件的值
+  const getJudgeClickData = (arr, row, callback) => {
+    let judgeClickIndex = arr.fullData.findIndex((e) => e.bdExamineProject.id === row.id);
+    callback(judgeClickIndex);
+  }
   //设置Switch默认
   const changeSwitch = (obj) => {
     obj.isOpen = 1;
     obj.isRequire = 1;
+    obj.sort = cloneDeep(vxeTableRef.value.rowSortData);
   };
-  init();
   //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {});
+  onMounted(() => {
+    init();
+  });
 </script>
 <style scoped lang="less">
   .switchDiv {

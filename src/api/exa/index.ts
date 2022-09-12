@@ -1,7 +1,7 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
-import {ExaProjectEntity} from "/@/api/exaProject";
+import { ExaProjectEntity } from '/@/api/exaProject';
 
 export interface ExaEntity extends PublicModel {
   id: string | undefined;
@@ -19,8 +19,8 @@ export interface ExaEntity extends PublicModel {
 }
 export interface ExaDetailEntity extends PublicModel {
   id: string | undefined;
-  number: string;
-  name: string;
+  number?: string;
+  name?: string;
   seq: number;
   min?: number;
   max?: number;

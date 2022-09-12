@@ -6,19 +6,24 @@
     show-overflow
     show-header-overflow
     v-bind="props.gridOptions"
+    :data="props.detailTableData"
     :columns="props.columns"
-    :data="tableInitData"
-    :edit-rules="editRules"
-    @edit-closed="editClosed"
+    :edit-rules="props.editRules"
+    :row-style="rowStyle"
     auto-resize
   >
     <template #toolbar_buttons>
-      <a-button type="primary" ghost v-show="props.isShowInsertRow" @click="insertRowEvent"
+      <a-button
+        type="primary"
+        :disabled="props.isDisableButton"
+        v-show="props.isShowInsertRow"
+        @click="insertRowEvent"
         >新增行</a-button
       >
       <a-button
         style="margin-left: 10px"
         danger
+        :disabled="props.isDisableButton"
         v-show="props.isShowRemoveRow"
         @click="removeRowEvent"
         >删除行</a-button
@@ -27,17 +32,14 @@
     <template #model="{ row, column }">
       <ExInput
         :show="props.isShowIcon"
-        v-model:value="row[sliceBasicProp(column.field)].name"
+        v-model:value="row[sliceBasicProp(column.field)].number"
         @search="onSearch(row, column)"
         @clear="onClear(row, column)"
       />
     </template>
-    <template #sum="{ row }">
-      <!--          <a style="color: #0960bd">{{ calc(row, column) }}</a>-->
-      <a style="color: #0960bd">{{ row.sum }}</a>
-    </template>
     <template #open="{ row }">
       <Switch
+        :disabled="row.bsStatus === 'B'"
         :checked-children="config.YES_OR_NO[1]"
         :un-checked-children="config.YES_OR_NO[0]"
         :checkedValue="1"
@@ -47,6 +49,7 @@
     </template>
     <template #isRequire="{ row }">
       <Switch
+        :disabled="row.bsStatus === 'B'"
         :checked-children="config.YES_OR_NO[1]"
         :un-checked-children="config.YES_OR_NO[0]"
         :checkedValue="1"
@@ -64,7 +67,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, PropType, reactive, ref, toRef } from 'vue';
+  import { onMounted, PropType, reactive, ref } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
@@ -75,16 +78,15 @@
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { VxeTablePropTypes } from 'vxe-table/types/all';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  const { createMessage } = useMessage();
   const AButton = Button;
   const props = defineProps({
     gridOptions: Object,
     columns: Array,
     isShowIcon: Boolean,
+    isDisableButton: Boolean,
     isShowInsertRow: {
-      type: Boolean,
-      default: true,
-    },
-    disabledTable: {
       type: Boolean,
       default: true,
     },
@@ -93,41 +95,23 @@
       default: true,
     },
     editRules: Object as PropType<VxeTablePropTypes.EditRules>, //校验规则
-    sunAmount: String,
-    fieldName: {
-      type: String,
-      default: 'sort',
-    },
-    order: {
-      type: String,
-      default: 'asc',
+    detailTableData: {
+      type: Array,
     },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
-    (event: 'countAmount', data): void; //编辑单元格自动计算总价
-    (event: 'changeSwitch', obj): void; //编辑单元格自动计算总价
+    (event: 'changeSwitch', obj): void; //新增行时设置默认值
+    (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
   };
-  const tableFullData = ref<object[]>([]); //表格数据
+  const tableFullData: any = ref<object[]>([]); //表格数据
+  const rowSortData = ref<number>(1); //表格顺序
+  let validAllErrMapData = ref<string>(''); //表格校验数据
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const basicSearchRef: any = ref(null); //基础信息查询组件ref
   const xGrid = ref<VxeGridInstance>();
-  const tableData: any[] = [];
-  //数据初始化
-  const tableInit = reactive({
-    data: tableData,
-  });
-  const tableInitData = toRef(tableInit, 'data');
-  //从详情页获取表格初始值
-  const init = (data) => {
-    console.log(data, 'aa');
-    tableInitData.value.push(...data);
-    tableInitData.value = cloneDeep(tableInitData.value);
-    tableFullData.value = cloneDeep(tableInitData.value);
-  };
-
   //打开弹框，获取数据
   const onSearch = async (data, column) => {
     nowCheckData.data = column; //输入框column.field
@@ -161,19 +145,27 @@
   };
   //截取基本属性
   const sliceBasicProp = (data: string) => {
-    return data.slice(0, -5);
+    return data.split('.')[0];
   };
 
   //基本信息表格双击事件
-  const basicClickEvent = (row) => {
-    emit('cellClickTableEvent', row, nowCheckRow.data, sliceBasicProp(nowCheckData.data.field));
+  const basicClickEvent = async (row) => {
+    const $grid: any = xGrid.value;
+    let arr = $grid.getTableData();
     let prop = sliceBasicProp(nowCheckData.data.field);
-    nowCheckRow.data[prop] = {
-      number: row.number,
-      name: row.name,
-      id: row.id,
-    };
-    basicSearchRef.value.bSearch(false);
+    emit('getJudgeClickData', arr, row, (index) => {
+      if (index !== -1) {
+        createMessage.error('该项目已被选择!');
+        return;
+      }
+      emit('cellClickTableEvent', row, nowCheckRow.data, prop);
+      nowCheckRow.data[prop] = {
+        number: row.number,
+        name: row.name,
+        id: row.id,
+      };
+      basicSearchRef.value.bSearch(false);
+    });
   };
 
   //基本信息数据查询
@@ -197,7 +189,7 @@
       {
         params: paramArr,
       },
-      //选择分类的接口地址，如基本单位。。
+      //选择分类的接口地址，如基本单位
       Url[column.params.list],
     );
   };
@@ -211,28 +203,14 @@
   //   return res ? res.label : '';
   // };
 
-  //只对 edit-config 配置时有效，单元格编辑状态下被关闭时会触发该事件-----------获取当前行
-  const editClosed = (row) => {
-    emit('countAmount', row.row); //计算
-    // sortColumEvent(row.row); //排序
-    // saveDataEvent();
+  //修改表格样式
+  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
+    if (row.bsStatus === 'B') {
+      return {
+        backgroundColor: 'rgb(225 225 224)',
+      };
+    }
   };
-
-  // const calc = (row, column) => {
-  //   emit('countAmount', row); //计算
-  //   // sortColumEvent(row.row); //排序
-  //   saveDataEvent();
-  //   return row[column.field];
-  // };
-
-  // 单元格有值时自动排序---字段名：fieldName，排序方式：order
-  // const sortColumEvent = (data) => {
-  //   const $grid: any = xGrid.value;
-  //   if (data) {
-  //     $grid.sort(props.fieldName, props.order);
-  //   }
-  // };
-
   //点击清空图标清空事件
   const onClear = (data, column) => {
     data[sliceBasicProp(column.field)] = {
@@ -241,40 +219,45 @@
       id: '',
     };
   };
+
   //新增行
   const insertRowEvent = () => {
     const $grid: any = xGrid.value;
     let obj = {};
+    let arr = $grid.getTableData();
+    rowSortData.value = Number(arr.fullData.length) + 1;
     emit('changeSwitch', obj);
     const record = obj;
     $grid.insertAt(record, -1);
   };
+
   //删除行
   const removeRowEvent = () => {
     const $grid: any = xGrid.value;
     $grid.removeCheckboxRow();
   };
-  // //不可编辑
-  // const disableRowEvent = () => {
-  //   const $grid: any = xGrid.value;
-  //   $grid.beforeEditMethod();
-  // };
-  // const editDisabledEvent: VxeGridEvents.EditDisabled = () => {
-  //   console.log('禁止编辑')
-  // }
-  //获取表格数据
-  const saveDataEvent = (): object[] => {
-    let tableData: any = '';
+
+  //获取校验规则
+  const getValidAllData = async () => {
     const $grid: any = xGrid.value;
-    tableData = $grid.getTableData();
+    validAllErrMapData.value = await $grid.validate(true);
+    return validAllErrMapData.value;
+  };
+
+  //获取表格数据
+  const getDetailData = (): object[] => {
+    // let tableData: any = '';
+    const $grid: any = xGrid.value;
+    let tableData = $grid.getTableData();
     tableFullData.value = tableData.fullData;
     return tableFullData.value;
   };
 
   defineExpose({
-    init,
-    saveDataEvent,
+    getValidAllData,
     tableFullData,
+    rowSortData,
+    getDetailData,
   });
 
   onMounted(() => {});

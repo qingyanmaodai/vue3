@@ -17,7 +17,17 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   //   defaultSort: { field: 'sort', order: 'asc' },
   //   orders: ['asc', 'desc', null],
   // },
-  editConfig: { trigger: 'dblclick', mode: 'cell', showStatus: true },
+  editConfig: {
+    trigger: 'dblclick',
+    mode: 'cell',
+    showStatus: true,
+    beforeEditMethod({ row }) {
+      if (row.bsStatus === 'B') {
+        return false;
+      }
+      return true;
+    },
+  },
   //操作按钮
   toolbarConfig: {
     slots: {
@@ -32,7 +42,6 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   data: [],
 });
 
-//检验方案
 export const ruleOfExaColumns = [
   { type: 'checkbox', width: 50, fixed: 'left' },
   { type: 'seq', title: '行号', width: 50, fixed: 'left' },
@@ -128,14 +137,13 @@ export const ruleOfExaColumns = [
 
 //检验方案详情
 export const exaProjectOfDetailColumns = [
-  { type: 'checkbox', width: 50, fixed: 'left' },
-  { type: 'seq', title: '行号', width: 50, fixed: 'left' },
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '行号', width: 50 },
   {
     field: 'sort',
     title: '顺序',
     sortable: true,
     width: 120,
-    fixed: 'left',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
   },
   // { field: 'number', title: '编码', width: 150, editRender: { name: '$input' } },
@@ -143,15 +151,8 @@ export const exaProjectOfDetailColumns = [
   {
     field: 'bdExamineProject.number',
     title: '检验项目编码',
-    className: 'disableProp',
-    width: 150,
     sortable: true,
-  },
-  {
-    field: 'bdExamineProject.name',
-    title: '检验项目名称',
-    sortable: true,
-    width: 150,
+    width: 180,
     params: {
       list: 'GET_EXA_PROJECT_LIST', //检验项目表格数据
       select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
@@ -162,17 +163,24 @@ export const exaProjectOfDetailColumns = [
     },
   },
   {
+    field: 'bdExamineProject.name',
+    title: '检验项目名称',
+    className: 'disableProp',
+    sortable: true,
+    width: 150,
+  },
+  {
     field: 'min',
     title: '最小值',
-    width: 120,
     sortable: true,
+    width: 120,
     editRender: { name: '$input', props: { type: 'float' } },
   },
   {
     field: 'max',
     title: '最大值',
-    width: 120,
     sortable: true,
+    width: 120,
     editRender: { name: '$input', props: { type: 'float' } },
   },
   { field: 'refer', title: '参考数据', width: 120, editRender: { name: '$input' } },

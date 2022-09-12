@@ -3,7 +3,7 @@
     <div style="background-color: #fff; height: 100%">
       <Search
         ref="searchRef"
-        tableName="BdExamineRule"
+        tableName="BdExamine"
         searchNo="方案编码"
         searchName="方案名称"
         @getList="getList"
