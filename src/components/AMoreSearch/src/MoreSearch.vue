@@ -32,9 +32,7 @@
           <Col>
             <a-select
               v-show="
-                search.fieldName
-                  ? JSON.parse(search.fieldName).controlType === 'date'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'date' : false
               "
               v-model:value="search.rule"
               placeholder="等于"
