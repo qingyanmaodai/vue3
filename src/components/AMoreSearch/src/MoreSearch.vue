@@ -9,28 +9,12 @@
     @close="handleClose"
   >
     <div class="form-style">
-      <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm">
-        <a-space
-          v-for="(search, index) in dynamicValidateForm.searches"
-          :key="search.key"
-          style="display: flex; margin: 5px 10px"
-        >
-          <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'startWith']">-->
-          <!--            <a-select-->
-          <!--              allowClear-->
-          <!--              v-model:value="search.startWith"-->
-          <!--              placeholder="括号"-->
-          <!--              :options="optionsStartWith"-->
-          <!--              style="width: 70px"-->
-          <!--              :filterOption="filterOption"-->
-          <!--            />-->
-          <!--          </a-form-item>-->
-          <a-form-item style="margin: 5px 5px" :name="['searches' + '', index, 'fieldName']">
+      <Row class="row" :key="search.key" v-for="(search, index) in dynamicValidateForm.searches">
+        <a-space>
+          <Col>
             <a-select
               v-model:value="search.fieldName"
-              onfocus="this.blur();"
-              show-search
-              placeholder="请输入或选择关键字"
+              placeholder="请选择"
               style="width: 200px"
               :filterOption="filterOption"
               @change="handleChange"
@@ -44,11 +28,11 @@
                 >{{ item.displayName }}</a-select-option
               >
             </a-select>
-          </a-form-item>
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'rule']">
+          </Col>
+          <Col>
             <a-select
               v-show="
-                search.fieldName !== '请选择'
+                search.fieldName
                   ? JSON.parse(search.fieldName).controlType === 'date'
                   : false
               "
@@ -59,29 +43,19 @@
               :filterOption="filterOption"
             />
             <a-select
-              v-show="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType !== 'date'
-                  : true
-              "
+              v-show="search.fieldName ? JSON.parse(search.fieldName).controlType !== 'date' : true"
               v-model:value="search.rule"
               placeholder="包含"
               :options="config.OPTION_RULE"
               style="width: 100px"
               :filterOption="filterOption"
             />
-          </a-form-item>
-          <a-form-item
-            style="margin: 5px 5px"
-            :name="['searches', index, 'val']"
-            v-model:value="search.val"
-          >
-            <a-input v-show="search.fieldName === '请选择'" style="width: 200px" disabled />
+          </Col>
+          <Col>
+            <a-input v-show="!search.fieldName" style="width: 200px" disabled />
             <a-select
               v-show="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'select'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'select' : false
               "
               v-model:value="search.val"
               placeholder="请选择..."
@@ -97,9 +71,7 @@
             </a-select>
             <a-input
               v-show="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'input'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'input' : false
               "
               style="width: 200px"
               placeholder="请输入..."
@@ -108,7 +80,7 @@
             />
             <a-input-search
               v-show="
-                search.fieldName !== '请选择'
+                search.fieldName
                   ? JSON.parse(search.fieldName).controlType === 'inputSearch'
                   : false
               "
@@ -124,9 +96,7 @@
               direction="vertical"
               :size="12"
               v-show="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'date'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'date' : false
               "
             >
               <a-date-picker
@@ -137,9 +107,7 @@
             </a-space>
             <a-select
               v-show="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'checkBox'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'checkBox' : false
               "
               mode="multiple"
               showSearch
@@ -151,9 +119,7 @@
             />
             <a-tree-select
               v-if="
-                search.fieldName !== '请选择'
-                  ? JSON.parse(search.fieldName).controlType === 'treeSelect'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'treeSelect' : false
               "
               v-model:value="search.val"
               show-search
@@ -166,26 +132,15 @@
               tree-default-expand-all
               :tree-data="search.treeData"
             />
-          </a-form-item>
-
-          <!--          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'endWith']">-->
-          <!--            <a-select-->
-          <!--              allowClear-->
-          <!--              v-model:value="search.endWith"-->
-          <!--              placeholder="括号"-->
-          <!--              :options="optionsEndWith"-->
-          <!--              style="width: 70px"-->
-          <!--              :filterOption="filterOption"-->
-          <!--            />-->
-          <!--          </a-form-item>-->
-          <a-form-item style="margin: 5px 5px" :name="['searches', index, 'link']">
+          </Col>
+          <Col>
             <a-select
               v-model:value="search.link"
               :options="optionsLink"
               style="width: 70px"
               :filterOption="filterOption"
             />
-          </a-form-item>
+          </Col>
           <a-button
             style="font-size: 14px; font-weight: bolder; padding: 2px 8px; line-height: 0"
             @click="addSearch"
@@ -197,9 +152,10 @@
             :disabled="dynamicValidateForm.searches.length === 1"
             @click="removeSearch(index)"
             ><MinusOutlined
-          /></a-button> </a-space
-        ><br />
-      </a-form>
+          /></a-button>
+        </a-space>
+      </Row>
+      <br />
     </div>
     <template #title>
       <span>高级查询</span>
@@ -230,6 +186,8 @@
     SelectOption,
     Space,
     TreeSelect,
+    Row,
+    Col,
   } from 'ant-design-vue';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
@@ -302,7 +260,7 @@
     const searchParams: SearchParams[] = [];
     if (searchKeywords && searchKeywords.length > 0) {
       for (let i = 0; i < searchKeywords.length; i++) {
-        if (searchKeywords[i].fieldName !== '请选择') {
+        if (searchKeywords[i].fieldName) {
           searchParams.push({
             table: formState.tableName,
             name: JSON.parse(searchKeywords[i].fieldName).propName,
@@ -346,7 +304,7 @@
 
   //选择公共属性
   const selectConfigOption = (data) => {
-    if (data !== '' && data !== '请选择') return JSON.parse(data).queryConfig;
+    if (data) return JSON.parse(data).queryConfig;
   };
   //获取基本信息字段
   const getPublicListOption = async () => {
@@ -386,7 +344,7 @@
       {
         startWith: undefined,
         endWith: undefined,
-        fieldName: '请选择',
+        fieldName: undefined,
         date: undefined,
         treeData: undefined,
         checkData: undefined,
@@ -517,7 +475,7 @@
   const addSearch = () => {
     dynamicValidateForm.searches.push({
       startWith: undefined,
-      fieldName: '请选择',
+      fieldName: undefined,
       val: '',
       date: undefined,
       checkData: undefined,
@@ -547,8 +505,13 @@
     margin: 10px 5px 0 5px;
   }
   .form-style {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
+    //display: flex;
+    //justify-content: center;
+    //align-items: center;
+  }
+  .row {
+    display: inherit !important;
+    margin-top: 15px;
   }
 </style>
