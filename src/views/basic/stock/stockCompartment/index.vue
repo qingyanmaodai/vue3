@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; padding: 15px">
-    <div style="background-color: #fff; height: 100%; padding: 0 10px">
+    <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
         ref="searchRef"
         tableName=""

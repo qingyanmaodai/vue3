@@ -1,6 +1,6 @@
 <template>
   <div class="default-theme" style="padding: 15px; height: 100%">
-    <div style="background-color: #fff; height: 100%; padding: 0 10px">
+    <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
         ref="searchRef"
         tableName="BdExamineRule"
