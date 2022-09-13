@@ -16,7 +16,7 @@
         />
       </a-pane>
       <a-pane :size="100 - paneSize">
-        <div style="background-color: #fff; height: 100%">
+        <div style="background-color: #fff; height: 100%; padding: 0 10px">
           <Search
             ref="customerSearchRef"
             tableName="BdCustomer"

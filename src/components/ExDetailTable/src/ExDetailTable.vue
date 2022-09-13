@@ -155,6 +155,7 @@
     let prop = sliceBasicProp(nowCheckData.data.field);
     emit('getJudgeClickData', arr, row, (index) => {
       if (index !== -1) {
+        basicSearchRef.value.bSearch(false);
         createMessage.error('该项目已被选择!');
         return;
       }

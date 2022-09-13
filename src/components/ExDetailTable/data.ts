@@ -167,7 +167,7 @@ export const exaProjectOfDetailColumns = [
     title: '检验项目名称',
     className: 'disableProp',
     sortable: true,
-    width: 150,
+    // width: 150,
   },
   {
     field: 'min',
@@ -187,7 +187,7 @@ export const exaProjectOfDetailColumns = [
   {
     field: 'description',
     title: '检验描述',
-    width: 120,
+    // width: 120,
     sortable: true,
     editRender: { name: '$input' },
   },
