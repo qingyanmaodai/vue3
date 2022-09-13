@@ -32,9 +32,7 @@
           <Col>
             <a-select
               v-show="
-                search.fieldName
-                  ? JSON.parse(search.fieldName).controlType === 'date'
-                  : false
+                search.fieldName ? JSON.parse(search.fieldName).controlType === 'date' : false
               "
               v-model:value="search.rule"
               placeholder="等于"
@@ -178,8 +176,8 @@
   import {
     Button,
     DatePicker,
-    Form,
-    FormItem,
+    // Form,
+    // FormItem,
     Input,
     InputSearch,
     Select,
@@ -206,8 +204,8 @@
   } from '/@/api/apiLink';
   import { config } from '/@/utils/publicParamConfig';
   const APlusOutlined = PlusOutlined;
-  const AForm = Form;
-  const AFormItem = FormItem;
+  // const AForm = Form;
+  // const AFormItem = FormItem;
   const ASpace = Space;
   const ASelect = Select;
   const AButton = Button;
