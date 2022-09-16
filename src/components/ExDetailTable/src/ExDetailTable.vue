@@ -11,6 +11,7 @@
     :edit-rules="props.editRules"
     :row-style="rowStyle"
     auto-resize
+    @edit-closed="editClosed"
   >
     <template #toolbar_buttons>
       <a-button
@@ -153,18 +154,18 @@
     const $grid: any = xGrid.value;
     let arr = $grid.getTableData();
     let prop = sliceBasicProp(nowCheckData.data.field);
-    emit('getJudgeClickData', arr, row, (index) => {
+    await emit('getJudgeClickData', arr, row, (index) => {
       if (index !== -1) {
         basicSearchRef.value.bSearch(false);
         createMessage.error('该项目已被选择!');
         return;
       }
       emit('cellClickTableEvent', row, nowCheckRow.data, prop);
-      nowCheckRow.data[prop] = {
-        number: row.number,
-        name: row.name,
-        id: row.id,
-      };
+      // nowCheckRow.data[prop] = {
+      //   number: row.number,
+      //   name: row.name,
+      //   id: row.id,
+      // };
       basicSearchRef.value.bSearch(false);
     });
   };
@@ -244,16 +245,16 @@
     validAllErrMapData.value = await $grid.validate(true);
     return validAllErrMapData.value;
   };
-
   //获取表格数据
   const getDetailData = (): object[] => {
-    // let tableData: any = '';
     const $grid: any = xGrid.value;
     let tableData = $grid.getTableData();
     tableFullData.value = tableData.fullData;
+    for (let i = 0; i < tableFullData.value.length; i++) {
+      tableFullData.value[i].seq = i + 1;
+    }
     return tableFullData.value;
   };
-
   defineExpose({
     getValidAllData,
     tableFullData,

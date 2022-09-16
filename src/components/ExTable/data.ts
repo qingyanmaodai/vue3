@@ -334,3 +334,31 @@ export const exaSchemeColumns = [
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+
+//盘盈单
+export const invCountGainColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 120, slots: { default: 'number' }, sortable: true },
+  { field: 'dtLk.srcField', title: '来源单号', width: 120, sortable: true },
+  { field: 'dtData.bdMaterial.number', title: '物料编号', width: 120, sortable: true },
+  { field: 'dtData.bdMaterial.name', title: '物料名称', width: 120, sortable: true },
+  { field: 'dtData.bdMaterial.model', title: '规格型号', width: 120, sortable: true },
+  { field: 'dtData.baseUnitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '盘点日期', width: 120, sortable: true },
+  { field: 'gain', title: '盘盈数量', width: 120, sortable: true },
+  { field: 'dtData.bdStock.name', title: '仓库', width: 120, sortable: true },
+  { field: 'dtData.bdStockCompartment.name', title: '分仓', width: 120, sortable: true },
+  { field: 'dtData.location.name', title: '仓位', width: 120, sortable: true },
+  { field: 'way', title: '盘点方式', width: 120, sortable: true }, //普通盘点，全盘点
+  { field: 'empId', title: '负责人', width: 120, sortable: true },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];

@@ -33,6 +33,7 @@ export const basicGridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
+//基本单位
 export const unitColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -66,6 +67,7 @@ export const unitColumns = [
     slots: { default: 'status' },
   },
 ];
+//仓库
 export const stockColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -81,6 +83,7 @@ export const stockColumns = [
     slots: { default: 'status' },
   },
 ];
+//分仓
 export const stockCompartmentColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -96,6 +99,7 @@ export const stockCompartmentColumns = [
     slots: { default: 'status' },
   },
 ];
+//仓位
 export const locationColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },

@@ -237,4 +237,15 @@ export const config = {
       label: '发货检验',
     },
   ],
+  //盘点方式
+  INVENTORY_WAY: [
+    {
+      value: 'A',
+      label: '普通盘点',
+    },
+    {
+      value: 'B',
+      label: '全盘点',
+    },
+  ],
 };

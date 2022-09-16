@@ -29,4 +29,6 @@ export enum PageEnum {
   EXA_RULE_DETAIL = '/examine/rule/detail',
   //检验方案详情页
   EXA_SCHEME_DETAIL = '/examine/scheme/detail',
+  //盘盈单详情页
+  INV_COUNT_GAIN_DETAIL = '/inventory/countGain/detail',
 }

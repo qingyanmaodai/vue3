@@ -1,0 +1,519 @@
+<template>
+  <div style="height: 100%">
+    <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
+      <a style="font-size: 1.4rem; font-weight: bold; color: #000; line-height: 60px" @click="back"
+        ><RollbackOutlined /> 返回</a
+      >
+      <div style="display: flex; float: right">
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="onAudit" v-if="formState.bsStatus === 'A'"
+          >审核</Button
+        >
+        <Button danger class="button" @click="onUnAudit" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
+      </div>
+    </LayoutHeader>
+    <div class="content">
+      <a-splitpanes class="default-theme" horizontal>
+        <pane :size="paneSize" style="background-color: #fff">
+          <Tabs v-model:activeKey="activeKey" class="tabs">
+            <TabPane key="1" tab="基本信息">
+              <a-form ref="formRef" :model="formState" :rules="formRules">
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="单据编号：" ref="number" name="number" class="item">
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        v-model:value="formState.number"
+                        placeholder="请输入单据编号"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="来源单号：" ref="source" name="srcField" class="item">
+                      <Input class="input" v-model:value="formState.srcField" disabled />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
+                        name="bsStatus"
+                        :disabled="true"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="负责人：" ref="empId" name="empId" class="item">
+                      <ExInput
+                        autocomplete="off"
+                        class="input"
+                        placeholder="请选择负责人"
+                        label="负责人"
+                        :show="formState.bsStatus !== 'B'"
+                        :value="formState.empName"
+                        :disabled="formState.bsStatus === 'B'"
+                        @search="onRule()"
+                        @clear="onClear(['ruleId', 'ruleName'])"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="盘点方式：" ref="invGroup" name="way" class="item">
+                      <Select
+                        v-model:value="formState.way"
+                        class="select"
+                        :options="config.INVENTORY_WAY"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="备注：" ref="mark" name="mark" class="item">
+                      <a-textArea
+                        v-model:value="formState.mark"
+                        placeholder="请添加备注"
+                        :rows="3"
+                        class="textArea"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+              </a-form>
+            </TabPane>
+            <TabPane key="2" tab="其他信息">
+              <a-form ref="formRef" :model="formState" :rules="formRules">
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="创建时间：" ref="createTime" name="createTime" class="item">
+                      <Input class="input" v-model:value="formState.createTime" disabled />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="创建人：" ref="createBy" name="createBy" class="item">
+                      <Input class="input" v-model:value="formState.createBy" disabled />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="修改时间：" ref="updateTime" name="updateTime" class="item">
+                      <Input
+                        class="input"
+                        v-model:value="formState.updateTime"
+                        disabled
+                      /> </a-form-item
+                  ></Col>
+                  <Col :span="8">
+                    <a-form-item label="修改人：" ref="updateBy" name="updateBy" class="item">
+                      <Input
+                        class="input"
+                        v-model:value="formState.updateBy"
+                        disabled
+                      /> </a-form-item
+                  ></Col>
+                </Row>
+              </a-form>
+            </TabPane>
+          </Tabs>
+        </pane>
+        <pane :size="100 - paneSize">
+          <ExDetailTable
+            :columns="invCountGainOfDetailColumns"
+            :gridOptions="RuleOfExaGridOptions"
+            :editRules="formRules"
+            ref="vxeTableRef"
+            @cellClickTableEvent="cellClickTableEvent"
+            :detailTableData="detailTableData"
+            @changeSwitch="changeSwitch"
+            @getJudgeClickData="getJudgeClickData"
+            :isShowIcon="formState.bsStatus !== 'B'"
+            :isDisableButton="formState.bsStatus === 'B'"
+          />
+        </pane>
+      </a-splitpanes>
+    </div>
+    <BasicSearch
+      @basicClickEvent="onRuleClickEvent"
+      @openSearch="openSearch"
+      ref="basicSearchRef"
+      :gridOptions="basicGridOptions"
+    />
+  </div>
+</template>
+<script lang="ts" setup>
+  import {
+    ruleOfExaGridOptions,
+    invCountGainOfDetailColumns,
+  } from '/@/components/ExDetailTable/data';
+  import { onMounted, reactive, ref, toRef } from 'vue';
+  import {
+    Button,
+    Col,
+    Form,
+    FormItem,
+    Input,
+    LayoutHeader,
+    Row,
+    TabPane,
+    Tabs,
+    Select,
+  } from 'ant-design-vue';
+  import { Pane, Splitpanes } from 'splitpanes';
+  import 'splitpanes/dist/splitpanes.css';
+  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { ExInput } from '/@/components/ExInput';
+  import { ExDetailTable } from '/@/components/ExDetailTable';
+  import { RollbackOutlined } from '@ant-design/icons-vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import {
+    add,
+    audit,
+    unAudit,
+    InvCountGainEntity,
+    getOneById,
+    update,
+    InvCountGainDetailEntity,
+  } from '/@/api/invCountGain';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { config } from '/@/utils/publicParamConfig';
+  import { VXETable } from 'vxe-table';
+  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { getEmployeeData, getEmployeeEntity } from '/@/api/employee';
+  import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
+  import { cloneDeep } from 'lodash-es';
+  import {getPublicList} from "/@/api/public";
+  const { createMessage } = useMessage();
+  const ASplitpanes = Splitpanes;
+  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const paneSize = ref<number>(50);
+  const AForm = Form;
+  const AFormItem = FormItem;
+  const ATextArea = Input.TextArea;
+  const router = useRouter();
+  const formRef = ref();
+  const activeKey = ref<string>('1');
+  const basicSearchRef: any = ref(null);
+  const vxeTableRef: any = ref<String | null>(null);
+  const formData: InvCountGainEntity = {
+    id: undefined,
+    number: '',
+    dtData: [],
+  };
+  const detailTableData: any = ref<object[]>([]); //表格数据
+  //初始化
+  const formStateInit = reactive({
+    data: formData,
+  });
+  const formState = toRef(formStateInit, 'data');
+  // const project = 'bdExamineProject.number';
+
+  const formRules = reactive({
+    // name: [{ required: true, message: '请输入方案名称' }],
+    number: [{ required: true, message: '请输入单据编号' }],
+  });
+  // formRules[project] = [{ required: true, message: '请选择检验项目' }];
+
+  //点击清空图标清空事件
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = '';
+    });
+  };
+  const openSearch = async () => {
+    const res = await onRule();
+    basicSearchRef.value.initList(res);
+  };
+  //基本信息表格双击事件
+  const onRuleClickEvent = (row) => {
+    formState.value.empId = row.id;
+    formState.value.empName = row.name;
+    basicSearchRef.value.bSearch(false);
+  };
+  //打开放大镜
+  const onRule = async () => {
+    const res: any = await getEmployeeData({
+      params: [
+        {
+          table: '',
+          name: 'bsStatus',
+          column: 'bs_status',
+          link: SearchLink.AND,
+          rule: SearchMatchType.EQ,
+          type: SearchDataType.string,
+          val: 'B',
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    let data = res;
+    basicSearchRef.value.bSearch(true);
+    basicSearchRef.value.initList(data);
+    basicSearchRef.value.initCols(employeeColumns);
+    await getEmployeeOption();
+    return res;
+  };
+  //获取基本单位字段
+  const getEmployeeOption = async () => {
+    try {
+      let arr: any = [];
+      let data = await getEmployeeEntity();
+      arr = cloneDeep(data);
+      arr = arr.filter((e) => e.fieldName != 'bs_status');
+      basicSearchRef.value.init(arr);
+    } catch (e) {
+      console.log('获取基本信息字段失败', e);
+    }
+  };
+  //接受参数
+  const dataId = useRoute().query.row?.toString();
+
+  //保存
+  const onSubmit = async () => {
+    formRef.value
+      .validate()
+      .then(async () => {
+        const tableFullData = vxeTableRef.value.getDetailData();
+        const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+        if (tableFullData) {
+          if (validAllErrMapData) {
+            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
+            return;
+          }
+          formState.value.dtData = cloneDeep(tableFullData);
+        }
+        if (!formState.value.id) {
+          const data = await add({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+        } else {
+          const data = await update({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+        }
+        formState.value.bsStatus = 'A';
+        createMessage.success('操作成功');
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
+  };
+  const onAudit = async () => {
+    formRef.value
+      .validate()
+      .then(async () => {
+        const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
+        if (type === 'confirm') {
+          const tableFullData = vxeTableRef.value.getDetailData();
+          const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+          if (tableFullData) {
+            if (validAllErrMapData) {
+              await VXETable.modal.message({
+                status: 'error',
+                message: '明细表数据校检不通过，请检查!',
+              });
+              return;
+            }
+            formState.value.dtData = cloneDeep(tableFullData);
+          }
+          const data = await audit({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
+          if (data.bsStatus === 'B' && tableFullData) {
+            tableFullData.map((e) => {
+              e.bsStatus = 'B';
+              return e;
+            });
+          }
+          createMessage.success('操作成功');
+        }
+      })
+      .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
+        console.log(error);
+      });
+  };
+  const onUnAudit = async () => {
+    const type = await VXETable.modal.confirm('您确定要反审核吗?');
+    if (type === 'confirm') {
+      const tableFullData = vxeTableRef.value.getDetailData();
+      if (tableFullData) {
+        formState.value.dtData = cloneDeep(tableFullData);
+      }
+      const data = await unAudit({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
+      if (data.bsStatus === 'A' && tableFullData) {
+        tableFullData.map((e) => {
+          e.bsStatus = 'A';
+          return e;
+        });
+      }
+      createMessage.success('操作成功');
+    }
+  };
+  //返回上一页
+  const back = () => {
+    router.go(-1);
+  };
+  //获取初始值
+  const init = async () => {
+    if (dataId) {
+      const res: any = await getOneById({ params: dataId });
+      formState.value = res;
+      if (formState.value.empId) {
+        formState.value.empId = res.bdExamineRule ? res.bdExamineRule.id : '';
+        formState.value.empName = res.bdExamineRule ? res.bdExamineRule.name : '';
+      }
+      if (formState.value.dtData) {
+        // formState.value.dtData.map((r) => {
+        //   r.bsStatus = formState.value.bsStatus;
+        //   if (!r.bdStock) {
+        //     r.bdStock = {
+        //       id: '',
+        //       name: '',
+        //       number: '',
+        //     };
+        //     return r;
+        //   }
+        // });
+      }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    }
+  };
+
+  //获取判断双击赋值事件的值
+  const getJudgeClickData = (arr, row, callback) => {
+    let judgeClickIndex = arr.fullData.findIndex((e) => e.bdStock.id === row.id);
+    callback(judgeClickIndex);
+  };
+  const getNextStock = async (key, colName, id) => {
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: colName,
+            column: colName,
+            link: 'AND',
+            rule: 'LIKE',
+            type: 'number',
+            val: id,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    return res;
+  };
+  const cellClickTableEvent = async (row, data, column) => {
+    console.log('row', row);
+    switch (column) {
+      case 'bdMaterial':
+        data.matId = row.id;
+        data.bdMaterial = {
+          number: row.number,
+          name: row.name,
+          // id: row.id,
+        };
+        data.model = row.model;
+        data.baseUnitName = row.baseUnit.name;
+        data.weightUnitName = row.baseUnit.name;
+        // data.bdStock = {
+        //   number: row.number,
+        //   name: row.name,
+        //   // id: row.id,
+        // };
+        break;
+      case 'bdStock':
+        data.stockId = row.id;
+        data.bdStock.name = row.name;
+        break;
+      case 'bdStockCompartment':
+        data.compartmentId = row.id;
+        data.bdStockCompartment.name = row.name;
+        const stockByStock = await getNextStock('stock', 'id', row.stockId);
+        data.stockId = stockByStock.records[0].id;
+        data.bdStock.name = stockByStock.records[0].name;
+        break;
+      case 'location':
+        data.locationId = row.id;
+        data.location.name = row.name;
+        console.log("aa", row);
+        const CompartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
+        console.log("bb", CompartmentByStockLocation);
+        const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
+        console.log('12321321', CompartmentByStockLocation);
+        data.compartmentId = CompartmentByStockLocation.records[0].id;
+        data.bdStock.name = CompartmentByStockLocation.records[0].name;
+        data.stockId = stockByStockLocation.records[0].id;
+        data.bdStock.name = stockByStockLocation.records[0].name;
+        break;
+    }
+  };
+  //设置Switch默认
+  const changeSwitch = (obj) => {
+    obj.isOpen = 1;
+    obj.isRequire = 1;
+    obj.sort = cloneDeep(vxeTableRef.value.rowSortData);
+  };
+  //刚进入页面——加载完后，需要执行的方法
+  onMounted(() => {
+    init();
+  });
+</script>
+<style scoped lang="less">
+  .switchDiv {
+    width: 318px;
+  }
+  .item {
+    flex-flow: nowrap;
+  }
+  .switch {
+    flex-flow: nowrap;
+  }
+  .input {
+    width: 16rem;
+    height: 2rem;
+    margin: 0 60px 0 2px;
+  }
+  .textArea {
+    width: 16rem;
+    height: 2rem;
+    margin: 0 60px 0 2px;
+  }
+  .select {
+    width: 16rem;
+    margin: 0 60px 0 2px;
+  }
+  .content {
+    border: 1px solid #e5e7eb;
+    margin: 10px;
+    height: calc(100% - 80px);
+    background-color: #fff;
+    padding: 10px;
+  }
+  .default-theme {
+    //height: calc(100% - 80px);
+  }
+  :deep(.vxe-grid) {
+    font-size: 14px;
+    height: 100%;
+  }
+  .button {
+    margin: 15px;
+  }
+</style>

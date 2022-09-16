@@ -208,6 +208,25 @@ export enum Url {
   EXPORT_UNIT_LIST = '/stock/bd-unit/export-list', //导出
   ADD_UNIT_LIST = '/stock/bd-unit/save', //添加
   UPDATE_UNIT_LIST = '/stock/bd-unit/update', //编辑
+
+  // 盘盈单
+  AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/audit', //审核
+  BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-audit', //批量审核
+  UN_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/un-audit', //反审核
+  UN_BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-un-audit', //批量反审核
+  DELETE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete', //删除
+  BATCH_DELETE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail', //删除含详情信息
+  GET_PAGE_INV_COUNT_GAIN_LIST = '/wms/bd-inventory-count-gain/list', //分页查询--获取列表
+  GET_INV_COUNT_GAIN_OPTIONS_LIST = '/wms/bd-inventory-count-gain/query-dto', //获取实体信息
+  GET_ONE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/query-one', //查询单条
+  IMPORT_INV_COUNT_GAIN = 'http://192.168.200.136:9999/wms/bd-inventory-count-gain/import-list', //导入
+  IMPORT_MODEL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/import-model', //导入模板下载
+  EXPORT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/export-list', //导出
+  ADD_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save', //添加
+  ADD_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save-with-detail', //添加含详情信息
+  UPDATE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/update', //编辑
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
@@ -333,6 +352,67 @@ export const TableColum = {
       title: '数据状态',
       sortable: true,
       slots: { default: 'status' },
+    },
+  ],
+  //盘盈单
+  GET_INV_COUNT_GAIN_OPTIONS_LIST: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '单据编号', sortable: true },
+    { field: 'bsNumber', title: '来源单号', sortable: true },
+    { field: 'bsNumber', title: '物料编号', sortable: true },
+    { field: 'bsNumber', title: '物料名称', sortable: true },
+    { field: 'bsNumber', title: '规格型号', sortable: true },
+    { field: 'bsNumber', title: '单位', sortable: true },
+    { field: 'optStockNum', title: '盘盈数量', sortable: true },
+    { field: 'way', title: '盘点方式', sortable: true }, //普通盘点，全盘点
+    { field: 'empId', title: '负责人', sortable: true },
+    { field: 'bsDate', title: '盘点日期', sortable: true },
+    { field: 'dtData.stockNum', title: '仓库', sortable: true },
+    { field: 'dtData.stockNum', title: '分仓', sortable: true },
+    { field: 'dtData.stockNum', title: '仓位', sortable: true },
+  ],
+  //物料信息表头
+  GET_OPTIONS_LIST: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '物料编码', sortable: true },
+    { field: 'name', title: '物料名称', sortable: true },
+    { field: 'model', title: '规格型号', sortable: true },
+    { field: 'baseUnit.name', title: '基本单位', sortable: true },
+    { field: 'weightUnit.name', title: '重量单位', sortable: true },
+    { field: 'bdStock.name', title: '仓库', sortable: true },
+    { field: 'bdStockCompartment.name', title: '分仓', sortable: true },
+    { field: 'location.name', title: '仓位', sortable: true },
+    { field: 'weightUnit.name', title: '重量单位', sortable: true },
+    { field: 'bdMaterialGroup.name', title: '物料分组', sortable: true },
+    {
+      field: 'attr',
+      title: '物料属性',
+      sortable: true,
+    },
+  ],
+  //客户实体信息表头
+  CUSTOMER_GET_ENTITY: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '编码', width: 120, sortable: true },
+    { field: 'name', title: '客户', sortable: true, width: 120 },
+    { field: 'shortName', title: '客户简称', sortable: true, width: 120 },
+    { field: 'contact', title: '联系人', sortable: true, width: 120 },
+    { field: 'phone', title: '联系电话', sortable: true, width: 120 },
+    { field: 'address', title: '地址', sortable: true, width: 120 },
+    { field: 'bdCountryCountry.name', title: '国家', sortable: true, width: 120 },
+    { field: 'bdCountryProvincial.name', title: '省', sortable: true, width: 120 },
+    { field: 'bdCountryMunicipal.name', title: '市', sortable: true, width: 120 },
+    { field: 'bdCountryDistrict.name', title: '区', sortable: true, width: 120 },
+    { field: 'bdCustomerGroup.name', title: '客户分组', sortable: true, width: 120 },
+    { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+    { field: 'updateTime', title: '修改日期', sortable: true, width: 160 },
+    {
+      field: 'attr',
+      title: '物料属性',
+      sortable: true,
     },
   ],
 };

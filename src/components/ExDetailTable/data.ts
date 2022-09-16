@@ -138,7 +138,7 @@ export const ruleOfExaColumns = [
 //检验方案详情
 export const exaProjectOfDetailColumns = [
   { type: 'checkbox', width: 50 },
-  { type: 'seq', title: '行号', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', width: 50 },
   {
     field: 'sort',
     title: '顺序',
@@ -203,4 +203,127 @@ export const exaProjectOfDetailColumns = [
     width: 120,
     slots: { default: 'open' },
   },
+];
+//盘盈单详情
+export const invCountGainOfDetailColumns = [
+  { type: 'checkbox', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', width: 50 },
+  {
+    field: 'sort',
+    title: '顺序',
+    sortable: true,
+    width: 100,
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+  },
+  {
+    field: 'bdMaterial.number',
+    title: '物料编码',
+    sortable: true,
+    width: 150,
+    params: {
+      list: 'GET_TABLE_LIST', //物料信息表格数据
+      select: 'GET_OPTIONS_LIST', //基本信息下拉框+表头
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
+    field: 'matId', //物料编码
+    visible: false,
+  },
+  {
+    field: 'locationId', //仓位
+    visible: false,
+  },
+  {
+    field: 'compartmentId', //分仓
+    visible: false,
+  },
+  {
+    field: 'stockId', //分仓
+    visible: false,
+  },
+  {
+    field: 'bdMaterial.name',
+    title: '物料名称',
+    className: 'disableProp',
+    sortable: true,
+    width: 150,
+  },
+  { field: 'model', title: '规格型号', width: 150, sortable: true },
+  {
+    field: 'baseUnitName',
+    title: '基本单位',
+    editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'weightUnitName',
+    title: '重量单位',
+    editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'stockNum',
+    title: '帐存数量',
+    editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'countNum',
+    title: '盘点数量',
+    editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  { field: 'gain', title: '盘盈数量', editRender: { name: '$input' }, width: 150, sortable: true },
+  {
+    field: 'bdStock.name',
+    title: '仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_LIST',
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockCompartment.name',
+    title: '分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_LIST',
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'location.name',
+    title: '仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_LIST',
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+    width: 150,
+    sortable: true,
+  },
+  { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
+  { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
