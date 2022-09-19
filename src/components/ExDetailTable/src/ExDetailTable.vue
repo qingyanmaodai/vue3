@@ -11,7 +11,6 @@
     :edit-rules="props.editRules"
     :row-style="rowStyle"
     auto-resize
-    @edit-closed="editClosed"
   >
     <template #toolbar_buttons>
       <a-button

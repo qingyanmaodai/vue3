@@ -162,6 +162,9 @@
             <template #bsType="{ row }">
               <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
             </template>
+            <template #attr="{ row }">
+              <Tag v-if="row.attr">{{ formatData(row.attr, config['MATERIAL_ATTR']) }}</Tag>
+            </template>
           </vxe-grid>
         </a-form-item>
         <Pager

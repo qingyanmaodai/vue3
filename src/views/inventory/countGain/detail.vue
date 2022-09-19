@@ -30,13 +30,13 @@
                         class="input"
                         autocomplete="off"
                         v-model:value="formState.number"
-                        placeholder="请输入单据编号"
-                        :disabled="formState.bsStatus === 'B'"
+                        placeholder="保存后自动生成"
+                        disabled
                       />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="source" name="srcField" class="item">
+                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
                       <Input class="input" v-model:value="formState.srcField" disabled />
                     </a-form-item>
                   </Col>
@@ -70,7 +70,7 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="盘点方式：" ref="invGroup" name="way" class="item">
+                    <a-form-item label="盘点方式：" ref="way" name="way" class="item">
                       <Select
                         v-model:value="formState.way"
                         class="select"
@@ -79,6 +79,19 @@
                       />
                     </a-form-item>
                   </Col>
+                  <Col :span="8">
+                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
+                      <a-date-picker
+                        class="select"
+                        dateFormat="YYYY-MM-DD"
+                        v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
+                        placeholder="请选择业务日期"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -167,6 +180,7 @@
     Input,
     LayoutHeader,
     Row,
+    DatePicker,
     TabPane,
     Tabs,
     Select,
@@ -178,15 +192,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import {
-    add,
-    audit,
-    unAudit,
-    InvCountGainEntity,
-    getOneById,
-    update,
-    InvCountGainDetailEntity,
-  } from '/@/api/invCountGain';
+  import { add, audit, unAudit, InvCountGainEntity, getOneById, update } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -195,9 +201,11 @@
   import { getEmployeeData, getEmployeeEntity } from '/@/api/employee';
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
-  import {getPublicList} from "/@/api/public";
+  import { getPublicList } from '/@/api/public';
+  // import dayjs from "dayjs";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
+  const ADatePicker = DatePicker;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
@@ -219,13 +227,19 @@
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
-  // const project = 'bdExamineProject.number';
+  const material = 'bdMaterial.number';
+  const stock = 'bdStock.name';
+  const compartment = 'bdStockCompartment.name';
+  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
     // name: [{ required: true, message: '请输入方案名称' }],
-    number: [{ required: true, message: '请输入单据编号' }],
+    // number: [{ required: true, message: '请输入单据编号' }],
   });
-  // formRules[project] = [{ required: true, message: '请选择检验项目' }];
+  formRules[material] = [{ required: true, message: '请选择检验项目' }];
+  formRules[stock] = [{ required: true, message: '请选择仓库' }];
+  formRules[compartment] = [{ required: true, message: '请选择分仓' }];
+  formRules[location] = [{ required: true, message: '请选择仓位' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -296,13 +310,13 @@
           }
           formState.value.dtData = cloneDeep(tableFullData);
         }
-        if (!formState.value.id) {
-          const data = await add({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-        } else {
-          const data = await update({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-        }
+        // if (!formState.value.id) {
+        const data = await add({ params: formState.value });
+        formState.value = Object.assign({}, formState.value, data);
+        // } else {
+        //   const data = await update({ params: formState.value });
+        //   formState.value = Object.assign({}, formState.value, data);
+        // }
         formState.value.bsStatus = 'A';
         createMessage.success('操作成功');
       })
@@ -372,22 +386,27 @@
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      if (formState.value.empId) {
-        formState.value.empId = res.bdExamineRule ? res.bdExamineRule.id : '';
-        formState.value.empName = res.bdExamineRule ? res.bdExamineRule.name : '';
-      }
+      // if (formState.value.empId) {
+      //   console.log(formState.value, 'swdsa');
+      // formState.value.empId = res.empName ? res.bdExamineRule.id : '';
+      // formState.value.empName = res.empName ? res.empName : '';
+      // }
+      // if (res.bsDate) {
+      //   console.log(formState.value, 'swdsa');
+      //   formState.value.bsDate = moment(res.bsDate, 'YYYY-MM-DD'),
+      // }
       if (formState.value.dtData) {
-        // formState.value.dtData.map((r) => {
-        //   r.bsStatus = formState.value.bsStatus;
-        //   if (!r.bdStock) {
-        //     r.bdStock = {
-        //       id: '',
-        //       name: '',
-        //       number: '',
-        //     };
-        //     return r;
-        //   }
-        // });
+        formState.value.dtData.map((r) => {
+          r.bsStatus = formState.value.bsStatus;
+          if (!r.bdStock) {
+            r.bdStock = {
+              id: '',
+              name: '',
+              number: '',
+            };
+            return r;
+          }
+        });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
@@ -398,6 +417,10 @@
     let judgeClickIndex = arr.fullData.findIndex((e) => e.bdStock.id === row.id);
     callback(judgeClickIndex);
   };
+  let queryStockParam = reactive({
+    stockCompartment: {},
+    stockLocation: {},
+  });
   const getNextStock = async (key, colName, id) => {
     const res: any = await getPublicList(
       {
@@ -421,26 +444,50 @@
   };
   const cellClickTableEvent = async (row, data, column) => {
     console.log('row', row);
+    console.log('data', data);
     switch (column) {
       case 'bdMaterial':
         data.matId = row.id;
-        data.bdMaterial = {
-          number: row.number,
-          name: row.name,
-          // id: row.id,
-        };
-        data.model = row.model;
-        data.baseUnitName = row.baseUnit.name;
-        data.weightUnitName = row.baseUnit.name;
-        // data.bdStock = {
-        //   number: row.number,
-        //   name: row.name,
-        //   // id: row.id,
-        // };
+        data.bdMaterial.number = row.number;
+        //存在问题---有些数据是不存在的，但是在添加时，没有清空数据-仓库，分仓，仓位
+        data.bdMaterial.name = row.name;
+        data.bdMaterial.model = row.model;
+        if (row.baseUnit) {
+          data.bdMaterial.baseUnitName = row.baseUnit.name;
+        }
+        if (row.weightUnit) {
+          data.bdMaterial.weightUnitName = row.weightUnit.name;
+        }
+        if (row.stockId) {
+          const stockByMaterial = await getNextStock('stock', 'id', row.stockId);
+          data.stockId = stockByMaterial.records[0].id;
+          data.bdStock.name = stockByMaterial.records[0].name;
+        }
+        if (row.compartmentId) {
+          const compartmentByMaterial = await getNextStock('sub', 'id', row.compartmentId);
+          data.compartmentId = compartmentByMaterial.records[0].id;
+          data.bdStockCompartment.name = compartmentByMaterial.records[0].name;
+        }
+        if (row.locationId) {
+          const locationByMaterial = await getNextStock('location', 'id', row.locationId);
+          data.locationId = locationByMaterial.records[0].id;
+          data.bdStockLocation.name = locationByMaterial.records[0].name;
+        }
         break;
       case 'bdStock':
         data.stockId = row.id;
         data.bdStock.name = row.name;
+        queryStockParam.stockCompartment = {
+          table: '',
+          name: 'stockId',
+          column: 'stock_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id;
@@ -448,17 +495,25 @@
         const stockByStock = await getNextStock('stock', 'id', row.stockId);
         data.stockId = stockByStock.records[0].id;
         data.bdStock.name = stockByStock.records[0].name;
+        queryStockParam.stockLocation = {
+          table: '',
+          name: 'compartmentId',
+          column: 'stock_compartment_id',
+          link: 'AND',
+          rule: 'EQ',
+          type: 'string',
+          val: row.id,
+          startWith: '',
+          endWith: '',
+        };
         break;
       case 'location':
         data.locationId = row.id;
-        data.location.name = row.name;
-        console.log("aa", row);
-        const CompartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
-        console.log("bb", CompartmentByStockLocation);
+        data.bdStockLocation.name = row.name;
+        const compartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
         const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        console.log('12321321', CompartmentByStockLocation);
-        data.compartmentId = CompartmentByStockLocation.records[0].id;
-        data.bdStock.name = CompartmentByStockLocation.records[0].name;
+        data.compartmentId = compartmentByStockLocation.records[0].id;
+        data.bdStockCompartment.name = compartmentByStockLocation.records[0].name;
         data.stockId = stockByStockLocation.records[0].id;
         data.bdStock.name = stockByStockLocation.records[0].name;
         break;

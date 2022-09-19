@@ -63,21 +63,6 @@ export const config = {
     A: '创建',
     B: '已审核',
   },
-  //  检验类型
-  EXAMINE_TYPE: [
-    {
-      value: 'A',
-      label: '免检',
-    },
-    {
-      value: 'B',
-      label: '质检',
-    },
-    {
-      value: 'C',
-      label: '全检',
-    },
-  ],
   //检验设置
   EXAMINE_SET: [
     {
@@ -211,7 +196,7 @@ export const config = {
       label: '重量单位',
     },
   ],
-  //物料属性
+  //检验类型
   EXAMINE_SCHEME_TYPE: [
     {
       value: 'A',

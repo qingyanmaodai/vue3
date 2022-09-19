@@ -216,20 +216,6 @@ export const invCountGainOfDetailColumns = [
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
   },
   {
-    field: 'bdMaterial.number',
-    title: '物料编码',
-    sortable: true,
-    width: 150,
-    params: {
-      list: 'GET_TABLE_LIST', //物料信息表格数据
-      select: 'GET_OPTIONS_LIST', //基本信息下拉框+表头
-    },
-    editRender: { name: '$input' },
-    slots: {
-      edit: 'model',
-    },
-  },
-  {
     field: 'matId', //物料编码
     visible: false,
   },
@@ -246,13 +232,27 @@ export const invCountGainOfDetailColumns = [
     visible: false,
   },
   {
+    field: 'bdMaterial.number',
+    title: '物料编码',
+    sortable: true,
+    width: 150,
+    params: {
+      list: 'GET_TABLE_LIST', //物料信息表格数据
+      select: 'GET_OPTIONS_LIST', //基本信息下拉框+表头
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
     field: 'bdMaterial.name',
     title: '物料名称',
     className: 'disableProp',
     sortable: true,
     width: 150,
   },
-  { field: 'model', title: '规格型号', width: 150, sortable: true },
+  { field: 'bdMaterial.model', title: '规格型号', width: 150, sortable: true },
   {
     field: 'baseUnitName',
     title: '基本单位',
@@ -261,7 +261,7 @@ export const invCountGainOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'weightUnitName',
+    field: 'bdMaterial.weightUnitName',
     title: '重量单位',
     editRender: { name: '$input' },
     width: 150,
@@ -311,7 +311,7 @@ export const invCountGainOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'location.name',
+    field: 'bdStockLocation.name',
     title: '仓位',
     params: {
       list: 'GET_PAGE_STOCK_LOCATION_LIST',

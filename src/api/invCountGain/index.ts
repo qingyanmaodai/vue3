@@ -38,7 +38,7 @@ export interface InvCountGainDetailEntity extends PublicModel {
   bdMaterial?: MatProfileEntity;
   bdStock?: StockProfileEntity;
   bdStockCompartment?: StockCompartmentProfileEntity;
-  location?: StockLocationProfileEntity;
+  bdStockLocation?: StockLocationProfileEntity;
 }
 /**
  * 获取表格信息

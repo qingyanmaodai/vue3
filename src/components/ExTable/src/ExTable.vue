@@ -65,6 +65,9 @@
     <template #job="{ row }">
       <Tag>{{ formatData(row.job, config['JOB']) }}</Tag>
     </template>
+    <template #way="{ row }">
+      <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
+    </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
@@ -87,7 +90,7 @@
   <vxe-modal
     v-model="resultModal"
     id="resultByBatchModal"
-    :position="{ top: 40 }"
+    :position="{ top: 20 }"
     show-zoom
     resize
     width="50%"

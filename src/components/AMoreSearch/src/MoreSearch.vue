@@ -99,7 +99,7 @@
             >
               <a-date-picker
                 style="width: 200px"
-                v-model:value="search.date"
+                v-model="search.date"
                 placeholder="请选择时间..."
               />
             </a-space>

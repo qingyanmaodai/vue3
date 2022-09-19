@@ -113,6 +113,7 @@ export const locationColumns = [
     slots: { default: 'status' },
   },
 ];
+//检验方案
 export const planColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },

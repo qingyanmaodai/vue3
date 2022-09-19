@@ -78,6 +78,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import dayjs from "dayjs";
 
   const { createMessage } = useMessage();
   const go = useGo();
@@ -126,6 +127,9 @@
     pages.total = res.total;
     pages.currentPage = currPage;
     let data = res.records;
+    // data.bsDate = dayjs(dayjs(data.bsDate).valueOf()).format('YYYY-MM-DD');
+    //存在日期数据转换问题
+    console.log('dwfdfed', data);
     tableRef.value.init(data);
     searchRef.value.moreSearchClose();
   };
