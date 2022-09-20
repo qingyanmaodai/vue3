@@ -82,14 +82,14 @@
                   <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
+                        :showToday="false"
                         class="select"
-                        format="YYYY/MM/DD"
+                        format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
                         placeholder="请选择业务日期"
                       />
                     </a-form-item>
-                    <!--                    :value="formState.bsDate ? moment(formState.bsDate, 'YYYY-MM-DD') : null"-->
                   </Col>
                 </Row>
                 <Row>
@@ -173,7 +173,7 @@
     ruleOfExaGridOptions,
     invCountGainOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -207,7 +207,7 @@
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { getEmployeeData, getEmployeeEntity } from '/@/api/employee';
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
@@ -226,11 +226,19 @@
   const activeKey = ref<string>('1');
   const basicSearchRef: any = ref(null);
   const vxeTableRef: any = ref<String | null>(null);
+
+  //获取当前时间
+  const getCurrentData = () => {
+    return new Date().toLocaleDateString();
+  };
+  //输入框默认值
   const formData: InvCountGainEntity = {
     id: undefined,
     number: '',
-    dtData: [],
+    way: 'A',
+    bsDate: moment(getCurrentData(), 'YYYY-MM-DD'),
   };
+
   const detailTableData: any = ref<object[]>([]); //表格数据
   //初始化
   const formStateInit = reactive({
@@ -243,7 +251,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    // name: [{ required: true, message: '请输入方案名称' }],
+    gain: [{ required: false, message: '请输入方案名称' }],
     countNum: [{ required: true, message: '请输入盘点数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
@@ -365,7 +373,7 @@
           }
           createMessage.success('操作成功');
         }
-        formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
+        formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         createMessage.error('数据校检不通过，请检查!');
@@ -389,7 +397,7 @@
       }
       createMessage.success('操作成功');
     }
-    formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
+    formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
   };
   //返回上一页
   const back = () => {
@@ -405,7 +413,7 @@
       // formState.value.empId = res.empName ? res.bdExamineRule.id : '';
       // formState.value.empName = res.empName ? res.empName : '';
       // }
-      formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
+      formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
