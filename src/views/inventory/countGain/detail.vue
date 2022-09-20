@@ -65,7 +65,7 @@
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="onRule()"
-                        @clear="onClear(['ruleId', 'ruleName'])"
+                        @clear="onClear(['empId', 'empName'])"
                       />
                     </a-form-item>
                   </Col>
@@ -240,6 +240,7 @@
   };
 
   const detailTableData: any = ref<object[]>([]); //表格数据
+  // let stockNumData: any = ref(0); //帐存数量
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -251,8 +252,16 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    gain: [{ required: false, message: '请输入方案名称' }],
-    countNum: [{ required: true, message: '请输入盘点数量' }],
+    countNum: [
+      { required: true, message: '请输入比帐存数量大的盘点数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+            return new Error('盘点数量应该大于帐存数量');
+          }
+        },
+      },
+    ],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
@@ -321,10 +330,13 @@
       .validate()
       .then(async () => {
         const tableFullData = vxeTableRef.value.getDetailData();
+        console.log('1212', tableFullData)
+
         const validAllErrMapData = await vxeTableRef.value.getValidAllData();
         if (tableFullData) {
+          console.log('1212', tableFullData)
           if (validAllErrMapData) {
-            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
+            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查1111111!' });
             return;
           }
           formState.value.dtData = cloneDeep(tableFullData);
@@ -473,6 +485,7 @@
   const cellClickTableEvent = async (row, data, column) => {
     console.log('row', row);
     console.log('data', data);
+
     switch (column) {
       case 'bdMaterial':
         data.matId = row.id;
@@ -489,7 +502,7 @@
           const stockByMaterial = await getNextStock('stock', 'id', row.stockId);
           data.stockId = stockByMaterial.records[0].id;
           data.bdStock.name = stockByMaterial.records[0].name;
-          data.bdStock.id = stockByMaterial.records[0].id;
+          data.bdStock.number = stockByMaterial.records[0].number;
         } else {
           data.stockId = '';
           data.bdStock.name = '';
@@ -498,7 +511,7 @@
           const compartmentByMaterial = await getNextStock('sub', 'id', row.compartmentId);
           data.compartmentId = compartmentByMaterial.records[0].id;
           data.bdStockCompartment.name = compartmentByMaterial.records[0].name;
-          data.bdStockCompartment.id = compartmentByMaterial.records[0].id;
+          data.bdStockCompartment.number = compartmentByMaterial.records[0].number;
         } else {
           data.compartmentId = '';
           data.bdStockCompartment.name = '';
@@ -507,20 +520,16 @@
           const locationByMaterial = await getNextStock('location', 'id', row.locationId);
           data.locationId = locationByMaterial.records[0].id;
           data.bdStockLocation.name = locationByMaterial.records[0].name;
-          data.bdStockLocation.id = locationByMaterial.records[0].id;
+          data.bdStockLocation.number = locationByMaterial.records[0].number;
         } else {
           data.locationId = '';
           data.bdStockLocation.name = '';
         }
-        // if (row.locationId || row.compartmentId || row.stockId || row.id) {
-        //   let
-        //   const stockNumData = await getNextStock('INV_BY_MAT_STOCK', 'id', row.id);
-        //   console.log('stocknum', stockNumData)
-        // }
         break;
       case 'bdStock':
         data.stockId = row.id;
         data.bdStock.name = row.name;
+        data.bdStock.number = row.number;
         queryStockParam.stockCompartment = {
           table: '',
           name: 'stockId',
@@ -536,6 +545,7 @@
       case 'bdStockCompartment':
         data.compartmentId = row.id;
         data.bdStockCompartment.name = row.name;
+        data.bdStockCompartment.number = row.number;
         const stockByStock = await getNextStock('stock', 'id', row.stockId);
         data.stockId = stockByStock.records[0].id;
         data.bdStock.name = stockByStock.records[0].name;
@@ -554,6 +564,7 @@
       case 'bdStockLocation':
         data.locationId = row.id;
         data.bdStockLocation.name = row.name;
+        data.bdStockLocation.number = row.number;
         const compartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
         const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
         data.compartmentId = compartmentByStockLocation.records[0].id;
@@ -562,11 +573,10 @@
         data.bdStock.name = stockByStockLocation.records[0].name;
         break;
     }
-    let stockNumData: any = '';
-    stockNumData = await getInventoryList({ params: data });
-    console.log('stock', stockNumData);
+    let stockNumData = await getInventoryList({ params: data });
+    console.log('stockNumData.value', stockNumData);
     if (stockNumData) {
-      data.stockNum = cloneDeep(stockNumData.stockNum);
+      data.stockNum = cloneDeep(stockNumData);
     } else {
       data.stockNum = 0;
     }

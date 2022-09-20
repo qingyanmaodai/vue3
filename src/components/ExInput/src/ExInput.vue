@@ -18,11 +18,23 @@
   const CloseIcon = CloseCircleFilled;
   const SearchIcon = SearchOutlined;
   const props = defineProps({
-    value: String,
-    disabled: Boolean,
+    value: {
+      type: String,
+      // default: '',
+    },
+    disabled: {
+      type: Boolean,
+      // default: true,
+    },
     placeholder: String,
-    allowClear: Boolean,
-    show: Boolean,
+    allowClear: {
+      type: Boolean,
+      // default: true,
+    },
+    show: {
+      type: Boolean,
+      // default: true,
+    },
   });
   type Emits = {
     (event: 'search', key: string): void;

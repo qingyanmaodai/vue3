@@ -132,7 +132,6 @@
     // if (res.bsDate) {
     //   formState.value.bsDate = dayjs(dayjs(res.bsDate).valueOf()).format('YYYY-MM-DD');
     // }
-    // console.log('dwfds',data)
     //存在日期数据转换问题
     tableRef.value.init(data);
     searchRef.value.moreSearchClose();

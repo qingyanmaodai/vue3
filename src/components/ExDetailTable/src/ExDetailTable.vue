@@ -156,7 +156,6 @@
 
   const editClosed = (row) => {
     emit('getCountAmount', row.row); //计算
-    console.log('row', row.row);
   };
 
   //基本信息表格双击事件
