@@ -83,14 +83,13 @@
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         class="select"
-                        :format="dateFormat"
+                        format="YYYY/MM/DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
                         placeholder="请选择业务日期"
                       />
                     </a-form-item>
-<!--                    :value="formState.bsDate ? moment(formState.bsDate, 'YYYY-MM-DD') : null"-->
-
+                    <!--                    :value="formState.bsDate ? moment(formState.bsDate, 'YYYY-MM-DD') : null"-->
                   </Col>
                 </Row>
                 <Row>
@@ -174,7 +173,7 @@
     ruleOfExaGridOptions,
     invCountGainOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -195,12 +194,20 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, InvCountGainEntity, getOneById, update } from '/@/api/invCountGain';
+  import {
+    add,
+    audit,
+    unAudit,
+    InvCountGainEntity,
+    getOneById,
+    update,
+    getInventoryList,
+  } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { getEmployeeData, getEmployeeEntity } from '/@/api/employee';
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
@@ -225,7 +232,6 @@
     dtData: [],
   };
   const detailTableData: any = ref<object[]>([]); //表格数据
-  const dateFormat = 'YYYY-MM-DD';
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -238,8 +244,9 @@
 
   const formRules = reactive({
     // name: [{ required: true, message: '请输入方案名称' }],
-    // number: [{ required: true, message: '请输入单据编号' }],
+    countNum: [{ required: true, message: '请输入盘点数量' }],
   });
+  formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
   formRules[compartment] = [{ required: true, message: '请选择分仓' }];
@@ -358,6 +365,7 @@
           }
           createMessage.success('操作成功');
         }
+        formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         createMessage.error('数据校检不通过，请检查!');
@@ -381,6 +389,7 @@
       }
       createMessage.success('操作成功');
     }
+    formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
   };
   //返回上一页
   const back = () => {
@@ -396,6 +405,7 @@
       // formState.value.empId = res.empName ? res.bdExamineRule.id : '';
       // formState.value.empName = res.empName ? res.empName : '';
       // }
+      formState.value.bsDate = moment(formState.value.bsDate, 'yyyy-MM-DD hh:mm:ss');
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
@@ -415,7 +425,7 @@
 
   //计算数量
   const getCountAmount = (row) => {
-    if (row.countNum && row.stockNum) {
+    if (row.countNum && row.stockNum !== null) {
       row.gain = row.countNum - row.stockNum;
       return row;
     }
@@ -451,6 +461,7 @@
     );
     return res;
   };
+  //双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
     console.log('row', row);
     console.log('data', data);
@@ -470,6 +481,7 @@
           const stockByMaterial = await getNextStock('stock', 'id', row.stockId);
           data.stockId = stockByMaterial.records[0].id;
           data.bdStock.name = stockByMaterial.records[0].name;
+          data.bdStock.id = stockByMaterial.records[0].id;
         } else {
           data.stockId = '';
           data.bdStock.name = '';
@@ -478,6 +490,7 @@
           const compartmentByMaterial = await getNextStock('sub', 'id', row.compartmentId);
           data.compartmentId = compartmentByMaterial.records[0].id;
           data.bdStockCompartment.name = compartmentByMaterial.records[0].name;
+          data.bdStockCompartment.id = compartmentByMaterial.records[0].id;
         } else {
           data.compartmentId = '';
           data.bdStockCompartment.name = '';
@@ -486,10 +499,16 @@
           const locationByMaterial = await getNextStock('location', 'id', row.locationId);
           data.locationId = locationByMaterial.records[0].id;
           data.bdStockLocation.name = locationByMaterial.records[0].name;
+          data.bdStockLocation.id = locationByMaterial.records[0].id;
         } else {
           data.locationId = '';
           data.bdStockLocation.name = '';
         }
+        // if (row.locationId || row.compartmentId || row.stockId || row.id) {
+        //   let
+        //   const stockNumData = await getNextStock('INV_BY_MAT_STOCK', 'id', row.id);
+        //   console.log('stocknum', stockNumData)
+        // }
         break;
       case 'bdStock':
         data.stockId = row.id;
@@ -534,6 +553,14 @@
         data.stockId = stockByStockLocation.records[0].id;
         data.bdStock.name = stockByStockLocation.records[0].name;
         break;
+    }
+    let stockNumData: any = '';
+    stockNumData = await getInventoryList({ params: data });
+    console.log('stock', stockNumData);
+    if (stockNumData) {
+      data.stockNum = cloneDeep(stockNumData.stockNum);
+    } else {
+      data.stockNum = 0;
     }
   };
   //设置Switch默认

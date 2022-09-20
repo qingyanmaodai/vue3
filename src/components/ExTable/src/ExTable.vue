@@ -72,12 +72,6 @@
     <template #way="{ row }">
       <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
     </template>
-<!--    <template #bsDate="{ row }">-->
-<!--      <Tag>{{ formatData(row.bsDate, config['YYYY-MM-DD']) }}</Tag>-->
-<!--    </template>-->
-    <template #bsDate="{ row }">
-      <Tag>{{ formatData(row.bsDate, config['YYYY-MM-DD']) }}</Tag>
-    </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
@@ -163,9 +157,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, reactive, ref } from 'vue';
+  import { reactive, ref } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import XEUtils from 'xe-utils'
   import { Tag, Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -253,13 +246,7 @@
     }
     return res ? res.label : '';
   };
-  // 自定义全局的格式化处理函数
-  // VXETable.formats.mixin({
-  //   // 格式化日期，默认 yyyy-MM-dd HH:mm:ss
-  //   formatDate ({ cellValue }, format) {
-  //     return XEUtils.toDateString(cellValue, format || 'yyyy-MM-dd HH:mm:ss')
-  //   },
-  // })
+
   //操作结果输出
   const computeData = (res) => {
     if (res) {

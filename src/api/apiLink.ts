@@ -209,6 +209,9 @@ export enum Url {
   ADD_UNIT_LIST = '/stock/bd-unit/save', //添加
   UPDATE_UNIT_LIST = '/stock/bd-unit/update', //编辑
 
+  //即时库存
+  GET_INVENTORY_OPTIONS = '/stock/bd-inventory/query-dto', //获取实体信息
+  GET_INV_BY_MAT_STOCK_LIST = '/stock/bd-inventory/get-inv-by-mat-stock', //物料号与仓位获取库存信息
   // 盘盈单
   AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/audit', //审核
   BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-audit', //批量审核

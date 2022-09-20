@@ -5,12 +5,13 @@ import { StockProfileEntity } from '/@/api/mainStock';
 import { StockLocationProfileEntity } from '/@/api/stockLocation';
 import { StockCompartmentProfileEntity } from '/@/api/stockCompartment';
 import { MatProfileEntity } from '/@/api/matTable';
-// import moment from "moment";
+import { Moment } from 'moment';
 
 export interface InvCountGainEntity extends PublicModel {
   id: string | undefined;
   number: string;
-  bsDate?: string;
+  bsDate?: string | Moment;
+  formatBsDate?: string;
   // getFormatBsDate?: moment;
   empId?: string;
   empName?: string;
@@ -41,6 +42,25 @@ export interface InvCountGainDetailEntity extends PublicModel {
   bdStock?: StockProfileEntity;
   bdStockCompartment?: StockCompartmentProfileEntity;
   bdStockLocation?: StockLocationProfileEntity;
+}
+
+/**
+ * 获取即时库存数据
+ */
+export function getInventoryList(
+  json: RequestData<SearchParams[]>,
+  mode: ErrorMessageMode = 'message',
+) {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_INV_BY_MAT_STOCK_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
 }
 /**
  * 获取表格信息

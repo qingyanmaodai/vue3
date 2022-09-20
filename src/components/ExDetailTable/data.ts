@@ -254,24 +254,34 @@ export const invCountGainOfDetailColumns = [
   },
   { field: 'bdMaterial.model', title: '规格型号', width: 150, sortable: true },
   {
-    field: 'baseUnitName',
+    field: 'bdMaterial.baseUnitName',
     title: '基本单位',
-    editRender: { name: '$input' },
+    className: 'disableProp',
+    // editRender: { name: '$input' },
     width: 150,
     sortable: true,
   },
   {
     field: 'bdMaterial.weightUnitName',
     title: '重量单位',
-    editRender: { name: '$input' },
+    className: 'disableProp',
+    // editRender: { name: '$input' },
     width: 150,
     sortable: true,
   },
   {
     field: 'stockNum',
     title: '帐存数量',
-    editRender: { name: '$input' },
     width: 150,
+    className: 'disableProp',
+    // params: {
+    //   list: 'GET_INV_BY_MAT_STOCK_LIST', //物料信息表格数据
+    //   select: 'GET_INVENTORY_OPTIONS', //基本信息下拉框+表头
+    // },
+    // editRender: { name: '$input' },
+    // slots: {
+    //   edit: 'model',
+    // },
     sortable: true,
   },
   {

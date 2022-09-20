@@ -12,6 +12,7 @@ export const config = {
     location: '/stock/bd-stock-location/list', //仓位
     plan: '/stock/bd-examine/list', //检验方案
     EMP: '/stock/bd-employee/list', //负责人
+    INV_BY_MAT_STOCK: '/stock/bd-inventory/get-inv-by-mat-stock', //即时库存-物料号与仓位获取库存信息
   },
   //物料属性
   MATERIAL_ATTR: [
