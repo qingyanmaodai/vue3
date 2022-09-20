@@ -28,13 +28,17 @@
           >{{ button.label }}
         </AButton>
         <span style="float: right; padding-right: 10px">
-          <AButton type="default" style="margin: 0 10px" @click="upTable" v-show="isShowImport"
+          <AButton
+            type="default"
+            style="margin: 0 10px"
+            @click="upTable"
+            v-show="props.isShowImport"
             >导入</AButton
           >
           <AButton
             style="background-color: rgb(47, 64, 86); color: #fff"
             @click="exportTable"
-            v-show="isShowExport"
+            v-show="props.isShowExport"
             >导出</AButton
           >
         </span>
@@ -67,6 +71,12 @@
     </template>
     <template #way="{ row }">
       <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
+    </template>
+<!--    <template #bsDate="{ row }">-->
+<!--      <Tag>{{ formatData(row.bsDate, config['YYYY-MM-DD']) }}</Tag>-->
+<!--    </template>-->
+    <template #bsDate="{ row }">
+      <Tag>{{ formatData(row.bsDate, config['YYYY-MM-DD']) }}</Tag>
     </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
@@ -153,16 +163,18 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { computed, reactive, ref } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
+  import XEUtils from 'xe-utils'
   import { Tag, Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
-  import { config, configEntity } from '/@/utils/publicParamConfig'; //公共配置ts
-
+  import { config, configEntity } from '/@/utils/publicParamConfig';
+  // import dayjs from 'dayjs';
+  import { Moment } from 'moment';
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -241,6 +253,13 @@
     }
     return res ? res.label : '';
   };
+  // 自定义全局的格式化处理函数
+  // VXETable.formats.mixin({
+  //   // 格式化日期，默认 yyyy-MM-dd HH:mm:ss
+  //   formatDate ({ cellValue }, format) {
+  //     return XEUtils.toDateString(cellValue, format || 'yyyy-MM-dd HH:mm:ss')
+  //   },
+  // })
   //操作结果输出
   const computeData = (res) => {
     if (res) {

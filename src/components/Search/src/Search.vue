@@ -1,11 +1,15 @@
 <template>
   <div>
     <div class="search" style="background-color: #fff">
-      <a-form :model="formState" ref="formRef" v-model="formRef">
+      <div v-show="props.showSearchNo">
         <span>{{ searchNo }}</span>
         <a-input class="input" v-model:value="formState.wlNo" />
+      </div>
+      <div v-show="props.showSearchName">
         <span>{{ searchName }}</span>
         <a-input class="input" v-model:value="formState.wlName" />
+      </div>
+      <div>
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
         <a-button class="button" @click="resetEvent">重置</a-button>
         <a-button
@@ -14,7 +18,7 @@
           @click="moreSearchEvent"
           >高级查询</a-button
         >
-      </a-form>
+      </div>
     </div>
   </div>
   <hr />
@@ -22,14 +26,14 @@
   <MoreSearch ref="moreSearchRef" @moreListEvent="moreListEvent" @resetEvent="resetEvent" />
 </template>
 <script lang="ts" setup>
-  import { Button, Form, Input } from 'ant-design-vue';
+  import { Button, Input } from 'ant-design-vue';
   import { MoreSearch } from '/@/components/AMoreSearch';
   import { reactive, ref, UnwrapRef } from 'vue';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
 
   const AButton = Button;
-  const AForm = Form;
   const AInput = Input;
+
   //高级查询组件ref
   const moreSearchRef: any = ref(null);
   // const options = reactive({ data: [] });
@@ -37,6 +41,14 @@
     tableName: {
       type: String,
       default: '',
+    },
+    showSearchNo: {
+      type: Boolean,
+      default: true,
+    },
+    showSearchName: {
+      type: Boolean,
+      default: true,
     },
     searchNo: {
       type: String,
@@ -46,6 +58,14 @@
       type: String,
       default: '',
     },
+    searchTwo: {
+      type: String,
+      default: 'name',
+    },
+    searchOne: {
+      type: String,
+      default: 'number',
+    },
   });
   interface FormState {
     wlNo: string;
@@ -53,14 +73,18 @@
     tableName: string;
     searchNo: string;
     searchName: string;
+    searchOne: string;
+    searchTwo: string;
   }
-  const formRef = ref();
+
   const formState: UnwrapRef<FormState> = reactive({
     wlNo: '',
     wlName: '',
     tableName: props.tableName,
     searchNo: props.searchNo,
     searchName: props.searchName,
+    searchOne: props.searchOne,
+    searchTwo: props.searchTwo,
   });
   type Emits = {
     (event: 'getList', keywords?: object, selected?): void;
@@ -72,8 +96,8 @@
     if (formState.wlNo) {
       searchParams.push({
         table: formState.tableName,
-        name: 'number',
-        column: 'number',
+        name: formState.searchOne,
+        column: formState.searchOne,
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
@@ -85,8 +109,8 @@
     if (formState.wlName) {
       searchParams.push({
         table: formState.tableName,
-        name: 'name',
-        column: 'name',
+        name: formState.searchTwo,
+        column: formState.searchTwo,
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
@@ -146,6 +170,6 @@
     margin: 10px 10px;
   }
   .button {
-    margin: 0 10px;
+    margin: 10px 10px;
   }
 </style>

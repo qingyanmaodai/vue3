@@ -83,12 +83,14 @@
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         class="select"
-                        dateFormat="YYYY-MM-DD"
+                        :format="dateFormat"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
                         placeholder="请选择业务日期"
                       />
                     </a-form-item>
+<!--                    :value="formState.bsDate ? moment(formState.bsDate, 'YYYY-MM-DD') : null"-->
+
                   </Col>
                 </Row>
                 <Row>
@@ -152,6 +154,7 @@
             :detailTableData="detailTableData"
             @changeSwitch="changeSwitch"
             @getJudgeClickData="getJudgeClickData"
+            @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
           />
@@ -202,7 +205,7 @@
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
-  // import dayjs from "dayjs";
+  import moment from 'moment';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -222,6 +225,7 @@
     dtData: [],
   };
   const detailTableData: any = ref<object[]>([]); //表格数据
+  const dateFormat = 'YYYY-MM-DD';
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -294,7 +298,7 @@
     }
   };
   //接受参数
-  const dataId = useRoute().query.row?.toString();
+  let dataId = useRoute().query.row?.toString() || '';
 
   //保存
   const onSubmit = async () => {
@@ -311,13 +315,14 @@
           formState.value.dtData = cloneDeep(tableFullData);
         }
         // if (!formState.value.id) {
-        const data = await add({ params: formState.value });
-        formState.value = Object.assign({}, formState.value, data);
+        let data = await add({ params: formState.value });
+        // formState.value = Object.assign({}, formState.value, data);
         // } else {
         //   const data = await update({ params: formState.value });
         //   formState.value = Object.assign({}, formState.value, data);
         // }
-        formState.value.bsStatus = 'A';
+        // formState.value.bsStatus = 'A';
+        await getListById(data.id);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -382,7 +387,7 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async () => {
+  const getListById = async (dataId) => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
@@ -390,10 +395,6 @@
       //   console.log(formState.value, 'swdsa');
       // formState.value.empId = res.empName ? res.bdExamineRule.id : '';
       // formState.value.empName = res.empName ? res.empName : '';
-      // }
-      // if (res.bsDate) {
-      //   console.log(formState.value, 'swdsa');
-      //   formState.value.bsDate = moment(res.bsDate, 'YYYY-MM-DD'),
       // }
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
@@ -409,6 +410,14 @@
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
+    }
+  };
+
+  //计算数量
+  const getCountAmount = (row) => {
+    if (row.countNum && row.stockNum) {
+      row.gain = row.countNum - row.stockNum;
+      return row;
     }
   };
 
@@ -449,7 +458,6 @@
       case 'bdMaterial':
         data.matId = row.id;
         data.bdMaterial.number = row.number;
-        //存在问题---有些数据是不存在的，但是在添加时，没有清空数据-仓库，分仓，仓位
         data.bdMaterial.name = row.name;
         data.bdMaterial.model = row.model;
         if (row.baseUnit) {
@@ -462,16 +470,25 @@
           const stockByMaterial = await getNextStock('stock', 'id', row.stockId);
           data.stockId = stockByMaterial.records[0].id;
           data.bdStock.name = stockByMaterial.records[0].name;
+        } else {
+          data.stockId = '';
+          data.bdStock.name = '';
         }
         if (row.compartmentId) {
           const compartmentByMaterial = await getNextStock('sub', 'id', row.compartmentId);
           data.compartmentId = compartmentByMaterial.records[0].id;
           data.bdStockCompartment.name = compartmentByMaterial.records[0].name;
+        } else {
+          data.compartmentId = '';
+          data.bdStockCompartment.name = '';
         }
         if (row.locationId) {
           const locationByMaterial = await getNextStock('location', 'id', row.locationId);
           data.locationId = locationByMaterial.records[0].id;
           data.bdStockLocation.name = locationByMaterial.records[0].name;
+        } else {
+          data.locationId = '';
+          data.bdStockLocation.name = '';
         }
         break;
       case 'bdStock':
@@ -507,7 +524,7 @@
           endWith: '',
         };
         break;
-      case 'location':
+      case 'bdStockLocation':
         data.locationId = row.id;
         data.bdStockLocation.name = row.name;
         const compartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
@@ -525,9 +542,9 @@
     obj.isRequire = 1;
     obj.sort = cloneDeep(vxeTableRef.value.rowSortData);
   };
-  //刚进入页面——加载完后，需要执行的方法
+
   onMounted(() => {
-    init();
+    getListById(dataId);
   });
 </script>
 <style scoped lang="less">

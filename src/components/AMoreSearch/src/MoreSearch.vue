@@ -99,7 +99,7 @@
             >
               <a-date-picker
                 style="width: 200px"
-                v-model="search.date"
+                v-model:value="search.date"
                 placeholder="请选择时间..."
               />
             </a-space>
@@ -220,7 +220,7 @@
     (event: 'moreListEvent'): void; //查询
     (event: 'resetEvent'): void; //重置
   };
-  const formRef = ref<any>(null);
+  // const formRef = ref<any>(null);
   //基础信息查询组件ref
   const basicSearchRef: any = ref(null); //
   //选择框data
@@ -251,7 +251,42 @@
     labelValue: '',
     tableName: props.tableName,
   });
-
+  interface Search {
+    startWith?: string;
+    endWith?: string;
+    fieldName?: string;
+    rule?: string;
+    date?: Dayjs | undefined;
+    treeData?: object[];
+    val?: string;
+    labelValue?: string;
+    link?: string;
+    type?: string;
+    key?: number;
+    name?: string;
+    column?: string;
+    checkData?: string[];
+  }
+  const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
+    searches: [
+      {
+        startWith: '',
+        endWith: '',
+        fieldName: '',
+        date: undefined,
+        treeData: [],
+        checkData: [],
+        val: '',
+        labelValue: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        key: Date.now(),
+        name: '',
+        column: '',
+      },
+    ],
+  });
   //查询按钮--查询参数
   let searchKeywords: any = [];
   const getSearchParams = (): SearchParams[] => {
@@ -321,42 +356,6 @@
     }
   };
 
-  interface Search {
-    startWith: string | undefined;
-    endWith: string | undefined;
-    fieldName: string | undefined;
-    rule: string | undefined;
-    date?: Dayjs;
-    treeData?: object[] | undefined;
-    val: string | undefined;
-    labelValue: string | undefined;
-    link: string | undefined;
-    type: string | undefined;
-    key: number;
-    name: string | undefined;
-    column: string | undefined;
-    checkData: string[] | undefined;
-  }
-  const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
-    searches: [
-      {
-        startWith: undefined,
-        endWith: undefined,
-        fieldName: undefined,
-        date: undefined,
-        treeData: undefined,
-        checkData: undefined,
-        val: '',
-        labelValue: '',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        key: Date.now(),
-        name: undefined,
-        column: undefined,
-      },
-    ],
-  });
   //改变选择的字段数据
   const handleChange = (value: string) => {
     selectOption.data = JSON.parse(value);
@@ -412,7 +411,7 @@
     return optionsFieldName.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
 
-  //选择字段数据
+  //选择高级查询字段数据
   const initOptions = (data) => {
     optionsFieldName.data = cloneDeep(data);
   };
@@ -448,14 +447,27 @@
 
   //重置方法
   const resetEvent = () => {
-    if (formRef.value) {
-      formRef.value.resetFields();
-    }
+    // if (formRef.value) {
+    //   formRef.value.resetFields();
+    dynamicValidateForm.searches[0] = {
+      startWith: '',
+      fieldName: '',
+      val: '',
+      date: undefined,
+      checkData: [],
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      labelValue: '',
+      key: Date.now(),
+      name: '',
+      column: '',
+    };
     searchKeywords = [];
     cacheQueryArr.data = [];
     dynamicValidateForm.searches.length = 1;
   };
-
   //取消查询
   const handleCel = () => {
     moreSearchDialog.value = false;
@@ -472,19 +484,19 @@
   //新增行
   const addSearch = () => {
     dynamicValidateForm.searches.push({
-      startWith: undefined,
-      fieldName: undefined,
+      startWith: '',
+      fieldName: '',
       val: '',
       date: undefined,
-      checkData: undefined,
-      endWith: undefined,
+      checkData: [],
+      endWith: '',
       link: SearchLink.AND,
       rule: SearchMatchType.LIKE,
       type: SearchDataType.string,
       labelValue: '',
       key: Date.now(),
-      name: undefined,
-      column: undefined,
+      name: '',
+      column: '',
     });
   };
   //将moreSearch这个方法暴露出去，传给父组件

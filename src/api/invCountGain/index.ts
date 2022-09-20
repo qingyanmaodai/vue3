@@ -5,11 +5,13 @@ import { StockProfileEntity } from '/@/api/mainStock';
 import { StockLocationProfileEntity } from '/@/api/stockLocation';
 import { StockCompartmentProfileEntity } from '/@/api/stockCompartment';
 import { MatProfileEntity } from '/@/api/matTable';
+// import moment from "moment";
 
 export interface InvCountGainEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string;
+  // getFormatBsDate?: moment;
   empId?: string;
   empName?: string;
   srcField?: string;
@@ -151,7 +153,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_INV_COUNT_GAIN,
+      url: Url.DELETE_WITH_DETAIL_INV_COUNT_GAIN,
       data: json,
     },
     {
@@ -166,7 +168,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_INV_COUNT_GAIN,
+      url: Url.BATCH_DELETE_WITH_DETAIL_INV_COUNT_GAIN,
       data: json,
     },
     {

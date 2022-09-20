@@ -3,9 +3,10 @@
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
         ref="searchRef"
-        tableName="BsInventoryCountGain"
+        tableName="BsInventoryCountGainModel"
         searchNo="单据编号"
         searchName="物料编号"
+        :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
@@ -78,7 +79,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import dayjs from "dayjs";
+  // import dayjs from "dayjs";
 
   const { createMessage } = useMessage();
   const go = useGo();
@@ -128,8 +129,11 @@
     pages.currentPage = currPage;
     let data = res.records;
     // data.bsDate = dayjs(dayjs(data.bsDate).valueOf()).format('YYYY-MM-DD');
+    // if (res.bsDate) {
+    //   formState.value.bsDate = dayjs(dayjs(res.bsDate).valueOf()).format('YYYY-MM-DD');
+    // }
+    // console.log('dwfds',data)
     //存在日期数据转换问题
-    console.log('dwfdfed', data);
     tableRef.value.init(data);
     searchRef.value.moreSearchClose();
   };
@@ -194,7 +198,8 @@
   };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
-    await delById({ params: row.id });
+    await delById({ params: row });
+    // await delById({ params: row.id });
     await getList();
   };
   //批量删除表格
@@ -202,10 +207,12 @@
     tableRef.value.delTable();
   };
   const deleteBatchEvent = async (rows: any[]) => {
-    const ids = rows.map((item) => {
-      return item.id;
-    });
-    const res = await delBatch({ params: ids });
+    // const ids = rows.map((item) => {
+    //   return item.id;
+    // });
+    // const res = await delBatch({ params: ids });
+    const res = await delBatch({ params: rows });
+    console.log('batch', res);
     await tableRef.value.computeData(res);
     await getList();
   };

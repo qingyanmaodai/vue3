@@ -277,11 +277,18 @@ export const invCountGainOfDetailColumns = [
   {
     field: 'countNum',
     title: '盘点数量',
-    editRender: { name: '$input' },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
-  { field: 'gain', title: '盘盈数量', editRender: { name: '$input' }, width: 150, sortable: true },
+  {
+    field: 'gain',
+    title: '盘盈数量',
+    slots: { default: 'gain' },
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
   {
     field: 'bdStock.name',
     title: '仓库',

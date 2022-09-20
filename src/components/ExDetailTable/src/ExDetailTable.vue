@@ -9,6 +9,7 @@
     :data="props.detailTableData"
     :columns="props.columns"
     :edit-rules="props.editRules"
+    @edit-closed="editClosed"
     :row-style="rowStyle"
     auto-resize
   >
@@ -47,6 +48,10 @@
         v-model:checked="row.isOpen"
       />
     </template>
+    <template #gain="{ row }">
+      <a style="color: #0960bd">{{ row.gain }}</a>
+    </template>
+
     <template #isRequire="{ row }">
       <Switch
         :disabled="row.bsStatus === 'B'"
@@ -104,6 +109,7 @@
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'changeSwitch', obj): void; //新增行时设置默认值
     (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
+    (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
   const rowSortData = ref<number>(1); //表格顺序
@@ -146,6 +152,11 @@
   //截取基本属性
   const sliceBasicProp = (data: string) => {
     return data.split('.')[0];
+  };
+
+  const editClosed = (row) => {
+    emit('getCountAmount', row.row); //计算
+    console.log('row', row.row);
   };
 
   //基本信息表格双击事件
