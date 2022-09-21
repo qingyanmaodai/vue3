@@ -49,7 +49,7 @@
       />
     </template>
     <template #gain="{ row }">
-      <a style="color: #0960bd">{{ row.gain }}</a>
+      <span>{{ row.gain }}</span>
     </template>
 
     <template #isRequire="{ row }">
@@ -145,8 +145,8 @@
     }
   };
   //基本信息弹框中需要的数据
-  const openSearch = async (keywords) => {
-    const res = await publicEvent(keywords, nowCheckData.data);
+  const openSearch = async (keywords, currentPage, pageSize) => {
+    const res = await publicEvent(keywords, nowCheckData.data, currentPage, pageSize);
     basicSearchRef.value.initList(res);
   };
   //截取基本属性
@@ -180,7 +180,7 @@
   };
 
   //基本信息数据查询
-  const publicEvent = async (keywords, column) => {
+  const publicEvent = async (keywords, column, currPage = 1, pageSize = 10) => {
     let paramArr: any = [];
     if (keywords) {
       paramArr.push(keywords);
@@ -199,6 +199,8 @@
     return await getPublicList(
       {
         params: paramArr,
+        pageIndex: currPage,
+        pageRows: pageSize,
       },
       //选择分类的接口地址，如基本单位
       Url[column.params.list],

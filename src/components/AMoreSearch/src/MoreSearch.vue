@@ -12,37 +12,36 @@
       <Row class="row" :key="search.key" v-for="(search, index) in dynamicValidateForm.searches">
         <a-space>
           <Col>
-            <a-select
-              v-model:value="search.fieldName"
+            <vxe-select
+              clearable
+              v-model="search.fieldName"
               placeholder="请选择"
               style="width: 200px"
-              :filterOption="filterOption"
-              @change="handleChange"
+              @focus="handleChange"
               @select="selectOne(search)"
             >
-              <a-select-option
+              <vxe-option
                 v-for="(item, v) in optionsFieldName.data"
                 :value="JSON.stringify(item)"
                 :label="item.displayName"
                 :key="v"
-                >{{ item.displayName }}</a-select-option
-              >
-            </a-select>
+              />
+            </vxe-select>
           </Col>
           <Col>
-            <a-select
+            <vxe-select
               v-show="
                 search.fieldName ? JSON.parse(search.fieldName).controlType === 'date' : false
               "
-              v-model:value="search.rule"
+              v-model="search.rule"
               placeholder="等于"
               :options="config.TIME_OPTION_RULE"
               style="width: 100px"
               :filterOption="filterOption"
             />
-            <a-select
+            <vxe-select
               v-show="search.fieldName ? JSON.parse(search.fieldName).controlType !== 'date' : true"
-              v-model:value="search.rule"
+              v-model="search.rule"
               placeholder="包含"
               :options="config.OPTION_RULE"
               style="width: 100px"
@@ -51,22 +50,22 @@
           </Col>
           <Col>
             <a-input v-show="!search.fieldName" style="width: 200px" disabled />
-            <a-select
+            <vxe-select
               v-show="
                 search.fieldName ? JSON.parse(search.fieldName).controlType === 'select' : false
               "
-              v-model:value="search.val"
+              v-model="search.val"
               placeholder="请选择..."
               style="width: 200px"
               :filterOption="filterOption"
             >
-              <a-select-option
+              <vxe-option
                 v-for="(item, optionIndex) in config[selectConfigOption(search.fieldName)]"
                 :key="optionIndex"
                 :value="item.value"
-                >{{ item.label }}</a-select-option
-              >
-            </a-select>
+                :label="item.label"
+              />
+            </vxe-select>
             <a-input
               v-show="
                 search.fieldName ? JSON.parse(search.fieldName).controlType === 'input' : false
@@ -103,7 +102,7 @@
                 placeholder="请选择时间..."
               />
             </a-space>
-            <a-select
+            <vxe-select
               v-show="
                 search.fieldName ? JSON.parse(search.fieldName).controlType === 'checkBox' : false
               "
@@ -111,7 +110,7 @@
               showSearch
               style="width: 200px"
               :showArrow="true"
-              v-model:value="search.checkData"
+              v-model="search.checkData"
               :filterOption="filterOption"
               placeholder="请选择...多选。。"
             />
@@ -132,8 +131,8 @@
             />
           </Col>
           <Col>
-            <a-select
-              v-model:value="search.link"
+            <vxe-select
+              v-model="search.link"
               :options="optionsLink"
               style="width: 70px"
               :filterOption="filterOption"
@@ -180,8 +179,8 @@
     // FormItem,
     Input,
     InputSearch,
-    Select,
-    SelectOption,
+    // Select,
+    // SelectOption,
     Space,
     TreeSelect,
     Row,
@@ -204,14 +203,10 @@
   } from '/@/api/apiLink';
   import { config } from '/@/utils/publicParamConfig';
   const APlusOutlined = PlusOutlined;
-  // const AForm = Form;
-  // const AFormItem = FormItem;
   const ASpace = Space;
-  const ASelect = Select;
   const AButton = Button;
   const AInput = Input;
   const AInputSearch = InputSearch;
-  const ASelectOption = SelectOption;
   const ADatePicker = DatePicker;
   const ATreeSelect = TreeSelect;
 
@@ -233,6 +228,7 @@
   const selectOption: any = reactive({ data: {} });
   //选择字段数据
   const optionsFieldName = reactive<any>({ data: [] });
+
   const props = defineProps({
     tableName: {
       type: String,
@@ -287,6 +283,11 @@
       },
     ],
   });
+
+  //改变选择的字段数据
+  const handleChange = (value: any) => {
+    selectOption.data = value.value;
+  };
   //查询按钮--查询参数
   let searchKeywords: any = [];
   const getSearchParams = (): SearchParams[] => {
@@ -310,7 +311,7 @@
     return searchParams;
   };
   //基本信息公共组件--获取基本信息表格信息
-  const publicEvent = async (keywords) => {
+  const publicEvent = async (keywords, currPage = 1, pageSize = 10) => {
     let paramArr: any = [];
     if (keywords) {
       paramArr.push(keywords);
@@ -329,6 +330,8 @@
     return await getPublicList(
       {
         params: paramArr,
+        pageIndex: currPage,
+        pageRows: pageSize,
       },
       //选择分类的接口地址，如基本单位。。
       selectOption.data.requestUrl,
@@ -356,10 +359,6 @@
     }
   };
 
-  //改变选择的字段数据
-  const handleChange = (value: string) => {
-    selectOption.data = JSON.parse(value);
-  };
   //判断输入框controlType类型，改变rule的默认值
   const selectOne = async (data: any) => {
     data.val = '';
@@ -368,16 +367,19 @@
       data.labelValue = '';
       data.date = '';
     }
-    if (selectOption.data.controlType && selectOption.data.controlType === 'treeSelect') {
-      const res = await getPublicList(
-        {
-          params: 0,
-        },
-        //选择分类的接口地址，如基本单位。。
-        selectOption.data.requestUrl,
-      );
-      data.val = undefined;
-      data.treeData = cloneDeep(res);
+    if (data.fieldName) {
+      let obj = JSON.parse(data.fieldName);
+      if (obj.controlType && obj.controlType === 'treeSelect') {
+        const res = await getPublicList(
+          {
+            params: 0,
+          },
+          //选择分类的接口地址，如基本单位。。
+          obj.requestUrl,
+        );
+        data.val = undefined;
+        data.treeData = cloneDeep(res);
+      }
     }
   };
   //基础信息弹框--打开放大镜
@@ -390,8 +392,8 @@
     await getPublicListOption();
   };
   //打开基本信息弹框
-  const openSearch = async (keywords) => {
-    const res = await publicEvent(keywords);
+  const openSearch = async (keywords, pageSize) => {
+    const res = await publicEvent(keywords, pageSize);
     basicSearchRef.value.initList(res);
   };
   //基本信息表格双击事件

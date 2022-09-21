@@ -510,6 +510,7 @@
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
+  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -591,9 +592,8 @@
       }
     } else if (key == 'sub') {
       try {
-        let arr: any = [];
         let data = await getSubOption({ params: '' });
-        arr = cloneDeep(data);
+        let arr: any = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
       } catch (e) {
@@ -601,9 +601,8 @@
       }
     } else if (key == 'location') {
       try {
-        let arr: any = [];
         let data = await getLocationOption({ params: '' });
-        arr = cloneDeep(data);
+        let arr: any = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_compartment_id' && e.fieldName != 'stock_id');
         basicSearchRef.value.init(arr);
       } catch (e) {
@@ -611,9 +610,8 @@
       }
     } else {
       try {
-        let arr: any = [];
         let data = await getUnitOption({ params: '' });
-        arr = cloneDeep(data);
+        let arr: any = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
       } catch (e) {
@@ -641,9 +639,9 @@
             table: '',
             name: 'bsStatus',
             column: 'bs_status',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
             val: 'B',
             startWith: '',
             endWith: '',

@@ -166,8 +166,8 @@
       </Tabs>
     </div>
     <BasicSearch
+      :modalType="modalType"
       @basicClickEvent="basicClickEvent"
-      @openSearch="openSearch"
       @searchList="searchList"
       ref="basicSearchRef"
       :gridOptions="basicGridOptions"
@@ -208,6 +208,8 @@
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { getPublicList } from '/@/api/public';
   import { getEmployeeEntity } from '/@/api/employee';
+  import {cloneDeep} from "lodash-es";
+  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
 
   const { createMessage } = useMessage();
   const AForm = Form;
@@ -236,12 +238,6 @@
   });
   let formState = toRef(formStateInit, 'data');
 
-  //打开基本信息弹框
-  const openSearch = async () => {
-    const res = await onSearch();
-    basicSearchRef.value.initList(res);
-  };
-
   //接受参数
   let rowId = useRoute().query.row?.toString() || '';
 
@@ -255,13 +251,13 @@
     }
   };
   getListById(rowId);
+
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
       formState.value[e] = '';
     });
   };
-
   /**
    * 基本信息弹框表头数据
    * @param key
@@ -286,9 +282,9 @@
             table: '',
             name: 'bsStatus',
             column: 'bs_status',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
             val: 'B',
             startWith: '',
             endWith: '',
@@ -334,6 +330,10 @@
         formState.value.empId = row.id;
         formState.value.empName = row.name;
         break;
+      case 'stock':
+        formState.value.stockId = row.id;
+        formState.value.stockName = row.name;
+        break;
     }
     basicSearchRef.value.bSearch(false);
   };
@@ -345,58 +345,19 @@
     try {
       if (key == 'EMP') {
         let data = await getEmployeeEntity();
-        basicSearchRef.value.init(data);
+        let arr: any = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
       } else if (key == 'stock') {
         let data = await getStockOption({ params: '' });
-        basicSearchRef.value.init(data);
+        let arr: any = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
       }
     } catch (e) {
       console.log('获取选项字段失败', e);
     }
   };
-
-  // //打开放大镜
-  // const onSearch = async () => {
-  //   const res: any = await getStockTable({
-  //     params: [
-  //       {
-  //         table: '',
-  //         name: 'bsStatus',
-  //         column: 'bs_status',
-  //         link: SearchLink.AND,
-  //         rule: SearchMatchType.EQ,
-  //         type: SearchDataType.string,
-  //         val: 'B',
-  //         startWith: '',
-  //         endWith: '',
-  //       },
-  //     ],
-  //   });
-  //   let data = res;
-  //   basicSearchRef.value.bSearch(true);
-  //   basicSearchRef.value.initList(data);
-  //   basicSearchRef.value.initCols(stockColumns);
-  //   await getStockTableOption();
-  //   return res;
-  // };
-  // //获取基本信息字段
-  // const getStockTableOption = async () => {
-  //   try {
-  //     let arr: any = [];
-  //     let data = await getStockOption({ params: '' });
-  //     arr = cloneDeep(data);
-  //     arr = arr.filter((e) => e.fieldName != 'bs_status');
-  //     basicSearchRef.value.init(arr);
-  //   } catch (e) {
-  //     console.log('获取基本信息字段失败', e);
-  //   }
-  // };
-  // //基本信息表格双击事件
-  // const basicClickEvent = (row) => {
-  //   formState.value.stockId = row.id;
-  //   formState.value.stockName = row.name;
-  //   basicSearchRef.value.bSearch(false);
-  // };
 
   //保存事件
   const onSubmit = async () => {

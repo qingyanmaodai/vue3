@@ -310,6 +310,7 @@
   import { CountryEntity, getCountryTree } from '/@/api/country';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { getPublicList } from '/@/api/public';
+  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
 
   /* data */
 
@@ -517,9 +518,9 @@
             table: '',
             name: 'bsStatus',
             column: 'bs_status',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
             val: 'B',
             startWith: '',
             endWith: '',
@@ -544,7 +545,9 @@
     try {
       if (key == 'EMP') {
         let data = await getEmployeeEntity();
-        basicSearchRef.value.init(data);
+        let arr: any = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
       }
     } catch (e) {
       console.log('获取选项字段失败', e);

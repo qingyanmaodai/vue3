@@ -4,7 +4,6 @@
     :placeholder="props.placeholder"
     :disabled="props.disabled"
     :value="props.value"
-    :allowClear="props.allowClear"
   >
     <template #suffix>
       <CloseIcon class="icon" v-if="props.value && props.show" @click="clearEvent" />
@@ -20,20 +19,16 @@
   const props = defineProps({
     value: {
       type: String,
-      // default: '',
+      default: '',
     },
     disabled: {
       type: Boolean,
-      // default: true,
+      default: false,
     },
     placeholder: String,
-    allowClear: {
-      type: Boolean,
-      // default: true,
-    },
     show: {
       type: Boolean,
-      // default: true,
+      default: true,
     },
   });
   type Emits = {

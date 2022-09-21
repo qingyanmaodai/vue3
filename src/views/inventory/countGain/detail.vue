@@ -64,7 +64,7 @@
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
-                        @search="onRule()"
+                        @search="onSearch('EMP')"
                         @clear="onClear(['empId', 'empName'])"
                       />
                     </a-form-item>
@@ -161,8 +161,9 @@
       </a-splitpanes>
     </div>
     <BasicSearch
-      @basicClickEvent="onRuleClickEvent"
-      @openSearch="openSearch"
+      :modalType="modalType"
+      @basicClickEvent="basicClickEvent"
+      @searchList="searchList"
       ref="basicSearchRef"
       :gridOptions="basicGridOptions"
     />
@@ -200,19 +201,19 @@
     unAudit,
     InvCountGainEntity,
     getOneById,
-    update,
+    // update,
     getInventoryList,
   } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { getEmployeeData, getEmployeeEntity } from '/@/api/employee';
+  import { getEmployeeEntity } from '/@/api/employee';
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -226,6 +227,8 @@
   const activeKey = ref<string>('1');
   const basicSearchRef: any = ref(null);
   const vxeTableRef: any = ref<String | null>(null);
+  const modalType = ref<string>(''); //当前显示基础信息弹框类型
+  const detailTableData: any = ref<object[]>([]); //表格数据
 
   //获取当前时间
   const getCurrentData = () => {
@@ -239,12 +242,12 @@
     bsDate: moment(getCurrentData(), 'YYYY-MM-DD'),
   };
 
-  const detailTableData: any = ref<object[]>([]); //表格数据
-  // let stockNumData: any = ref(0); //帐存数量
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
+
+  // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
@@ -275,80 +278,106 @@
       formState.value[e] = '';
     });
   };
-  const openSearch = async () => {
-    const res = await onRule();
-    basicSearchRef.value.initList(res);
+
+  //  基本信息弹框表头数据
+  const getInitCols = (key: any) => {
+    const colConfig = {
+      EMP: employeeColumns,
+    };
+    return colConfig[key];
   };
-  //基本信息表格双击事件
-  const onRuleClickEvent = (row) => {
-    formState.value.empId = row.id;
-    formState.value.empName = row.name;
-    basicSearchRef.value.bSearch(false);
-  };
-  //打开放大镜
-  const onRule = async () => {
-    const res: any = await getEmployeeData({
-      params: [
-        {
-          table: '',
-          name: 'bsStatus',
-          column: 'bs_status',
-          link: SearchLink.AND,
-          rule: SearchMatchType.EQ,
-          type: SearchDataType.string,
-          val: 'B',
-          startWith: '',
-          endWith: '',
-        },
-      ],
-    });
-    let data = res;
+
+  // 基本信息弹框选放大镜事件
+  const onSearch: any = async (key) => {
+    modalType.value = key;
+    await getBasicSelectData(key);
+    const res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+    let dataCols = getInitCols(key);
+    let dataList = res;
     basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initList(data);
-    basicSearchRef.value.initCols(employeeColumns);
-    await getEmployeeOption();
+    basicSearchRef.value.initCols(dataCols);
+    basicSearchRef.value.initList(dataList);
     return res;
   };
-  //获取基本单位字段
-  const getEmployeeOption = async () => {
+
+  // 基础资料弹框查询事件
+  const searchList = async (type, keywords) => {
+    let param: any = [];
+    if (keywords) {
+      param.push(keywords);
+    }
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: param,
+        },
+        config.PUBLIC_REQUEST_URL[type],
+      ),
+    );
+  };
+
+  //基础资料弹框双击选择事件
+  const basicClickEvent = async (row) => {
+    switch (modalType.value) {
+      case 'EMP':
+        formState.value.empId = row.id;
+        formState.value.empName = row.name;
+        break;
+    }
+    basicSearchRef.value.bSearch(false);
+  };
+
+  // 基础信息弹框获取下拉框数据
+  const getBasicSelectData = async (key: string) => {
     try {
-      let arr: any = [];
-      let data = await getEmployeeEntity();
-      arr = cloneDeep(data);
-      arr = arr.filter((e) => e.fieldName != 'bs_status');
-      basicSearchRef.value.init(arr);
+      if (key == 'EMP') {
+        let data = await getEmployeeEntity();
+        let arr: any = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
+      }
     } catch (e) {
-      console.log('获取基本信息字段失败', e);
+      console.log('获取选项字段失败', e);
     }
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
-
   //保存
   const onSubmit = async () => {
     formRef.value
       .validate()
       .then(async () => {
         const tableFullData = vxeTableRef.value.getDetailData();
-        console.log('1212', tableFullData)
-
         const validAllErrMapData = await vxeTableRef.value.getValidAllData();
         if (tableFullData) {
-          console.log('1212', tableFullData)
           if (validAllErrMapData) {
-            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查1111111!' });
+            await VXETable.modal.message({
+              status: 'error',
+              message: '明细表数据校检不通过，请检查!',
+            });
             return;
           }
           formState.value.dtData = cloneDeep(tableFullData);
         }
-        // if (!formState.value.id) {
+        //保存：新增+更新
         let data = await add({ params: formState.value });
-        // formState.value = Object.assign({}, formState.value, data);
-        // } else {
-        //   const data = await update({ params: formState.value });
-        //   formState.value = Object.assign({}, formState.value, data);
-        // }
-        // formState.value.bsStatus = 'A';
         await getListById(data.id);
         createMessage.success('操作成功');
       })
@@ -357,6 +386,7 @@
         console.log(error);
       });
   };
+  //审核
   const onAudit = async () => {
     formRef.value
       .validate()
@@ -392,6 +422,7 @@
         console.log(error);
       });
   };
+  //反审核
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
@@ -420,23 +451,22 @@
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      // if (formState.value.empId) {
-      //   console.log(formState.value, 'swdsa');
-      // formState.value.empId = res.empName ? res.bdExamineRule.id : '';
-      // formState.value.empName = res.empName ? res.empName : '';
-      // }
+      if (formState.value.empId) {
+        formState.value.empId = res.empName ? res.bdExamineRule.id : '';
+        formState.value.empName = res.empName ? res.empName : '';
+      }
       formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
-          if (!r.bdStock) {
-            r.bdStock = {
-              id: '',
-              name: '',
-              number: '',
-            };
-            return r;
-          }
+          // if (!r.bdStock) {
+          //   r.bdStock = {
+          //     id: '',
+          //     name: '',
+          //     number: '',
+          //   };
+          //   return r;
+          // }
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
@@ -574,7 +604,6 @@
         break;
     }
     let stockNumData = await getInventoryList({ params: data });
-    console.log('stockNumData.value', stockNumData);
     if (stockNumData) {
       data.stockNum = cloneDeep(stockNumData);
     } else {

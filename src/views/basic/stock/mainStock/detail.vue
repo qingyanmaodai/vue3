@@ -57,7 +57,7 @@
                     v-model:value="formState.empName"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onSearch('EMP')"
-                    @clear="onClear('EMP')"
+                    @clear="onClear(['empId', 'empName'])"
                   />
                 </a-form-item>
               </Col>
@@ -190,6 +190,8 @@
   import { getPublicList } from '/@/api/public';
   import { getEmployeeEntity } from '/@/api/employee';
   import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
+  import { cloneDeep } from 'lodash-es';
+  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -273,6 +275,12 @@
       createMessage.success('操作成功');
     }
   };
+  //点击清空图标清空事件
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = '';
+    });
+  };
   /**
    * 基本信息弹框表头数据
    * @param key
@@ -296,9 +304,9 @@
             table: '',
             name: 'bsStatus',
             column: 'bs_status',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
             val: 'B',
             startWith: '',
             endWith: '',
@@ -355,7 +363,9 @@
     try {
       if (key == 'EMP') {
         let data = await getEmployeeEntity();
-        basicSearchRef.value.init(data);
+        let arr: any = cloneDeep(data);
+        arr = arr.filter((e) => e.fieldName != 'bs_status');
+        basicSearchRef.value.init(arr);
       }
     } catch (e) {
       console.log('获取选项字段失败', e);

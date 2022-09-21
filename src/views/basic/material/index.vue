@@ -296,7 +296,6 @@
         row: row.id,
       },
     });
-    console.log('编辑:', row.id);
   };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {

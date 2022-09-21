@@ -202,6 +202,7 @@
     unAuditStockLocationList,
     updateStockLocationList,
   } from '/@/api/stockLocation';
+  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -251,9 +252,8 @@
   const getStockOps = async (key) => {
     if (key == 'stock') {
       try {
-        let arr: any = [];
         let data = await getStockOption({ params: '' });
-        arr = cloneDeep(data);
+        let arr: any = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
       } catch (e) {
@@ -261,9 +261,8 @@
       }
     } else if (key == 'sub') {
       try {
-        let arr: any = [];
         let data = await getSubOption({ params: '' });
-        arr = cloneDeep(data);
+        let arr: any = cloneDeep(data);
         arr = arr.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
         basicSearchRef.value.init(arr);
       } catch (e) {
@@ -291,9 +290,9 @@
             table: '',
             name: 'bsStatus',
             column: 'bs_status',
-            link: 'AND',
-            rule: 'EQ',
-            type: 'string',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
             val: 'B',
             startWith: '',
             endWith: '',
@@ -367,10 +366,7 @@
     basicSearchRef.value.bSearch(false);
   };
 
-  //接受参数
-  let rowId = useRoute().query.row?.toString() || '';
-
-  //搜索功能
+  //基础资料弹框查询事件
   const searchList = async (type, keywords) => {
     let param: any = [];
     param.push(keywords);
@@ -386,6 +382,9 @@
       ),
     );
   };
+  //接受参数
+  let rowId = useRoute().query.row?.toString() || '';
+
   //获取初始值
   const getListById = async (rowId) => {
     if (rowId) {

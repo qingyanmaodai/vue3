@@ -89,7 +89,7 @@
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.ruleName"
                         :disabled="formState.bsStatus === 'B'"
-                        @search="onRule()"
+                        @search="onRule('rule')"
                         @clear="onClear(['ruleId', 'ruleName'])"
                       />
                     </a-form-item>
@@ -200,8 +200,9 @@
       </a-splitpanes>
     </div>
     <BasicSearch
+      :modalType="modalType"
       @basicClickEvent="onRuleClickEvent"
-      @openSearch="openSearch"
+      @searchList="searchList"
       ref="basicSearchRef"
       :gridOptions="basicGridOptions"
     />
@@ -239,9 +240,10 @@
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { getDataList, getSearchOption } from '/@/api/exaRule';
+  import { getSearchOption } from '/@/api/exaRule';
   import { basicGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
+  import {getPublicList} from "/@/api/public";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -254,6 +256,7 @@
   const activeKey = ref<string>('1');
   const basicSearchRef: any = ref(null);
   const vxeTableRef: any = ref<String | null>(null);
+  const modalType = ref<string>(''); //当前显示基础信息弹框类型
   const formData: ExaEntity = {
     id: undefined,
     number: '',
@@ -289,10 +292,7 @@
       formState.value[e] = '';
     });
   };
-  const openSearch = async () => {
-    const res = await onRule();
-    basicSearchRef.value.initList(res);
-  };
+
   //基本信息表格双击事件
   const onRuleClickEvent = (row) => {
     formState.value.ruleId = row.id;
@@ -300,22 +300,28 @@
     basicSearchRef.value.bSearch(false);
   };
   //打开放大镜
-  const onRule = async () => {
-    const res: any = await getDataList({
-      params: [
-        {
-          table: '',
-          name: 'bsStatus',
-          column: 'bs_status',
-          link: SearchLink.AND,
-          rule: SearchMatchType.EQ,
-          type: SearchDataType.string,
-          val: 'B',
-          startWith: '',
-          endWith: '',
-        },
-      ],
-    });
+  const onRule = async (key) => {
+    modalType.value = key;
+    const res: any = await getPublicList(
+      {
+
+        params: [
+          {
+            table: '',
+            name: 'bsStatus',
+            column: 'bs_status',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: 'B',
+            startWith: '',
+            endWith: '',
+          },
+        ],
+      },
+      config.PUBLIC_REQUEST_URL[key],
+    );
+
     let data = res;
     basicSearchRef.value.bSearch(true);
     basicSearchRef.value.initList(data);
@@ -323,12 +329,26 @@
     await getRuleOption();
     return res;
   };
-  //获取基本单位字段
+  //基础资料弹框查询事件
+  const searchList = async (type, keywords) => {
+    let param: any = [];
+    if (keywords) {
+      param.push(keywords);
+    }
+    basicSearchRef.value.initList(
+      await getPublicList(
+        {
+          params: param,
+        },
+        config.PUBLIC_REQUEST_URL[type],
+      ),
+    );
+  };
+  //获取基本单位下拉框字段
   const getRuleOption = async () => {
     try {
-      let arr: any = [];
       let data = await getSearchOption({ params: '' });
-      arr = cloneDeep(data);
+      let arr: any = cloneDeep(data);
       arr = arr.filter((e) => e.fieldName != 'bs_status');
       basicSearchRef.value.init(arr);
     } catch (e) {
@@ -367,6 +387,7 @@
         console.log(error);
       });
   };
+  //审核
   const onAudit = async () => {
     formRef.value
       .validate()
@@ -398,6 +419,7 @@
         console.log(error);
       });
   };
+  //反审核
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
