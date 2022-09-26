@@ -17,7 +17,9 @@
               v-model="search.fieldName"
               placeholder="请选择"
               style="width: 200px"
-              @focus="handleChange"
+              :filter-method="filterOption"
+              transfer
+              @change="handleChange"
               @select="selectOne(search)"
             >
               <vxe-option
@@ -37,7 +39,8 @@
               placeholder="等于"
               :options="config.TIME_OPTION_RULE"
               style="width: 100px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             />
             <vxe-select
               v-show="search.fieldName ? JSON.parse(search.fieldName).controlType !== 'date' : true"
@@ -45,7 +48,8 @@
               placeholder="包含"
               :options="config.OPTION_RULE"
               style="width: 100px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             />
           </Col>
           <Col>
@@ -57,7 +61,8 @@
               v-model="search.val"
               placeholder="请选择..."
               style="width: 200px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             >
               <vxe-option
                 v-for="(item, optionIndex) in config[selectConfigOption(search.fieldName)]"
@@ -111,7 +116,8 @@
               style="width: 200px"
               :showArrow="true"
               v-model="search.checkData"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
               placeholder="请选择...多选。。"
             />
             <a-tree-select
@@ -135,7 +141,8 @@
               v-model="search.link"
               :options="optionsLink"
               style="width: 70px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             />
           </Col>
           <a-button
@@ -186,7 +193,7 @@
     Row,
     Col,
   } from 'ant-design-vue';
-  import { reactive, ref, UnwrapRef } from 'vue';
+  import {nextTick, reactive, ref, UnwrapRef} from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
@@ -213,6 +220,7 @@
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'moreListEvent'): void; //查询
+    (event: 'basicSearchEvent'): void; //查询
     (event: 'resetEvent'): void; //重置
   };
   // const formRef = ref<any>(null);
@@ -235,6 +243,11 @@
       default: '',
     },
   });
+
+  /*-------开始-------------------------*/
+
+  /*-------结束------------------------------*/
+
   interface FormState {
     fieldName: string;
     labelValue: string;
@@ -286,7 +299,7 @@
 
   //改变选择的字段数据
   const handleChange = (value: any) => {
-    selectOption.data = value.value;
+    selectOption.data = JSON.parse(value.value);
   };
   //查询按钮--查询参数
   let searchKeywords: any = [];
@@ -386,6 +399,7 @@
   const onSearch = async (data) => {
     nowCheckData.data = data; //输入框的值
     const res = await publicEvent(data); //获取数据
+    await nextTick();
     basicSearchRef.value.initList(res); //表格数据
     basicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
     basicSearchRef.value.bSearch(true); //打开弹框
@@ -445,6 +459,7 @@
     //   }
     // }
     emit('moreListEvent');
+    emit('basicSearchEvent');
   };
 
   //重置方法

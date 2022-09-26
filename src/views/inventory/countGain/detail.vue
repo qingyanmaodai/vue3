@@ -257,13 +257,13 @@
   const formRules = reactive({
     countNum: [
       { required: true, message: '请输入比帐存数量大的盘点数量' },
-      {
-        validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
-            return new Error('盘点数量应该大于帐存数量');
-          }
-        },
-      },
+      // {
+      //   validator({ cellValue, row }) {
+      //     if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+      //       return new Error('盘点数量应该大于帐存数量');
+      //     }
+      //   },
+      // },
     ],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
@@ -319,14 +319,14 @@
 
   // 基础资料弹框查询事件
   const searchList = async (type, keywords) => {
-    let param: any = [];
-    if (keywords) {
-      param.push(keywords);
-    }
+    // let param: any = [];
+    // if (keywords) {
+    //   param.push(keywords);
+    // }
     basicSearchRef.value.initList(
       await getPublicList(
         {
-          params: param,
+          params: keywords,
         },
         config.PUBLIC_REQUEST_URL[type],
       ),
@@ -378,6 +378,8 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
+        console.log('1212', data.id);
+        formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
         await getListById(data.id);
         createMessage.success('操作成功');
       })

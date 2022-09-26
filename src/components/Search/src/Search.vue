@@ -88,7 +88,7 @@
   });
   type Emits = {
     (event: 'getList', keywords?: object, selected?): void;
-    (event: 'resetEvent'): void;
+    // (event: 'resetEvent'): void;
   };
   const emit = defineEmits<Emits>();
   const getSearchParams = (): SearchParams[] => {
@@ -154,7 +154,7 @@
     if (moreSearchRef.value) {
       moreSearchRef.value.resetEvent();
     }
-    emit('resetEvent');
+    // emit('resetEvent');
   };
   defineExpose({ moreSearchClose, getOptions, formState, getSearchParams, resetEvent });
 </script>

@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, PropType, reactive, ref } from 'vue';
+  import { nextTick, onMounted, PropType, reactive, ref } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
@@ -118,11 +118,31 @@
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const basicSearchRef: any = ref(null); //基础信息查询组件ref
   const xGrid = ref<VxeGridInstance>();
+  let paramsData = [
+    {
+      table: '',
+      name: 'bsStatus',
+      column: 'bs_status',
+      link: SearchLink.AND,
+      rule: SearchMatchType.EQ,
+      type: SearchDataType.string,
+      val: 'B',
+      startWith: '',
+      endWith: '',
+    },
+  ];
   //打开弹框，获取数据
   const onSearch = async (data, column) => {
     nowCheckData.data = column; //输入框column.field
     nowCheckRow.data = data; //当前选中行数据
-    const res = await publicEvent(undefined, column); //表格获取数据
+    const res: any = await getPublicList(
+      {
+        params: paramsData,
+      },
+      //选择分类的接口地址，如基本单位
+      Url[column.params.list],
+    );
+    // const res = await publicEvent([], column); //表格获取数据
     basicSearchRef.value.initList(res); //表格数据
     basicSearchRef.value.initCols(TableColum[column.params.select]); //表头
     basicSearchRef.value.bSearch(true); //打开弹框
@@ -141,11 +161,12 @@
       arr = arr.filter((e) => e.fieldName != 'bs_status');
       basicSearchRef.value.getListUnitEvent(arr);
     } catch (e) {
-      console.log('高级查询获取基本信息字段失败', e);
+      console.log('明细表获取基本信息下拉框选项失败', e);
     }
   };
   //基本信息弹框中需要的数据
   const openSearch = async (keywords, currentPage, pageSize) => {
+    console.log('res', keywords);
     const res = await publicEvent(keywords, nowCheckData.data, currentPage, pageSize);
     basicSearchRef.value.initList(res);
   };
@@ -181,24 +202,27 @@
 
   //基本信息数据查询
   const publicEvent = async (keywords, column, currPage = 1, pageSize = 10) => {
-    let paramArr: any = [];
-    if (keywords) {
-      paramArr.push(keywords);
+    // let paramArr: any = [];
+    // if (keywords) {
+    //   paramArr.push(keywords);
+    // }
+    // paramArr.push({
+    //   column: 'bs_status',
+    //   endWith: '',
+    //   link: SearchLink.AND,
+    //   rule: SearchMatchType.LIKE,
+    //   type: SearchDataType.string,
+    //   name: 'bsStatus',
+    //   startWith: '',
+    //   table: '',
+    //   val: 'B',
+    // });
+    if (!keywords) {
+      keywords = paramsData;
     }
-    paramArr.push({
-      column: 'bs_status',
-      endWith: '',
-      link: SearchLink.AND,
-      rule: SearchMatchType.LIKE,
-      type: SearchDataType.string,
-      name: 'bsStatus',
-      startWith: '',
-      table: '',
-      val: 'B',
-    });
     return await getPublicList(
       {
-        params: paramArr,
+        params: keywords,
         pageIndex: currPage,
         pageRows: pageSize,
       },

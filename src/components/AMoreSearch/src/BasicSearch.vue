@@ -18,7 +18,9 @@
               v-model="search.fieldName"
               placeholder="请选择"
               style="width: 200px"
-              @focus="handleChange"
+              :filter-method="filterOption"
+              transfer
+              @change="handleChange"
               @select="selectOne(search)"
             >
               <vxe-option
@@ -38,7 +40,8 @@
               placeholder="等于"
               :options="config.TIME_OPTION_RULE"
               style="width: 100px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             />
             <vxe-select
               v-show="search.fieldName ? JSON.parse(search.fieldName).controlType !== 'date' : true"
@@ -46,7 +49,8 @@
               placeholder="包含"
               :options="config.OPTION_RULE"
               style="width: 100px"
-              :filterOption="filterOption"
+              :filter-method="filterOption"
+              transfer
             />
           </Col>
           <Col>
@@ -58,6 +62,8 @@
               v-model="search.val"
               placeholder="请选择"
               style="width: 200px"
+              :filter-method="filterOption"
+              transfer
             >
               <vxe-option
                 v-for="(item, optionIndex) in config[selectConfigOption(search.fieldName)]"
@@ -120,6 +126,12 @@
           <span style="margin-left: 10px">
             <a-button type="primary" class="x-button" @click="resetSearch">重置</a-button>
             <a-button type="primary" class="x-button" @click="basicSearchEvent">查询</a-button>
+            <a-button
+              class="x-button"
+              style="background-color: #2f4056; color: #fff"
+              @click="childMoreSearchEvent"
+              >高级查询</a-button
+            >
           </span>
         </a-space>
       </Row>
@@ -165,6 +177,14 @@
       <span>基础信息查询</span>
     </template>
   </vxe-modal>
+  <!--    高级查询弹框     -->
+  <MoreSearchByBasic
+    v-if="isShowModelByMoreSearch"
+    ref="childMoreSearchRef"
+    @basicSearchEvent="basicSearchEvent"
+  />
+  <!--  @resetEvent="resetSearch"-->
+
   <!--  基础信息查询-->
   <BasicSearch
     v-if="isShowModel"
@@ -188,23 +208,24 @@
     Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { reactive, ref, UnwrapRef } from 'vue';
+  import { reactive, ref, UnwrapRef, nextTick } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs, { Dayjs } from 'dayjs';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
-  import { BasicSearch } from '/@/components/AMoreSearch';
+  import { BasicSearch, MoreSearch } from '/@/components/AMoreSearch';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   const { createMessage } = useMessage();
+  const MoreSearchByBasic = MoreSearch;
   const ASpace = Space;
   const AButton = Button;
   const AInput = Input;
   const AInputSearch = InputSearch;
   const ADatePicker = DatePicker;
   const ATreeSelect = TreeSelect;
-  import { SearchDataType, SearchMatchType, TableColum, Url } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink';
   const optionsUnitFieldName = reactive<any>({ data: [] });
 
   type Emits = {
@@ -212,7 +233,7 @@
     (event: 'getListUnitEvent', keywords: object): void; //获取下拉框字段
     (event: 'openSearch', keywords?: object, currPage?: number, pageSize?: number): void; //打开基本信息弹框以及获取基本信息数据
     (event: 'onSearch', data: object): void; //基本信息的的选择框点击事件
-    (event: 'searchList', type: string, keywords: object): void; //详情页的基本信息搜索
+    (event: 'searchList', type: string, searchParams: any): void; //详情页的基本信息搜索
   };
   //获取父组件的数据
   const props = defineProps({
@@ -222,35 +243,62 @@
     modalType: String,
   });
   interface Search {
-    startWith: string;
-    fieldName: string;
-    rule: string;
-    val: string;
-    labelValue: string;
+    startWith?: string;
+    fieldName?: string;
+    rule?: string;
+    val?: string;
+    type?: string;
+    labelValue?: string;
     treeData?: object[];
     checkData?: string[];
     date?: Dayjs | undefined;
-    endWith: string;
+    endWith?: string;
     controlType?: string;
-    key: number;
+    key?: number;
   }
   const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
     searches: [
       {
         startWith: '',
         fieldName: '',
-        rule: 'LIKE',
         val: '',
         labelValue: '',
         date: undefined,
         checkData: [],
         treeData: [],
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
         controlType: '',
         endWith: '',
         key: Date.now(),
       },
     ],
   });
+
+  /*--------------测试----------------*/
+  //高级查询组件ref
+  const childMoreSearchRef: any = ref(null);
+  const isShowModelByMoreSearch = ref<boolean>(false);
+
+  // 高级查询打开
+  const childMoreSearchEvent = async () => {
+    isShowModelByMoreSearch.value = true;
+    await nextTick();
+    // setTimeout(() => {
+    childMoreSearchRef.value.mSearch(true);
+    childMoreSearchRef.value.initOptions(optionsUnitFieldName.data);
+    // }, 1);
+  };
+
+  //高级查询
+  // const moreListEvent = async () => {
+  //   // let type = props.modalType;
+  //   // await basicSearchEvent();
+  // };
+
+  /*--------------测试----------------*/
+
   //1111---开始---基础信息查询的弹框
   const isShowModel = ref<boolean>(false);
   //判断输入框controlType类型，改变后面输入框的类型
@@ -301,6 +349,7 @@
     paramArr.push({
       column: 'bs_status',
       endWith: '',
+      link: SearchLink.AND,
       rule: SearchMatchType.LIKE,
       type: SearchDataType.string,
       name: 'bsStatus',
@@ -323,16 +372,20 @@
     childBasicSearchRef.value.bSearch(false);
   };
   //改变选择的字段数据
-  const handleChange = (value: any) => {
-    selectOption.data = value.value;
+  const handleChange = async (value: any, $event) => {
+    selectOption.data = JSON.parse(value.value);
+    console.log('seede', $event)
   };
   const onSearch = async (data) => {
     nowCheckData.data = data; //输入框的值
     isShowModel.value = true;
     const res = await publicEvent(data); //获取数据
+    await nextTick();
+    // setTimeout(() => {
     childBasicSearchRef.value.initList(res); //表格数据
     childBasicSearchRef.value.initCols(TableColum[selectOption.data.queryConfig]); //表头
     childBasicSearchRef.value.bSearch(true); //打开弹框
+    // }, 1);
     await getPublicListOption();
   };
   const openSearch = async (keywords) => {
@@ -362,7 +415,7 @@
     pages.total = data.total;
     pages.pageSize = data.size;
   };
-  //高级查询字段数据
+  //查询字段数据
   const getListUnitEvent = (data) => {
     optionsUnitFieldName.data = data;
   };
@@ -384,29 +437,29 @@
   const selectConfigOption = (data) => {
     if (data) return JSON.parse(data).queryConfig;
   };
-  //选择事件
-  const selectOne = async (data: any) => {
-    data.val = '';
-    data.rule = 'LIKE';
-    if (data.labelValue || data.date) {
-      data.labelValue = '';
-      data.date = '';
-    }
-    if (data.fieldName) {
-      let obj = JSON.parse(data.fieldName);
-      if (obj.controlType && obj.controlType === 'treeSelect') {
-        const res = await getPublicList(
-          {
-            params: 0,
-          },
-          //选择分类的接口地址，如基本单位。。
-          obj.requestUrl,
-        );
-        data.val = undefined;
-        data.treeData = cloneDeep(res);
-      }
-    }
-  };
+  // //选择事件
+  // const selectOne = async (data: any) => {
+  //   data.val = '';
+  //   data.rule = 'LIKE';
+  //   if (data.labelValue || data.date) {
+  //     data.labelValue = '';
+  //     data.date = '';
+  //   }
+  //   if (data.fieldName) {
+  //     let obj = JSON.parse(data.fieldName);
+  //     if (obj.controlType && obj.controlType === 'treeSelect') {
+  //       const res = await getPublicList(
+  //         {
+  //           params: 0,
+  //         },
+  //         //选择分类的接口地址，如基本单位。。
+  //         obj.requestUrl,
+  //       );
+  //       data.val = undefined;
+  //       data.treeData = cloneDeep(res);
+  //     }
+  //   }
+  // };
   //关闭
   const handleClose = () => {
     // formRef.value.resetFields();
@@ -426,38 +479,58 @@
     basicSearchDialog.value = false;
   };
   //查询按钮
-  const basicSearchEvent = (type, keywords) => {
+  const basicSearchEvent = async (type, keywords) => {
+    let searchParams: any = [];
     type = props.modalType;
-    dynamicValidateForm.searches.map((r) => {
-      if (r.date) {
-        r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD');
-      }
-    });
     if (dynamicValidateForm.searches) {
+      dynamicValidateForm.searches.map((r) => {
+        if (r.date) {
+          r.val = dayjs(dayjs(r.date).valueOf()).format('YYYY-MM-DD');
+        }
+      });
       keywords = dynamicValidateForm.searches;
-      if (keywords.length == 1 && !keywords[0].fieldName) {
-        return;
+      if (keywords[0].fieldName) {
+        searchParams.push({
+          table: '',
+          name: JSON.parse(keywords[0].fieldName).propName,
+          column: JSON.parse(keywords[0].fieldName).fieldName,
+          startWith: keywords[0].startWith,
+          endWith: keywords[0].endWith,
+          // type: keywords[0].controlType,
+          link: 'AND',
+          rule: keywords[0].rule,
+          date: keywords[0].date,
+          val: keywords[0].val,
+        });
       }
-      keywords = {
+      searchParams.push({
+        column: 'bs_status',
+        endWith: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        name: 'bsStatus',
+        startWith: '',
         table: '',
-        name: JSON.parse(keywords[0].fieldName).propName,
-        column: JSON.parse(keywords[0].fieldName).fieldName,
-        startWith: keywords[0].startWith,
-        endWith: keywords[0].endWith,
-        type: keywords[0].controlType,
-        link: 'AND',
-        rule: keywords[0].rule,
-        date: keywords[0].date,
-        val: keywords[0].val,
-      };
-      emit('searchList', type, keywords);
-      emit('openSearch', keywords);
-    } else {
-      createMessage.error('输入不可为空');
+        val: 'B',
+      });
+      await nextTick(() => {
+        if (childMoreSearchRef.value) {
+          if (
+            childMoreSearchRef.value.getSearchParams() &&
+            childMoreSearchRef.value.getSearchParams().length > 0
+          ) {
+            searchParams = searchParams.concat(childMoreSearchRef.value.getSearchParams());
+          }
+          return searchParams;
+        }
+      });
     }
+    emit('searchList', type, searchParams);
+    emit('openSearch', keywords);
   };
   //重置
-  const resetSearch = (type, keywords) => {
+  const resetSearch = async (type, keywords) => {
     type = props.modalType;
     dynamicValidateForm.searches[0] = {
       startWith: '',
@@ -472,7 +545,13 @@
       rule: SearchMatchType.LIKE,
       key: Date.now(),
     };
+    await nextTick(() => {
+      if (childMoreSearchRef.value) {
+        childMoreSearchRef.value.resetEvent();
+      }
+    });
     dynamicValidateForm.searches.length = 1;
+    keywords = dynamicValidateForm.searches;
     emit('searchList', type, keywords);
     emit('openSearch', keywords);
   };
