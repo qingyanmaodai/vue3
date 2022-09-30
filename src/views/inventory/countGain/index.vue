@@ -2,6 +2,7 @@
   <div class="default-theme" style="padding: 15px; height: 100%">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
+        :control="moreSearchData"
         ref="searchRef"
         tableName="BsInventoryCountGainModel"
         searchNo="单据编号"
@@ -74,7 +75,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountGainColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { ControlSet, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
@@ -104,12 +105,6 @@
     pages.pageSize = pageSize;
     await getList(currentPage);
   };
-  //获取高级查询字段数据
-  const getOptions = async () => {
-    const moreSearchData = await getSearchOption({ params: '' });
-    searchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -304,6 +299,11 @@
     getList();
   };
 
+  //获取高级查询字段数据
+  const moreSearchData = ref();
+  getSearchOption({ params: '' }).then((res) => {
+    moreSearchData.value = res;
+  });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     // getList();

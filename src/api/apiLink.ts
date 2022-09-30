@@ -501,3 +501,12 @@ export interface PublicModel {
   updateBy?: string;
   erpCode?: string;
 }
+export interface ControlSet {
+  controlType: string;
+  displayName: string;
+  fieldName: string;
+  propName: string;
+  queryConfig: string;
+  requestUrl: string;
+  tableAsName: string;
+}
