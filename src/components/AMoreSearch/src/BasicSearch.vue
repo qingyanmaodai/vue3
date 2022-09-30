@@ -64,7 +64,7 @@
               style="width: 200px"
               onfocus="this.blur();"
               placeholder="请选择输入..."
-              v-model:value="defaultParam.val"
+              v-model:value="defaultParam.valLabel"
               @click="onSearch(defaultParam)"
               @search="onSearch(defaultParam)"
             />
@@ -154,7 +154,7 @@
     v-if="isShow"
     ref="childMoreSearchRef"
     @searchEvent="searchEvent"
-    :control="moreSearchData"
+    :control="controlOfBasic"
     :tableName="basicTableName"
   />
 
@@ -171,8 +171,6 @@
 </template>
 <script lang="ts" setup>
   import {
-    // Select,
-    // SelectOption,
     Button,
     Row,
     Col,
@@ -183,10 +181,9 @@
     Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { reactive, ref, UnwrapRef, nextTick, toRef } from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
   import { config, configEntity } from '/@/utils/publicParamConfig';
-  import { Dayjs } from 'dayjs';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { BasicSearch, MoreSearch } from '/@/components/AMoreSearch';
@@ -208,11 +205,9 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  // const optionsUnitFieldName = reactive<any>({ data: [] });
 
   type Emits = {
     (event: 'basicClickEvent', data: object): void; //表格双击事件
-    // (event: 'getListUnitEvent', keywords: object): void; //获取下拉框字段
     (event: 'onSearch', data: object): void; //基本信息的的选择框点击事件
     (event: 'searchList', type: string, searchParams: any): void; //详情页的基本信息搜索
   };
@@ -243,7 +238,6 @@
       return [];
     },
   });
-  const isShow = ref<boolean>(false);
   const defaultControl: ControlSet = {
     controlType: '',
     displayName: '',
@@ -272,90 +266,30 @@
     data: cloneDeep(defaultParams),
     param: cloneDeep(defaultP),
   });
+  const isShow = ref<boolean>(false);
   const tableData = ref<any[]>([]);
-  const formData = toRef(formDataInit, 'data');
   const defaultParam = toRef(formDataInit, 'param');
-  interface FormState {
-    fieldName: string;
-    labelValue: string;
-    tableName: string;
-    date?: string;
-    checkData?: string[];
-  }
-  const formState: UnwrapRef<FormState> = reactive({
-    fieldName: '',
-    labelValue: '',
-    tableName: props.tableName,
-  });
-  interface Search {
-    controlType?: string;
-    startWith?: string;
-    endWith?: string;
-    fieldName?: string;
-    rule?: string;
-    date?: Dayjs | undefined;
-    treeData?: object[];
-    val?: string;
-    labelValue?: string;
-    link?: string;
-    type?: string;
-    key?: number;
-    name?: string;
-    column?: string;
-    checkData?: string[];
-  }
-  const searchObj: Search = {
-    startWith: '',
-    endWith: '',
-    fieldName: '',
-    controlType: '',
-    date: undefined,
-    treeData: [],
-    checkData: [],
-    val: '',
-    labelValue: '',
-    link: SearchLink.AND,
-    rule: SearchMatchType.LIKE,
-    type: SearchDataType.string,
-    key: Date.now(),
-    name: '',
-    column: '',
-  };
-  const dynamicValidateForm: UnwrapRef<{ searches: Search[] }> = reactive({
-    searches: [searchObj],
-  });
-
-  /*--------------测试----------------*/
+  const basicControl = ref<ControlSet[]>();
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]);
+  const basicShow = ref<boolean>(false);
+  const basicTableName = ref<string>('');
+  const currParam = ref<Param>();
+  let getParams: SearchParams[] = [];
+  const listUrl = ref<string>();
   //高级查询组件ref
   const childMoreSearchRef: any = ref(null);
-  const isShowModelByMoreSearch = ref<boolean>(false);
-  let moreSearchData = ref();
   const tableNameOfBasic = ref<string>('');
-
-  // 高级查询打开
-  const childMoreSearchEvent = async () => {
-    isShowModelByMoreSearch.value = true;
-    await nextTick();
-    await childMoreSearchRef.value.show();
-    moreSearchData.value = cloneDeep(props.control);
-    tableNameOfBasic.value = cloneDeep(props.tableName);
-  };
-
-  const isShowModel = ref<boolean>(false);
-  //判断输入框controlType类型，改变后面输入框的类型
-  // const selectOption: any = reactive({ data: {} });
-  //选择框data
-  const nowCheckData: any = reactive({ data: {} });
+  const controlOfBasic = ref<ControlSet[]>([]);
   //基础信息查询组件ref
   const childBasicSearchRef: any = ref(null);
-  //1111--结束---基础信息查询的弹框
   const xGrid = ref<VxeGridInstance>();
-  //判断窗体类型
-  let isUnit = ref<string>();
-  //高级查询基本单位表格数据
-  const tableCols = ref<any>([]);
-  //弹框
-  const basicSearchDialog = ref(true);
+  // 高级查询打开
+  const childMoreSearchEvent = async () => {
+    await childMoreSearchRef.value.show();
+    tableNameOfBasic.value = cloneDeep(props.tableName);
+    controlOfBasic.value = cloneDeep(props.control);
+  };
+
   //格式化数据
   const formatData = (data: string | number, source: configEntity[]) => {
     let res;
@@ -364,28 +298,14 @@
     }
     return res ? res.label : '';
   };
-  //详情页查询字段数据——渲染数据
-  // const init = (data) => {
-  //   optionsUnitFieldName.data = data;
-  // };
-  //判断窗体类型
-  const initSearch = (data) => {
-    // isUnit.value = data == 'baseUnit' || data == 'weightUnit' || !data;
-    isUnit.value = data;
-    return isUnit;
-  };
-  //高级查询基本单位表格数据——表头
-  const initCols = (data) => {
-    tableCols.value = data;
-  };
 
-  //基本信息表格双击事件
+  //基本信息弹框中的基础信息表格双击事件
   const basicClickEvent = (row) => {
-    nowCheckData.data.val = row.id;
-    nowCheckData.data.labelValue = row.name;
-    childBasicSearchRef.value.bSearch(false);
+    currParam.value ? (currParam.value.val = row.id) : currParam.value;
+    currParam.value ? (currParam.value.valLabel = row.name) : currParam.value;
+    childBasicSearchRef.value.close();
   };
-  //改变选择的字段数据
+  //改变选择的字段选项
   const handleChange = async (value: any) => {
     defaultParam.value.ruleType = config.OPTION_RULE;
     defaultParam.value.rule = SearchMatchType.LIKE;
@@ -408,12 +328,8 @@
     });
     return res;
   };
+
   //基础信息弹框--打开放大镜
-  const basicControl = ref<ControlSet[]>();
-  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]);
-  const basicShow = ref<boolean>(false);
-  const basicTableName = ref<string>('');
-  const currParam = ref<Param>();
   const onSearch = async (param: Param) => {
     basicShow.value = true;
     const control = getControl(param.name);
@@ -422,15 +338,10 @@
     const res = await getPublicList({ params: [] }, Url[control.queryConfig]);
     basicControl.value = res as ControlSet[];
     basicTableName.value = control.tableAsName;
-    console.log('abc', childBasicSearchRef.value);
     await childBasicSearchRef.value.init(control.requestUrl);
     currParam.value = param;
   };
 
-  //显示弹框
-  const bSearch = (data) => {
-    basicSearchDialog.value = data;
-  };
   //双击单元格事件
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
@@ -443,7 +354,7 @@
     isShow.value = false;
   };
   //查询按钮
-  const searchEvent = async (type) => {
+  const searchEvent = async () => {
     await getList(listUrl.value, 1);
   };
   //重置
@@ -462,7 +373,7 @@
     pages.pageSize = pageSize;
     await getList(currentPage);
   };
-  let getParams: SearchParams[] = [];
+
   const getList = async (url, currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
     const data = defaultParam.value;
@@ -515,7 +426,6 @@
   const close = () => {
     isShow.value = false;
   };
-  const listUrl = ref<string>();
   const init = async (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
@@ -525,11 +435,6 @@
     show,
     close,
     init,
-    bSearch,
-    // initList,
-    initCols,
-    initSearch,
-    // getListUnitEvent,
   });
 </script>
 <style scoped lang="less">

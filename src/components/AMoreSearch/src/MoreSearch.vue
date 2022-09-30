@@ -138,7 +138,7 @@
     Row,
     Col,
   } from 'ant-design-vue';
-  import { reactive, ref, toRef, UnwrapRef } from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
@@ -311,7 +311,6 @@
 
   //重置方法
   const resetEvent = () => {
-    console.log('看看',defaultParams);
     formData.value = cloneDeep(defaultParams);
   };
   //单行条件移除
