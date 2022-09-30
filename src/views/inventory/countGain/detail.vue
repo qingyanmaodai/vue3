@@ -148,10 +148,10 @@
             :columns="invCountGainOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
-            ref="vxeTableRef"
+            ref="detailTableRef"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @changeSwitch="changeSwitch"
+            @setDefaultTableData="setDefaultTableData"
             @getJudgeClickData="getJudgeClickData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
@@ -226,7 +226,7 @@
   const formRef = ref();
   const activeKey = ref<string>('1');
   const basicSearchRef: any = ref(null);
-  const vxeTableRef: any = ref<String | null>(null);
+  const detailTableRef: any = ref<String | null>(null);
   const modalType = ref<string>(''); //当前显示基础信息弹框类型
   const detailTableData: any = ref<object[]>([]); //表格数据
 
@@ -246,7 +246,6 @@
   const formStateInit = reactive({
     data: formData,
   });
-
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
@@ -364,8 +363,8 @@
     formRef.value
       .validate()
       .then(async () => {
-        const tableFullData = vxeTableRef.value.getDetailData();
-        const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+        const tableFullData = detailTableRef.value.getDetailData();
+        const validAllErrMapData = await detailTableRef.value.getValidAllData();
         if (tableFullData) {
           if (validAllErrMapData) {
             await VXETable.modal.message({
@@ -378,7 +377,7 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        console.log('1212', data.id);
+        console.log('data.id', data.id);
         formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
         await getListById(data.id);
         createMessage.success('操作成功');
@@ -395,8 +394,8 @@
       .then(async () => {
         const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
         if (type === 'confirm') {
-          const tableFullData = vxeTableRef.value.getDetailData();
-          const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+          const tableFullData = detailTableRef.value.getDetailData();
+          const validAllErrMapData = await detailTableRef.value.getValidAllData();
           if (tableFullData) {
             if (validAllErrMapData) {
               await VXETable.modal.message({
@@ -428,7 +427,7 @@
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
-      const tableFullData = vxeTableRef.value.getDetailData();
+      const tableFullData = detailTableRef.value.getDetailData();
       if (tableFullData) {
         formState.value.dtData = cloneDeep(tableFullData);
       }
@@ -454,7 +453,7 @@
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.empId) {
-        formState.value.empId = res.empName ? res.bdExamineRule.id : '';
+        formState.value.empId = res.empId ? res.empId : '';
         formState.value.empName = res.empName ? res.empName : '';
       }
       formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
@@ -612,11 +611,11 @@
       data.stockNum = 0;
     }
   };
-  //设置Switch默认
-  const changeSwitch = (obj) => {
-    obj.isOpen = 1;
-    obj.isRequire = 1;
-    obj.sort = cloneDeep(vxeTableRef.value.rowSortData);
+  //新增行时设置默认值
+  const setDefaultTableData = (obj) => {
+    // obj.isOpen = 1;
+    // obj.isRequire = 1;
+    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
   };
 
   onMounted(() => {

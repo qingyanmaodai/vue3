@@ -436,7 +436,22 @@ export const TableColum = {
     },
   ],
 };
-
+//人员档案
+export const employeeColumns = [
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '编码', sortable: true },
+  { field: 'name', title: '人员名称', sortable: true },
+  { field: 'entryDate', title: '入职日期', sortable: true },
+  { field: 'birthday', title: '出生日期', sortable: true },
+  { field: 'address', title: '地址', sortable: true },
+  { field: 'mark', title: '备注', sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
+];
 //公共属性
 export enum SearchLink {
   AND = 'AND',

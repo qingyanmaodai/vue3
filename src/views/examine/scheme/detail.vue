@@ -191,7 +191,7 @@
             :editRules="formRules"
             ref="vxeTableRef"
             :detailTableData="detailTableData"
-            @changeSwitch="changeSwitch"
+            @setDefaultTableData="setDefaultTableData"
             @getJudgeClickData="getJudgeClickData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -474,7 +474,7 @@
     callback(judgeClickIndex);
   }
   //设置Switch默认
-  const changeSwitch = (obj) => {
+  const setDefaultTableData = (obj) => {
     obj.isOpen = 1;
     obj.isRequire = 1;
     obj.sort = cloneDeep(vxeTableRef.value.rowSortData);

@@ -17,7 +17,7 @@
       <a-button
         type="primary"
         :disabled="props.isDisableButton"
-        v-show="props.isShowInsertRow"
+        v-show="props.isShowInsertButton"
         @click="insertRowEvent"
         >新增行</a-button
       >
@@ -25,7 +25,7 @@
         style="margin-left: 10px"
         danger
         :disabled="props.isDisableButton"
-        v-show="props.isShowRemoveRow"
+        v-show="props.isShowRemoveButton"
         @click="removeRowEvent"
         >删除行</a-button
       >
@@ -91,11 +91,11 @@
     columns: Array,
     isShowIcon: Boolean,
     isDisableButton: Boolean,
-    isShowInsertRow: {
+    isShowInsertButton: {
       type: Boolean,
       default: true,
     },
-    isShowRemoveRow: {
+    isShowRemoveButton: {
       type: Boolean,
       default: true,
     },
@@ -107,7 +107,7 @@
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
-    (event: 'changeSwitch', obj): void; //新增行时设置默认值
+    (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
     (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
   };
@@ -263,7 +263,7 @@
     let obj = {};
     let arr = $grid.getTableData();
     rowSortData.value = Number(arr.fullData.length) + 1;
-    emit('changeSwitch', obj);
+    emit('setDefaultTableData', obj);
     const record = obj;
     $grid.insertAt(record, -1);
   };

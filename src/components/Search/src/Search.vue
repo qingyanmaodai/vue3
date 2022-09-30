@@ -23,7 +23,7 @@
   </div>
   <hr />
   <!--    高级查询弹框     -->
-  <MoreSearch ref="moreSearchRef" @moreListEvent="moreListEvent" @resetEvent="resetEvent" />
+  <MoreSearch ref="moreSearchRef" @moreListEvent="moreListEvent" />
 </template>
 <script lang="ts" setup>
   import { Button, Input } from 'ant-design-vue';
@@ -88,7 +88,7 @@
   });
   type Emits = {
     (event: 'getList', keywords?: object, selected?): void;
-    // (event: 'resetEvent'): void;
+    (event: 'resetEvent'): void;
   };
   const emit = defineEmits<Emits>();
   const getSearchParams = (): SearchParams[] => {
@@ -149,12 +149,10 @@
   };
   //重置
   const resetEvent = () => {
-    formState.wlNo = '';
-    formState.wlName = '';
+    emit('resetEvent');
     if (moreSearchRef.value) {
       moreSearchRef.value.resetEvent();
     }
-    // emit('resetEvent');
   };
   defineExpose({ moreSearchClose, getOptions, formState, getSearchParams, resetEvent });
 </script>
