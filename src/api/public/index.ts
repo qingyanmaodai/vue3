@@ -30,7 +30,7 @@ export function getPublicList(
   url: string,
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<Result>(
+  return defHttp.post<any>(
     {
       url: url,
       data: json,

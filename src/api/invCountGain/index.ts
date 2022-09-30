@@ -1,6 +1,6 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { Url, RequestData, SearchParams, PublicModel, ControlSet } from '/@/api/apiLink';
 import { StockProfileEntity } from '/@/api/mainStock';
 import { StockLocationProfileEntity } from '/@/api/stockLocation';
 import { StockCompartmentProfileEntity } from '/@/api/stockCompartment';
@@ -81,7 +81,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
  * 获取选项
  */
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<Result>(
+  return defHttp.post<ControlSet[]>(
     {
       url: Url.GET_INV_COUNT_GAIN_OPTIONS_LIST,
       data: json,
