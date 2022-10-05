@@ -314,6 +314,7 @@
     defaultParam.value.rule = SearchMatchType.LIKE;
     if (value.value === defaultParam.value.name) {
       defaultParam.value.control = getControl(value.value);
+      defaultParam.value.treeData = [];
       defaultParam.value.val = undefined;
       if (defaultParam.value.control.controlType === 'date') {
         defaultParam.value.ruleType = cloneDeep(config.OPTION_RULE.slice(1));
