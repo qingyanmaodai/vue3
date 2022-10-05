@@ -205,6 +205,7 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { TreeItem } from '/@/components/Tree';
 
   type Emits = {
     (event: 'basicClickEvent', data: object): void; //表格双击事件
@@ -224,6 +225,7 @@
     control: ControlSet;
     ruleType?: any;
     valLabel?: string;
+    treeData?: TreeItem[];
   }
   interface ProType {
     tableName: string;
@@ -258,6 +260,7 @@
     column: '',
     table: props.tableName,
     ruleType: cloneDeep(config.OPTION_RULE),
+    treeData: [],
     // control: undefined,
     control: defaultControl,
   };
@@ -315,6 +318,12 @@
       if (defaultParam.value.control.controlType === 'date') {
         defaultParam.value.ruleType = cloneDeep(config.OPTION_RULE.slice(1));
         defaultParam.value.rule = SearchMatchType.EQ;
+      }
+      if (defaultParam.value.control.controlType === 'treeSelect') {
+        defaultParam.value.treeData = await getPublicList(
+          { params: 0 },
+          defaultParam.value.control.requestUrl,
+        );
       }
     }
   };

@@ -155,6 +155,7 @@
   } from '/@/api/apiLink';
   import { config } from '/@/utils/publicParamConfig';
   import { VxeGridPropTypes, VxeSelectPropTypes } from 'vxe-table/types/all';
+  import { TreeItem } from '/@/components/Tree';
   const APlusOutlined = PlusOutlined;
   const ASpace = Space;
   const AButton = Button;
@@ -189,6 +190,7 @@
     control: ControlSet;
     ruleType?: any;
     valLabel?: string;
+    treeData?: TreeItem[];
   }
   interface ProType {
     tableName: string;
@@ -196,6 +198,7 @@
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
+    treeData: [],
     control: () => {
       return [];
     },
@@ -243,20 +246,24 @@
     currParam.value = param;
   };
   //改变选择的字段数据
-  const handleChange = (value: any) => {
-    formData.value.forEach((item) => {
+  const handleChange = async (value: any) => {
+    for (const item of formData.value) {
       item.ruleType = config.OPTION_RULE;
       item.rule = SearchMatchType.LIKE;
       item.valLabel = '';
       if (value.value === item.name) {
         item.control = getControl(value.value);
         item.val = undefined;
+        item.treeData = [];
         if (item.control.controlType === 'date') {
           item.ruleType = cloneDeep(config.OPTION_RULE.slice(1));
           item.rule = SearchMatchType.EQ;
         }
+        if (item.control.controlType === 'treeSelect') {
+          item.treeData = await getPublicList({ params: 0 }, item.control.requestUrl);
+        }
       }
-    });
+    }
   };
   const getControl = (name: string): ControlSet => {
     let res: ControlSet = defaultControl;
