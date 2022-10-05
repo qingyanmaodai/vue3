@@ -7,7 +7,7 @@
     v-bind="props.gridOptions"
     :columns="props.columns"
     :export-config="{}"
-    :data="tableData.data"
+    :data="props.tableData"
     :show="props.show"
     :treeSelectData="treeSelectData"
     show-overflow
@@ -167,7 +167,7 @@
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   // import dayjs from 'dayjs';
-  import { Moment } from 'moment';
+  // import { Moment } from 'moment';
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -180,6 +180,7 @@
     count: Number,
     treeSelectData: Number,
     show: Boolean,
+    tableData: Array,
     isShowImport: {
       type: Boolean,
       default: true,
@@ -229,9 +230,10 @@
     fileList: FileItem[];
   }
   //数据初始化
-  const tableData = reactive<any>({ data: [] });
+  // const tableData = reactive<any>({ data: [] });
   const init = (data) => {
-    tableData.data = data;
+    console.log(data);
+    // tableData.data = data;
   };
 
   /**

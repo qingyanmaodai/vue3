@@ -18,6 +18,7 @@
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
+        :tableData="tableData"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -75,7 +76,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountGainColumns } from '/@/components/ExTable/data';
-  import { ControlSet, SearchParams } from '/@/api/apiLink';
+  import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
@@ -91,6 +92,7 @@
   let importConfig = ref<string>('IMPORT_INV_COUNT_GAIN');
   //表格事件
   const tableRef: any = ref<String | null>(null);
+  let tableData = ref<object[]>([]);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -122,14 +124,13 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
+    tableData.value = res.records;
+    searchRef.value.moreSearchClose();
+    //存在日期数据转换问题
     // data.bsDate = dayjs(dayjs(data.bsDate).valueOf()).format('YYYY-MM-DD');
     // if (res.bsDate) {
     //   formState.value.bsDate = dayjs(dayjs(res.bsDate).valueOf()).format('YYYY-MM-DD');
     // }
-    //存在日期数据转换问题
-    tableRef.value.init(data);
-    searchRef.value.moreSearchClose();
   };
 
   //重置

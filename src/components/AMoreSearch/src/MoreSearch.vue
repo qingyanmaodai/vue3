@@ -260,7 +260,8 @@
           item.rule = SearchMatchType.EQ;
         }
         if (item.control.controlType === 'treeSelect') {
-          item.treeData = await getPublicList({ params: 0 }, item.control.requestUrl);
+          let res = await getPublicList({ params: 0 }, item.control.requestUrl);
+          item.treeData = cloneDeep(res);
         }
       }
     }

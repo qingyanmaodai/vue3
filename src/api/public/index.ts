@@ -1,4 +1,4 @@
-import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
+import { ErrorMessageMode, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { RequestData, Url } from '/@/api/apiLink';
 

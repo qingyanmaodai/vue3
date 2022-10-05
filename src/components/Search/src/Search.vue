@@ -2,11 +2,11 @@
   <div>
     <div class="search" style="background-color: #fff">
       <div v-show="props.showSearchNo">
-        <span>{{ searchNo }}</span>
+        <span>{{ props.searchNo }}</span>
         <a-input class="input" v-model:value="formState.wlNo" />
       </div>
       <div v-show="props.showSearchName">
-        <span>{{ searchName }}</span>
+        <span>{{ props.searchName }}</span>
         <a-input class="input" v-model:value="formState.wlName" />
       </div>
       <div>
