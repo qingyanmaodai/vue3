@@ -171,22 +171,11 @@
   const basicSearchRef: any = ref(null); //
   //高级查询弹框
   const isShow = ref(false);
-
-  //基础信息弹框--打开放大镜
   const basicControl = ref<ControlSet[]>();
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]);
   const basicTableName = ref<string>('');
   const currParam = ref<Param>();
-  const onSearch = async (param: Param) => {
-    const control = getControl(param.name);
-    basicTableCols.value = TableColum[control.queryConfig];
-    //获取查询筛选条件
-    const res = await getPublicList({ params: [] }, Url[control.queryConfig]);
-    basicControl.value = res as ControlSet[];
-    basicTableName.value = control.tableAsName;
-    await basicSearchRef.value.init(control.requestUrl);
-    currParam.value = param;
-  };
+
   interface Param {
     column: string;
     endWith: string;
@@ -236,13 +225,23 @@
   };
   const defaultParams: Param[] = [cloneDeep(defaultP)];
   let copyDefaultParams: Param[] = [cloneDeep(defaultP)];
-  // onMounted(() => {
-  //   formData.value = cloneDeep(copyDefaultParams);
-  // });
+
   const formDataInit = reactive({
     data: cloneDeep(defaultParams),
   });
   const formData = toRef(formDataInit, 'data');
+
+  //基础信息弹框--打开放大镜
+  const onSearch = async (param: Param) => {
+    const control = getControl(param.name);
+    basicTableCols.value = TableColum[control.queryConfig];
+    //获取查询筛选条件
+    const res = await getPublicList({ params: [] }, Url[control.queryConfig]);
+    basicControl.value = res as ControlSet[];
+    basicTableName.value = control.tableAsName;
+    await basicSearchRef.value.init(control.requestUrl);
+    currParam.value = param;
+  };
   //改变选择的字段数据
   const handleChange = (value: any) => {
     formData.value.forEach((item) => {
@@ -326,7 +325,6 @@
   };
   const close = () => {
     formData.value = cloneDeep(copyDefaultParams);
-    // copyDefaultParams = [cloneDeep(defaultP)];
     isShow.value = false;
   };
   defineExpose({
