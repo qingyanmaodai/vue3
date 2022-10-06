@@ -54,7 +54,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_SCHEME_OPTIONS_LIST,
+      url: Url.GET_EXA_SCHEME_DTO,
       data: json,
     },
     {
@@ -174,7 +174,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ExaEntity>(
     {
-      url: Url.UNAUDIT_EXA_SCHEME,
+      url: Url.UN_AUDIT_EXA_SCHEME,
       data: json,
     },
     {
@@ -189,7 +189,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_UNAUDIT_EXA_SCHEME,
+      url: Url.BATCH_UN_AUDIT_EXA_SCHEME,
       data: json,
     },
     {

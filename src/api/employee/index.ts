@@ -56,7 +56,7 @@ export function getEmployeeData(
 export function getEmployeeEntity(mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EMPLOYEE_GET_ENTITY,
+      url: Url.GET_EMPLOYEE_DTO,
       data: {},
     },
     {

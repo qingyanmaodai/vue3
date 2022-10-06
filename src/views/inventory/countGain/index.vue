@@ -207,7 +207,6 @@
     // });
     // const res = await delBatch({ params: ids });
     const res = await delBatch({ params: rows });
-    console.log('batch', res);
     await tableRef.value.computeData(res);
     await getList();
   };

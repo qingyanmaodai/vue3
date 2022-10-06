@@ -32,7 +32,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_PROJECT_OPTIONS_LIST,
+      url: Url.GET_EXA_PROJECT_DTO,
       data: json,
     },
     {
@@ -152,7 +152,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ExaProjectEntity>(
     {
-      url: Url.UNAUDIT_EXA_PROJECT,
+      url: Url.UN_AUDIT_EXA_PROJECT,
       data: json,
     },
     {
@@ -167,7 +167,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_UNAUDIT_EXA_PROJECT,
+      url: Url.BATCH_UN_AUDIT_EXA_PROJECT,
       data: json,
     },
     {

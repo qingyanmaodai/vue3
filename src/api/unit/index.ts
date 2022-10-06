@@ -2,7 +2,7 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface UnitProfileEntity extends PublicModel {
+export interface UnitEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -18,7 +18,7 @@ export interface UnitProfileEntity extends PublicModel {
 export function getUnitOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_TABLE_UNIT,
+      url: Url.GET_UNIT_DTO,
       data: json,
     },
     {
@@ -49,7 +49,7 @@ export function getUnitTable(
  * 添加计量单位信息
  */
 export function addUnitList(
-  json: RequestData<UnitProfileEntity>,
+  json: RequestData<UnitEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -67,7 +67,7 @@ export function addUnitList(
  * 编辑计量单位信息
  */
 export function updateUnitList(
-  json: RequestData<UnitProfileEntity>,
+  json: RequestData<UnitEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(

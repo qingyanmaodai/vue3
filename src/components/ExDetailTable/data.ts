@@ -112,7 +112,7 @@ export const ruleOfExaColumns = [
     sortable: true,
     params: {
       list: 'GET_EXA_RULE_LIST',
-      select: 'GET_EXA_RULE_OPTIONS_LIST',
+      select: 'GET_EXA_RULE_DTO',
     },
     editRender: { name: '$input' },
     slots: {
@@ -126,7 +126,7 @@ export const ruleOfExaColumns = [
     width: 100,
     params: {
       list: 'GET_EXA_PROJECT_LIST', //弹框表格数据
-      select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
+      select: 'GET_EXA_PROJECT_DTO', //基本信息下拉框+表头
     },
     editRender: { name: '$input' },
     slots: {
@@ -155,7 +155,7 @@ export const exaProjectOfDetailColumns = [
     width: 180,
     params: {
       list: 'GET_EXA_PROJECT_LIST', //检验项目表格数据
-      select: 'GET_EXA_PROJECT_OPTIONS_LIST', //基本信息下拉框+表头
+      select: 'GET_EXA_PROJECT_DTO', //基本信息下拉框+表头
     },
     editRender: { name: '$input' },
     slots: {
@@ -237,8 +237,8 @@ export const invCountGainOfDetailColumns = [
     sortable: true,
     width: 150,
     params: {
-      list: 'GET_TABLE_LIST', //物料信息表格数据
-      select: 'GET_OPTIONS_LIST', //基本信息下拉框+表头
+      list: 'GET_MATERIAL_LIST', //物料信息表格数据
+      select: 'GET_MAT_DTO', //基本信息下拉框+表头
     },
     editRender: { name: '$input' },
     slots: {
@@ -276,7 +276,7 @@ export const invCountGainOfDetailColumns = [
     className: 'disableProp',
     // params: {
     //   list: 'GET_INV_BY_MAT_STOCK_LIST', //物料信息表格数据
-    //   select: 'GET_INVENTORY_OPTIONS', //基本信息下拉框+表头
+    //   select: 'GET_INVENTORY_DTO', //基本信息下拉框+表头
     // },
     // editRender: { name: '$input' },
     // slots: {
@@ -304,7 +304,7 @@ export const invCountGainOfDetailColumns = [
     title: '仓库',
     params: {
       list: 'GET_PAGE_STOCK_LIST',
-      select: 'GET_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
     },
     editRender: { name: '$input' },
     slots: {
@@ -318,7 +318,7 @@ export const invCountGainOfDetailColumns = [
     title: '分仓',
     params: {
       list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
-      select: 'GET_SUB_LIST',
+      select: 'GET_SUB_STOCK_DTO',
     },
     editRender: { name: '$input' },
     slots: {
@@ -332,7 +332,7 @@ export const invCountGainOfDetailColumns = [
     title: '仓位',
     params: {
       list: 'GET_PAGE_STOCK_LOCATION_LIST',
-      select: 'GET_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
     },
     editRender: { name: '$input' },
     slots: {

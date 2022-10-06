@@ -59,7 +59,7 @@ export function getSupplierData(
 export function getSupplierEntity(mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.SUPPLIER_GET_ENTITY,
+      url: Url.GET_SUPPLIER_DTO,
       data: {},
     },
     {

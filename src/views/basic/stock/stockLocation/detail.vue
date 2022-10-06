@@ -198,7 +198,7 @@
     addStockLocationList,
     auditStockLocationList,
     getStockLocationListById,
-    StockLocationProfileEntity,
+    StockLocationEntity,
     unAuditStockLocationList,
     updateStockLocationList,
   } from '/@/api/stockLocation';
@@ -226,7 +226,7 @@
   //选择对应的基本信息弹框
   let chosenModal: String = '';
   //初始化
-  const formData: StockLocationProfileEntity = {
+  const formData: StockLocationEntity = {
     id: undefined,
     number: '',
     name: '',

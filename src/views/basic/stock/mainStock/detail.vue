@@ -181,7 +181,7 @@
     addStockList,
     auditStockList,
     getOneStockById,
-    StockProfileEntity,
+    StockEntity,
     unAuditStockList,
     updateStockList,
   } from '/@/api/mainStock';
@@ -207,7 +207,7 @@
   const basicSearchRef = ref<any>(null);
   const modalType = ref<string>(''); //当前显示基础信息弹框类型
   //初始化
-  const formData: StockProfileEntity = {
+  const formData: StockEntity = {
     id: undefined,
     number: '',
     name: '',
