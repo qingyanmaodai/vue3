@@ -66,10 +66,10 @@
                     autocomplete="off"
                     class="input"
                     placeholder="请选择基本单位"
-                    v-model:value="formState.baseUnitName"
+                    v-model:value="formState.baseUnit"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST)"
-                    @clear="onClear(['baseUnitId', 'baseUnitName'])"
+                    @search="onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, ['baseUnitId', 'baseUnit'])"
+                    @clear="onClear(['baseUnitId', 'baseUnit'])"
                   />
                 </a-form-item>
               </Col>
@@ -81,10 +81,10 @@
                     placeholder="请选择物料分组"
                     label="物料分组"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.groupName"
+                    v-model:value="formState.bdMaterialGroup"
                     :disabled="formState.bsStatus === 'B'"
                     @search="onGroupSearch(formState.groupName)"
-                    @clear="onClear(['groupId', 'groupName'])"
+                    @clear="onClear(['groupId', 'bdMaterialGroup'])"
                   />
                 </a-form-item>
               </Col>
@@ -108,10 +108,15 @@
                     placeholder="请选择重量单位"
                     label="重量单位"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.weightName"
+                    v-model:value="formState.weightUnit"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST)"
-                    @clear="onClear(['weightUnitId', 'weightName'])"
+                    @search="
+                      onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, [
+                        'weightUnitId',
+                        'weightUnit',
+                      ])
+                    "
+                    @clear="onClear(['weightUnitId', 'weightUnit'])"
                   />
                 </a-form-item>
               </Col>
@@ -171,17 +176,22 @@
                     placeholder="请选择仓库"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.stockName"
+                    v-model:value="formState.bdStock"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST)"
+                    @search="
+                      onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, [
+                        'stockId',
+                        'bdStock',
+                      ])
+                    "
                     @clear="
                       onClear([
                         'stockId',
-                        'stockName',
+                        'bdStock',
                         'compartmentId',
-                        'compartmentName',
+                        'bdStockCompartment',
                         'locationId',
-                        'locationName',
+                        'bdStockLocation',
                       ])
                     "
                   />
@@ -195,17 +205,23 @@
                     placeholder="请选择分仓"
                     label="分仓"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.compartmentName"
+                    v-model:value="formState.bdStockCompartment"
                     :disabled="formState.bsStatus === 'B'"
                     @search="
                       onSearch(
                         'GET_SUB_STOCK_DTO',
                         'BdStockCompartment',
                         Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
+                        ['compartmentId', 'bdStockCompartment'],
                       )
                     "
                     @clear="
-                      onClear(['compartmentId', 'compartmentName', 'locationId', 'locationName'])
+                      onClear([
+                        'compartmentId',
+                        'bdStockCompartment',
+                        'locationId',
+                        'bdStockLocation',
+                      ])
                     "
                   />
                 </a-form-item>
@@ -218,16 +234,17 @@
                     placeholder="请选择仓位"
                     label="仓位"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.locationName"
+                    v-model:value="formState.bdStockLocation"
                     :disabled="formState.bsStatus === 'B'"
                     @search="
                       onSearch(
                         'GET_LOCATION_DTO',
                         'BdStockLocation',
                         Url.GET_PAGE_STOCK_LOCATION_LIST,
+                        ['locationId', 'bdStockLocation'],
                       )
                     "
-                    @clear="onClear(['locationId', 'locationName'])"
+                    @clear="onClear(['locationId', 'bdStockLocation'])"
                   />
                 </a-form-item>
               </Col>
@@ -357,10 +374,15 @@
                       placeholder="请选择检验方案"
                       label="检验方案"
                       :show="formState.bsStatus !== 'B'"
-                      v-model:value="formState.bdExamineName"
+                      v-model:value="formState.bdExamine"
                       :disabled="formState.bsStatus === 'B'"
-                      @search="onSearch('GET_EXA_SCHEME_DTO', 'BdExamine', Url.GET_EXA_SCHEME_LIST)"
-                      @clear="onClear(['examineId', 'bdExamineName'])"
+                      @search="
+                        onSearch('GET_EXA_SCHEME_DTO', 'BdExamine', Url.GET_EXA_SCHEME_LIST, [
+                          'examineId',
+                          'bdExamine',
+                        ])
+                      "
+                      @clear="onClear(['examineId', 'bdExamine'])"
                     />
                   </a-form-item>
                 </Col>
@@ -453,7 +475,7 @@
       <a-tree-select
         loading
         show-search
-        v-model:value="formState.node"
+        v-model:value="formState.groupId"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
         placeholder="请选择物料分组"
@@ -563,15 +585,11 @@
   //物料分组弹框
   const onGroupSearch = (name) => {
     visibleGroupModal.value = true;
-    formState.value.node = name;
-    if (formState.value.node == '') {
-      formState.value.node = undefined;
-    }
   };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = '';
+      formState.value[e] = undefined;
     });
   };
 
@@ -583,16 +601,28 @@
     stockName: {},
   });
 
-  //输入框点击放大镜事件
-  //第一个不能为一个链接，还需要通过它查出表头和下拉框
-  const onSearch: any = async (urlConfig, tableName, url) => {
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  /**
+   * 基础资料弹窗
+   * @param dtoUrlConfig  获取基础资料查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
+   */
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
     basicSearchRef.value.show();
     modalName.value = tableName;
-    const res = await getPublicList({ params: [] }, Url[urlConfig]);
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
     basicControl.value = res as ControlSet[];
-    basicTableCols.value = TableColum[urlConfig];
+    basicTableCols.value = TableColum[dtoUrlConfig];
     basicTableName.value = tableName;
-    await basicSearchRef.value.init(url);
+    await basicSearchRef.value.init(tableUrl);
   };
 
   //选择仓库后查询——联动-----key:在待用url中选择的----colName:需要查询的名字，如编码，名称。。。---id:输入的值
@@ -619,66 +649,11 @@
   };
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
-    switch (modalName.value) {
-      case 'baseUnit':
-        formState.value.baseUnitId = row.id;
-        formState.value.baseUnitName = row.name;
-        break;
-      case 'weightUnit':
-        formState.value.weightName = row.name;
-        formState.value.locationName = '';
-        formState.value.weightUnitId = row.id;
-        break;
-      case 'BdStock':
-        formState.value.stockId = row.id;
-        formState.value.stockName = row.name;
-        queryStockParam.stockCompartment = {
-          table: '',
-          name: 'stockId',
-          column: 'stock_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
-        // await getNextStock('stock', 'formState.stockId', formState.value.stockId);
-        break;
-      case 'BdStockCompartment':
-        formState.value.compartmentId = row.id;
-        formState.value.compartmentName = row.name;
-        queryStockParam.stockLocation = {
-          table: '',
-          name: 'compartmentId',
-          column: 'stock_compartment_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
-        const stockByStock = await getNextStock('stock', 'id', row.stockId);
-        formState.value.stockId = stockByStock.records[0].id;
-        formState.value.stockName = stockByStock.records[0].name;
-        break;
-      case 'BdStockLocation':
-        formState.value.locationId = row.id;
-        formState.value.locationName = row.name;
-        const stockCompartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
-        const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        formState.value.compartmentId = stockCompartmentByStockLocation.records[0].id;
-        formState.value.compartmentName = stockCompartmentByStockLocation.records[0].name;
-        formState.value.stockId = stockByStockLocation.records[0].id;
-        formState.value.stockName = stockByStockLocation.records[0].name;
-        break;
-      case 'BdExamine':
-        formState.value.examineId = row.id;
-        formState.value.bdExamineName = row.name;
-        break;
-    }
     basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
 
   //获取物料分组数据
@@ -699,9 +674,8 @@
     });
   };
   //物料分组弹框关
-  const groupSelect = (value, node) => {
-    formState.value.node = node ? node[0] : '';
-    formState.value.groupName = formState.value.node;
+  const groupSelect = (value: string, names: string[]) => {
+    formState.value.bdMaterialGroup = { id: value, name: names[0] || '' };
     formState.value.groupId = value;
     visibleGroupModal.value = false;
   };
@@ -713,56 +687,7 @@
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
-      if (res.baseUnit) {
-        formState.value.baseUnitId = res.baseUnit.id;
-        formState.value.baseUnitName = res.baseUnit.name;
-      }
-      if (res.bdStockLocation) {
-        formState.value.locationId = res.bdStockLocation.id;
-        formState.value.locationName = res.bdStockLocation.name;
-      }
-      if (res.bdExamine) {
-        formState.value.bdExamineName = res.bdExamine.name;
-        formState.value.examineId = res.bdExamine.id;
-      }
-      if (res.weightUnit) {
-        formState.value.weightUnitId = res.weightUnit.id;
-        formState.value.weightName = res.weightUnit.name;
-      }
-      if (res.bdMaterialGroup) {
-        formState.value.groupId = res.bdMaterialGroup.id;
-        formState.value.groupName = res.bdMaterialGroup.name;
-      }
-      if (formState.value.stockId) {
-        formState.value.stockId = res.bdStock.id;
-        formState.value.stockName = res.bdStock.name;
-        queryStockParam.stockCompartment = {
-          table: '',
-          name: 'stockId',
-          column: 'stock_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: res.bdStock.id,
-          startWith: '',
-          endWith: '',
-        };
-      }
-      if (formState.value.compartmentId) {
-        formState.value.compartmentId = res.bdStockCompartment.id;
-        formState.value.compartmentName = res.bdStockCompartment.name;
-        queryStockParam.stockLocation = {
-          table: '',
-          name: 'compartmentId',
-          column: 'stock_compartment_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: res.bdStockCompartment.id,
-          startWith: '',
-          endWith: '',
-        };
-      }
+      console.log('看看数据', res);
     }
   };
   getListById(rowId);

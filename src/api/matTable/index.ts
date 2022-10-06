@@ -1,6 +1,12 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { ExaEntity } from '/@/api/exa';
+import { StockEntity } from '/@/api/mainStock';
+import { StockLocationEntity } from '/@/api/stockLocation';
+import { StockCompartmentEntity } from '/@/api/stockCompartment';
+import { MatGroupEntity } from '/@/api/matGroup';
+import { UnitEntity } from '/@/api/unit';
 
 export interface MatProfileEntity extends PublicModel {
   id?: string;
@@ -11,24 +17,25 @@ export interface MatProfileEntity extends PublicModel {
   baseUnitId?: string;
   groupId?: string;
   groupName?: string;
-  bdMaterialGroup?: object;
+  weightUnit?: UnitEntity;
+  baseUnit?: UnitEntity;
+  bdMaterialGroup?: MatGroupEntity;
   attr?: string;
   weightUnitId?: string;
   weightName?: string;
   netWeight?: number;
   model?: string;
   oldMatNumber?: number;
-  node?: string;
   stockId?: string;
-  bdStock?: object;
+  bdStock?: StockEntity;
   compartmentId?: string;
   stockName?: string;
   compartmentName?: string;
-  bdStockLocation?: object;
+  bdStockLocation?: StockLocationEntity;
   labelValue?: string;
   examineId?: string;
   bdExamineName?: string;
-  bdStockCompartment?: object;
+  bdStockCompartment?: StockCompartmentEntity;
   locationId?: string;
   locationName?: string;
   enableSn?: number;
@@ -40,7 +47,7 @@ export interface MatProfileEntity extends PublicModel {
   stockInExamine?: number;
   stockOutExamine?: number;
   produceExamine?: number;
-  bdExamine?: object;
+  bdExamine?: ExaEntity;
 }
 /**
  * 获取表格信息

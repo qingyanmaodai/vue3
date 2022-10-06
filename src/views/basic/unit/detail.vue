@@ -143,7 +143,7 @@
     auditUnitList,
     getUnitListById,
     unAuditUnitList,
-    UnitProfileEntity,
+    UnitEntity,
     updateUnitList,
   } from '/@/api/unit';
   const { createMessage } = useMessage();
@@ -159,7 +159,7 @@
     bsType: [{ required: true, message: '请输入单位类型' }],
   });
   //初始化
-  const formData: UnitProfileEntity = {
+  const formData: UnitEntity = {
     id: undefined,
     number: '',
     name: '',

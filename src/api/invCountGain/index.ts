@@ -1,9 +1,9 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel, ControlSet } from '/@/api/apiLink';
-import { StockProfileEntity } from '/@/api/mainStock';
-import { StockLocationProfileEntity } from '/@/api/stockLocation';
-import { StockCompartmentProfileEntity } from '/@/api/stockCompartment';
+import { StockEntity } from '/@/api/mainStock';
+import { StockLocationEntity } from '/@/api/stockLocation';
+import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatProfileEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 
@@ -39,9 +39,9 @@ export interface InvCountGainDetailEntity extends PublicModel {
   lot?: string;
   mark?: string;
   bdMaterial?: MatProfileEntity;
-  bdStock?: StockProfileEntity;
-  bdStockCompartment?: StockCompartmentProfileEntity;
-  bdStockLocation?: StockLocationProfileEntity;
+  bdStock?: StockEntity;
+  bdStockCompartment?: StockCompartmentEntity;
+  bdStockLocation?: StockLocationEntity;
 }
 
 /**

@@ -196,7 +196,7 @@
     addStockCompartmentList,
     auditStockCompartmentList,
     getStockCompartmentListById,
-    StockCompartmentProfileEntity,
+    StockCompartmentEntity,
     unAuditStockCompartmentList,
     updateStockCompartmentList,
   } from '/@/api/stockCompartment';
@@ -228,7 +228,7 @@
     stockId: [{ required: true, message: '请输入所属仓库' }],
   });
   //初始化
-  const formData: StockCompartmentProfileEntity = {
+  const formData: StockCompartmentEntity = {
     id: undefined,
     number: '',
     name: '',

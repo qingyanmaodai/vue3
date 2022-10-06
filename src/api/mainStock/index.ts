@@ -2,7 +2,7 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface StockProfileEntity extends PublicModel {
+export interface StockEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -54,7 +54,7 @@ export function getStockTable(
  * 根据id获取表格信息
  */
 export function getOneStockById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<StockProfileEntity>(
+  return defHttp.post<StockEntity>(
     {
       url: Url.GET_ONE_STOCK_LIST,
       data: json,
@@ -69,7 +69,7 @@ export function getOneStockById(json: RequestData<string>, mode: ErrorMessageMod
  * 添加仓库信息
  */
 export function addStockList(
-  json: RequestData<StockProfileEntity>,
+  json: RequestData<StockEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -87,7 +87,7 @@ export function addStockList(
  * 编辑仓库信息
  */
 export function updateStockList(
-  json: RequestData<StockProfileEntity>,
+  json: RequestData<StockEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
