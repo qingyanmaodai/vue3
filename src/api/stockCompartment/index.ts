@@ -27,7 +27,7 @@ export interface StockCompartmentProfileEntity extends PublicModel {
 export function getSubOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_SUB_LIST,
+      url: Url.GET_SUB_STOCK_DTO,
       data: json,
     },
     {

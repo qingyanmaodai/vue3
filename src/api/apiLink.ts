@@ -7,25 +7,25 @@ export enum Url {
   QUERY_ONE_MATERIAL_GROUP = '/stock/bd-material-group/query-one',
   TREE_MATERIAL_GROUP = '/stock/bd-material-group/tree',
   //物料信息
-  GET_TABLE_LIST = '/stock/bd-material/list', //获取基本单位列表
-  GET_OPTIONS_LIST = '/stock/bd-material/query-dto', //获取物料信息实体信息
-  ADD_TABLE_LIST = '/stock/bd-material/save',
-  AUDIT_TABLE_LIST = '/stock/bd-material/audit',
-  BATCH_AUDIT_TABLE_LIST = '/stock/bd-material/batch-audit',
-  UN_AUDIT_TABLE_LIST = '/stock/bd-material/un-audit',
-  BATCH_UN_AUDIT_TABLE_LIST = '/stock/bd-material/batch-un-audit',
-  UPDATE_TABLE_LIST = '/stock/bd-material/update',
-  GET_TABLE_BY_ID = '/stock/bd-material/getOneMaterial',
-  DEL_TABLE_LIST = '/stock/bd-material/delete',
-  BATCH_DEL_TABLE_LIST = '/stock/bd-material/batch-delete',
-  EXPORT_TABLE_LIST = '/stock/bd-material/export-list',
+  GET_MATERIAL_LIST = '/stock/bd-material/list', //获取列表
+  GET_MAT_DTO = '/stock/bd-material/query-dto', //获取物料信息实体信息
+  ADD_MATERIAL = '/stock/bd-material/save',
+  AUDIT_MATERIAL = '/stock/bd-material/audit',
+  BATCH_AUDIT_MATERIAL = '/stock/bd-material/batch-audit',
+  UN_AUDIT_MATERIAL = '/stock/bd-material/un-audit',
+  BATCH_UN_AUDIT_MATERIAL = '/stock/bd-material/batch-un-audit',
+  UPDATE_MATERIAL = '/stock/bd-material/update',
+  GET_MATERIAL_BY_ID = '/stock/bd-material/getOneMaterial',
+  DEL_MATERIAL = '/stock/bd-material/delete',
+  BATCH_DEL_MATERIAL = '/stock/bd-material/batch-delete',
+  EXPORT_MATERIAL_LIST = '/stock/bd-material/export-list',
   IMPORT_MATERIAL = 'http://192.168.200.136:9999/stock/bd-material/import-list',
   IMPORT_MODEL = '/stock/bd-material/import-model',
 
   //供应商
   SUPPLIER_GET_DATA = '/stock/bd-supplier/list', //获取供应商列表
   SUPPLIER_GET_ONE = '/stock/bd-supplier/query-one', //查询单个供应商
-  SUPPLIER_GET_ENTITY = '/stock/bd-supplier/query-dto', //获取供应商实体信息
+  GET_SUPPLIER_DTO = '/stock/bd-supplier/query-dto', //获取供应商实体信息
   SUPPLIER_SAVE = '/stock/bd-supplier/save', //保存单个供应商
   SUPPLIER_UPDATE = '/stock/bd-supplier/update', //修改单个供应商
   SUPPLIER_AUDIT = '/stock/bd-supplier/audit', //供应商审核
@@ -46,7 +46,7 @@ export enum Url {
   //客户
   CUSTOMER_GET_DATA = '/stock/bd-customer/list', //获取客户列表
   CUSTOMER_GET_ONE = '/stock/bd-customer/query-one', //查询单个客户
-  CUSTOMER_GET_ENTITY = '/stock/bd-customer/query-dto', //获取客户实体信息
+  GET_CUSTOMER_DTO = '/stock/bd-customer/query-dto', //获取客户实体信息
   CUSTOMER_SAVE = '/stock/bd-customer/save', //保存单个客户
   CUSTOMER_UPDATE = '/stock/bd-customer/update', //修改单个客户
   CUSTOMER_AUDIT = '/stock/bd-customer/audit', //客户审核
@@ -67,7 +67,7 @@ export enum Url {
   //员工
   EMPLOYEE_GET_DATA = '/stock/bd-employee/list', //获取员工列表
   EMPLOYEE_GET_ONE = '/stock/bd-employee/query-one', //查询单个员工
-  EMPLOYEE_GET_ENTITY = '/stock/bd-employee/query-dto', //获取员工实体信息
+  GET_EMPLOYEE_DTO = '/stock/bd-employee/query-dto', //获取员工实体信息
   EMPLOYEE_SAVE = '/stock/bd-employee/save', //保存单个员工
   EMPLOYEE_UPDATE = '/stock/bd-employee/update', //修改单个员工
   EMPLOYEE_AUDIT = '/stock/bd-employee/audit', //员工审核
@@ -88,10 +88,10 @@ export enum Url {
   DEPT_GET_TREE = '/stock/bd-department/tree', //获取员工分组
 
   //共用--实体信息--搜索的下拉框
-  GET_TABLE_UNIT = '/stock/bd-unit/query-dto', //计量（基本）单位查询字段
-  GET_STOCK_LIST = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
-  GET_SUB_LIST = '/stock/bd-stock-compartment/query-dto', //获取分仓实体信息
-  GET_LOCATION_LIST = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
+  GET_UNIT_DTO = '/stock/bd-unit/query-dto', //计量（基本）单位查询字段
+  GET_STOCK_DTO = '/stock/bd-stock/query-dto', //获取仓库实体信息--搜索的下拉框
+  GET_SUB_STOCK_DTO = '/stock/bd-stock-compartment/query-dto', //获取分仓实体信息
+  GET_LOCATION_DTO = '/stock/bd-stock-location/query-dto', //获取仓位实体信息
 
   //仓库管理
   AUDIT_STOCK_LIST = '/stock/bd-stock/audit', //审核
@@ -117,10 +117,10 @@ export enum Url {
   GET_EXA_PROJECT_LIST = '/stock/bd-examine-project/list', //检验项目列表
   AUDIT_EXA_PROJECT = '/stock/bd-examine-project/audit', //检验项目审核
   BATCH_AUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-audit', //检验项目批量审核
-  UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/un-audit', //反审核检验项目
-  BATCH_UNAUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-un-audit', //检验项目批量反审核
+  UN_AUDIT_EXA_PROJECT = '/stock/bd-examine-project/un-audit', //反审核检验项目
+  BATCH_UN_AUDIT_EXA_PROJECT = '/stock/bd-examine-project/batch-un-audit', //检验项目批量反审核
   BATCH_DEL_EXA_PROJECT = '/stock/bd-examine-project/batch-delete', //删除检验项目
-  GET_EXA_PROJECT_OPTIONS_LIST = '/stock/bd-examine-project/query-dto', //获取实体信息
+  GET_EXA_PROJECT_DTO = '/stock/bd-examine-project/query-dto', //获取检验项目实体信息
   ADD_EXA_PROJECT = '/stock/bd-examine-project/save', //新增
   QUERY_ONE_EXA_PROJECT = '/stock/bd-examine-project/query-one',
   UPDATE_EXA_PROJECT = '/stock/bd-examine-project/update',
@@ -128,8 +128,9 @@ export enum Url {
   EXPORT_EXA_PROJECT = '/stock/bd-examine-project/export-list',
   IMPORT_EXA_PROJECT = '/stock/bd-examine-project/import-model',
   UPLOAD_EXA_PROJECT = 'http://192.168.200.136:9999/stock/bd-examine-project/import-list',
+
   //检验规则
-  GET_EXA_RULE_OPTIONS_LIST = '/stock/bd-examine-rule/query-dto', //检验规则实体
+  GET_EXA_RULE_DTO = '/stock/bd-examine-rule/query-dto', //检验规则实体
   GET_EXA_RULE_LIST = '/stock/bd-examine-rule/list',
   ADD_EXA_RULE = '/stock/bd-examine-rule/save',
   UPDATE_EXA_RULE = '/stock/bd-examine-rule/update',
@@ -138,19 +139,20 @@ export enum Url {
   QUERY_ONE_EXA_RULE = '/stock/bd-examine-rule/query-one',
   DEL_EXA_RULE = '/stock/bd-examine-rule/delete',
   BATCH_DEL_EXA_RULE = '/stock/bd-examine-rule/batch-delete',
-  UNAUDIT_EXA_RULE = '/stock/bd-examine-rule/un-audit',
-  BATCH_UNAUDIT_EXA_RULE = '/stock/bd-examine-rule/batch-un-audit',
+  UN_AUDIT_EXA_RULE = '/stock/bd-examine-rule/un-audit',
+  BATCH_UN_AUDIT_EXA_RULE = '/stock/bd-examine-rule/batch-un-audit',
   EXPORT_EXA_RULE = '/stock/bd-examine-rule/export-list',
   IMPORT_EXA_RULE = '/stock/bd-examine-rule/import-model',
   UPLOAD_EXA_RULE = 'http://192.168.200.136:9999/stock/bd-examine-rule/import-list',
+
   //检验方案
   GET_EXA_SCHEME_LIST = '/stock/bd-examine/list',
   AUDIT_EXA_SCHEME = '/stock/bd-examine/audit',
   BATCH_AUDIT_EXA_SCHEME = '/stock/bd-examine/batch-audit',
-  UNAUDIT_EXA_SCHEME = '/stock/bd-examine/un-audit',
-  BATCH_UNAUDIT_EXA_SCHEME = '/stock/bd-examine/batch-un-audit',
+  UN_AUDIT_EXA_SCHEME = '/stock/bd-examine/un-audit',
+  BATCH_UN_AUDIT_EXA_SCHEME = '/stock/bd-examine/batch-un-audit',
   BATCH_DEL_EXA_SCHEME = '/stock/bd-examine/batch-delete',
-  GET_EXA_SCHEME_OPTIONS_LIST = '/stock/bd-examine/query-dto',
+  GET_EXA_SCHEME_DTO = '/stock/bd-examine/query-dto',
   ADD_EXA_SCHEME = '/stock/bd-examine/save',
   QUERY_ONE_EXA_SCHEME = '/stock/bd-examine/query-one',
   UPDATE_EXA_SCHEME = '/stock/bd-examine/update',
@@ -192,7 +194,7 @@ export enum Url {
 
   //国家地区
   COUNTRY_TREE = '/stock/bd-country/getCountryByParentId',
-  GET_COUNTRY_ENTITY = '/stock/bd-country/query-dto',
+  GET_COUNTRY_DTO = '/stock/bd-country/query-dto',
 
   //计量单位
   AUDIT_UNIT_LIST = '/stock/bd-unit/audit', //审核
@@ -210,7 +212,7 @@ export enum Url {
   UPDATE_UNIT_LIST = '/stock/bd-unit/update', //编辑
 
   //即时库存
-  GET_INVENTORY_OPTIONS = '/stock/bd-inventory/query-dto', //获取实体信息
+  GET_INVENTORY_DTO = '/stock/bd-inventory/query-dto', //获取实体信息
   GET_INV_BY_MAT_STOCK_LIST = '/stock/bd-inventory/get-inv-by-mat-stock', //物料号与仓位获取库存信息
   // 盘盈单
   AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/audit', //审核
@@ -222,7 +224,7 @@ export enum Url {
   BATCH_DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail', //删除含详情信息
   GET_PAGE_INV_COUNT_GAIN_LIST = '/wms/bd-inventory-count-gain/list', //分页查询--获取列表
-  GET_INV_COUNT_GAIN_OPTIONS_LIST = '/wms/bd-inventory-count-gain/query-dto', //获取实体信息
+  GET_INV_COUNT_GAIN_DTO = '/wms/bd-inventory-count-gain/query-dto', //获取实体信息
   GET_ONE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/query-one', //查询单条
   IMPORT_INV_COUNT_GAIN = 'http://192.168.200.136:9999/wms/bd-inventory-count-gain/import-list', //导入
   IMPORT_MODEL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/import-model', //导入模板下载
@@ -234,7 +236,7 @@ export enum Url {
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
   //计量（基本）单位表头
-  GET_TABLE_UNIT: [
+  GET_UNIT_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '单位编码', sortable: true },
     { field: 'name', title: '单位名称', sortable: true },
@@ -267,7 +269,7 @@ export const TableColum = {
     },
   ],
   //仓库
-  GET_STOCK_LIST: [
+  GET_STOCK_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '仓库编码', sortable: true },
     { field: 'name', title: '仓库名称', sortable: true },
@@ -282,7 +284,7 @@ export const TableColum = {
     },
   ],
   //分仓
-  GET_SUB_LIST: [
+  GET_SUB_STOCK_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '分仓编码', sortable: true },
     { field: 'name', title: '分仓名称', sortable: true },
@@ -297,7 +299,7 @@ export const TableColum = {
     },
   ],
   //仓位
-  GET_LOCATION_LIST: [
+  GET_LOCATION_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '仓位编码', sortable: true },
     { field: 'name', title: '仓位名称', sortable: true },
@@ -312,7 +314,7 @@ export const TableColum = {
     },
   ],
   //国家地区
-  GET_COUNTRY_ENTITY: [
+  GET_COUNTRY_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '编码', sortable: true },
     { field: 'name', title: '名称', sortable: true },
@@ -326,7 +328,7 @@ export const TableColum = {
     },
   ],
   //检验方案
-  GET_EXA_PROJECT_OPTIONS_LIST: [
+  GET_EXA_PROJECT_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '项目编码', sortable: true },
     { field: 'name', title: '项目名称', sortable: true },
@@ -341,7 +343,7 @@ export const TableColum = {
     },
   ],
   //抽检规则
-  GET_EXA_RULE_OPTIONS_LIST: [
+  GET_EXA_RULE_DTO: [
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '规则编码', sortable: true },
     { field: 'name', title: '规则名称', sortable: true },
@@ -358,7 +360,7 @@ export const TableColum = {
     },
   ],
   //盘盈单
-  GET_INV_COUNT_GAIN_OPTIONS_LIST: [
+  GET_INV_COUNT_GAIN_DTO: [
     { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '单据编号', sortable: true },
@@ -383,7 +385,7 @@ export const TableColum = {
     },
   ],
   //物料信息表头
-  GET_OPTIONS_LIST: [
+  GET_MAT_DTO: [
     { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '物料编码', sortable: true, width: 120 },
@@ -410,8 +412,23 @@ export const TableColum = {
       slots: { default: 'status' },
     },
   ],
+  //检验方案
+  GET_EXA_SCHEME_DTO: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '方案编码', sortable: true },
+    { field: 'name', title: '方案名称', sortable: true },
+    { field: 'updateBy', title: '修改人员', sortable: true },
+    { field: 'updateTime', title: '修改时间', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
   //客户实体信息表头
-  CUSTOMER_GET_ENTITY: [
+  GET_CUSTOMER_DTO: [
     { type: 'checkbox', width: 50 },
     { type: 'seq', title: '序号', width: 50 },
     { field: 'number', title: '编码', width: 120, sortable: true },
@@ -435,23 +452,39 @@ export const TableColum = {
       width: 120,
     },
   ],
+  //人员档案
+  GET_EMPLOYEE_DTO: [
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '编码', sortable: true },
+    { field: 'name', title: '人员名称', sortable: true },
+    { field: 'entryDate', title: '入职日期', sortable: true },
+    { field: 'birthday', title: '出生日期', sortable: true },
+    { field: 'address', title: '地址', sortable: true },
+    { field: 'mark', title: '备注', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
 };
-//人员档案
-export const employeeColumns = [
-  { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '编码', sortable: true },
-  { field: 'name', title: '人员名称', sortable: true },
-  { field: 'entryDate', title: '入职日期', sortable: true },
-  { field: 'birthday', title: '出生日期', sortable: true },
-  { field: 'address', title: '地址', sortable: true },
-  { field: 'mark', title: '备注', sortable: true },
-  {
-    field: 'bsStatus',
-    title: '数据状态',
-    sortable: true,
-    slots: { default: 'status' },
-  },
-];
+//人员档案------还需要修改
+// export const employeeColumns = [
+//   { type: 'seq', title: '序号', width: 50 },
+//   { field: 'number', title: '编码', sortable: true },
+//   { field: 'name', title: '人员名称', sortable: true },
+//   { field: 'entryDate', title: '入职日期', sortable: true },
+//   { field: 'birthday', title: '出生日期', sortable: true },
+//   { field: 'address', title: '地址', sortable: true },
+//   { field: 'mark', title: '备注', sortable: true },
+//   {
+//     field: 'bsStatus',
+//     title: '数据状态',
+//     sortable: true,
+//     slots: { default: 'status' },
+//   },
+// ];
 //公共属性
 export enum SearchLink {
   AND = 'AND',

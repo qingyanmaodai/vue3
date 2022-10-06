@@ -48,7 +48,7 @@ export interface MatProfileEntity extends PublicModel {
 export function getMatTable(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_TABLE_LIST,
+      url: Url.GET_MATERIAL_LIST,
       data: json,
     },
     {
@@ -63,7 +63,7 @@ export function getMatTable(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getMatOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_OPTIONS_LIST,
+      url: Url.GET_MAT_DTO,
       data: json,
     },
     {
@@ -82,7 +82,7 @@ export function addMatTable(
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.ADD_TABLE_LIST,
+      url: Url.ADD_MATERIAL,
       data: json,
     },
     {
@@ -100,7 +100,7 @@ export function updateMatTable(
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.UPDATE_TABLE_LIST,
+      url: Url.UPDATE_MATERIAL,
       data: json,
     },
     {
@@ -115,7 +115,7 @@ export function updateMatTable(
 export function auditMatTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.AUDIT_TABLE_LIST,
+      url: Url.AUDIT_MATERIAL,
       data: json,
     },
     {
@@ -130,7 +130,7 @@ export function auditMatTable(json: RequestData<object>, mode: ErrorMessageMode 
 export function auditMatTableBatch(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_TABLE_LIST,
+      url: Url.BATCH_AUDIT_MATERIAL,
       data: json,
     },
     {
@@ -145,7 +145,7 @@ export function auditMatTableBatch(json: RequestData<object>, mode: ErrorMessage
 export function unAuditMatTable(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_AUDIT_TABLE_LIST,
+      url: Url.UN_AUDIT_MATERIAL,
       data: json,
     },
     {
@@ -163,7 +163,7 @@ export function unAuditMatTableBatch(
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_UN_AUDIT_TABLE_LIST,
+      url: Url.BATCH_UN_AUDIT_MATERIAL,
       data: json,
     },
     {
@@ -178,7 +178,7 @@ export function unAuditMatTableBatch(
 export function getMatTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_TABLE_BY_ID,
+      url: Url.GET_MATERIAL_BY_ID,
       data: json,
     },
     {
@@ -193,7 +193,7 @@ export function getMatTableById(json: RequestData<string>, mode: ErrorMessageMod
 export function delMatTableById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DEL_TABLE_LIST,
+      url: Url.DEL_MATERIAL,
       data: json,
     },
     {
@@ -211,7 +211,7 @@ export function delMatTableBatch(
 ) {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DEL_TABLE_LIST,
+      url: Url.BATCH_DEL_MATERIAL,
       data: json,
     },
     {
@@ -227,7 +227,7 @@ export function delMatTableBatch(
 export function exportTableList(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_TABLE_LIST,
+      url: Url.EXPORT_MATERIAL_LIST,
       data: json,
       responseType: 'blob',
     },

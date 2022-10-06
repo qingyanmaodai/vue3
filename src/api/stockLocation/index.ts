@@ -24,7 +24,7 @@ export interface StockLocationProfileEntity extends PublicModel {
 export function getLocationOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_LOCATION_LIST,
+      url: Url.GET_LOCATION_DTO,
       data: json,
     },
     {

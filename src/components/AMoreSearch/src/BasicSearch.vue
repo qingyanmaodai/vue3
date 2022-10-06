@@ -389,7 +389,7 @@
     const data = defaultParam.value;
     if (data.name && data.val) {
       getParams.push({
-        table: props.tableName,
+        table: data.control.tableAsName,
         name: data.name,
         column: data.control.fieldName,
         link: data.link,

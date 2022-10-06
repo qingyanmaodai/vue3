@@ -83,7 +83,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_INV_COUNT_GAIN_OPTIONS_LIST,
+      url: Url.GET_INV_COUNT_GAIN_DTO,
       data: json,
     },
     {

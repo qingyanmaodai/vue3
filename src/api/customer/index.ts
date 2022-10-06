@@ -57,7 +57,7 @@ export function getCustomerData(
 export function getCustomerEntity(mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.CUSTOMER_GET_ENTITY,
+      url: Url.GET_CUSTOMER_DTO,
       data: {},
     },
     {

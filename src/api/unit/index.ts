@@ -18,7 +18,7 @@ export interface UnitProfileEntity extends PublicModel {
 export function getUnitOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_TABLE_UNIT,
+      url: Url.GET_UNIT_DTO,
       data: json,
     },
     {

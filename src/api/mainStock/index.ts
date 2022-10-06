@@ -23,7 +23,7 @@ export interface StockProfileEntity extends PublicModel {
 export function getStockOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_STOCK_LIST,
+      url: Url.GET_STOCK_DTO,
       data: json,
     },
     {
