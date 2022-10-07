@@ -163,7 +163,6 @@
    * @param pageSize
    */
   const getEmployeeList = async (currPage = 1, pageSize = pages.pageSize) => {
-    console.log(currPage, pageSize);
     ParamsData = [];
     if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
       ParamsData = ParamsData.concat(treeRef.value.getSearchParams());

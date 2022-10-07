@@ -18,6 +18,7 @@
       <a-pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
+            :control="moreSearchData"
             ref="customerSearchRef"
             tableName="BdCustomer"
             searchNo="编码"
@@ -29,6 +30,7 @@
             :columns="customerColumns"
             :buttons="tableButtons"
             :gridOptions="GridOptions"
+            :tableData="tableData"
             ref="customerTableRef"
             @addEvent="tableAddEvent"
             @editEvent="editTableEvent"
@@ -111,6 +113,7 @@
   const paneSize = ref(16); //面板尺寸
   const customerSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
   const customerTableRef: any = ref<String | null>(null); //表格组件引用ref
+  let tableData = ref<object[]>([]); //表格数据
   const customerGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
@@ -186,8 +189,7 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
-    customerTableRef.value.init(data);
+    tableData.value = res.records;
     customerSearchRef.value.moreSearchClose();
   };
 
@@ -361,11 +363,10 @@
   /**
    * 获取高级查询下拉框
    */
-  const getOptions = async () => {
-    const moreSearchData = await getCustomerEntity();
-    customerSearchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
+  const moreSearchData = ref();
+  getCustomerEntity().then((res) => {
+    moreSearchData.value = res;
+  });
 
   /**
    * 选中分组事件

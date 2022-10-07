@@ -2,8 +2,9 @@
   <div style="height: 100%; padding: 15px">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
+        :control="moreSearchData"
         ref="searchRef"
-        tableName=""
+        tableName="BdStock"
         searchNo="仓库编码："
         searchName="仓库名称："
         @getList="getList"
@@ -14,6 +15,7 @@
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
+        :tableData="tableData"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -82,6 +84,8 @@
   const installPaneSize = ref<number>(16);
   //表格事件
   const tableRef: any = ref<String | null>(null);
+  //表格数据
+  let tableData = ref<object[]>([]);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //导入上传文件api
@@ -99,11 +103,10 @@
     await getList(currentPage);
   };
   //获取高级查询字段数据
-  const getOptions = async () => {
-    const moreSearchData = await getStockOption({ params: '' });
-    searchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
+  const moreSearchData = ref();
+  getStockOption({ params: '' }).then((res) => {
+    moreSearchData.value = res;
+  });
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -121,8 +124,7 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
-    tableRef.value.init(data);
+    tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
 

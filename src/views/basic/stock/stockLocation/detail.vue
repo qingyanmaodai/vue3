@@ -69,10 +69,15 @@
                     placeholder="请选择所属仓库"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.stockName"
+                    v-model:value="formState.bdStock"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onStock('stock')"
-                    @clear="onClear(['stockId', 'stockName', 'compartmentId', 'compartmentName'])"
+                    @search="
+                      onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, [
+                        'stockId',
+                        'bdStock',
+                      ])
+                    "
+                    @clear="onClear(['stockId', 'bdStock', 'compartmentId', 'bdStockCompartment'])"
                   />
                 </a-form-item>
               </Col>
@@ -89,10 +94,17 @@
                     placeholder="请选择所属分仓"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.compartmentName"
+                    v-model:value="formState.bdStockCompartment"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onStock('sub')"
-                    @clear="onClear(['compartmentId', 'compartmentName'])"
+                    @search="
+                      onSearch(
+                        'GET_SUB_STOCK_DTO',
+                        'BdStockCompartment',
+                        Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
+                        ['compartmentId', 'bdStockCompartment'],
+                      )
+                    "
+                    @clear="onClear(['compartmentId', 'bdStockCompartment'])"
                   />
                 </a-form-item>
               </Col>
@@ -156,11 +168,12 @@
       </Tabs>
     </div>
     <BasicSearch
-      :modalType="modalType"
       @basicClickEvent="basicClickEvent"
-      @searchList="searchList"
-      ref="basicSearchRef"
       :gridOptions="basicGridOptions"
+      ref="basicSearchRef"
+      :control="basicControl"
+      :tableCols="basicTableCols"
+      :tableName="basicTableName"
     />
   </div>
 </template>
@@ -180,18 +193,11 @@
   import { ExInput } from '/@/components/ExInput';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import {
-    basicGridOptions,
-    stockColumns,
-    stockCompartmentColumns,
-  } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { useRoute, useRouter } from 'vue-router';
   import { config } from '/@/utils/publicParamConfig';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { getStockOption } from '/@/api/mainStock';
-  import { getSubOption } from '/@/api/stockCompartment';
   import { getPublicList } from '/@/api/public';
-  import { cloneDeep } from 'lodash-es';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
@@ -202,7 +208,8 @@
     unAuditStockLocationList,
     updateStockLocationList,
   } from '/@/api/stockLocation';
-  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
@@ -215,16 +222,10 @@
   const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
-  //更新基础信息表头数据
-  const getCurrentCols = (key: any) => {
-    const colConfig = {
-      stock: stockColumns,
-      sub: stockCompartmentColumns,
-    };
-    return colConfig[key];
-  };
-  //选择对应的基本信息弹框
-  let chosenModal: String = '';
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  const basicTableName = ref<string>(''); //表格数据
+
   //初始化
   const formData: StockLocationEntity = {
     id: undefined,
@@ -245,142 +246,47 @@
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = '';
+      formState.value[e] = undefined;
     });
   };
-  //获取仓库字段
-  const getStockOps = async (key) => {
-    if (key == 'stock') {
-      try {
-        let data = await getStockOption({ params: '' });
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      } catch (e) {
-        console.log('获取仓库选项字段失败', e);
-      }
-    } else if (key == 'sub') {
-      try {
-        let data = await getSubOption({ params: '' });
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      } catch (e) {
-        console.log('获取分仓选项字段失败', e);
-      }
-    }
-  };
-  //弹窗类型
-  let queryStockParam = reactive({
-    stockCompartment: {},
-    stockLocation: {},
-    compartmentName: {},
-    stockName: {},
-  });
-  //输入框点击放大镜事件
-  const onStock: any = async (key) => {
-    let q = {};
-    await getStockOps(key);
-    modalType.value = key;
-    const res: any = await getPublicList(
-      {
-        params: [
-          q,
-          {
-            table: '',
-            name: 'bsStatus',
-            column: 'bs_status',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: 'B',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    chosenModal = key;
-    let dataCols = getCurrentCols(key);
-    let dataList = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initCols(dataCols);
-    basicSearchRef.value.initList(dataList);
-    basicSearchRef.value.initSearch(key);
-    return res;
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  /**
+   * 基础资料弹窗
+   * @param dtoUrlConfig  获取基础资料查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
+   */
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
+    basicSearchRef.value.show();
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res as ControlSet[];
+    basicTableCols.value = TableColum[dtoUrlConfig];
+    basicTableName.value = tableName;
+    await basicSearchRef.value.init(tableUrl);
   };
 
-  //选择仓库后查询——联动
-  //key:在待用url中选择的
-  //colName:需要查询的名字，如编码，名称。。。
-  //id:输入的值
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'number',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    return res;
-  };
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
-    switch (chosenModal) {
-      case 'stock':
-        formState.value.stockId = row.id;
-        formState.value.stockName = row.name;
-        queryStockParam.stockCompartment = {
-          table: '',
-          name: 'stockId',
-          column: 'stock_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
-        await getNextStock('stock', 'formState.stockId', formState.value.stockId);
-        break;
-      case 'sub':
-        formState.value.compartmentId = row.id;
-        formState.value.compartmentName = row.name;
-        const stockByStock = await getNextStock('stock', 'id', row.stockId);
-        formState.value.stockId = stockByStock.records[0].id;
-        formState.value.stockName = stockByStock.records[0].name;
-        break;
+    basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
+    if (row.stockId) {
+      formState.value.bdStock = row.bdStock;
+      formState.value.stockId = row.stockId;
     }
-    basicSearchRef.value.bSearch(false);
-  };
-
-  //基础资料弹框查询事件
-  const searchList = async (type, keywords) => {
-    let param: any = [];
-    param.push(keywords);
-    if (type == 'sub') {
-      param.push(queryStockParam.stockCompartment);
+    if (row.compartmentId) {
+      formState.value.bdStockCompartment = row.bdStockCompartment;
+      formState.value.compartmentId = row.compartmentId;
     }
-    basicSearchRef.value.initList(
-      await getPublicList(
-        {
-          params: param,
-        },
-        config.PUBLIC_REQUEST_URL[type],
-      ),
-    );
   };
   //接受参数
   let rowId = useRoute().query.row?.toString() || '';
@@ -392,25 +298,6 @@
         params: rowId,
       });
       formState.value = res;
-      if (formState.value.compartmentId) {
-        formState.value.compartmentId = res.bdStockCompartment.id;
-        formState.value.compartmentName = res.bdStockCompartment.name;
-        queryStockParam.stockLocation = {
-          table: '',
-          name: 'compartmentId',
-          column: 'stock_compartment_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: res.bdStockCompartment.id,
-          startWith: '',
-          endWith: '',
-        };
-      }
-      if (formState.value.stockId) {
-        formState.value.stockId = res.bdStock.id;
-        formState.value.stockName = res.bdStock.name;
-      }
     }
   };
   getListById(rowId);

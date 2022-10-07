@@ -68,7 +68,12 @@
                     placeholder="请选择基本单位"
                     v-model:value="formState.baseUnit"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, ['baseUnitId', 'baseUnit'])"
+                    @search="
+                      onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, [
+                        'baseUnitId',
+                        'baseUnit',
+                      ])
+                    "
                     @clear="onClear(['baseUnitId', 'baseUnit'])"
                   />
                 </a-form-item>
@@ -83,7 +88,7 @@
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdMaterialGroup"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onGroupSearch(formState.groupName)"
+                    @search="onGroupSearch"
                     @clear="onClear(['groupId', 'bdMaterialGroup'])"
                   />
                 </a-form-item>
@@ -534,7 +539,15 @@
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import {
+    ControlSet,
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const AModal = Modal;
@@ -544,21 +557,17 @@
   const ATextArea = Input.TextArea;
 
   const router = useRouter();
-  //整个基本信息 v-model:activeKey="activeKey"
   const activeKey = ref<string>('1');
   //物料分组弹框visible
   const visibleGroupModal: any = ref<boolean>(false);
-  //弹窗类型
-  let modalName = ref<string>('');
   //表单ref
   const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
-  const basicTableName = ref<string>(''); //表格数据
+  let basicTableName = ref<string>(''); //需要查询的表名
 
-  //对应输入框绑定的值接口类型
   const formData: MatProfileEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
   const formStateInit = reactive({
@@ -583,7 +592,7 @@
   });
 
   //物料分组弹框
-  const onGroupSearch = (name) => {
+  const onGroupSearch = () => {
     visibleGroupModal.value = true;
   };
   //点击清空图标清空事件
@@ -592,14 +601,6 @@
       formState.value[e] = undefined;
     });
   };
-
-  //弹窗类型
-  let queryStockParam = reactive({
-    stockCompartment: {},
-    stockLocation: {},
-    compartmentName: {},
-    stockName: {},
-  });
 
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
@@ -616,37 +617,45 @@
     dataParam: string[],
   ) => {
     currDataParam = dataParam;
-    basicSearchRef.value.show();
-    modalName.value = tableName;
     const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
-    basicControl.value = res as ControlSet[];
+    basicControl.value = res;
     basicTableCols.value = TableColum[dtoUrlConfig];
     basicTableName.value = tableName;
-    await basicSearchRef.value.init(tableUrl);
+    let filterParams: SearchParams[] = [];
+    if (tableName === 'BdStockCompartment') {
+      if (formState.value.stockId) {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: formState.value.stockId,
+          },
+        ];
+      }
+    }
+    if (tableName === 'BdStockLocation') {
+      if (formState.value.compartmentId) {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: formState.value.compartmentId,
+          },
+        ];
+      }
+    }
+    basicSearchRef.value.setFilter(filterParams);
+    basicSearchRef.value.init(tableUrl);
   };
 
-  //选择仓库后查询——联动-----key:在待用url中选择的----colName:需要查询的名字，如编码，名称。。。---id:输入的值
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'string',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    return res;
-  };
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
@@ -654,8 +663,15 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
+    if (row.stockId) {
+      formState.value.bdStock = row.bdStock;
+      formState.value.stockId = row.stockId;
+    }
+    if (row.compartmentId) {
+      formState.value.bdStockCompartment = row.bdStockCompartment;
+      formState.value.compartmentId = row.compartmentId;
+    }
   };
-
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
   const getGroup = async () => {
@@ -687,7 +703,6 @@
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
-      console.log('看看数据', res);
     }
   };
   getListById(rowId);

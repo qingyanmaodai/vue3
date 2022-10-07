@@ -181,7 +181,7 @@
     Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { reactive, ref, toRef } from 'vue';
+  import { reactive, ref, toRef, onMounted } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { getPublicList } from '/@/api/public';
@@ -232,7 +232,6 @@
     control: ControlSet[];
     gridOptions: any;
     tableCols: VxeGridPropTypes.Columns;
-    modalType?: string;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -387,6 +386,9 @@
   const getList = async (url, currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
     const data = defaultParam.value;
+    if (filterParams.value && filterParams.value.length > 0) {
+      getParams = getParams.concat(filterParams.value);
+    }
     if (data.name && data.val) {
       getParams.push({
         table: data.control.tableAsName,
@@ -436,14 +438,23 @@
   const close = () => {
     isShow.value = false;
   };
-  const init = async (tableUrl: string) => {
+  const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    await getList(tableUrl);
+    getList(tableUrl);
+  };
+  const filterParams = ref<SearchParams[]>([]);
+  /**
+   * 设置过滤条件
+   * @param params
+   */
+  const setFilter = (params: SearchParams[]) => {
+    filterParams.value = params;
   };
   defineExpose({
     show,
     close,
+    setFilter,
     init,
   });
 </script>

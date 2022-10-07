@@ -1,24 +1,19 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { StockEntity } from '/@/api/mainStock';
+import { EmployeeEntity } from '/@/api/employee';
 
 export interface StockCompartmentEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
   address?: string;
-  bsProperty?: string;
-  info?: string;
-  isDefault?: string;
-  isDelete?: string;
   empId?: string;
-  empName?: string;
   phone?: string;
-  tenantId?: string;
-  // bdStock?: string;
   stockId?: string;
-  stockName?: string;
-  bdEmployee?: object;
+  bdStock?: StockEntity;
+  bdEmployee?: EmployeeEntity;
 }
 
 /**
@@ -93,7 +88,10 @@ export function updateStockCompartmentList(
 /**
  * 审核分仓信息
  */
-export function auditStockCompartmentList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function auditStockCompartmentList(
+  json: RequestData<object>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
       url: Url.AUDIT_STOCK_COMPARTMENT_LIST,
@@ -126,7 +124,10 @@ export function auditStockCompartmentListBatch(
 /**
  * 反审核分仓信息
  */
-export function unAuditStockCompartmentList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function unAuditStockCompartmentList(
+  json: RequestData<object>,
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<Result>(
     {
       url: Url.UN_AUDIT_STOCK_COMPARTMENT_LIST,

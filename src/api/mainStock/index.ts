@@ -1,21 +1,16 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { EmployeeEntity } from '/@/api/employee';
 
 export interface StockEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
   address?: string;
-  bsProperty?: string;
-  info?: string;
-  isDefault?: string;
-  isDelete?: string;
   empId?: string;
-  empName?: string;
   phone?: string;
-  tenantId?: number;
-  bdEmployee?: object;
+  bdEmployee?: EmployeeEntity;
 }
 /**
  * 获取仓库选项
@@ -68,10 +63,7 @@ export function getOneStockById(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加仓库信息
  */
-export function addStockList(
-  json: RequestData<StockEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function addStockList(json: RequestData<StockEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.ADD_STOCK_LIST,
