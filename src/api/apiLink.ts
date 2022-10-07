@@ -521,7 +521,6 @@ export interface SearchParams {
   rule: SearchMatchType;
   type: SearchDataType;
   val: string;
-  date?: string;
   startWith?: string;
   endWith?: string;
 }
