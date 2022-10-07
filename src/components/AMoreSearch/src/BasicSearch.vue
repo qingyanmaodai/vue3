@@ -232,7 +232,7 @@
     control: ControlSet[];
     gridOptions: any;
     tableCols: VxeGridPropTypes.Columns;
-    modalType?: string;
+    currStockParam?: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -409,6 +409,19 @@
       table: '',
       val: 'B',
     });
+    if(props.currStockParam){
+      getParams.push({
+        column: props.currStockParam['fieldName'],
+        endWith: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        name: props.currStockParam['propName'],
+        startWith: '',
+        table: '',
+        val: props.currStockParam['id'],
+      });
+    }
     if (
       childMoreSearchRef.value &&
       childMoreSearchRef.value.getSearchParams() &&
@@ -436,7 +449,7 @@
   const close = () => {
     isShow.value = false;
   };
-  const init = async (tableUrl: string) => {
+  const init = async (tableUrl: string, param) => {
     isShow.value = true;
     listUrl.value = tableUrl;
     await getList(tableUrl);

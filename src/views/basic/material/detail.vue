@@ -68,7 +68,12 @@
                     placeholder="请选择基本单位"
                     v-model:value="formState.baseUnit"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, ['baseUnitId', 'baseUnit'])"
+                    @search="
+                      onSearch('GET_UNIT_DTO', 'bdUnit', Url.GET_PAGE_UNIT_LIST, [
+                        'baseUnitId',
+                        'baseUnit',
+                      ])
+                    "
                     @clear="onClear(['baseUnitId', 'baseUnit'])"
                   />
                 </a-form-item>
@@ -492,6 +497,7 @@
       :control="basicControl"
       :tableCols="basicTableCols"
       :tableName="basicTableName"
+      :currStockParam="currStockParam"
     />
   </div>
 </template>
@@ -552,8 +558,9 @@
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
+  let currStockParam = ref<string[]>([]); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
-  const basicTableName = ref<string>(''); //表格数据
+  let basicTableName = ref<string>(''); //需要查询的表名
 
   const formData: MatProfileEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
@@ -590,6 +597,7 @@
   };
 
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  let currTableUrl = ''; //列表数据链接，用于限定分仓，仓位
   /**
    * 基础资料弹窗
    * @param dtoUrlConfig  获取基础资料查询链接属性
@@ -603,36 +611,29 @@
     tableUrl: string,
     dataParam: string[],
   ) => {
+    let arr: any = [];
     currDataParam = dataParam;
     basicSearchRef.value.show();
     const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
-    basicControl.value = res as ControlSet[];
     basicTableCols.value = TableColum[dtoUrlConfig];
     basicTableName.value = tableName;
     await basicSearchRef.value.init(tableUrl);
+    if (basicTableName.value == 'BdStockCompartment') {
+      arr = res.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
+    } else if (basicTableName.value == 'BdStockLocation') {
+      arr = res.filter(
+        (e) =>
+          e.fieldName != 'stock_compartment_id' &&
+          e.fieldName != 'stock_id' &&
+          e.fieldName != 'bs_status',
+      );
+    } else {
+      arr = res.filter((e) => e.fieldName != 'bs_status');
+    }
+    basicControl.value = arr as ControlSet[];
+    console.log('basicControl.value', basicControl.value);
   };
-  //选择仓库后查询——联动-----key:在待用url中选择的----colName:需要查询的名字，如编码，名称。。。---id:输入的值
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'string',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    return res;
-  };
+
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
@@ -640,18 +641,27 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
-    if(row.stockId){
+    if (row.stockId) {
       formState.value.bdStock = row.bdStock;
       formState.value.stockId = row.stockId;
     }
-    if(row.compartmentId){
+    if (row.compartmentId) {
       formState.value.bdStockCompartment = row.bdStockCompartment;
       formState.value.compartmentId = row.compartmentId;
     }
-    console.log('formState', formState.value)
-
+    //限制分仓
+    if (basicTableName.value == 'BdStock') {
+      currStockParam.value['propName'] = 'stockId';
+      currStockParam.value['fieldName'] = 'stock_id';
+      currStockParam.value['id'] = row.id;
+    }
+    //限制仓位
+    if (basicTableName.value == 'BdStockCompartment') {
+      currStockParam.value['propName'] = 'compartmentId';
+      currStockParam.value['fieldName'] = 'compartment_id';
+      currStockParam.value['id'] = row.id;
+    }
   };
-
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
   const getGroup = async () => {

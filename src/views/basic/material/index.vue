@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <a-splitpanes class="default-theme" style="padding: 15px; height: 100%">
+    <a-splitPanes class="default-theme" style="padding: 15px; height: 100%">
       <pane :size="paneSize">
         <ex-tree
           :toolbar="true"
@@ -67,7 +67,7 @@
           </div>
         </div>
       </pane>
-    </a-splitpanes>
+    </a-splitPanes>
   </div>
 </template>
 
@@ -110,7 +110,7 @@
   import { useGo } from '/@/hooks/web/usePage';
 
   const go = useGo();
-  const ASplitpanes = Splitpanes;
+  const ASplitPanes = Splitpanes;
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);

@@ -9,7 +9,6 @@
     :export-config="{}"
     :data="props.tableData"
     :show="props.show"
-    :treeSelectData="treeSelectData"
     show-overflow
     show-header-overflow
     height="83%"
@@ -178,7 +177,6 @@
     columns: Array,
     buttons: Array,
     count: Number,
-    treeSelectData: Number,
     show: Boolean,
     tableData: Array,
     isShowImport: {
