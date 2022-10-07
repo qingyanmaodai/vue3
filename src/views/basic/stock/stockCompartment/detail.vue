@@ -54,10 +54,15 @@
                     placeholder="请选择所属仓库"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.stockName"
+                    v-model:value="formState.bdStock"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('stock')"
-                    @clear="onClear(['stockId', 'stockName'])"
+                    @search="
+                      onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, [
+                        'stockId',
+                        'bdStock',
+                      ])
+                    "
+                    @clear="onClear(['stockId', 'bdStock'])"
                   />
                 </a-form-item>
               </Col>
@@ -68,13 +73,18 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择负责人"
-                    label="仓库"
+                    placeholder="请选择责任人"
+                    label="责任人"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.empName"
+                    v-model:value="formState.bdEmployee"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('EMP')"
-                    @clear="onClear(['empId', 'empName'])"
+                    @search="
+                      onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
+                        'empId',
+                        'bdEmployee',
+                      ])
+                    "
+                    @clear="onClear(['empId', 'bdEmployee'])"
                   />
                 </a-form-item>
               </Col>
@@ -166,11 +176,12 @@
       </Tabs>
     </div>
     <BasicSearch
-      :modalType="modalType"
       @basicClickEvent="basicClickEvent"
-      @searchList="searchList"
-      ref="basicSearchRef"
       :gridOptions="basicGridOptions"
+      ref="basicSearchRef"
+      :control="basicControl"
+      :tableCols="basicTableCols"
+      :tableName="basicTableName"
     />
   </div>
 </template>
@@ -200,16 +211,13 @@
     unAuditStockCompartmentList,
     updateStockCompartmentList,
   } from '/@/api/stockCompartment';
-  import { basicGridOptions, employeeColumns, stockColumns } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { config } from '/@/utils/publicParamConfig';
-  import { getStockOption } from '/@/api/mainStock';
-  // import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { getPublicList } from '/@/api/public';
-  import { getEmployeeEntity } from '/@/api/employee';
-  import {cloneDeep} from "lodash-es";
-  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
 
   const { createMessage } = useMessage();
   const AForm = Form;
@@ -220,8 +228,10 @@
   const activeKey = ref<string>('1');
   const formRef = ref();
   //基础信息查询组件ref
-  const basicSearchRef: any = ref(null);
-  const modalType = ref<string>(''); //当前显示基础信息弹框类型
+  const basicSearchRef: any = ref<any>(undefined);
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  const basicTableName = ref<string>(''); //表格数据
   const formRules = reactive({
     name: [{ required: true, message: '请输入分仓名称' }],
     number: [{ required: true, message: '请输入分仓编码' }],
@@ -246,8 +256,6 @@
     if (rowId) {
       const res: any = await getStockCompartmentListById({ params: rowId });
       formState.value = res;
-      formState.value.stockName = res.bdStock ? res.bdStock.name : '';
-      formState.value.empName = res.bdEmployee ? res.bdEmployee.name : '';
     }
   };
   getListById(rowId);
@@ -255,108 +263,41 @@
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = '';
+      formState.value[e] = undefined;
     });
   };
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
-   * 基本信息弹框表头数据
-   * @param key
+   * 基础资料弹窗
+   * @param dtoUrlConfig  获取基础资料查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
    */
-  const getInitCols = (key: any) => {
-    const colConfig = {
-      EMP: employeeColumns,
-      stock: stockColumns,
-    };
-    return colConfig[key];
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
+    basicSearchRef.value.show();
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res as ControlSet[];
+    basicTableCols.value = TableColum[dtoUrlConfig];
+    basicTableName.value = tableName;
+    await basicSearchRef.value.init(tableUrl);
   };
-  /**
-   * 基本信息弹框选放大镜事件
-   */
-  const onSearch: any = async (key) => {
-    modalType.value = key;
-    await getBasicSelectData(key);
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: 'bsStatus',
-            column: 'bs_status',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: 'B',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    let dataCols = getInitCols(key);
-    let dataList = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initCols(dataCols);
-    basicSearchRef.value.initList(dataList);
-    return res;
-  };
-  /**
-   * 基础资料弹框查询事件
-   * @param type
-   * @param keywords
-   */
-  const searchList = async (type, keywords) => {
-    let param: any = [];
-    if (keywords) {
-      param.push(keywords);
-    }
-    basicSearchRef.value.initList(
-      await getPublicList(
-        {
-          params: param,
-        },
-        config.PUBLIC_REQUEST_URL[type],
-      ),
-    );
-  };
-
   /**
    * 基础资料弹框双击选择事件
    * @param row
    */
   const basicClickEvent = async (row) => {
-    switch (modalType.value) {
-      case 'EMP':
-        formState.value.empId = row.id;
-        formState.value.empName = row.name;
-        break;
-      case 'stock':
-        formState.value.stockId = row.id;
-        formState.value.stockName = row.name;
-        break;
-    }
-    basicSearchRef.value.bSearch(false);
-  };
-  /**
-   * 基础信息弹框获取下拉框数据
-   * @param key
-   */
-  const getBasicSelectData = async (key: string) => {
-    try {
-      if (key == 'EMP') {
-        let data = await getEmployeeEntity();
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      } else if (key == 'stock') {
-        let data = await getStockOption({ params: '' });
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      }
-    } catch (e) {
-      console.log('获取选项字段失败', e);
-    }
+    basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
 
   //保存事件

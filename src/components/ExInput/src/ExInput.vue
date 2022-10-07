@@ -30,7 +30,6 @@
     } else {
       return undefined;
     }
-    // return isString(props.value) ? props.value : props.value.name ? props.value.name : undefined;
   });
   type Emits = {
     (event: 'search', key: string): void;
