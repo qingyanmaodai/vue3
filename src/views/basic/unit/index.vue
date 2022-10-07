@@ -71,12 +71,12 @@
     delUnitListBatch,
     delUnitListById,
     exportUnitList,
+    getUnitOption,
     getUnitTable,
     importUnitModel,
     unAuditUnitList,
     unAuditUnitListBatch,
   } from '/@/api/unit';
-  import { getMatOption } from '/@/api/matTable';
   const { createMessage } = useMessage();
   const go = useGo();
   const GridOptions = gridOptions;
@@ -104,7 +104,7 @@
   };
   //获取高级查询字段数据
   const moreSearchData = ref();
-  getMatOption({ params: '' }).then((res) => {
+  getUnitOption({ params: '' }).then((res) => {
     moreSearchData.value = res;
   });
   //表格查询

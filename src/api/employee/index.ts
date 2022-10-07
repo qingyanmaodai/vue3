@@ -53,11 +53,11 @@ export function getEmployeeData(
 /**
  * 获取选项
  */
-export function getEmployeeEntity(mode: ErrorMessageMode = 'message') {
+export function getEmployeeEntity(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.GET_EMPLOYEE_DTO,
-      data: {},
+      data: json,
     },
     {
       errorMessageMode: mode,

@@ -97,6 +97,7 @@
     batchDeleteEmployee,
     exportEmployeeData,
     employeeImportModel,
+    getEmployeeEntity,
   } from '/@/api/employee';
   import {
     addDept,
@@ -107,7 +108,6 @@
     DepartmentEntity,
   } from '/@/api/department';
   import { SearchParams } from '/@/api/apiLink';
-  import { getMatOption } from '/@/api/matTable';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
@@ -354,7 +354,7 @@
   };
   //获取高级查询字段数据
   const moreSearchData = ref();
-  getMatOption({ params: '' }).then((res) => {
+  getEmployeeEntity({ params: '' }).then((res) => {
     moreSearchData.value = res;
   });
 

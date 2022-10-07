@@ -203,7 +203,7 @@ export enum Url {
   UN_BATCH_AUDIT_UNIT_LIST = '/stock/bd-unit/batch-un-audit', //批量反审核
   DELETE_UNIT_LIST = '/stock/bd-unit/delete', //删除
   BATCH_DELETE_UNIT_LIST = '/stock/bd-unit/batch-delete', //批量删除
-  GET_PAGE_UNIT_LIST = '/stock/bd-unit/list', //分页查询--获取仓库列表
+  GET_PAGE_UNIT_LIST = '/stock/bd-unit/list', //分页查询--获取计量单位
   GET_ONE_UNIT_LIST = '/stock/bd-unit/query-one', //查询单条
   IMPORT_UNIT_LIST = 'http://192.168.200.136:9999/stock/bd-unit/import-list', //导入
   IMPORT_MODEL_UNIT = '/stock/bd-unit/import-model', //导入模板下载
