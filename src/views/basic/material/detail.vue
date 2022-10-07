@@ -88,7 +88,7 @@
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdMaterialGroup"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onGroupSearch(formState.groupName)"
+                    @search="onGroupSearch"
                     @clear="onClear(['groupId', 'bdMaterialGroup'])"
                   />
                 </a-form-item>
@@ -497,7 +497,6 @@
       :control="basicControl"
       :tableCols="basicTableCols"
       :tableName="basicTableName"
-      :currStockParam="currStockParam"
     />
   </div>
 </template>
@@ -540,7 +539,15 @@
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import {
+    ControlSet,
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const AModal = Modal;
@@ -558,7 +565,6 @@
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
-  let currStockParam = ref<string[]>([]); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
 
@@ -597,7 +603,6 @@
   };
 
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
-  let currTableUrl = ''; //列表数据链接，用于限定分仓，仓位
   /**
    * 基础资料弹窗
    * @param dtoUrlConfig  获取基础资料查询链接属性
@@ -611,27 +616,44 @@
     tableUrl: string,
     dataParam: string[],
   ) => {
-    let arr: any = [];
     currDataParam = dataParam;
-    basicSearchRef.value.show();
     const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res;
     basicTableCols.value = TableColum[dtoUrlConfig];
     basicTableName.value = tableName;
-    await basicSearchRef.value.init(tableUrl);
-    if (basicTableName.value == 'BdStockCompartment') {
-      arr = res.filter((e) => e.fieldName != 'stock_id' && e.fieldName != 'bs_status');
-    } else if (basicTableName.value == 'BdStockLocation') {
-      arr = res.filter(
-        (e) =>
-          e.fieldName != 'stock_compartment_id' &&
-          e.fieldName != 'stock_id' &&
-          e.fieldName != 'bs_status',
-      );
-    } else {
-      arr = res.filter((e) => e.fieldName != 'bs_status');
+    let filterParams: SearchParams[] = [];
+    if (tableName === 'BdStockCompartment') {
+      if (formState.value.stockId) {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: formState.value.stockId,
+          },
+        ];
+      }
     }
-    basicControl.value = arr as ControlSet[];
-    console.log('basicControl.value', basicControl.value);
+    if (tableName === 'BdStockLocation') {
+      if (formState.value.compartmentId) {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: formState.value.compartmentId,
+          },
+        ];
+      }
+    }
+    basicSearchRef.value.setFilter(filterParams);
+    basicSearchRef.value.init(tableUrl);
   };
 
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
@@ -648,18 +670,6 @@
     if (row.compartmentId) {
       formState.value.bdStockCompartment = row.bdStockCompartment;
       formState.value.compartmentId = row.compartmentId;
-    }
-    //限制分仓
-    if (basicTableName.value == 'BdStock') {
-      currStockParam.value['propName'] = 'stockId';
-      currStockParam.value['fieldName'] = 'stock_id';
-      currStockParam.value['id'] = row.id;
-    }
-    //限制仓位
-    if (basicTableName.value == 'BdStockCompartment') {
-      currStockParam.value['propName'] = 'compartmentId';
-      currStockParam.value['fieldName'] = 'compartment_id';
-      currStockParam.value['id'] = row.id;
     }
   };
   //获取物料分组数据
