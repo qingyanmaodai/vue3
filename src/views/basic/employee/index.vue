@@ -6,7 +6,7 @@
           :toolbar="true"
           :search="true"
           :tree-data="treeData"
-          ref="employeeGroupTreeRef"
+          ref="treeRef"
           title="部门组织"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
@@ -18,7 +18,8 @@
       <a-pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
-            ref="employeeSearchRef"
+            :control="moreSearchData"
+            ref="searchRef"
             tableName="BdEmployee"
             searchNo="编码"
             searchName="人员"
@@ -29,6 +30,7 @@
             :columns="employeeColumns"
             :buttons="tableButtons"
             :gridOptions="GridOptions"
+            :tableData="tableData"
             ref="employeeTableRef"
             @addEvent="tableAddEvent"
             @editEvent="editTableEvent"
@@ -95,7 +97,6 @@
     batchDeleteEmployee,
     exportEmployeeData,
     employeeImportModel,
-    getEmployeeEntity,
   } from '/@/api/employee';
   import {
     addDept,
@@ -106,14 +107,16 @@
     DepartmentEntity,
   } from '/@/api/department';
   import { SearchParams } from '/@/api/apiLink';
+  import { getMatOption } from '/@/api/matTable';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
-  const employeeSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
+  const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
   const employeeTableRef: any = ref<String | null>(null); //表格组件引用ref
-  const employeeGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
+  const treeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
+  const tableData = ref<object[]>([]); //表格数据
   //分页参数
   const pages = reactive({
     currentPage: 1,
@@ -162,21 +165,12 @@
   const getEmployeeList = async (currPage = 1, pageSize = pages.pageSize) => {
     console.log(currPage, pageSize);
     ParamsData = [];
-    if (
-      employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id') &&
-      employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id').length > 0
-    ) {
-      ParamsData = ParamsData.concat(
-        employeeGroupTreeRef.value.getSearchParams('deptId', 'dept_id'),
-      );
+    if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(treeRef.value.getSearchParams());
     }
-    if (
-      employeeSearchRef.value.getSearchParams() &&
-      employeeSearchRef.value.getSearchParams().length > 0
-    ) {
-      ParamsData = ParamsData.concat(employeeSearchRef.value.getSearchParams());
+    if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(searchRef.value.getSearchParams());
     }
-
     //表格查询
     const res: any = await getEmployeeData({
       params: ParamsData,
@@ -188,9 +182,8 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
-    employeeTableRef.value.init(data);
-    employeeSearchRef.value.moreSearchClose();
+    tableData.value = res.records;
+    searchRef.value.moreSearchClose();
   };
 
   /**
@@ -202,7 +195,7 @@
    * 表格新增数据
    */
   const tableAddEvent = () => {
-    let groupId = employeeGroupTreeRef.value.getSelectedKeys();
+    let groupId = treeRef.value.getSelectedKeys();
     routerGo({
       path: PageEnum.EMPLOYEE_DETAIL, //人员详情页
       //需要带到详情页的参数
@@ -309,9 +302,9 @@
    * 刷新表格数据
    */
   const resetTable = () => {
-    employeeGroupTreeRef.value.setSelectedKeys([]);
-    employeeSearchRef.value.formState.wlNo = null;
-    employeeSearchRef.value.formState.wlName = null;
+    treeRef.value.setSelectedKeys([]);
+    searchRef.value.formState.wlNo = null;
+    searchRef.value.formState.wlName = null;
     getEmployeeList();
   };
 
@@ -359,15 +352,11 @@
       });
     };
   };
-
-  /**
-   * 获取高级查询下拉框
-   */
-  const getOptions = async () => {
-    const moreSearchData = await getEmployeeEntity();
-    employeeSearchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
+  //获取高级查询字段数据
+  const moreSearchData = ref();
+  getMatOption({ params: '' }).then((res) => {
+    moreSearchData.value = res;
+  });
 
   /**
    * 选中分组事件
@@ -383,12 +372,12 @@
    * 新增人员分组
    */
   const addGroupEvent = () => {
-    employeeGroupTreeRef.value.resetGroupFormData();
+    treeRef.value.resetGroupFormData();
     OptGroupHook.submitGroup = async () => {
       await addDept({
         params: {
-          number: employeeGroupTreeRef.value.groupFormData.number,
-          name: employeeGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.groupFormData.number,
+          name: treeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
@@ -402,17 +391,17 @@
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneDept({ params: node.key?.toString() || '0' });
     if (result) {
-      employeeGroupTreeRef.value.groupFormData.number = result.number;
-      employeeGroupTreeRef.value.groupFormData.name = result.name;
-      employeeGroupTreeRef.value.groupFormData.id = result.id;
-      employeeGroupTreeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      treeRef.value.groupFormData.number = result.number;
+      treeRef.value.groupFormData.name = result.name;
+      treeRef.value.groupFormData.id = result.id;
+      treeRef.value.groupFormData.parent = { id: result.id, name: result.name };
     }
     OptGroupHook.submitGroup = async () => {
       await editDept({
         params: {
           id: node.key?.toString() || '0',
-          number: employeeGroupTreeRef.value.groupFormData.number,
-          name: employeeGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.groupFormData.number,
+          name: treeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
@@ -424,14 +413,14 @@
    * @param node
    */
   const addGroupSubEvent = (node: TreeItem) => {
-    employeeGroupTreeRef.value.resetGroupFormData();
-    employeeGroupTreeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.resetGroupFormData();
+    treeRef.value.groupFormData.parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addDept({
         params: {
           parentId: node.key?.toString() || '0',
-          number: employeeGroupTreeRef.value.groupFormData.number,
-          name: employeeGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.groupFormData.number,
+          name: treeRef.value.groupFormData.name,
         },
       });
       await refreshTree();
