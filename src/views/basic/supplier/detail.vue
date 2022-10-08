@@ -5,11 +5,15 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-show="showSave">保存</Button>
-        <Button danger class="button" @click="handleAudit(0)" v-show="showAudit && formState.id"
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="handleAudit(0)" v-if="formState.bsStatus === 'A'"
           >审核</Button
         >
-        <Button danger class="button" @click="handleAudit(1)" v-show="!showAudit">反审核</Button>
+        <Button danger class="button" @click="handleAudit(1)" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
       </div>
     </LayoutHeader>
     <div class="content">
@@ -38,7 +42,7 @@
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入供应商名称"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -49,7 +53,7 @@
                     class="input"
                     v-model:value="formState.shortName"
                     placeholder="请输入简称"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -63,7 +67,7 @@
                     autocomplete="off"
                     v-model:value="formState.contact"
                     placeholder="请输入联系人"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -76,22 +80,27 @@
                     v-model:value="formState.phone"
                     name="name"
                     placeholder="请输入联系电话"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="责任人：" ref="locationId" name="locationId" class="item">
+                <a-form-item label="责任人：" ref="empId" name="empId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
                     placeholder="请选择责任人"
                     label="责任人"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="tempFormState.empName"
+                    v-model:value="formState.bdEmployee"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onSearch('EMP')"
-                    @clear="onClear('EMP')"
+                    @search="
+                      onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
+                        'empId',
+                        'bdEmployee',
+                      ])
+                    "
+                    @clear="onClear(['empId', 'bdEmployee'])"
                   />
                 </a-form-item>
               </Col>
@@ -102,7 +111,7 @@
                   <a-select
                     allowClear
                     class="input"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.country"
                     show-search
                     placeholder="请选择"
@@ -118,8 +127,8 @@
                     allowClear
                     v-if="isShowDistrict"
                     style="width: 16rem; height: 2rem; margin: 0 60px 0 2px"
-                    :disabled="isDisable"
-                    v-model:value="tempFormState.districtArr"
+                    :disabled="formState.bsStatus === 'B'"
+                    v-model:value="formState.districtArr"
                     :options="districtData"
                     :load-data="loadDistrictData"
                     change-on-select
@@ -134,7 +143,7 @@
                     class="input"
                     v-model:value="formState.address"
                     placeholder="请输入地址"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -145,7 +154,7 @@
                   <Select
                     v-model:value="formState.level"
                     class="select"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                     placeholder="请选择"
                   >
                     <SelectOption
@@ -159,23 +168,17 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  label="供应商分组："
-                  v-model:value="formState.groupId"
-                  ref="groupName"
-                  name="groupName"
-                  class="item"
-                >
+                <a-form-item label="供应商分组：" ref="groupId" name="groupId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
                     placeholder="请选择供应商分组"
                     label="供应商分组"
-                    :show="!isDisable"
-                    v-model:value="tempFormState.groupName"
-                    :disabled="isDisable"
+                    :show="formState.bsStatus !== 'B'"
+                    v-model:value="formState.bdSupplierGroup"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onGroupSearch"
-                    @clear="onClear('GROUP')"
+                    @clear="onClear(['groupId', 'bdSupplierGroup'])"
                   />
                 </a-form-item>
               </Col>
@@ -200,7 +203,7 @@
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -255,11 +258,12 @@
       />
     </a-modal>
     <BasicSearch
-      :modalType="modalType"
       @basicClickEvent="basicClickEvent"
-      @searchList="searchList"
-      ref="basicSearchRef"
       :gridOptions="basicGridOptions"
+      ref="basicSearchRef"
+      :control="basicControl"
+      :tableCols="basicTableCols"
+      :tableName="basicTableName"
     />
   </div>
 </template>
@@ -300,8 +304,7 @@
     queryOneSupplierGroup,
     SupplierGroupEntity,
   } from '/@/api/supplierGroup'; //供应商分组api
-  import { getEmployeeEntity } from '/@/api/employee';
-  import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { TreeItem } from '/@/components/Tree';
   import { VXETable } from 'vxe-table';
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
@@ -310,40 +313,20 @@
   import { CountryEntity, getCountryTree } from '/@/api/country';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { getPublicList } from '/@/api/public';
-  import {SearchDataType, SearchLink, SearchMatchType} from "/@/api/apiLink";
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
 
-  /* data */
-
-  //额外表单数据
-  type tempForm = {
-    groupName: string;
-    districtArr: number[];
-    empName: string;
-  };
-  const tempFormState: UnwrapRef<tempForm> = reactive({
-    groupName: '', //供应商分组名称
-    districtArr: [], //地区数组
-    empName: '', //责任人名称
-  });
   //基础信息查询组件ref
   const basicSearchRef = ref<any>(null);
-  const modalType = ref<string>(''); //当前显示基础信息弹框类型
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  const basicTableName = ref<string>(''); //表格数据
   //表单初始数据
   const formData: UnwrapRef<SupplierEntity> = {
-    id: undefined,
-    number: undefined,
-    name: undefined,
-    shortName: undefined,
-    contact: undefined,
-    phone: undefined,
-    empId: undefined,
-    address: undefined,
-    country: undefined,
-    provincial: undefined,
-    municipal: undefined,
-    district: undefined,
-    level: undefined,
-    groupId: undefined,
+    id: '',
+    number: '',
+    name: '',
+    districtArr: [],
   };
   const formInitState = reactive({ data: formData });
 
@@ -361,10 +344,7 @@
   const countryData = ref<CountryEntity[]>([]); //国家数据
   const districtData = ref<CountryEntity[]>([]); //地区数据
   const supplierGroupModel = ref<boolean>(false); //供应商分组弹框显示状态
-  const showAudit = ref<boolean>(true); //显示审核/反审核按钮
-  const showSave = ref<boolean>(true); //显示保存按钮
   const activeTabs = ref<string>('basicInfo'); //当前激活板块
-  const isDisable = ref<boolean>(false); //表单禁用状态
   const isShowDistrict = ref<boolean>(false); //是否显示地区组件
 
   /* method */
@@ -387,7 +367,7 @@
       const result = await queryOneSupplierGroup({ params: selectGroupId.value || '0' });
       if (result) {
         formState.value.groupId = result.id;
-        tempFormState.groupName = result.name || '';
+        formState.value.bdSupplierGroup = result;
       }
     }
     isShowDistrict.value = true;
@@ -400,13 +380,6 @@
     const res: any = await getOneSupplier(supId);
     if (res) {
       formState.value = res;
-      tempFormState.groupName = res.bdSupplierGroup ? res.bdSupplierGroup.name : '';
-      tempFormState.empName = res.bdEmployee ? res.bdEmployee.name : '';
-      if (formState.value.bsStatus === 'B') {
-        isDisable.value = true;
-        showAudit.value = false;
-        showSave.value = false;
-      }
       //回显地区信息
       await echoDistrict();
     }
@@ -420,14 +393,14 @@
     formRef.value
       .validate()
       .then(async () => {
-        formState.value.provincial = tempFormState.districtArr[0]
-          ? tempFormState.districtArr[0]
+        formState.value.provincial = formState.value.districtArr[0]
+          ? formState.value.districtArr[0]
           : undefined; //省
-        formState.value.municipal = tempFormState.districtArr[1]
-          ? tempFormState.districtArr[1]
+        formState.value.municipal = formState.value.districtArr[1]
+          ? formState.value.districtArr[1]
           : undefined; //市
-        formState.value.district = tempFormState.districtArr[2]
-          ? tempFormState.districtArr[2]
+        formState.value.district = formState.value.districtArr[2]
+          ? formState.value.districtArr[2]
           : undefined; //区
         let res;
         if (supplierId.value) {
@@ -458,14 +431,8 @@
           let data;
           if (flag === 0) {
             data = await audit({ params: formState.value });
-            isDisable.value = true;
-            showAudit.value = false;
-            showSave.value = false;
           } else {
             data = await unAudit({ params: formState.value });
-            isDisable.value = false;
-            showAudit.value = true;
-            showSave.value = true;
           }
           formState.value = Object.assign({}, formState.value, data);
           createMessage.success('操作成功');
@@ -494,98 +461,38 @@
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
 
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
-   * 基本信息弹框表头数据
-   * @param key
+   * 基础资料弹窗
+   * @param dtoUrlConfig  获取基础资料查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
    */
-  const getInitCols = (key: any) => {
-    const colConfig = {
-      EMP: employeeColumns,
-    };
-    return colConfig[key];
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
+    basicSearchRef.value.show();
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res as ControlSet[];
+    basicTableCols.value = TableColum[dtoUrlConfig];
+    basicTableName.value = tableName;
+    await basicSearchRef.value.init(tableUrl);
   };
-
-  /**
-   * 基本信息弹框选放大镜事件
-   */
-  const onSearch: any = async (key) => {
-    modalType.value = key;
-    await getBasicSelectData(key);
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: 'bsStatus',
-            column: 'bs_status',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: 'B',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    let dataCols = getInitCols(key);
-    let dataList = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initCols(dataCols);
-    basicSearchRef.value.initList(dataList);
-    return res;
-  };
-
-  /**
-   * 基础信息弹框获取下拉框数据
-   * @param key
-   */
-  const getBasicSelectData = async (key: string) => {
-    try {
-      if (key == 'EMP') {
-        let data = await getEmployeeEntity();
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      }
-    } catch (e) {
-      console.log('获取选项字段失败', e);
-    }
-  };
-
-  /**
-   * 基础资料弹框查询事件
-   * @param type
-   * @param keywords
-   */
-  const searchList = async (type, keywords) => {
-    let param: any = [];
-    if (keywords) {
-      param.push(keywords);
-    }
-    basicSearchRef.value.initList(
-      await getPublicList(
-        {
-          params: param,
-        },
-        config.PUBLIC_REQUEST_URL[type],
-      ),
-    );
-  };
-
   /**
    * 基础资料弹框双击选择事件
    * @param row
    */
   const basicClickEvent = async (row) => {
-    switch (modalType.value) {
-      case 'EMP':
-        formState.value.empId = row.id;
-        tempFormState.empName = row.name;
-        break;
-    }
-    basicSearchRef.value.bSearch(false);
+    basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
 
   /**
@@ -601,8 +508,8 @@
    * @param value
    * @param node
    */
-  const groupSelect = (value, node) => {
-    tempFormState.groupName = node ? node[0] : '';
+  const groupSelect = (value: string, names: string[]) => {
+    formState.value.bdSupplierGroup = { id: value, name: names[0] || '' };
     formState.value.groupId = value;
     supplierGroupModel.value = false;
   };
@@ -704,7 +611,7 @@
         }
       }
       districtData.value = cloneDeep(ssqData);
-      tempFormState.districtArr = arr;
+      formState.value.districtArr = arr;
     } catch (e) {
       console.log(e);
     }
@@ -726,14 +633,10 @@
   /**
    * 清空事件
    */
-  const onClear = (type) => {
-    if (type === 'GROUP') {
-      formState.value.groupId = '';
-      tempFormState.groupName = '';
-    } else if (type === 'EMP') {
-      formState.value.empId = '';
-      tempFormState.empName = '';
-    }
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = undefined;
+    });
   };
 
   const back = () => {

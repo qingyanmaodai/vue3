@@ -23,6 +23,7 @@
     value: undefined,
     disabled: false,
     show: true,
+    placeholder: '',
   });
   const showVal = computed(() => {
     if (props.value) {

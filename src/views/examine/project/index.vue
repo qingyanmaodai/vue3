@@ -18,6 +18,7 @@
       <pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
+            :control="moreSearchData"
             ref="searchRef"
             tableName="BdExamineProject"
             searchNo="项目编码"
@@ -30,6 +31,7 @@
             :buttons="buttons"
             :gridOptions="GridOptions"
             :importConfig="importConfig"
+            :tableData="tableData"
             ref="tableRef"
             @addEvent="addTableEvent"
             @editEvent="editTableEvent"
@@ -116,6 +118,8 @@
   let importConfig = ref<string>('UPLOAD_EXA_PROJECT');
   //表格事件
   const tableRef: any = ref<String | null>(null);
+  //表格数据
+  let tableData = ref<object[]>([]);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
@@ -209,11 +213,10 @@
     await getList(currentPage);
   };
   //获取高级查询字段数据
-  const getOptions = async () => {
-    const moreSearchData = await getSearchOption({ params: '' });
-    searchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
+  const moreSearchData = ref();
+  getSearchOption({ params: '' }).then((res) => {
+    moreSearchData.value = res;
+  });
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -234,8 +237,7 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
-    tableRef.value.init(data);
+    tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
 
@@ -288,7 +290,6 @@
         groupId: groupId == '' ? '' : groupId,
       },
     });
-    console.log('添加:', groupId);
   };
   //编辑
   const editTableEvent = (row) => {

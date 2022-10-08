@@ -47,23 +47,17 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item
-                  label="项目类别："
-                  v-model:value="formState.groupId"
-                  ref="groupId"
-                  name="groupId"
-                  class="item"
-                >
+                <a-form-item label="项目类别：" ref="groupId" name="groupId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
                     placeholder="请选择项目类别"
                     label="项目类别"
                     :show="formState.bsStatus !== 'B'"
-                    v-model:value="formState.groupName"
+                    v-model:value="formState.bdExamineGroup"
                     :disabled="formState.bsStatus === 'B'"
-                    @search="onGroupSearch(formState.groupName)"
-                    @clear="onClear(['groupId', 'groupName'])"
+                    @search="onGroupSearch"
+                    @clear="onClear(['groupId', 'bdExamineGroup'])"
                   />
                 </a-form-item>
               </Col>
@@ -162,7 +156,7 @@
         v-model:value="formState.groupId"
         style="width: 100%"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-        placeholder="请选择物料分组"
+        placeholder="请选择检验类别"
         treeNodeFilterProp="title"
         tree-default-expand-all
         :treeData="treeData"
@@ -231,10 +225,7 @@
     });
     if (result) {
       formState.value.groupId = result.id == '0' ? '' : result.id;
-      formState.value.groupName = result.name;
-    } else {
-      formState.value.groupId = undefined;
-      formState.value.groupName = undefined;
+      formState.value.bdExamineGroup = result;
     }
   };
   const formRules = reactive({
@@ -243,12 +234,8 @@
   });
 
   //分组弹框
-  const onGroupSearch = (name) => {
+  const onGroupSearch = () => {
     visibleGroupModal.value = true;
-    formState.value.groupName = name;
-    if (formState.value.groupName == '') {
-      formState.value.groupName = undefined;
-    }
   };
 
   //点击清空图标清空事件
@@ -274,8 +261,8 @@
     });
   };
   //物料分组弹框关
-  const groupSelect = (value, node) => {
-    formState.value.groupName = node[0] || '';
+  const groupSelect = (value: string, names: string[]) => {
+    formState.value.bdExamineGroup = { id: value, name: names[0] || '' };
     formState.value.groupId = value;
     visibleGroupModal.value = false;
   };

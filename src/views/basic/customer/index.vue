@@ -86,7 +86,7 @@
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
-  import { Pager } from 'vxe-table';
+  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     batchAuditCustomer,
@@ -163,7 +163,6 @@
    * @param pageSize
    */
   const getCustomerList = async (currPage = 1, pageSize = pages.pageSize) => {
-    console.log(currPage, pageSize);
     ParamsData = [];
     if (
       customerGroupTreeRef.value.getSearchParams() &&
@@ -196,8 +195,11 @@
   /**
    * 表格每页显示数改变事件
    */
-  const tablePagerChange = () => {};
-
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    await getCustomerList(currentPage);
+  };
   /**
    * 表格新增数据
    */

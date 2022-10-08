@@ -1,6 +1,7 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { ExaProjectGroupEntity } from '/@/api/exaProjectGroup';
 
 export interface ExaProjectEntity extends PublicModel {
   id: string | undefined;
@@ -9,7 +10,7 @@ export interface ExaProjectEntity extends PublicModel {
   isOpen?: number;
   description?: string;
   groupId?: string | undefined;
-  groupName?: string;
+  bdExamineGroup?: ExaProjectGroupEntity;
 }
 /**
  * 获取表格信息

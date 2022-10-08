@@ -47,7 +47,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="责任人：" ref="locationId" name="locationId" class="item">
+                <a-form-item label="责任人：" ref="empId" name="empId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
