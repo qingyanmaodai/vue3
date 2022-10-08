@@ -1,6 +1,7 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { DepartmentEntity } from '/@/api/department';
 
 export interface EmployeeEntity extends PublicModel {
   id?: string;
@@ -9,6 +10,7 @@ export interface EmployeeEntity extends PublicModel {
   sex?: number;
   job?: string;
   deptId?: string;
+  bdDepartment?: DepartmentEntity;
   phone?: string;
   email?: string;
   address?: string;

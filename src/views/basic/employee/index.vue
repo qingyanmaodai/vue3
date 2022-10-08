@@ -164,8 +164,11 @@
    */
   const getEmployeeList = async (currPage = 1, pageSize = pages.pageSize) => {
     ParamsData = [];
-    if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
-      ParamsData = ParamsData.concat(treeRef.value.getSearchParams());
+    if (
+      treeRef.value.getSearchParams('deptId', 'dept_id') &&
+      treeRef.value.getSearchParams('deptId', 'dept_id').length > 0
+    ) {
+      ParamsData = ParamsData.concat(treeRef.value.getSearchParams('deptId', 'dept_id'));
     }
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       ParamsData = ParamsData.concat(searchRef.value.getSearchParams());
