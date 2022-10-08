@@ -2,6 +2,7 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 import { ExaProjectEntity } from '/@/api/exaProject';
+import { ExaRuleEntity } from '/@/api/exaRule';
 
 export interface ExaEntity extends PublicModel {
   id: string | undefined;
@@ -13,7 +14,7 @@ export interface ExaEntity extends PublicModel {
   business?: string;
   ruleId?: string;
   ruleName?: string;
-  bdExamineRule?: object;
+  bdExamineRule?: ExaRuleEntity;
   bsStatus?: string;
   bdExamineDetailList?: ExaDetailEntity[];
 }

@@ -89,8 +89,13 @@
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.ruleName"
                         :disabled="formState.bsStatus === 'B'"
-                        @search="onRule('rule')"
-                        @clear="onClear(['ruleId', 'ruleName'])"
+                        @search="
+                          onSearch('GET_EXA_RULE_DTO', 'bdExamineRule', Url.GET_EXA_RULE_LIST, [
+                            'ruleId',
+                            'bdExamineRule',
+                          ])
+                        "
+                        @clear="onClear(['ruleId', 'bdExamineRule'])"
                       />
                     </a-form-item>
                   </Col>
@@ -200,11 +205,12 @@
       </a-splitpanes>
     </div>
     <BasicSearch
-      :modalType="modalType"
-      @basicClickEvent="onRuleClickEvent"
-      @searchList="searchList"
-      ref="basicSearchRef"
+      @basicClickEvent="basicClickEvent"
       :gridOptions="basicGridOptions"
+      ref="basicSearchRef"
+      :control="basicControl"
+      :tableCols="basicTableCols"
+      :tableName="basicTableName"
     />
   </div>
 </template>
@@ -239,11 +245,16 @@
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { getSearchOption } from '/@/api/exaRule';
-  import { basicGridOptions, exaRuleColumns } from '/@/components/AMoreSearch/data';
+  import {
+    ControlSet,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
-  import {getPublicList} from "/@/api/public";
+  import { getPublicList } from '/@/api/public';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -254,9 +265,11 @@
   const router = useRouter();
   const formRef = ref();
   const activeKey = ref<string>('1');
-  const basicSearchRef: any = ref(null);
+  const basicSearchRef: any = ref(null); //基础信息查询组件ref
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  let basicTableName = ref<string>(''); //需要查询的表名
   const vxeTableRef: any = ref<String | null>(null);
-  const modalType = ref<string>(''); //当前显示基础信息弹框类型
   const formData: ExaEntity = {
     id: undefined,
     number: '',
@@ -269,7 +282,7 @@
     ruleName: '',
   };
 
-  const detailTableData:any = ref<object[]>([]); //表格数据
+  const detailTableData: any = ref<object[]>([]); //表格数据
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -283,77 +296,47 @@
     ruleId: [{ required: true, message: '请选择抽检规则' }],
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
-  })
+  });
   formRules[project] = [{ required: true, message: '请选择检验项目' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = '';
+      formState.value[e] = undefined;
     });
   };
 
-  //基本信息表格双击事件
-  const onRuleClickEvent = (row) => {
-    formState.value.ruleId = row.id;
-    formState.value.ruleName = row.name;
-    basicSearchRef.value.bSearch(false);
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  /**
+   * 基础资料弹窗
+   * @param dtoUrlConfig  获取基础资料查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
+   */
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res;
+    basicTableCols.value = TableColum[dtoUrlConfig];
+    basicTableName.value = tableName;
+    let filterParams: SearchParams[] = [];
+    basicSearchRef.value.setFilter(filterParams);
+    basicSearchRef.value.init(tableUrl);
   };
-  //打开放大镜
-  const onRule = async (key) => {
-    modalType.value = key;
-    const res: any = await getPublicList(
-      {
 
-        params: [
-          {
-            table: '',
-            name: 'bsStatus',
-            column: 'bs_status',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: 'B',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-
-    let data = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initList(data);
-    basicSearchRef.value.initCols(exaRuleColumns);
-    await getRuleOption();
-    return res;
-  };
-  //基础资料弹框查询事件
-  const searchList = async (type, keywords) => {
-    let param: any = [];
-    if (keywords) {
-      param.push(keywords);
-    }
-    basicSearchRef.value.initList(
-      await getPublicList(
-        {
-          params: param,
-        },
-        config.PUBLIC_REQUEST_URL[type],
-      ),
-    );
-  };
-  //获取基本单位下拉框字段
-  const getRuleOption = async () => {
-    try {
-      let data = await getSearchOption({ params: '' });
-      let arr: any = cloneDeep(data);
-      arr = arr.filter((e) => e.fieldName != 'bs_status');
-      basicSearchRef.value.init(arr);
-    } catch (e) {
-      console.log('获取基本信息字段失败', e);
-    }
+  //双击单元格选择事件——获取双击所选的值并赋值到对应字段
+  const basicClickEvent = async (row) => {
+    basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   const dataId = useRoute().query.row?.toString();
@@ -366,9 +349,9 @@
         const tableFullData = vxeTableRef.value.getDetailData();
         const validAllErrMapData = await vxeTableRef.value.getValidAllData();
         if (tableFullData) {
-          if(validAllErrMapData){
+          if (validAllErrMapData) {
             await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
-            return
+            return;
           }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
@@ -397,9 +380,9 @@
           const tableFullData = vxeTableRef.value.getDetailData();
           const validAllErrMapData = await vxeTableRef.value.getValidAllData();
           if (tableFullData) {
-            if(validAllErrMapData){
+            if (validAllErrMapData) {
               await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
-              return
+              return;
             }
             formState.value.bdExamineDetailList = cloneDeep(tableFullData);
           }
@@ -447,10 +430,6 @@
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      if (formState.value.ruleId) {
-        formState.value.ruleId = res.bdExamineRule ? res.bdExamineRule.id : '';
-        formState.value.ruleName = res.bdExamineRule ? res.bdExamineRule.name : '';
-      }
       if (formState.value.bdExamineDetailList) {
         formState.value.bdExamineDetailList.map((r) => {
           r.bsStatus = formState.value.bsStatus;
@@ -472,7 +451,7 @@
   const getJudgeClickData = (arr, row, callback) => {
     let judgeClickIndex = arr.fullData.findIndex((e) => e.bdExamineProject.id === row.id);
     callback(judgeClickIndex);
-  }
+  };
   //设置Switch默认
   const setDefaultTableData = (obj) => {
     obj.isOpen = 1;

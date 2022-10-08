@@ -18,6 +18,7 @@
       <a-pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
+            :control="moreSearchData"
             ref="supplierSearchRef"
             tableName="BdSupplier"
             searchNo="编码"
@@ -29,6 +30,7 @@
             :columns="supplierColumns"
             :buttons="tableButtons"
             :gridOptions="GridOptions"
+            :tableData="tableData"
             ref="supplierTableRef"
             @addEvent="tableAddEvent"
             @editEvent="editTableEvent"
@@ -84,7 +86,7 @@
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
-  import { Pager } from 'vxe-table';
+  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     batchAuditSupplier,
@@ -111,6 +113,7 @@
   const paneSize = ref(16); //面板尺寸
   const supplierSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
   const supplierTableRef: any = ref<String | null>(null); //表格组件引用ref
+  let tableData = ref<object[]>([]); //表格数据
   const supplierGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
@@ -186,15 +189,18 @@
     });
     pages.total = res.total;
     pages.currentPage = currPage;
-    let data = res.records;
-    supplierTableRef.value.init(data);
+    tableData.value = res.records;
     supplierSearchRef.value.moreSearchClose();
   };
 
   /**
    * 表格每页显示数改变事件
    */
-  const tablePagerChange = () => {};
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    await getSupplierList(currentPage);
+  };
 
   /**
    * 表格新增数据
@@ -361,11 +367,10 @@
   /**
    * 获取高级查询下拉框
    */
-  const getOptions = async () => {
-    const moreSearchData = await getSupplierEntity();
-    supplierSearchRef.value.getOptions(moreSearchData);
-  };
-  getOptions();
+  const moreSearchData = ref();
+  getSupplierEntity().then((res) => {
+    moreSearchData.value = res;
+  });
 
   /**
    * 选中分组事件

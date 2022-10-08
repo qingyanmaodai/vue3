@@ -208,7 +208,15 @@
     unAuditStockLocationList,
     updateStockLocationList,
   } from '/@/api/stockLocation';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import {
+    ControlSet,
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const AForm = Form;
@@ -217,8 +225,6 @@
 
   const router = useRouter();
   const activeKey = ref<string>('1');
-  //弹窗类型
-  let modalType = ref<string>('');
   const formRef = ref();
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
@@ -269,6 +275,23 @@
     basicControl.value = res as ControlSet[];
     basicTableCols.value = TableColum[dtoUrlConfig];
     basicTableName.value = tableName;
+    let filterParams: SearchParams[] = [];
+    if (tableName === 'BdStockCompartment') {
+      if (formState.value.stockId) {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: formState.value.stockId,
+          },
+        ];
+      }
+    }
+    basicSearchRef.value.setFilter(filterParams);
     await basicSearchRef.value.init(tableUrl);
   };
 
