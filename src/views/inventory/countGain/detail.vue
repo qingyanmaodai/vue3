@@ -64,7 +64,12 @@
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
-                        @search="onSearch('EMP')"
+                        @search="
+                          onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
+                            'empId',
+                            'empName',
+                          ])
+                        "
                         @clear="onClear(['empId', 'empName'])"
                       />
                     </a-form-item>
@@ -161,11 +166,12 @@
       </a-splitpanes>
     </div>
     <BasicSearch
-      :modalType="modalType"
       @basicClickEvent="basicClickEvent"
-      @searchList="searchList"
-      ref="basicSearchRef"
       :gridOptions="basicGridOptions"
+      ref="basicSearchRef"
+      :control="basicControl"
+      :tableCols="basicTableCols"
+      :tableName="basicTableName"
     />
   </div>
 </template>
@@ -208,12 +214,11 @@
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { getEmployeeEntity } from '/@/api/employee';
-  import { basicGridOptions, employeeColumns } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -225,10 +230,14 @@
   const router = useRouter();
   const formRef = ref();
   const activeKey = ref<string>('1');
-  const basicSearchRef: any = ref(null);
   const detailTableRef: any = ref<String | null>(null);
-  const modalType = ref<string>(''); //当前显示基础信息弹框类型
   const detailTableData: any = ref<object[]>([]); //表格数据
+
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined);
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  let basicTableName = ref<string>(''); //需要查询的表名
 
   //获取当前时间
   const getCurrentData = () => {
@@ -274,87 +283,38 @@
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = '';
+      formState.value[e] = undefined;
     });
   };
-
-  //  基本信息弹框表头数据
-  const getInitCols = (key: any) => {
-    const colConfig = {
-      EMP: employeeColumns,
-    };
-    return colConfig[key];
+  // 负责人弹框选放大镜事件
+  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  /**
+   * 负责人弹窗
+   * @param dtoUrlConfig  获取负责人查询链接属性
+   * @param tableName  指向的表名根据DTO链接可以查询到
+   * @param tableUrl  表格列表数据链接
+   * @param dataParam 当前选中的数据包
+   */
+  const onSearch: any = async (
+    dtoUrlConfig: string,
+    tableName: string,
+    tableUrl: string,
+    dataParam: string[],
+  ) => {
+    currDataParam = dataParam;
+    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+    basicControl.value = res;
+    basicTableCols.value = TableColum[dtoUrlConfig];
+    basicTableName.value = tableName;
+    basicSearchRef.value.init(tableUrl);
   };
-
-  // 基本信息弹框选放大镜事件
-  const onSearch: any = async (key) => {
-    modalType.value = key;
-    await getBasicSelectData(key);
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: 'bsStatus',
-            column: 'bs_status',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: 'B',
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    let dataCols = getInitCols(key);
-    let dataList = res;
-    basicSearchRef.value.bSearch(true);
-    basicSearchRef.value.initCols(dataCols);
-    basicSearchRef.value.initList(dataList);
-    return res;
-  };
-
-  // 基础资料弹框查询事件
-  const searchList = async (type, keywords) => {
-    // let param: any = [];
-    // if (keywords) {
-    //   param.push(keywords);
-    // }
-    basicSearchRef.value.initList(
-      await getPublicList(
-        {
-          params: keywords,
-        },
-        config.PUBLIC_REQUEST_URL[type],
-      ),
-    );
-  };
-
-  //基础资料弹框双击选择事件
+  //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
-    switch (modalType.value) {
-      case 'EMP':
-        formState.value.empId = row.id;
-        formState.value.empName = row.name;
-        break;
-    }
-    basicSearchRef.value.bSearch(false);
-  };
-
-  // 基础信息弹框获取下拉框数据
-  const getBasicSelectData = async (key: string) => {
-    try {
-      if (key == 'EMP') {
-        let data = await getEmployeeEntity();
-        let arr: any = cloneDeep(data);
-        arr = arr.filter((e) => e.fieldName != 'bs_status');
-        basicSearchRef.value.init(arr);
-      }
-    } catch (e) {
-      console.log('获取选项字段失败', e);
-    }
+    basicSearchRef.value.close();
+    formState.value[currDataParam[0]] = row.id;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
