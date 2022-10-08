@@ -1,6 +1,7 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { CustomerGroupEntity } from '/@/api/customerGroup';
 
 export interface CustomerEntity extends PublicModel {
   id?: string;
@@ -15,6 +16,8 @@ export interface CustomerEntity extends PublicModel {
   municipal?: number;
   district?: number;
   groupId?: string;
+  bdCustomerGroup?: CustomerGroupEntity;
+  districtArr: number[];
 }
 
 export function getOneCustomer(id: string, mode: ErrorMessageMode = 'message') {

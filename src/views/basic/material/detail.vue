@@ -580,7 +580,7 @@
     const result = await queryOneMatGroup({ params: groupSelectId || '0' });
     if (result) {
       formState.value.groupId = result.id;
-      formState.value.groupName = result.name;
+      formState.value.bdMaterialGroup = result;
     }
   };
   groupEvent();

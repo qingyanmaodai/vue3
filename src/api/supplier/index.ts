@@ -1,6 +1,8 @@
 import { ErrorMessageMode, Result, UploadFileParams } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
+import { EmployeeEntity } from '/@/api/employee';
+import { SupplierGroupEntity } from '/@/api/supplierGroup';
 
 export interface SupplierEntity extends PublicModel {
   id?: string;
@@ -17,6 +19,9 @@ export interface SupplierEntity extends PublicModel {
   district?: number;
   level?: number;
   groupId?: string;
+  bdEmployee?: EmployeeEntity;
+  bdSupplierGroup?: SupplierGroupEntity;
+  districtArr: number[];
 }
 
 export function getOneSupplier(id: string, mode: ErrorMessageMode = 'message') {

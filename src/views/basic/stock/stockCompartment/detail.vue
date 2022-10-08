@@ -69,7 +69,7 @@
             </Row>
             <Row>
               <Col :span="8">
-                <a-form-item label="负责人：" ref="mainBy" name="mainBy" class="item">
+                <a-form-item label="负责人：" ref="empId" name="empId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
