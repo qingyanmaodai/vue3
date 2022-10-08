@@ -5,11 +5,15 @@
         ><RollbackOutlined /> 返回</a
       >
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit" v-show="showSave">保存</Button>
-        <Button danger class="button" @click="handleAudit(0)" v-show="showAudit && formState.id"
+        <Button type="primary" class="button" @click="onSubmit" v-if="formState.bsStatus !== 'B'"
+          >保存</Button
+        >
+        <Button danger class="button" @click="handleAudit(0)" v-if="formState.bsStatus === 'A'"
           >审核</Button
         >
-        <Button danger class="button" @click="handleAudit(1)" v-show="!showAudit">反审核</Button>
+        <Button danger class="button" @click="handleAudit(1)" v-if="formState.bsStatus === 'B'"
+          >反审核</Button
+        >
       </div>
     </LayoutHeader>
     <div class="content">
@@ -38,7 +42,7 @@
                     v-model:value="formState.name"
                     name="name"
                     placeholder="请输入人员名称"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -47,7 +51,7 @@
                   <a-select
                     allowClear
                     class="input"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.sex"
                     show-search
                     placeholder="请选择"
@@ -67,7 +71,7 @@
                     v-model:value="formState.phone"
                     name="name"
                     placeholder="请输入联系电话"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -80,7 +84,7 @@
                     v-model:value="formState.email"
                     name="name"
                     placeholder="请输入邮箱"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -91,7 +95,7 @@
                     class="input"
                     v-model:value="formState.address"
                     placeholder="请输入地址"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -102,7 +106,7 @@
                   <a-select
                     allowClear
                     class="input"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.job"
                     show-search
                     placeholder="请选择"
@@ -114,9 +118,8 @@
               <Col :span="8">
                 <a-form-item
                   label="部门："
-                  v-model:value="formState.deptId"
-                  ref="groupName"
-                  name="groupName"
+                  ref="formState.deptId"
+                  name="formState.deptId"
                   class="item"
                 >
                   <ExInput
@@ -124,11 +127,11 @@
                     class="input"
                     placeholder="请选择部门"
                     label="部门"
-                    :show="!isDisable"
-                    v-model:value="tempFormState.groupName"
-                    :disabled="isDisable"
+                    :show="formState.bsStatus !== 'B'"
+                    :value="formState.bdDepartment"
+                    :disabled="formState.bsStatus === 'B'"
                     @search="onGroupSearch"
-                    @clear="onClear"
+                    @clear="onClear(['deptId', 'bdDepartment'])"
                   />
                 </a-form-item>
               </Col>
@@ -138,7 +141,7 @@
                     class="input"
                     v-model:value="formState.birthday"
                     placeholder="请选择时间..."
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -150,7 +153,7 @@
                     class="input"
                     v-model:value="formState.entryDate"
                     placeholder="请选择时间..."
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -175,7 +178,7 @@
                     placeholder="请添加描述"
                     :rows="3"
                     class="textArea"
-                    :disabled="isDisable"
+                    :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
               </Col>
@@ -215,7 +218,7 @@
       </Tabs>
     </div>
     <!--  部门弹框  -->
-    <a-modal v-model:visible="employeeGroupModel" title="部门" ref="node">
+    <a-modal v-model:visible="employeeGroupModel" title="部门" ref="names">
       <a-tree-select
         loading
         show-search
@@ -270,16 +273,6 @@
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
   /* data */
-
-  //额外表单数据
-  type tempForm = {
-    groupName: string;
-    districtArr: number[];
-  };
-  const tempFormState: UnwrapRef<tempForm> = reactive({
-    groupName: '', //部门名称
-    districtArr: [], //地区数组
-  });
   //表单初始数据
   const formData: UnwrapRef<EmployeeEntity> = {
     id: undefined,
@@ -332,7 +325,7 @@
       const result = await queryOneDept({ params: selectGroupId.value || '0' });
       if (result) {
         formState.value.deptId = result.id;
-        tempFormState.groupName = result.name || '';
+        formState.value.bdDepartment = result;
       }
     }
   };
@@ -344,12 +337,6 @@
     const res: any = await getOneEmployee(entityId);
     if (res) {
       formState.value = res;
-      tempFormState.groupName = res.bdDepartment ? res.bdDepartment.name : '';
-      if (formState.value.bsStatus === 'B') {
-        isDisable.value = true;
-        showAudit.value = false;
-        showSave.value = false;
-      }
     }
   };
 
@@ -390,14 +377,8 @@
           let data;
           if (flag === 0) {
             data = await audit({ params: formState.value });
-            isDisable.value = true;
-            showAudit.value = false;
-            showSave.value = false;
           } else {
             data = await unAudit({ params: formState.value });
-            isDisable.value = false;
-            showAudit.value = true;
-            showSave.value = true;
           }
           formState.value = Object.assign({}, formState.value, data);
           createMessage.success('操作成功');
@@ -429,10 +410,10 @@
   /**
    * 部门选择事件
    * @param value
-   * @param node
+   * @param names
    */
-  const groupSelect = (value, node) => {
-    tempFormState.groupName = node ? node[0] : '';
+  const groupSelect = (value: string, names: string[]) => {
+    formState.value.bdDepartment = { id: value, name: names[0] || '' };
     formState.value.deptId = value;
     employeeGroupModel.value = false;
   };
@@ -458,13 +439,11 @@
       runTree(item.children || []);
     });
   };
-
-  /**
-   * 清空事件
-   */
-  const onClear = () => {
-    formState.value.deptId = '';
-    tempFormState.groupName = '';
+  //点击清空图标清空事件
+  const onClear = (key: string[]) => {
+    key.forEach((e) => {
+      formState.value[e] = undefined;
+    });
   };
 
   const back = () => {
