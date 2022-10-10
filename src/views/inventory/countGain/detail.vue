@@ -154,6 +154,7 @@
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
+            @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
             @setDefaultTableData="setDefaultTableData"
@@ -197,6 +198,7 @@
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { ExInput } from '/@/components/ExInput';
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
@@ -265,13 +267,13 @@
   const formRules = reactive({
     countNum: [
       { required: true, message: '请输入比帐存数量大的盘点数量' },
-      // {
-      //   validator({ cellValue, row }) {
-      //     if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
-      //       return new Error('盘点数量应该大于帐存数量');
-      //     }
-      //   },
-      // },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+            return new Error('盘点数量应该大于帐存数量');
+          }
+        },
+      },
     ],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
@@ -285,6 +287,23 @@
     key.forEach((e) => {
       formState.value[e] = undefined;
     });
+  };
+  //列表页清空事件
+  const clearDetailTableEvent = (data, column) => {
+    console.log(column);
+    if (column.field === 'bdMaterial.number') {
+      data.stockNum = '';
+      data.countNum = '';
+      for (const key in column.params.param) {
+        data[key] = '';
+        data[column.params.param[key]] = {};
+      }
+    } else {
+      for (const key in column.params.param) {
+        data[key] = '';
+        data[column.params.param[key]] = {};
+      }
+    }
   };
   // 负责人弹框选放大镜事件
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
@@ -431,6 +450,7 @@
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
+      console.log(detailTableData.value);
     }
   };
 
@@ -438,8 +458,10 @@
   const getCountAmount = (row) => {
     if (row.countNum && row.stockNum !== null) {
       row.gain = row.countNum - row.stockNum;
-      return row;
+    } else {
+      row.gain = '';
     }
+    return row;
   };
 
   //获取判断双击赋值事件的值
@@ -447,10 +469,10 @@
     let judgeClickIndex = arr.fullData.findIndex((e) => e.bdStock.id === row.id);
     callback(judgeClickIndex);
   };
-  let queryStockParam = reactive({
-    stockCompartment: {},
-    stockLocation: {},
-  });
+  // let queryStockParam = reactive({
+  //   stockCompartment: {},
+  //   stockLocation: {},
+  // });
   const getNextStock = async (key, colName, id) => {
     const res: any = await getPublicList(
       {
@@ -476,7 +498,6 @@
   const cellClickTableEvent = async (row, data, column) => {
     console.log('row', row);
     console.log('data', data);
-
     switch (column) {
       case 'bdMaterial':
         data.matId = row.id;
@@ -520,48 +541,26 @@
       case 'bdStock':
         data.stockId = row.id;
         data.bdStock.name = row.name;
-        data.bdStock.number = row.number;
-        queryStockParam.stockCompartment = {
-          table: '',
-          name: 'stockId',
-          column: 'stock_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id;
         data.bdStockCompartment.name = row.name;
-        data.bdStockCompartment.number = row.number;
-        const stockByStock = await getNextStock('stock', 'id', row.stockId);
-        data.stockId = stockByStock.records[0].id;
-        data.bdStock.name = stockByStock.records[0].name;
-        queryStockParam.stockLocation = {
-          table: '',
-          name: 'compartmentId',
-          column: 'stock_compartment_id',
-          link: 'AND',
-          rule: 'EQ',
-          type: 'string',
-          val: row.id,
-          startWith: '',
-          endWith: '',
-        };
+        if (row.stockId) {
+          data.bdStock.name = row.bdStock.name;
+          data.stockId = row.stockId;
+        }
         break;
       case 'bdStockLocation':
         data.locationId = row.id;
         data.bdStockLocation.name = row.name;
-        data.bdStockLocation.number = row.number;
-        const compartmentByStockLocation = await getNextStock('sub', 'id', row.compartmentId);
-        const stockByStockLocation = await getNextStock('stock', 'id', row.stockId);
-        data.compartmentId = compartmentByStockLocation.records[0].id;
-        data.bdStockCompartment.name = compartmentByStockLocation.records[0].name;
-        data.stockId = stockByStockLocation.records[0].id;
-        data.bdStock.name = stockByStockLocation.records[0].name;
+        if (row.stockId) {
+          data.bdStock = row.bdStock;
+          data.stockId = row.stockId;
+        }
+        if (row.compartmentId) {
+          data.bdStockCompartment = row.bdStockCompartment;
+          data.compartmentId = row.compartmentId;
+        }
         break;
     }
     let stockNumData = await getInventoryList({ params: data });

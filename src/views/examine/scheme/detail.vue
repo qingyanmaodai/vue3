@@ -461,8 +461,10 @@
   };
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
-    data.bdExamineProject={};
-    data.exaProjectId = '';
+    for (const key in column.params.param) {
+      data[key] = '';
+      data[column.params.param[key]] = {};
+    }
   };
   //设置Switch默认
   const setDefaultTableData = (obj) => {

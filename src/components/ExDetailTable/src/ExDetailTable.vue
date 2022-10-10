@@ -40,6 +40,16 @@
         @clear="onClear(row, column)"
       />
     </template>
+    <template #model1="{ row, column }">
+      <ExInput
+        :disabled="row.bsStatus === 'B'"
+        :show="props.isShowIcon"
+        placeholder="请选择"
+        v-model:value="row[sliceBasicProp(column.field)].name"
+        @search="onSearch(row, column)"
+        @clear="onClear(row, column)"
+      />
+    </template>
     <template #open="{ row }">
       <Switch
         :disabled="row.bsStatus === 'B'"
@@ -81,7 +91,16 @@
   import { ExInput } from '/@/components/ExInput';
   import { Button, Switch } from 'ant-design-vue';
   import { config } from '/@/utils/publicParamConfig';
-  import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
+
+  import {
+    ControlSet,
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink'; //公共配置ts
   import { getPublicList } from '/@/api/public';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
@@ -120,26 +139,52 @@
   let validAllErrMapData = ref<string>(''); //表格校验数据
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
-  const basicSearchRef: any = ref(null); //基础信息查询组件ref
+  const xGrid = ref<VxeGridInstance>();
+
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  const xGrid = ref<VxeGridInstance>();
-
-  /**
-   * 基础资料弹窗
-   * @param data
-   * @param column
-   */
-
+  //打开弹框，获取数据
   const onSearch = async (data, column) => {
     nowCheckData.data = column; //输入框column.field
     nowCheckRow.data = data; //当前选中行数据
-    const controlData = await getPublicList({ params: [] }, Url[column.params.select]);
-    basicControl.value = controlData;
+    const res = await getPublicList({ params: [] }, Url[column.params.select]);
+    basicControl.value = res;
     basicTableCols.value = TableColum[column.params.select];
     basicTableName.value = column.params.tableName;
     let filterParams: SearchParams[] = [];
+    if (column.field === 'bdStockCompartment.name') {
+      if (data.stockId) {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.stockId,
+          },
+        ];
+      }
+    }
+    if (column.field === 'bdStockLocation.name') {
+      if (data.compartmentId) {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.compartmentId,
+          },
+        ];
+      }
+    }
     basicSearchRef.value.setFilter(filterParams);
     basicSearchRef.value.init(Url[column.params.list]);
   };
