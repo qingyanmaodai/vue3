@@ -32,8 +32,20 @@
     </template>
     <template #model="{ row, column }">
       <ExInput
+        :disabled="row.bsStatus === 'B'"
         :show="props.isShowIcon"
+        placeholder="请选择"
         v-model:value="row[sliceBasicProp(column.field)].number"
+        @search="onSearch(row, column)"
+        @clear="onClear(row, column)"
+      />
+    </template>
+    <template #model1="{ row, column }">
+      <ExInput
+        :disabled="row.bsStatus === 'B'"
+        :show="props.isShowIcon"
+        placeholder="请选择"
+        v-model:value="row[sliceBasicProp(column.field)].name"
         @search="onSearch(row, column)"
         @clear="onClear(row, column)"
       />
@@ -64,25 +76,34 @@
     </template>
   </vxe-grid>
   <BasicSearch
-    @openSearch="openSearch"
     @basicClickEvent="basicClickEvent"
     :gridOptions="basicGridOptions"
     ref="basicSearchRef"
+    :control="basicControl"
+    :tableCols="basicTableCols"
+    :tableName="basicTableName"
   />
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, onMounted, PropType, reactive, ref } from 'vue';
+  import { onMounted, PropType, reactive, ref } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
-  import { cloneDeep } from 'lodash-es';
   import { ExInput } from '/@/components/ExInput';
   import { Button, Switch } from 'ant-design-vue';
   import { config } from '/@/utils/publicParamConfig';
-  import { SearchDataType, SearchLink, SearchMatchType, TableColum, Url } from '/@/api/apiLink'; //公共配置ts
+  import {
+    ControlSet,
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    TableColum,
+    Url,
+  } from '/@/api/apiLink'; //公共配置ts
   import { getPublicList } from '/@/api/public';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { VxeTablePropTypes } from 'vxe-table/types/all';
+  import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
   import { useMessage } from '/@/hooks/web/useMessage';
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -110,66 +131,76 @@
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
     (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
+    (event: 'onClearList', data, column): void; //清空内容事件
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
   const rowSortData = ref<number>(1); //表格顺序
   let validAllErrMapData = ref<string>(''); //表格校验数据
   const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
-  const basicSearchRef: any = ref(null); //基础信息查询组件ref
   const xGrid = ref<VxeGridInstance>();
-  let paramsData = [
-    {
-      table: '',
-      name: 'bsStatus',
-      column: 'bs_status',
-      link: SearchLink.AND,
-      rule: SearchMatchType.EQ,
-      type: SearchDataType.string,
-      val: 'B',
-      startWith: '',
-      endWith: '',
-    },
-  ];
+
+  //基础信息查询组件ref
+  const basicSearchRef: any = ref<any>(undefined);
+  const basicControl = ref<ControlSet[]>(); //下拉框
+  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
+  let basicTableName = ref<string>(''); //需要查询的表名
+  // let paramsData = [
+  //   {
+  //     table: '',
+  //     name: 'bsStatus',
+  //     column: 'bs_status',
+  //     link: SearchLink.AND,
+  //     rule: SearchMatchType.EQ,
+  //     type: SearchDataType.string,
+  //     val: 'B',
+  //     startWith: '',
+  //     endWith: '',
+  //   },
+  // ];
   //打开弹框，获取数据
   const onSearch = async (data, column) => {
     nowCheckData.data = column; //输入框column.field
     nowCheckRow.data = data; //当前选中行数据
-    const res: any = await getPublicList(
-      {
-        params: paramsData,
-      },
-      //选择分类的接口地址，如基本单位
-      Url[column.params.list],
-    );
-    // const res = await publicEvent([], column); //表格获取数据
-    basicSearchRef.value.initList(res); //表格数据
-    basicSearchRef.value.initCols(TableColum[column.params.select]); //表头
-    basicSearchRef.value.bSearch(true); //打开弹框
-    await getPublicListOption(column); //基本信息查询下拉框
-  };
-  //基本信息查询下拉框
-  const getPublicListOption = async (column: any) => {
-    try {
-      const data: any = await getPublicList(
-        {
-          params: [],
-        },
-        Url[column.params.select],
-      );
-      let arr = cloneDeep(data);
-      arr = arr.filter((e) => e.fieldName != 'bs_status');
-      basicSearchRef.value.getListUnitEvent(arr);
-    } catch (e) {
-      console.log('明细表获取基本信息下拉框选项失败', e);
+    const res = await getPublicList({ params: [] }, Url[column.params.select]);
+    basicControl.value = res;
+    basicTableCols.value = TableColum[column.params.select];
+    basicTableName.value = column.params.tableName;
+    let filterParams: SearchParams[] = [];
+    if (column.field === 'bdStockCompartment.name') {
+      if (data.stockId) {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.stockId,
+          },
+        ];
+      }
     }
+    if (column.field === 'bdStockLocation.name') {
+      if (data.compartmentId) {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.compartmentId,
+          },
+        ];
+      }
+    }
+    basicSearchRef.value.setFilter(filterParams);
+    basicSearchRef.value.init(Url[column.params.list]);
   };
-  //基本信息弹框中需要的数据
-  const openSearch = async (keywords, currentPage, pageSize) => {
-    console.log('res', keywords);
-    const res = await publicEvent(keywords, nowCheckData.data, currentPage, pageSize);
-    basicSearchRef.value.initList(res);
-  };
+
   //截取基本属性
   const sliceBasicProp = (data: string) => {
     return data.split('.')[0];
@@ -186,49 +217,14 @@
     let prop = sliceBasicProp(nowCheckData.data.field);
     await emit('getJudgeClickData', arr, row, (index) => {
       if (index !== -1) {
-        basicSearchRef.value.bSearch(false);
+        basicSearchRef.value.close();
         createMessage.error('该项目已被选择!');
         return;
       }
       emit('cellClickTableEvent', row, nowCheckRow.data, prop);
-      // nowCheckRow.data[prop] = {
-      //   number: row.number,
-      //   name: row.name,
-      //   id: row.id,
-      // };
-      basicSearchRef.value.bSearch(false);
-    });
-  };
 
-  //基本信息数据查询
-  const publicEvent = async (keywords, column, currPage = 1, pageSize = 10) => {
-    // let paramArr: any = [];
-    // if (keywords) {
-    //   paramArr.push(keywords);
-    // }
-    // paramArr.push({
-    //   column: 'bs_status',
-    //   endWith: '',
-    //   link: SearchLink.AND,
-    //   rule: SearchMatchType.LIKE,
-    //   type: SearchDataType.string,
-    //   name: 'bsStatus',
-    //   startWith: '',
-    //   table: '',
-    //   val: 'B',
-    // });
-    if (!keywords) {
-      keywords = paramsData;
-    }
-    return await getPublicList(
-      {
-        params: keywords,
-        pageIndex: currPage,
-        pageRows: pageSize,
-      },
-      //选择分类的接口地址，如基本单位
-      Url[column.params.list],
-    );
+      basicSearchRef.value.close();
+    });
   };
 
   // 格式化数据
@@ -250,11 +246,7 @@
   };
   //点击清空图标清空事件
   const onClear = (data, column) => {
-    data[sliceBasicProp(column.field)] = {
-      number: '',
-      name: '',
-      id: '',
-    };
+    emit('onClearList', data, column);
   };
 
   //新增行
