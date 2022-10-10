@@ -87,7 +87,7 @@
                         placeholder="请选择抽检规则"
                         label="抽检规则"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.ruleName"
+                        :value="formState.bdExamineRule"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_EXA_RULE_DTO', 'bdExamineRule', Url.GET_EXA_RULE_LIST, [
@@ -195,6 +195,8 @@
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
             ref="vxeTableRef"
+            @cellClickTableEvent="cellClickTableEvent"
+            @clearDetailTableEvent="clearDetailTableEvent"
             :detailTableData="detailTableData"
             @setDefaultTableData="setDefaultTableData"
             @getJudgeClickData="getJudgeClickData"
@@ -255,6 +257,7 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import {getInventoryList} from "/@/api/invCountGain";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -279,7 +282,6 @@
     examineType: 'A',
     business: 'A',
     ruleId: '',
-    ruleName: '',
   };
 
   const detailTableData: any = ref<object[]>([]); //表格数据
@@ -337,6 +339,7 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
+    console.log(formState.value)
   };
   //接受参数
   const dataId = useRoute().query.row?.toString();
@@ -355,14 +358,15 @@
           }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
+        let data;
         if (!formState.value.id) {
-          const data = await add({ params: formState.value });
+          data = await add({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
         } else {
-          const data = await update({ params: formState.value });
+          data = await update({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
         }
-        formState.value.bsStatus = 'A';
+        await init(data.id);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -426,31 +430,39 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async () => {
+  const init = async (dataId) => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.bdExamineDetailList) {
         formState.value.bdExamineDetailList.map((r) => {
           r.bsStatus = formState.value.bsStatus;
-          if (!r.bdExamineProject) {
-            r.bdExamineProject = {
-              id: '',
-              name: '',
-              number: '',
-            };
-            return r;
-          }
         });
       }
       detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
     }
   };
 
-  //获取判断双击赋值事件的值
+  //明细表获取判断双击赋值事件的值
   const getJudgeClickData = (arr, row, callback) => {
     let judgeClickIndex = arr.fullData.findIndex((e) => e.bdExamineProject.id === row.id);
     callback(judgeClickIndex);
+  };
+  //明细表双击赋值事件
+  const cellClickTableEvent = async (row, data, column) => {
+    switch (column) {
+      case 'bdExamineProject':
+        data.exaProjectId = row.id;
+        data.bdExamineProject.id = row.id;
+        data.bdExamineProject.number = row.number;
+        data.bdExamineProject.name = row.name;
+        break;
+    }
+  };
+  //明细表清空事件
+  const clearDetailTableEvent = (data, column) => {
+    data.bdExamineProject={};
+    data.exaProjectId = '';
   };
   //设置Switch默认
   const setDefaultTableData = (obj) => {
@@ -460,7 +472,7 @@
   };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
-    init();
+    init(dataId);
   });
 </script>
 <style scoped lang="less">

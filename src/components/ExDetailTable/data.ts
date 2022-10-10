@@ -149,11 +149,20 @@ export const exaProjectOfDetailColumns = [
   // { field: 'number', title: '编码', width: 150, editRender: { name: '$input' } },
   // { field: 'name', title: '检验详情名称', width: 150, editRender: { name: '$input' } },
   {
+    field: 'exaProjectId', //检验项目
+    visible: false,
+  },
+  {
+    field: 'bdExamineProject.id', //检验项目
+    visible: false,
+  },
+  {
     field: 'bdExamineProject.number',
     title: '检验项目编码',
     sortable: true,
     width: 180,
     params: {
+      tableName: 'BdExamineProject',
       list: 'GET_EXA_PROJECT_LIST', //检验项目表格数据
       select: 'GET_EXA_PROJECT_DTO', //基本信息下拉框+表头
     },
@@ -167,7 +176,7 @@ export const exaProjectOfDetailColumns = [
     title: '检验项目名称',
     className: 'disableProp',
     sortable: true,
-    // width: 150,
+    width: 150,
   },
   {
     field: 'min',
@@ -237,6 +246,7 @@ export const invCountGainOfDetailColumns = [
     sortable: true,
     width: 150,
     params: {
+      tableName: 'BdMaterial',
       list: 'GET_MATERIAL_LIST', //物料信息表格数据
       select: 'GET_MAT_DTO', //基本信息下拉框+表头
     },
