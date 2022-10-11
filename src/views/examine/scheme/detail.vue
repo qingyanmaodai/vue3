@@ -430,7 +430,7 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async (dataId) => {
+  const init = async (dataId:string) => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;

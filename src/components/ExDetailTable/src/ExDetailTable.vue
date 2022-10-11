@@ -194,12 +194,12 @@
     return data.split('.')[0];
   };
 
-  const editClosed = (row) => {
+  const editClosed = (row: any) => {
     emit('getCountAmount', row.row); //计算
   };
 
   //基本信息表格双击事件
-  const basicClickEvent = async (row) => {
+  const basicClickEvent = async (row: object) => {
     const $grid: any = xGrid.value;
     let arr = $grid.getTableData();
     let prop = sliceBasicProp(nowCheckData.data.field);
@@ -232,7 +232,7 @@
     }
   };
   //点击清空图标清空事件
-  const onClear = (data, column) => {
+  const onClear = (data: object, column: object) => {
     emit('clearDetailTableEvent', data, column);
   };
 
