@@ -453,9 +453,10 @@
     switch (column) {
       case 'bdExamineProject':
         data.exaProjectId = row.id;
-        data.bdExamineProject.id = row.id;
-        data.bdExamineProject.number = row.number;
-        data.bdExamineProject.name = row.name;
+        // data.bdExamineProject.id = row.id;
+        // data.bdExamineProject.number = row.number;
+        // data.bdExamineProject.name = row.name;
+        data.bdExamineProject = row;
         break;
     }
   };
