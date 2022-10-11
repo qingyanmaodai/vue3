@@ -89,6 +89,7 @@
                       <a-date-picker
                         :showToday="false"
                         class="select"
+                        valueFormat="YYYY-MM-DD HH:mm:ss"
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
@@ -221,6 +222,7 @@
   import moment from 'moment';
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getMatTableById } from '/@/api/matTable';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -357,7 +359,6 @@
         //保存：新增+更新
         let data = await add({ params: formState.value });
         console.log('data.id', data.id);
-        formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
         await getListById(data.id);
         createMessage.success('操作成功');
       })
@@ -395,7 +396,6 @@
           }
           createMessage.success('操作成功');
         }
-        formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         createMessage.error('数据校检不通过，请检查!');
@@ -420,7 +420,6 @@
       }
       createMessage.success('操作成功');
     }
-    formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
   };
   //返回上一页
   const back = () => {
@@ -435,14 +434,12 @@
         formState.value.empId = res.empId ? res.empId : '';
         formState.value.empName = res.empName ? res.empName : '';
       }
-      formState.value.bsDate = moment(formState.value.bsDate, 'YYYY-MM-DD hh:mm:ss');
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
-      console.log(detailTableData.value);
     }
   };
 
@@ -474,18 +471,21 @@
     console.log('data', data);
     switch (column) {
       case 'bdMaterial':
-        data.matId = row.id ? row.id : null;
-        data.bdMaterial.number = row.number ? row.number : null;
-        data.bdMaterial.name = row.name ? row.name : null;
-        data.bdMaterial.model = row.model ? row.model : null;
-        data.bdMaterial.baseUnitName = row.baseUnit ? row.baseUnit.name : null;
-        data.bdMaterial.weightUnitName = row.weightUnit ? row.weightUnit.name : null;
-        data.stockId = row.stockId ? row.stockId : null;
-        data.bdStock.name = row.bdStock ? row.bdStock.name : null;
-        data.compartmentId = row.compartmentId ? row.compartmentId : null;
-        data.bdStockCompartment.name = row.bdStockCompartment ? row.bdStockCompartment : null;
-        data.locationId = row.locationId ? row.locationId : null;
-        data.bdStockLocation.name = row.bdStockLocation ? row.bdStockLocation.name : null;
+        const res: any = await getMatTableById({
+          params: row.id,
+        });
+        data.matId = res.id ? res.id : null;
+        data.bdMaterial.number = res.number ? res.number : null;
+        data.bdMaterial.name = res.name ? res.name : null;
+        data.bdMaterial.model = res.model ? res.model : null;
+        data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
+        data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
+        data.stockId = res.bdStock ? res.bdStock.id : null;
+        data.bdStock.name = res.bdStock ? res.bdStock.name : null;
+        data.compartmentId = res.compartmentId ? res.compartmentId : null;
+        data.bdStockCompartment.name = res.bdStockCompartment ? res.bdStockCompartment.name : null;
+        data.locationId = res.locationId ? res.locationId : null;
+        data.bdStockLocation.name = res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
         data.stockId = row.id ? row.id : null;

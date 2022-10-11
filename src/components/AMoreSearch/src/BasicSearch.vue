@@ -380,7 +380,7 @@
   const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
     pages.currentPage = currentPage;
     pages.pageSize = pageSize;
-    await getList(currentPage);
+    await getList(listUrl.value, currentPage);
   };
 
   const getList = async (url, currPage = 1, pageSize = pages.pageSize) => {

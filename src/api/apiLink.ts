@@ -395,7 +395,7 @@ export const TableColum = {
     { field: 'weightUnit.name', title: '重量单位', sortable: true, width: 120 },
     { field: 'bdStock.name', title: '仓库', sortable: true, width: 120 },
     { field: 'bdStockCompartment.name', title: '分仓', sortable: true, width: 120 },
-    { field: 'location.name', title: '仓位', sortable: true, width: 120 },
+    { field: 'bdStockLocation.name', title: '仓位', sortable: true, width: 120 },
     { field: 'bdMaterialGroup.name', title: '物料分组', sortable: true, width: 120 },
     {
       field: 'attr',

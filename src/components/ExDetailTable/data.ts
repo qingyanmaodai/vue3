@@ -20,7 +20,7 @@ export const ruleOfExaGridOptions = reactive<VxeGridProps>({
   editConfig: {
     trigger: 'dblclick',
     mode: 'cell',
-    showStatus: true,
+    // showStatus: true,
     beforeEditMethod({ row }) {
       if (row.bsStatus === 'B') {
         return false;
@@ -149,14 +149,6 @@ export const exaProjectOfDetailColumns = [
   // { field: 'number', title: '编码', width: 150, editRender: { name: '$input' } },
   // { field: 'name', title: '检验详情名称', width: 150, editRender: { name: '$input' } },
   {
-    field: 'exaProjectId', //检验项目
-    visible: false,
-  },
-  {
-    field: 'bdExamineProject.id', //检验项目
-    visible: false,
-  },
-  {
     field: 'bdExamineProject.number',
     title: '检验项目编码',
     sortable: true,
@@ -219,30 +211,7 @@ export const exaProjectOfDetailColumns = [
 //盘盈单详情
 export const invCountGainOfDetailColumns = [
   { type: 'checkbox', width: 50 },
-  { field: 'seq', type: 'seq', title: '行号', width: 50 },
-  {
-    field: 'sort',
-    title: '顺序',
-    sortable: true,
-    width: 100,
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
-  },
-  {
-    field: 'matId', //物料编码
-    visible: false,
-  },
-  {
-    field: 'locationId', //仓位
-    visible: false,
-  },
-  {
-    field: 'compartmentId', //分仓
-    visible: false,
-  },
-  {
-    field: 'stockId', //仓库
-    visible: false,
-  },
+  { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
   {
     field: 'bdMaterial.number',
     title: '物料编码',
@@ -271,7 +240,13 @@ export const invCountGainOfDetailColumns = [
     sortable: true,
     width: 150,
   },
-  { field: 'bdMaterial.model', title: '规格型号', width: 150, sortable: true },
+  {
+    field: 'bdMaterial.model',
+    title: '规格型号',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
   {
     field: 'bdMaterial.baseUnitName',
     title: '基本单位',
