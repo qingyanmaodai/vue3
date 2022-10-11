@@ -30,7 +30,7 @@
                         class="input"
                         autocomplete="off"
                         v-model:value="formState.number"
-                        placeholder="请输入方案编码"
+                        :placeholder="formState.bsStatus === 'B'?'':'请输入方案编码'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -43,7 +43,7 @@
                         autocomplete="off"
                         v-model:value="formState.name"
                         name="name"
-                        placeholder="请输入方案名称"
+                        :placeholder="formState.bsStatus === 'B'?'':'请输入方案名称'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -84,7 +84,7 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        placeholder="请选择抽检规则"
+                        :placeholder="formState.bsStatus === 'B'?'':'请选择抽检规则'"
                         label="抽检规则"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.bdExamineRule"
@@ -132,7 +132,7 @@
                     >
                       <a-textArea
                         v-model:value="formState.description"
-                        placeholder="请添加方案描述:"
+                        :placeholder="formState.bsStatus === 'B'?'':'请添加方案描述'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
@@ -143,7 +143,7 @@
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
-                        placeholder="请添加备注"
+                        :placeholder="formState.bsStatus === 'B'?'':'请输入备注'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
@@ -297,7 +297,7 @@
       { required: false },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.max) > Number(cellValue)) {
+          if (Number(cellValue) && Number(row.min) > Number(cellValue)) {
             return new Error('最大值应该大于最小值');
           }
         },
@@ -307,7 +307,7 @@
       { required: false },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.min) < Number(cellValue)) {
+          if (Number(cellValue) && Number(row.max) < Number(cellValue)) {
             return new Error('最小值应该小于最大值');
           }
         },

@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入仓库编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入仓库编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入仓库名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入仓库名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -51,7 +51,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择责任人"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择责任人'"
                     label="责任人"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdEmployee"
@@ -75,7 +75,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.phone"
-                    placeholder="请输入联系电话"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入联系电话'"
                     :disabled="formState.bsStatus === 'B'"
                     onkeyup="value=value.replace(/[^\d\-]/g,'')"
                     :maxlength="20"
@@ -90,7 +90,7 @@
                     autocomplete="off"
                     v-model:value="formState.address"
                     name="name"
-                    placeholder="请输入仓库地址"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入仓库地址'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -112,7 +112,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"

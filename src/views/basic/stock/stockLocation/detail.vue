@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入仓位编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入仓位编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入仓位名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入仓位名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -54,7 +54,7 @@
                     autocomplete="off"
                     v-model:value="formState.address"
                     name="name"
-                    placeholder="请输入地址"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入地址'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -66,7 +66,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择所属仓库"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择所属仓库'"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStock"
@@ -91,7 +91,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择所属分仓"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择所属分仓'"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStockCompartment"
@@ -125,7 +125,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"

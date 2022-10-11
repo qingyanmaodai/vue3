@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入客户编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入客户编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入客户名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入客户名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -52,7 +52,7 @@
                     allowClear
                     class="input"
                     v-model:value="formState.shortName"
-                    placeholder="请输入简称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入简称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -67,7 +67,7 @@
                     :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.country"
                     show-search
-                    placeholder="请选择"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                     :options="countryData"
                     :filter-option="filterOption"
                     @change="countryHandleChange"
@@ -85,7 +85,7 @@
                     :options="districtData"
                     :load-data="loadDistrictData"
                     change-on-select
-                    placeholder="请选择"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                   />
                 </a-form-item>
               </Col>
@@ -95,7 +95,7 @@
                     allowClear
                     class="input"
                     v-model:value="formState.address"
-                    placeholder="请输入地址"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入地址'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -109,7 +109,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.contact"
-                    placeholder="请输入联系人"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入联系人'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -122,7 +122,7 @@
                     autocomplete="off"
                     v-model:value="formState.phone"
                     name="name"
-                    placeholder="请输入联系电话"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入联系电话'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -132,7 +132,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择客户分组"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户分组'"
                     label="客户分组"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdCustomerGroup"
@@ -160,7 +160,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <TextArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
