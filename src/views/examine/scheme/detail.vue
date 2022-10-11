@@ -194,7 +194,7 @@
             :columns="exaProjectOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
-            ref="vxeTableRef"
+            ref="detailTableRef"
             @cellClickTableEvent="cellClickTableEvent"
             @clearDetailTableEvent="clearDetailTableEvent"
             :detailTableData="detailTableData"
@@ -247,17 +247,12 @@
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import {
-    ControlSet,
-    SearchParams,
-    TableColum,
-    Url,
-  } from '/@/api/apiLink';
+  import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import {getInventoryList} from "/@/api/invCountGain";
+  import { getInventoryList } from '/@/api/invCountGain';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -272,7 +267,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  const vxeTableRef: any = ref<String | null>(null);
+  const detailTableRef: any = ref<String | null>(null);
   const formData: ExaEntity = {
     id: undefined,
     number: '',
@@ -298,6 +293,26 @@
     ruleId: [{ required: true, message: '请选择抽检规则' }],
     business: [{ required: true, message: '请选择抽检规则' }],
     examineType: [{ required: true, message: '请选择抽检规则' }],
+    max: [
+      { required: false },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.max) > Number(cellValue)) {
+            return new Error('最大值应该大于最小值');
+          }
+        },
+      },
+    ],
+    min: [
+      { required: false },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.min) < Number(cellValue)) {
+            return new Error('最小值应该小于最大值');
+          }
+        },
+      },
+    ],
   });
   formRules[project] = [{ required: true, message: '请选择检验项目' }];
 
@@ -339,23 +354,26 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
-    console.log(formState.value)
+    console.log(formState.value);
   };
   //接受参数
-  const dataId = useRoute().query.row?.toString();
+  const dataId = useRoute().query.row?.toString()||'';
 
   //保存
   const onSubmit = async () => {
     formRef.value
       .validate()
       .then(async () => {
-        const tableFullData = vxeTableRef.value.getDetailData();
-        const validAllErrMapData = await vxeTableRef.value.getValidAllData();
-        if (tableFullData) {
-          if (validAllErrMapData) {
-            await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
-            return;
-          }
+          const tableFullData = detailTableRef.value.getDetailData();
+          const validAllErrMapData = await detailTableRef.value.getValidAllData();
+          if (tableFullData) {
+            if (validAllErrMapData) {
+              await VXETable.modal.message({
+                status: 'error',
+                message: '明细表数据校检不通过，请检查!',
+              });
+              return;
+            }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
         let data;
@@ -381,8 +399,8 @@
       .then(async () => {
         const type = await VXETable.modal.confirm('您确定要保存并审核吗?');
         if (type === 'confirm') {
-          const tableFullData = vxeTableRef.value.getDetailData();
-          const validAllErrMapData = await vxeTableRef.value.getValidAllData();
+          const tableFullData = detailTableRef.value.getDetailData();
+          const validAllErrMapData = await detailTableRef.value.getValidAllData();
           if (tableFullData) {
             if (validAllErrMapData) {
               await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
@@ -410,7 +428,7 @@
   const onUnAudit = async () => {
     const type = await VXETable.modal.confirm('您确定要反审核吗?');
     if (type === 'confirm') {
-      const tableFullData = vxeTableRef.value.getDetailData();
+      const tableFullData = detailTableRef.value.getDetailData();
       if (tableFullData) {
         formState.value.bdExamineDetailList = cloneDeep(tableFullData);
       }
@@ -430,7 +448,7 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async (dataId:string) => {
+  const init = async (dataId: string) => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
@@ -471,7 +489,7 @@
   const setDefaultTableData = (obj) => {
     obj.isOpen = 1;
     obj.isRequire = 1;
-    obj.sort = cloneDeep(vxeTableRef.value.rowSortData);
+    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
   };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
