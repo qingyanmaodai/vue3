@@ -439,14 +439,6 @@
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
-          // if (!r.bdStock) {
-          //   r.bdStock = {
-          //     id: '',
-          //     name: '',
-          //     number: '',
-          //   };
-          //   return r;
-          // }
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
@@ -466,98 +458,53 @@
 
   //获取判断双击赋值事件的值
   const getJudgeClickData = (arr, row, callback) => {
-    let judgeClickIndex = arr.fullData.findIndex((e) => e.bdStock.id === row.id);
+    let judgeClickIndex = arr.fullData.findIndex(
+      (e) =>
+        e.stockId === row.id ||
+        e.compartmentId === row.id ||
+        e.locationId === row.id ||
+        e.matId === row.id,
+    );
     callback(judgeClickIndex);
   };
-  // let queryStockParam = reactive({
-  //   stockCompartment: {},
-  //   stockLocation: {},
-  // });
-  const getNextStock = async (key, colName, id) => {
-    const res: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: colName,
-            column: colName,
-            link: 'AND',
-            rule: 'LIKE',
-            type: 'number',
-            val: id,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-      },
-      config.PUBLIC_REQUEST_URL[key],
-    );
-    return res;
-  };
+
   //双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
     console.log('row', row);
     console.log('data', data);
     switch (column) {
       case 'bdMaterial':
-        data.matId = row.id;
-        data.bdMaterial.number = row.number;
-        data.bdMaterial.name = row.name;
-        data.bdMaterial.model = row.model;
-        if (row.baseUnit) {
-          data.bdMaterial.baseUnitName = row.baseUnit.name;
-        }
-        if (row.weightUnit) {
-          data.bdMaterial.weightUnitName = row.weightUnit.name;
-        }
-        if (row.stockId) {
-          const stockByMaterial = await getNextStock('stock', 'id', row.stockId);
-          data.stockId = stockByMaterial.records[0].id;
-          data.bdStock.name = stockByMaterial.records[0].name;
-          data.bdStock.number = stockByMaterial.records[0].number;
-        } else {
-          data.stockId = '';
-          data.bdStock.name = '';
-        }
-        if (row.compartmentId) {
-          const compartmentByMaterial = await getNextStock('sub', 'id', row.compartmentId);
-          data.compartmentId = compartmentByMaterial.records[0].id;
-          data.bdStockCompartment.name = compartmentByMaterial.records[0].name;
-          data.bdStockCompartment.number = compartmentByMaterial.records[0].number;
-        } else {
-          data.compartmentId = '';
-          data.bdStockCompartment.name = '';
-        }
-        if (row.locationId) {
-          const locationByMaterial = await getNextStock('location', 'id', row.locationId);
-          data.locationId = locationByMaterial.records[0].id;
-          data.bdStockLocation.name = locationByMaterial.records[0].name;
-          data.bdStockLocation.number = locationByMaterial.records[0].number;
-        } else {
-          data.locationId = '';
-          data.bdStockLocation.name = '';
-        }
+        data.matId = row.id ? row.id : null;
+        data.bdMaterial.number = row.number ? row.number : null;
+        data.bdMaterial.name = row.name ? row.name : null;
+        data.bdMaterial.model = row.model ? row.model : null;
+        data.bdMaterial.baseUnitName = row.baseUnit ? row.baseUnit.name : null;
+        data.bdMaterial.weightUnitName = row.weightUnit ? row.weightUnit.name : null;
+        data.stockId = row.stockId ? row.stockId : null;
+        data.bdStock.name = row.bdStock ? row.bdStock.name : null;
+        data.compartmentId = row.compartmentId ? row.compartmentId : null;
+        data.bdStockCompartment.name = row.bdStockCompartment ? row.bdStockCompartment : null;
+        data.locationId = row.locationId ? row.locationId : null;
+        data.bdStockLocation.name = row.bdStockLocation ? row.bdStockLocation.name : null;
         break;
       case 'bdStock':
-        data.stockId = row.id;
-        data.bdStock.name = row.name;
+        data.stockId = row.id ? row.id : null;
+        data.bdStock.name = row.name ? row.name : null;
         break;
       case 'bdStockCompartment':
-        data.compartmentId = row.id;
-        data.bdStockCompartment.name = row.name;
-        if (row.stockId) {
-          data.bdStock.name = row.bdStock.name;
-          data.stockId = row.stockId;
-        }
-        break;
-      case 'bdStockLocation':
-        data.locationId = row.id;
-        data.bdStockLocation.name = row.name;
+        data.compartmentId = row.id ? row.id : null;
+        data.bdStockCompartment.name = row.name ? row.name : null;
         if (row.stockId) {
           data.bdStock = row.bdStock;
           data.stockId = row.stockId;
         }
-        if (row.compartmentId) {
+        break;
+      case 'bdStockLocation':
+        data.locationId = row.id ? row.id : null;
+        data.bdStockLocation.name = row.name ? row.name : null;
+        if (row.stockId && row.compartmentId) {
+          data.bdStock = row.bdStock;
+          data.stockId = row.stockId;
           data.bdStockCompartment = row.bdStockCompartment;
           data.compartmentId = row.compartmentId;
         }
