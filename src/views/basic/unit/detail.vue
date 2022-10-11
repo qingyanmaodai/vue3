@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入单位编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入单位编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入单位名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入单位名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -51,7 +51,7 @@
                   <Select
                     v-model:value="formState.bsType"
                     class="select"
-                    placeholder="请选择单位类型"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择单位类型'"
                     :options="config.UNIT_TYPE"
                     :disabled="formState.bsStatus === 'B'"
                   />
@@ -74,7 +74,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"

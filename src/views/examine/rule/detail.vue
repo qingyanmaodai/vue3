@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入项目编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入项目编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入项目名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入项目名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -107,7 +107,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加备注"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
@@ -155,7 +155,6 @@
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
-    Card,
     Col,
     Form,
     FormItem,
@@ -177,7 +176,6 @@
   const { createMessage } = useMessage();
   const AForm = Form;
   const AFormItem = FormItem;
-  const ACard = Card;
   const ATextArea = Input.TextArea;
   const router = useRouter();
   const formRef = ref();

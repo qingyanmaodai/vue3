@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入项目编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入项目编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入项目名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入项目名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -51,7 +51,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择项目类别"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择项目类别'"
                     label="项目类别"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdExamineGroup"
@@ -79,7 +79,7 @@
                 <a-form-item label="检验描述：" ref="description" name="description" class="item">
                   <a-textArea
                     v-model:value="formState.description"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加检验描述'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
@@ -90,7 +90,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"

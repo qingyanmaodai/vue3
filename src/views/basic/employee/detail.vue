@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入人员编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入人员编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入人员名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入人员名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -54,7 +54,7 @@
                     :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.sex"
                     show-search
-                    placeholder="请选择"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                     :options="config.GENDER"
                     :filter-option="filterOption"
                   />
@@ -70,7 +70,7 @@
                     autocomplete="off"
                     v-model:value="formState.phone"
                     name="name"
-                    placeholder="请输入联系电话"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入联系电话'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -83,7 +83,7 @@
                     autocomplete="off"
                     v-model:value="formState.email"
                     name="name"
-                    placeholder="请输入邮箱"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入邮箱'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -94,7 +94,7 @@
                     allowClear
                     class="input"
                     v-model:value="formState.address"
-                    placeholder="请输入地址"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入地址'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -109,7 +109,7 @@
                     :disabled="formState.bsStatus === 'B'"
                     v-model:value="formState.job"
                     show-search
-                    placeholder="请选择"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                     :options="config.JOB"
                     :filter-option="filterOption"
                   />
@@ -125,7 +125,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择部门"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择部门'"
                     label="部门"
                     :show="formState.bsStatus !== 'B'"
                     :value="formState.bdDepartment"
@@ -140,7 +140,7 @@
                   <a-date-picker
                     class="input"
                     v-model:value="formState.birthday"
-                    placeholder="请选择时间..."
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择出生日期'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -152,7 +152,7 @@
                   <a-date-picker
                     class="input"
                     v-model:value="formState.entryDate"
-                    placeholder="请选择时间..."
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择入职日期'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -175,7 +175,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <TextArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
@@ -301,10 +301,7 @@
   const selectGroupId = ref<string>(''); //路由参数，部门Id
   const treeData = ref<TreeItem>([]); //部门数据
   const employeeGroupModel = ref<boolean>(false); //部门弹框显示状态
-  const showAudit = ref<boolean>(true); //显示审核/反审核按钮
-  const showSave = ref<boolean>(true); //显示保存按钮
   const activeTabs = ref<string>('basicInfo'); //当前激活板块
-  const isDisable = ref<boolean>(false); //表单禁用状态
 
   /* method */
 

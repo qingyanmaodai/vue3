@@ -28,7 +28,7 @@
                     class="input"
                     autocomplete="off"
                     v-model:value="formState.number"
-                    placeholder="请输入物料编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入物料编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -41,7 +41,7 @@
                     autocomplete="off"
                     v-model:value="formState.name"
                     name="name"
-                    placeholder="请输入物料名称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入物料名称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -52,7 +52,7 @@
                     allowClear
                     class="input"
                     v-model:value="formState.shortName"
-                    placeholder="请输入简称"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入简称'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -65,7 +65,7 @@
                     :show="formState.bsStatus !== 'B'"
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择基本单位"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择基本单位'"
                     v-model:value="formState.baseUnit"
                     :disabled="formState.bsStatus === 'B'"
                     @search="
@@ -83,7 +83,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择物料分组"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择物料分组'"
                     label="物料分组"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdMaterialGroup"
@@ -110,7 +110,7 @@
                   <ExInput
                     class="input"
                     autocomplete="off"
-                    placeholder="请选择重量单位"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择重量单位'"
                     label="重量单位"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.weightUnit"
@@ -128,6 +128,7 @@
               <Col :span="8">
                 <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
                   <InputNumber
+                    :placeholder="formState.bsStatus === 'B'?'':'请输入净重'"
                     class="input"
                     :min="0"
                     :step="0.1"
@@ -140,7 +141,7 @@
                   <Input
                     class="input"
                     v-model:value="formState.model"
-                    placeholder="请输入规格型号"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入规格型号'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -166,7 +167,7 @@
                   <Input
                     class="input"
                     v-model:value="formState.oldMatNumber"
-                    placeholder="请输入旧物料编码"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入旧物料编码'"
                     :disabled="formState.bsStatus === 'B'"
                   />
                 </a-form-item>
@@ -178,7 +179,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择仓库"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓库'"
                     label="仓库"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStock"
@@ -207,7 +208,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择分仓"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择分仓'"
                     label="分仓"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStockCompartment"
@@ -236,7 +237,7 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    placeholder="请选择仓位"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓位'"
                     label="仓位"
                     :show="formState.bsStatus !== 'B'"
                     v-model:value="formState.bdStockLocation"
@@ -259,7 +260,7 @@
                 <a-form-item label="备注：" ref="mark" name="mark" class="item">
                   <a-textArea
                     v-model:value="formState.mark"
-                    placeholder="请添加描述"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                     :rows="3"
                     class="textArea"
                     :disabled="formState.bsStatus === 'B'"
@@ -376,7 +377,7 @@
                     <ExInput
                       autocomplete="off"
                       class="input"
-                      placeholder="请选择检验方案"
+                      :placeholder="formState.bsStatus === 'B' ? '' : '请选择检验方案'"
                       label="检验方案"
                       :show="formState.bsStatus !== 'B'"
                       v-model:value="formState.bdExamine"
@@ -396,6 +397,7 @@
                 <Col :span="8">
                   <a-form-item label="最小库存：" ref="minSize" name="minSize" class="item">
                     <InputNumber
+                      :placeholder="formState.bsStatus === 'B' ? '' : '请输入最小库存'"
                       class="input"
                       v-model:value="formState.minStockNum"
                       :disabled="formState.bsStatus === 'B'"
@@ -404,6 +406,7 @@
                 <Col :span="8">
                   <a-form-item label="最大库存：" ref="maxSize" name="maxSize" class="item">
                     <InputNumber
+                      :placeholder="formState.bsStatus === 'B' ? '' : '请输入最大库存'"
                       class="input"
                       v-model:value="formState.maxStockNum"
                       :disabled="formState.bsStatus === 'B'"
@@ -417,6 +420,7 @@
                     class="item"
                   >
                     <InputNumber
+                      :placeholder="formState.bsStatus === 'B' ? '' : '请输入安全库存'"
                       class="input"
                       v-model:value="formState.safeStockNum"
                       :disabled="formState.bsStatus === 'B'"
@@ -432,6 +436,7 @@
                     class="item"
                   >
                     <InputNumber
+                      :placeholder="formState.bsStatus === 'B' ? '' : '请输入存储期'"
                       class="input"
                       v-model:value="formState.storagePeriod"
                       :min="0"

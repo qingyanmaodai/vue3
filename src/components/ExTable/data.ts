@@ -315,6 +315,7 @@ export const exaRuleColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //检验方案

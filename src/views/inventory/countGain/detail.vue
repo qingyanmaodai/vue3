@@ -102,7 +102,7 @@
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
-                        placeholder="请添加备注"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
