@@ -430,7 +430,7 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async (dataId) => {
+  const init = async (dataId:string) => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
@@ -453,9 +453,10 @@
     switch (column) {
       case 'bdExamineProject':
         data.exaProjectId = row.id;
-        data.bdExamineProject.id = row.id;
-        data.bdExamineProject.number = row.number;
-        data.bdExamineProject.name = row.name;
+        // data.bdExamineProject.id = row.id;
+        // data.bdExamineProject.number = row.number;
+        // data.bdExamineProject.name = row.name;
+        data.bdExamineProject = row;
         break;
     }
   };
