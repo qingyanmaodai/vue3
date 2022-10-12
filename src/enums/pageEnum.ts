@@ -31,4 +31,6 @@ export enum PageEnum {
   EXA_SCHEME_DETAIL = '/examine/scheme/detail',
   //盘盈单详情页
   INV_COUNT_GAIN_DETAIL = '/inventory/countGain/detail',
+  //盘亏单详情页
+  INV_COUNT_LOSS_DETAIL = '/inventory/countLoss/detail',
 }

@@ -232,6 +232,25 @@ export enum Url {
   ADD_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/update', //编辑
+
+  // 盘亏单
+  AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/audit', //审核
+  BATCH_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-audit', //批量审核
+  UN_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/un-audit', //反审核
+  UN_BATCH_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-un-audit', //批量反审核
+  // DELETE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete', //删除
+  // BATCH_DELETE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete-with-detail', //删除含详情信息
+  GET_PAGE_INV_COUNT_LOSS_LIST = '/wms/bd-inventory-count-loss/list', //分页查询--获取列表
+  GET_INV_COUNT_LOSS_DTO = '/wms/bd-inventory-count-loss/query-dto', //获取实体信息
+  GET_ONE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/query-one', //查询单条
+  IMPORT_INV_COUNT_LOSS = 'http://192.168.200.136:9999/wms/bd-inventory-count-loss/import-list', //导入
+  IMPORT_MODEL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/import-model', //导入模板下载
+  EXPORT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/export-list', //导出
+  // ADD_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save', //添加
+  ADD_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save-with-detail', //添加含详情信息
+  UPDATE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/update', //编辑
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
@@ -369,8 +388,34 @@ export const TableColum = {
     { field: 'dtData.bdMaterial.name', title: '物料名称', sortable: true },
     { field: 'dtData.bdMaterial.model', title: '规格型号', sortable: true },
     { field: 'dtData.baseUnitName', title: '单位', sortable: true },
+    { field: 'stockNum', title: '帐存数量', sortable: true },
     { field: 'gain', title: '盘盈数量', sortable: true },
-    { field: 'gain', title: '盘盈数量', sortable: true },
+    { field: 'way', title: '盘点方式', sortable: true }, //普通盘点，全盘点
+    { field: 'empId', title: '盘点人', sortable: true },
+    { field: 'bsDate', title: '盘点日期', sortable: true },
+    { field: 'dtData.bdStock.name', title: '仓库', sortable: true },
+    { field: 'dtData.bdStockCompartment.name', title: '分仓', sortable: true },
+    { field: 'dtData.location.name', title: '仓位', sortable: true },
+    {
+      field: 'bsStatus',
+      title: '数据状态',
+      sortable: true,
+      slots: { default: 'status' },
+    },
+  ],
+
+  //盘亏单
+  GET_INV_COUNT_LOSS_DTO: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '单据编号', sortable: true },
+    { field: 'dtLk.srcField', title: '来源单号', sortable: true },
+    { field: 'dtData.bdMaterial.number', title: '物料编号', sortable: true },
+    { field: 'dtData.bdMaterial.name', title: '物料名称', sortable: true },
+    { field: 'dtData.bdMaterial.model', title: '规格型号', sortable: true },
+    { field: 'dtData.baseUnitName', title: '单位', sortable: true },
+    { field: 'stockNum', title: '帐存数量', sortable: true },
+    { field: 'loss', title: '盘亏数量', sortable: true },
     { field: 'way', title: '盘点方式', sortable: true }, //普通盘点，全盘点
     { field: 'empId', title: '盘点人', sortable: true },
     { field: 'bsDate', title: '盘点日期', sortable: true },

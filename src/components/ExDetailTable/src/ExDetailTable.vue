@@ -63,6 +63,9 @@
     <template #gain="{ row }">
       <span>{{ row.gain }}</span>
     </template>
+    <template #loss="{ row }">
+      <span>{{ row.loss }}</span>
+    </template>
 
     <template #isRequire="{ row }">
       <Switch
