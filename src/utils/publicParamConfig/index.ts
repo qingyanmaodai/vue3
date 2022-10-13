@@ -1,3 +1,4 @@
+
 export interface configEntity {
   label: string;
   value: string | number;
@@ -233,6 +234,21 @@ export const config = {
     {
       value: 'B',
       label: '全盘点',
+    },
+  ],
+  //仓库维度
+  STOCK_DIS: [
+    {
+      value: 'A',
+      label: '仓库',
+    },
+    {
+      value: 'B',
+      label: '分仓',
+    },
+    {
+      value: 'C',
+      label: '仓位',
     },
   ],
 };
