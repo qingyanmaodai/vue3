@@ -516,6 +516,7 @@
     } else {
       data.stockNum = 0;
     }
+    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {

@@ -278,7 +278,7 @@
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = undefined;
+      formState.value[e] = null;
     });
   };
 
@@ -308,9 +308,10 @@
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
-    formState.value[currDataParam[1]] = {};
-    formState.value[currDataParam[1]].id = row.id;
-    formState.value[currDataParam[1]].name = row.name;
+    formState.value[currDataParam[1]] = row.name;
+    // formState.value[currDataParam[1]] = {};
+    // formState.value[currDataParam[1]].id = row.id;
+    // formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
