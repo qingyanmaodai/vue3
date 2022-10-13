@@ -59,7 +59,7 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        placeholder="请选择负责人"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择负责人'"
                         label="负责人"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
@@ -93,7 +93,7 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                        placeholder="请选择业务日期"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择业务日期'"
                       />
                     </a-form-item>
                   </Col>
@@ -178,10 +178,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  ruleOfExaGridOptions,
-  invCountLossOfDetailColumns,
-} from '/@/components/ExDetailTable/data';
+  import {
+    ruleOfExaGridOptions,
+    invCountLossOfDetailColumns,
+  } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
@@ -335,7 +335,6 @@ import {
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        console.log('data.id', data.id);
         await getListById(data.id);
         createMessage.success('操作成功');
       })
@@ -407,10 +406,10 @@ import {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      if (formState.value.empId) {
-        formState.value.empId = res.empId ? res.empId : '';
-        formState.value.empName = res.empName ? res.empName : '';
-      }
+      // if (formState.value.empId) {
+      //   formState.value.empId = res.empId ? res.empId : '';
+      //   formState.value.empName = res.empName ? res.empName : '';
+      // }
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
@@ -429,9 +428,9 @@ import {
     }
     return row;
   };
+
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
-    console.log(column);
     if (column.field === 'bdMaterial.number') {
       data.stockNum = '';
       data.countNum = '';
@@ -461,8 +460,6 @@ import {
 
   //双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
-    console.log('row', row);
-    console.log('data', data);
     switch (column) {
       case 'bdMaterial':
         const res: any = await getMatTableById({
@@ -508,7 +505,10 @@ import {
     if (stockNumData) {
       data.stockNum = cloneDeep(stockNumData);
     } else {
-      data.stockNum = 10;
+      data.stockNum = 0;
+    }
+    if (data.countNum && data.stockNum !== null) {
+      data.loss = data.stockNum - data.countNum;
     }
   };
   //新增行时设置默认值

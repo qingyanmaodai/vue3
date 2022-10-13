@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCountLossModel"
+        tableName="BsInventoryCountLoss"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -116,7 +116,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['update_time'],
+        descList: ['BsInventoryCountLoss.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,

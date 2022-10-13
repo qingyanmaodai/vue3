@@ -140,7 +140,7 @@
   const tableFullData: any = ref<object[]>([]); //表格数据
   const rowSortData = ref<number>(1); //表格顺序
   let validAllErrMapData = ref<string>(''); //表格校验数据
-  const nowCheckData: any = reactive({ data: {} }); //当前选中单元格节点
+  const nowColumFileName: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const xGrid = ref<VxeGridInstance>();
 
@@ -151,7 +151,7 @@
   let basicTableName = ref<string>(''); //需要查询的表名
   //打开弹框，获取数据
   const onSearch = async (data, column) => {
-    nowCheckData.data = column; //输入框column.field
+    nowColumFileName.data = column; //输入框column.field
     nowCheckRow.data = data; //当前选中行数据
     const res = await getPublicList({ params: [] }, Url[column.params.select]);
     basicControl.value = res;
@@ -198,21 +198,21 @@
   };
 
   const editClosed = (row: any) => {
-    emit('getCountAmount', row.row); //计算
+    emit('getCountAmount', row.row); //点击单元格时计算
   };
 
   //基本信息表格双击事件
   const basicClickEvent = async (row: object) => {
     const $grid: any = xGrid.value;
     let arr = $grid.getTableData();
-    let prop = sliceBasicProp(nowCheckData.data.field);
+    let columnFile = sliceBasicProp(nowColumFileName.data.field);
     await emit('getJudgeClickData', arr, row, (index) => {
       if (index !== -1) {
         basicSearchRef.value.close();
         createMessage.error('该项目已被选择!');
         return;
       }
-      emit('cellClickTableEvent', row, nowCheckRow.data, prop);
+      emit('cellClickTableEvent', row, nowCheckRow.data, columnFile);
       basicSearchRef.value.close();
     });
   };
