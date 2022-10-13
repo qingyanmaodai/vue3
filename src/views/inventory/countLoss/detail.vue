@@ -93,7 +93,6 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择业务日期'"
                       />
                     </a-form-item>
                   </Col>
@@ -158,7 +157,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @setDefaultTableData="setDefaultTableData"
             @getJudgeClickData="getJudgeClickData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
@@ -406,10 +404,6 @@
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      // if (formState.value.empId) {
-      //   formState.value.empId = res.empId ? res.empId : '';
-      //   formState.value.empName = res.empName ? res.empName : '';
-      // }
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
@@ -507,15 +501,7 @@
     } else {
       data.stockNum = 0;
     }
-    if (data.countNum && data.stockNum !== null) {
-      data.loss = data.stockNum - data.countNum;
-    }
-  };
-  //新增行时设置默认值
-  const setDefaultTableData = (obj) => {
-    // obj.isOpen = 1;
-    // obj.isRequire = 1;
-    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
+    await getCountAmount(data);
   };
 
   onMounted(() => {
