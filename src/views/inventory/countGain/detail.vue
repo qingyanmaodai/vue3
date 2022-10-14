@@ -17,7 +17,7 @@
       </div>
     </LayoutHeader>
     <div class="content">
-      <a-splitpanes class="default-theme" horizontal>
+      <a-splitpanes horizontal>
         <pane :size="paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
@@ -59,8 +59,8 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        placeholder="请选择负责人"
                         label="负责人"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择负责人'"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -82,6 +82,7 @@
                         class="select"
                         :options="config.INVENTORY_WAY"
                         :disabled="formState.bsStatus === 'B'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                       />
                     </a-form-item>
                   </Col>
@@ -94,7 +95,7 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                        placeholder="请选择业务日期"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入业务日期'"
                       />
                     </a-form-item>
                   </Col>
@@ -104,10 +105,10 @@
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                       />
                     </a-form-item>
                   </Col>
@@ -288,12 +289,11 @@
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
-      formState.value[e] = undefined;
+      formState.value[e] = null;
     });
   };
   //列表页清空事件
   const clearDetailTableEvent = (data, column) => {
-    console.log(column);
     if (column.field === 'bdMaterial.number') {
       data.stockNum = '';
       data.countNum = '';
@@ -334,9 +334,7 @@
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
-    formState.value[currDataParam[1]] = {};
-    formState.value[currDataParam[1]].id = row.id;
-    formState.value[currDataParam[1]].name = row.name;
+    formState.value[currDataParam[1]] = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
@@ -359,7 +357,6 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        console.log('data.id', data.id);
         await getListById(data.id);
         createMessage.success('操作成功');
       })
@@ -431,10 +428,6 @@
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      if (formState.value.empId) {
-        formState.value.empId = res.empId ? res.empId : '';
-        formState.value.empName = res.empName ? res.empName : '';
-      }
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
@@ -468,8 +461,6 @@
 
   //双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
-    console.log('row', row);
-    console.log('data', data);
     switch (column) {
       case 'bdMaterial':
         const res: any = await getMatTableById({
@@ -521,8 +512,6 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
-    // obj.isOpen = 1;
-    // obj.isRequire = 1;
     obj.sort = cloneDeep(detailTableRef.value.rowSortData);
   };
 
@@ -560,9 +549,6 @@
     height: calc(100% - 80px);
     background-color: #fff;
     padding: 10px;
-  }
-  .default-theme {
-    //height: calc(100% - 80px);
   }
   :deep(.vxe-grid) {
     font-size: 14px;

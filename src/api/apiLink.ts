@@ -251,6 +251,12 @@ export enum Url {
   // ADD_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/update', //编辑
+
+  //系统参数
+  GET_SYSTEM_LIST = '/stock/bd-system/list', //系统参数查询
+  GET_SYSTEM_IS_NE_STOCK = '/stock/bd-system/is-ne-stock', //查询是否允许负库存
+  GET_SYSTEM_STOCK_DIS = '/stock/bd-system/stock-dis', //查询仓库维度
+  UPDATE_SYSTEM = '/stock/bd-system/update', //更新系统参数
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

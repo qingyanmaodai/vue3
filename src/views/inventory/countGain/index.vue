@@ -81,7 +81,6 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
-  // import dayjs from "dayjs";
 
   const { createMessage } = useMessage();
   const go = useGo();
@@ -126,11 +125,6 @@
     pages.currentPage = currPage;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
-    //存在日期数据转换问题
-    // data.bsDate = dayjs(dayjs(data.bsDate).valueOf()).format('YYYY-MM-DD');
-    // if (res.bsDate) {
-    //   formState.value.bsDate = dayjs(dayjs(res.bsDate).valueOf()).format('YYYY-MM-DD');
-    // }
   };
 
   //重置
