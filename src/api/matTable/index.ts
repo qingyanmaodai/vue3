@@ -8,7 +8,7 @@ import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatGroupEntity } from '/@/api/matGroup';
 import { UnitEntity } from '/@/api/unit';
 
-export interface MatProfileEntity extends PublicModel {
+export interface MatEntity extends PublicModel {
   id?: string;
   number?: string;
   name?: string;
@@ -78,7 +78,7 @@ export function getMatOption(json: RequestData<string>, mode: ErrorMessageMode =
  * 添加物料信息
  */
 export function addMatTable(
-  json: RequestData<MatProfileEntity>,
+  json: RequestData<MatEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(
@@ -96,7 +96,7 @@ export function addMatTable(
  * 编辑物料信息
  */
 export function updateMatTable(
-  json: RequestData<MatProfileEntity>,
+  json: RequestData<MatEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
   return defHttp.post<Result>(

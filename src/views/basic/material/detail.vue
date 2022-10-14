@@ -535,7 +535,7 @@
     addMatTable,
     auditMatTable,
     getMatTableById,
-    MatProfileEntity,
+    MatEntity,
     unAuditMatTable,
     updateMatTable,
   } from '/@/api/matTable';
@@ -573,7 +573,7 @@
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
 
-  const formData: MatProfileEntity = { id: undefined, number: '', name: '', attr: 'A' };
+  const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A'};
   //初始化
   const formStateInit = reactive({
     data: formData,

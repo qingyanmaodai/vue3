@@ -77,6 +77,7 @@
                   <Col :span="8">
                     <a-form-item label="盘点方式：" ref="way" name="way" class="item">
                       <Select
+                        allowClear
                         v-model:value="formState.way"
                         class="select"
                         :options="config.INVENTORY_WAY"

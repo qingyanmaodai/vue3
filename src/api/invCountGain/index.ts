@@ -4,7 +4,7 @@ import { Url, RequestData, SearchParams, PublicModel, ControlSet } from '/@/api/
 import { StockEntity } from '/@/api/mainStock';
 import { StockLocationEntity } from '/@/api/stockLocation';
 import { StockCompartmentEntity } from '/@/api/stockCompartment';
-import { MatProfileEntity } from '/@/api/matTable';
+import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 
 export interface InvCountGainEntity extends PublicModel {
@@ -38,7 +38,7 @@ export interface InvCountGainDetailEntity extends PublicModel {
   locationId?: string;
   lot?: string;
   mark?: string;
-  bdMaterial?: MatProfileEntity;
+  bdMaterial?: MatEntity;
   bdStock?: StockEntity;
   bdStockCompartment?: StockCompartmentEntity;
   bdStockLocation?: StockLocationEntity;

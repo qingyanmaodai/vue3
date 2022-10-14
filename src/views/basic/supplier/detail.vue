@@ -152,6 +152,7 @@
               <Col :span="8">
                 <a-form-item label="供应商等级：" ref="level" name="level" class="item">
                   <Select
+                    allowClear
                     v-model:value="formState.level"
                     class="select"
                     :disabled="formState.bsStatus === 'B'"
