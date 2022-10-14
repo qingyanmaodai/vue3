@@ -384,7 +384,6 @@
           data = await update({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
         }
-        await init(data.id);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -448,7 +447,7 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async (dataId: string) => {
+  const init = async () => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
@@ -493,7 +492,7 @@
   };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
-    init(dataId);
+    init();
   });
 </script>
 <style scoped lang="less">

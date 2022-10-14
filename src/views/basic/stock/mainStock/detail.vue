@@ -228,13 +228,13 @@
   let rowId = useRoute().query.row?.toString() || '';
 
   //获取初始值
-  const getListById = async (rowId) => {
+  const getListById = async () => {
     if (rowId) {
       const res: any = await getOneStockById({ params: rowId });
       formState.value = res;
     }
   };
-  getListById(rowId);
+  getListById();
   //保存事件
   const onSubmit = async () => {
     let data;
@@ -246,7 +246,7 @@
         } else {
           data = await updateStockList({ params: formState.value });
         }
-        await getListById(data.id);
+        formState.value = Object.assign({}, formState.value, data);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {

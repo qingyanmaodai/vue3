@@ -350,7 +350,7 @@
         } else {
           res = await save({ params: formState.value });
         }
-        await getCustomer(res.id);
+        formState.value = Object.assign({}, formState.value, res);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {

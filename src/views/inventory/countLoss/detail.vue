@@ -335,7 +335,7 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        await getListById(data.id);
+        formState.value = Object.assign({}, formState.value, data);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -402,7 +402,7 @@
     router.go(-1);
   };
   //获取初始值
-  const getListById = async (dataId) => {
+  const getListById = async () => {
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
@@ -507,7 +507,7 @@
   };
 
   onMounted(() => {
-    getListById(dataId);
+    getListById();
   });
 </script>
 <style scoped lang="less">

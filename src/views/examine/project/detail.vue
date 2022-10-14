@@ -280,7 +280,6 @@
           const data = await update({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
         }
-        formState.value.bsStatus = 'A';
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {

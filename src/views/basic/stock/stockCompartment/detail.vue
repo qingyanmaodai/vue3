@@ -252,13 +252,13 @@
   let rowId = useRoute().query.row?.toString() || '';
 
   //获取初始值
-  const getListById = async (rowId) => {
+  const getListById = async () => {
     if (rowId) {
       const res: any = await getStockCompartmentListById({ params: rowId });
       formState.value = res;
     }
   };
-  getListById(rowId);
+  getListById();
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -311,7 +311,7 @@
         } else {
           data = await updateStockCompartmentList({ params: formState.value });
         }
-        await getListById(data.id);
+        formState.value = Object.assign({}, formState.value, data);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {

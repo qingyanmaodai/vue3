@@ -704,13 +704,13 @@
   //接受参数
   let rowId = useRoute().query.row?.toString() || '';
 
-  const getListById = async (rowId) => {
+  const getListById = async () => {
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
     }
   };
-  getListById(rowId);
+  getListById();
 
   //保存事件
   const onSubmit = async () => {
@@ -723,7 +723,7 @@
         } else {
           data = await updateMatTable({ params: formState.value });
         }
-        await getListById(data.id);
+        formState.value = Object.assign({}, formState.value, data);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
