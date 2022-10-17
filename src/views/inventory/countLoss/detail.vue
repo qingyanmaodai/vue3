@@ -159,8 +159,10 @@
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
             @getCountAmount="getCountAmount"
+            @filterModalSearchEvent="filterModalSearchEvent"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
+            filterTableName="BdMaterial"
           />
         </pane>
       </a-splitpanes>
@@ -211,9 +213,9 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getMatTableById } from '/@/api/matTable';
+  import {getMatTable, getMatTableById} from '/@/api/matTable';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -227,12 +229,32 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-
+  //筛选条件组件url
+  // let filterModalUrl: any = ref<string>('');
+  // filterModalUrl = Url.GET_MATERIAL_LIST;
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
+
+  //筛选条件查询
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+    let getParams: SearchParams[] = [];
+    if (detailTableRef.value.filterModalParams() && detailTableRef.value.filterModalParams().length > 0) {
+      getParams = getParams.concat(detailTableRef.value.filterModalParams());
+    }
+    //表格查询
+    const res: any = await getMatTable({
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: currPage,
+      pageRows: pageSize,
+    });
+    console.log('filterModalSearchEvent--res',res.records)
+  };
 
   //获取当前时间
   const getCurrentData = () => {
