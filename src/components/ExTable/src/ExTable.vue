@@ -26,6 +26,13 @@
           style="margin-right: 5px"
           >{{ button.label }}
         </AButton>
+        <AButton
+          type="primary"
+          style="margin: 0 10px"
+          @click="pushDownEvent"
+          v-show="props.isPushDown"
+          >下推</AButton
+        >
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -153,6 +160,7 @@
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
   <!--  </div>-->
+  <ExPushDownModel ref="ExPushDownModelRef" />
 </template>
 
 <script lang="ts" setup>
@@ -165,8 +173,12 @@
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
+
+  //基础信息查询组件ref
+  const ExPushDownModelRef: any = ref(null); //
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -179,11 +191,15 @@
     count: Number,
     show: Boolean,
     tableData: Array,
+    isShowExport: {
+      type: Boolean,
+      default: true,
+    },
     isShowImport: {
       type: Boolean,
       default: true,
     },
-    isShowExport: {
+    isPushDown: {
       type: Boolean,
       default: true,
     },
@@ -395,6 +411,10 @@
         color: 'red',
       };
     }
+  };
+  //下推弹框
+  const pushDownEvent = () => {
+    ExPushDownModelRef.value.show();
   };
 
   //上传文件前的判断
