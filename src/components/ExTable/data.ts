@@ -402,3 +402,30 @@ export const invCountLossColumns = [
   },
   { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+//盘点单
+export const invCountSheetColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 120, slots: { default: 'number' }, sortable: true },
+  // { field: 'dtLk.srcField', title: '来源单号', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '盘点日期', width: 120, sortable: true },
+  { field: 'loss', title: '盘点数量', width: 120, sortable: true },
+  { field: 'stockName', title: '仓库', width: 120, sortable: true },
+  { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
+  { field: 'locationName', title: '仓位', width: 120, sortable: true },
+  { field: 'way', title: '盘点方式', width: 120, slots: { default: 'way' }, sortable: true }, //普通盘点，全盘点
+  { field: 'empName', title: '盘点人', width: 120, sortable: true },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];

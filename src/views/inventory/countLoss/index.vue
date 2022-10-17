@@ -251,7 +251,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '盘盈单导入模板.xls', data: res };
+            const data = { title: '盘亏单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -267,13 +267,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '盘盈单',
+            fileName: '盘亏单',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '盘盈单.xls', data: res };
+            const data = { title: '盘亏单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

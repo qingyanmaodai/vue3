@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCountLoss"
+        tableName="BsInventoryCount"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -13,7 +13,7 @@
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
-        :columns="invCountLossColumns"
+        :columns="invCountSheetColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
@@ -71,10 +71,10 @@
     importFile,
     unAudit,
     unAuditBatch,
-  } from '/@/api/invCountLoss';
+  } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
+  import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -115,7 +115,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsInventoryCountLoss.update_time'],
+        descList: ['BsInventoryCount.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -169,7 +169,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.INV_COUNT_LOSS_DETAIL,
+      path: PageEnum.INV_COUNT_SHEET_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -178,7 +178,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.INV_COUNT_LOSS_DETAIL,
+      path: PageEnum.INV_COUNT_SHEET_DETAIL,
       query: {
         row: row.id,
       },
@@ -251,7 +251,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '盘盈单导入模板.xls', data: res };
+            const data = { title: '盘点单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -267,13 +267,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '盘盈单',
+            fileName: '盘点单',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '盘盈单.xls', data: res };
+            const data = { title: '盘点单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

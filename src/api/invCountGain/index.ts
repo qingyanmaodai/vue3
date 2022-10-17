@@ -1,6 +1,13 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams, PublicModel, ControlSet } from '/@/api/apiLink';
+import {
+  Url,
+  RequestData,
+  SearchParams,
+  PublicModel,
+  ControlSet,
+  InvCountEntity,
+} from '/@/api/apiLink';
 import { StockEntity } from '/@/api/mainStock';
 import { StockLocationEntity } from '/@/api/stockLocation';
 import { StockCompartmentEntity } from '/@/api/stockCompartment';
@@ -12,13 +19,16 @@ export interface InvCountGainEntity extends PublicModel {
   number: string;
   bsDate?: string | Moment;
   formatBsDate?: string;
-  // getFormatBsDate?: moment;
   empId?: string;
   empName?: string;
   srcField?: string;
   way?: string;
   dtData?: InvCountGainDetailEntity[];
-  dtLk?: object;
+  dtLk?: InvCountEntity;
+  srcBill?: string;
+  srcBillId?: string;
+  srcId?: string;
+  srcType?: string;
 }
 export interface InvCountGainDetailEntity extends PublicModel {
   id: string | undefined;
