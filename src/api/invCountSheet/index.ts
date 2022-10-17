@@ -51,7 +51,7 @@ export interface InvCountLossDetailEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_INV_COUNT_LOSS_LIST,
+      url: Url.GET_PAGE_INV_COUNT_LIST,
       data: json,
     },
     {
@@ -66,7 +66,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_INV_COUNT_LOSS_DTO,
+      url: Url.GET_INV_COUNT_DTO,
       data: json,
     },
     {
@@ -81,7 +81,7 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 export function add(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountLossEntity>(
     {
-      url: Url.ADD_WITH_DETAIL_INV_COUNT_LOSS,
+      url: Url.ADD_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -96,7 +96,7 @@ export function add(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMod
 export function update(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountLossEntity>(
     {
-      url: Url.UPDATE_INV_COUNT_LOSS,
+      url: Url.UPDATE_INV_COUNT,
       data: json,
     },
     {
@@ -111,7 +111,7 @@ export function update(json: RequestData<InvCountLossEntity>, mode: ErrorMessage
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountLossEntity>(
     {
-      url: Url.AUDIT_INV_COUNT_LOSS,
+      url: Url.AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -126,7 +126,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_INV_COUNT_LOSS,
+      url: Url.BATCH_AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -141,7 +141,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ONE_INV_COUNT_LOSS,
+      url: Url.GET_ONE_INV_COUNT,
       data: json,
     },
     {
@@ -156,7 +156,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_WITH_DETAIL_INV_COUNT_LOSS,
+      url: Url.DELETE_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -171,7 +171,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_WITH_DETAIL_INV_COUNT_LOSS,
+      url: Url.BATCH_DELETE_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -186,7 +186,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountLossEntity>(
     {
-      url: Url.UN_AUDIT_INV_COUNT_LOSS,
+      url: Url.UN_AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -201,7 +201,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_INV_COUNT_LOSS,
+      url: Url.UN_BATCH_AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -216,7 +216,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_INV_COUNT_LOSS,
+      url: Url.EXPORT_INV_COUNT,
       data: json,
       responseType: 'blob',
     },
@@ -232,7 +232,7 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_INV_COUNT_LOSS,
+      url: Url.IMPORT_MODEL_INV_COUNT,
       data: json,
       responseType: 'blob',
     },

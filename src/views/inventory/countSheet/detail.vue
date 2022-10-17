@@ -12,12 +12,12 @@
           >审核</Button
         >
         <Button danger class="button" @click="onUnAudit" v-if="formState.bsStatus === 'B'"
-          >反审核</Button
+          >反审核</Button*
         >
       </div>
     </LayoutHeader>
     <div class="content">
-      <a-splitpanes horizontal>
+      <a-splitpanes class="default-theme" horizontal>
         <pane :size="paneSize" style="background-color: #fff">
           <Tabs v-model:activeKey="activeKey" class="tabs">
             <TabPane key="1" tab="基本信息">
@@ -59,8 +59,8 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        label="负责人"
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择负责人'"
+                        label="负责人"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -82,7 +82,6 @@
                         class="select"
                         :options="config.INVENTORY_WAY"
                         :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
                       />
                     </a-form-item>
                   </Col>
@@ -95,7 +94,6 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入业务日期'"
                       />
                     </a-form-item>
                   </Col>
@@ -105,10 +103,10 @@
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"
                       />
                     </a-form-item>
                   </Col>
@@ -153,14 +151,13 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="invCountGainOfDetailColumns"
+            :columns="invCountLossOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @setDefaultTableData="setDefaultTableData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -181,7 +178,7 @@
 <script lang="ts" setup>
   import {
     ruleOfExaGridOptions,
-    invCountGainOfDetailColumns,
+    invCountLossOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -205,15 +202,8 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import {
-    add,
-    audit,
-    unAudit,
-    InvCountGainEntity,
-    getOneById,
-    // update,
-    getInventoryList,
-  } from '/@/api/invCountGain';
+  import { add, audit, unAudit, InvCountLossEntity, getOneById } from '/@/api/invCountLoss';
+  import { getInventoryList } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -249,7 +239,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: InvCountGainEntity = {
+  const formData: InvCountLossEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -269,10 +259,10 @@
 
   const formRules = reactive({
     countNum: [
-      { required: true, message: '请输入比帐存数量大的盘点数量' },
+      { required: true, message: '请输入比帐存数量小的盘点数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+          if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
             return new Error('盘点数量应该大于帐存数量');
           }
         },
@@ -291,22 +281,7 @@
       formState.value[e] = null;
     });
   };
-  //列表页清空事件
-  const clearDetailTableEvent = (data, column) => {
-    if (column.field === 'bdMaterial.number') {
-      data.stockNum = '';
-      data.countNum = '';
-      for (const key in column.params.param) {
-        data[key] = '';
-        data[column.params.param[key]] = {};
-      }
-    } else {
-      for (const key in column.params.param) {
-        data[key] = '';
-        data[column.params.param[key]] = {};
-      }
-    }
-  };
+
   // 负责人弹框选放大镜事件
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
@@ -334,6 +309,9 @@
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
+    // formState.value[currDataParam[1]] = {};
+    // formState.value[currDataParam[1]].id = row.id;
+    // formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
@@ -349,24 +327,6 @@
             await VXETable.modal.message({
               status: 'error',
               message: '明细表数据校检不通过，请检查!',
-            });
-            return;
-          }
-          if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
-          ) {
-            await VXETable.modal.message({
-              status: 'error',
-              message: '明细表存在相同数据，请检查!',
             });
             return;
           }
@@ -396,24 +356,6 @@
               await VXETable.modal.message({
                 status: 'error',
                 message: '明细表数据校检不通过，请检查!',
-              });
-              return;
-            }
-            if (
-              tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
-                      e1.matId === e.matId,
-                  ).length > 1,
-              )
-            ) {
-              await VXETable.modal.message({
-                status: 'error',
-                message: '明细表存在相同数据，请检查!',
               });
               return;
             }
@@ -475,12 +417,41 @@
   //计算数量
   const getCountAmount = (row) => {
     if (row.countNum && row.stockNum !== null) {
-      row.gain = row.countNum - row.stockNum;
+      row.loss = row.stockNum - row.countNum;
     } else {
-      row.gain = '';
+      row.loss = '';
     }
     return row;
   };
+
+  //明细表清空事件
+  const clearDetailTableEvent = (data, column) => {
+    if (column.field === 'bdMaterial.number') {
+      data.stockNum = '';
+      data.countNum = '';
+      for (const key in column.params.param) {
+        data[key] = '';
+        data[column.params.param[key]] = {};
+      }
+    } else {
+      for (const key in column.params.param) {
+        data[key] = '';
+        data[column.params.param[key]] = {};
+      }
+    }
+  };
+
+  //获取判断双击赋值事件的值
+  // const getJudgeClickData = (arr, row, callback) => {
+  //   let judgeClickIndex = arr.fullData.findIndex(
+  //     (e) =>
+  //       e.stockId === row.id ||
+  //       e.compartmentId === row.id ||
+  //       e.locationId === row.id ||
+  //       e.matId === row.id,
+  //   );
+  //   callback(judgeClickIndex);
+  // };
 
   //双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
@@ -533,10 +504,6 @@
     }
     await getCountAmount(data);
   };
-  //新增行时设置默认值
-  const setDefaultTableData = (obj) => {
-    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
-  };
 
   onMounted(() => {
     getListById();
@@ -572,6 +539,9 @@
     height: calc(100% - 80px);
     background-color: #fff;
     padding: 10px;
+  }
+  .default-theme {
+    //height: calc(100% - 80px);
   }
   :deep(.vxe-grid) {
     font-size: 14px;

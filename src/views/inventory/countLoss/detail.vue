@@ -158,7 +158,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @getJudgeClickData="getJudgeClickData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -310,9 +309,6 @@
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
-    // formState.value[currDataParam[1]] = {};
-    // formState.value[currDataParam[1]].id = row.id;
-    // formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
@@ -328,6 +324,24 @@
             await VXETable.modal.message({
               status: 'error',
               message: '明细表数据校检不通过，请检查!',
+            });
+            return;
+          }
+          if (
+            tableFullData.some(
+              (e) =>
+                tableFullData.filter(
+                  (e1) =>
+                    e1.stockId === e.stockId &&
+                    e1.compartmentId === e.compartmentId &&
+                    e1.locationId === e.locationId &&
+                    e1.matId === e.matId,
+                ).length > 1,
+            )
+          ) {
+            await VXETable.modal.message({
+              status: 'error',
+              message: '明细表存在相同数据，请检查!',
             });
             return;
           }
@@ -357,6 +371,24 @@
               await VXETable.modal.message({
                 status: 'error',
                 message: '明细表数据校检不通过，请检查!',
+              });
+              return;
+            }
+            if (
+              tableFullData.some(
+                (e) =>
+                  tableFullData.filter(
+                    (e1) =>
+                      e1.stockId === e.stockId &&
+                      e1.compartmentId === e.compartmentId &&
+                      e1.locationId === e.locationId &&
+                      e1.matId === e.matId,
+                  ).length > 1,
+              )
+            ) {
+              await VXETable.modal.message({
+                status: 'error',
+                message: '明细表存在相同数据，请检查!',
               });
               return;
             }
@@ -440,18 +472,6 @@
         data[column.params.param[key]] = {};
       }
     }
-  };
-
-  //获取判断双击赋值事件的值
-  const getJudgeClickData = (arr, row, callback) => {
-    let judgeClickIndex = arr.fullData.findIndex(
-      (e) =>
-        e.stockId === row.id ||
-        e.compartmentId === row.id ||
-        e.locationId === row.id ||
-        e.matId === row.id,
-    );
-    callback(judgeClickIndex);
   };
 
   //双击赋值事件

@@ -233,6 +233,25 @@ export enum Url {
   ADD_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/update', //编辑
 
+  // 盘点单
+  AUDIT_INV_COUNT = '/wms/bd-inventory-count/audit', //审核
+  BATCH_AUDIT_INV_COUNT = '/wms/bd-inventory-count/batch-audit', //批量审核
+  UN_AUDIT_INV_COUNT = '/wms/bd-inventory-count/un-audit', //反审核
+  UN_BATCH_AUDIT_INV_COUNT = '/wms/bd-inventory-count/batch-un-audit', //批量反审核
+  DELETE_INV_COUNT = '/wms/bd-inventory-count/delete', //删除
+  BATCH_DELETE_INV_COUNT = '/wms/bd-inventory-count/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/delete-with-detail', //删除含详情信息
+  GET_PAGE_INV_COUNT_LIST = '/wms/bd-inventory-count/list', //分页查询--获取列表
+  GET_INV_COUNT_DTO = '/wms/bd-inventory-count/query-dto', //获取实体信息
+  GET_ONE_INV_COUNT = '/wms/bd-inventory-count/query-one', //查询单条
+  IMPORT_INV_COUNT = 'http://192.168.200.136:9999/wms/bd-inventory-count/import-list', //导入
+  IMPORT_MODEL_INV_COUNT = '/wms/bd-inventory-count/import-model', //导入模板下载
+  EXPORT_INV_COUNT = '/wms/bd-inventory-count/export-list', //导出
+  ADD_INV_COUNT = '/wms/bd-inventory-count/save', //添加
+  ADD_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/save-with-detail', //添加含详情信息
+  UPDATE_INV_COUNT = '/wms/bd-inventory-count/update', //编辑
+
   // 盘亏单
   AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/audit', //审核
   BATCH_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-audit', //批量审核
