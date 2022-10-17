@@ -29,6 +29,14 @@
         @click="removeRowEvent"
         >删除行</a-button
       >
+      <a-button
+        style="margin-left: 10px"
+        type="primary"
+        :disabled="props.isDisableButton"
+        v-show="props.isShowFilterButton"
+        @click="filterEvent"
+        >筛选</a-button
+      >
     </template>
     <template #model="{ row, column }">
       <ExInput
@@ -86,6 +94,7 @@
     :tableCols="basicTableCols"
     :tableName="basicTableName"
   />
+  <ExFilterModal ref="filterModalRef" />
 </template>
 
 <script lang="ts" setup>
@@ -94,7 +103,6 @@
   import { ExInput } from '/@/components/ExInput';
   import { Button, Switch } from 'ant-design-vue';
   import { config } from '/@/utils/publicParamConfig';
-
   import {
     ControlSet,
     SearchDataType,
@@ -107,6 +115,7 @@
   import { getPublicList } from '/@/api/public';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
+  import { ExFilterModal } from '/@/components/ExFilterModal';
   import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
   import { useMessage } from '/@/hooks/web/useMessage';
   const { createMessage } = useMessage();
@@ -124,6 +133,10 @@
       type: Boolean,
       default: true,
     },
+    isShowFilterButton: {
+      type: Boolean,
+      default: true,
+    },
     editRules: Object as PropType<VxeTablePropTypes.EditRules>, //校验规则
     detailTableData: {
       type: Array,
@@ -134,7 +147,7 @@
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'clearDetailTableEvent', data, column): void; //双击获取字段数据
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
-    (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
+    // (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
@@ -143,6 +156,8 @@
   const nowColumFileName: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const xGrid = ref<VxeGridInstance>();
+  //筛选弹框组件ref
+  const filterModalRef: any = ref<any>(undefined);
 
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
@@ -203,18 +218,9 @@
 
   //基本信息表格双击事件
   const basicClickEvent = async (row: object) => {
-    const $grid: any = xGrid.value;
-    let arr = $grid.getTableData();
     let columnFile = sliceBasicProp(nowColumFileName.data.field);
-    await emit('getJudgeClickData', arr, row, (index) => {
-      if (index !== -1) {
-        basicSearchRef.value.close();
-        createMessage.error('该项目已被选择!');
-        return;
-      }
-      emit('cellClickTableEvent', row, nowCheckRow.data, columnFile);
-      basicSearchRef.value.close();
-    });
+    emit('cellClickTableEvent', row, nowCheckRow.data, columnFile);
+    basicSearchRef.value.close();
   };
 
   // 格式化数据
@@ -256,6 +262,11 @@
     $grid.removeCheckboxRow();
   };
 
+  //显示筛选弹框
+  const filterEvent = () => {
+    filterModalRef.value.show();
+    console.log('看看filterEvent');
+  };
   //获取校验规则
   const getValidAllData = async () => {
     const $grid: any = xGrid.value;
