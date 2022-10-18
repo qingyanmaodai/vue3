@@ -159,7 +159,6 @@
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
             @getCountAmount="getCountAmount"
-            @filterModalSearchEvent="filterModalSearchEvent"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
             isShowFilterButton="false"

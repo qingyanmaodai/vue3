@@ -160,6 +160,7 @@
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
+            @filterModalSearchEvent="filterModalSearchEvent"
             filterTableName="BdMaterial"
           />
         </pane>
@@ -280,9 +281,18 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    console.log('filterModalSearchEvent--res',res.records)
+    let bdMaterial = res.records.map((item) => {
+      return Object.assign({}, { 'id': item.id,'name':item.name,'number':item.number,'model':item.model,'baseUnitName': item.baseUnit.name,'weightUnitName':item.weightUnit.name,'baseUnitId': item.baseUnit.id,'weightUnitId':item.weightUnit.id})
+    })
+    res.records.forEach((item, index) => {
+      item.bdMaterial = bdMaterial[index]
+      item.bsStatus = 'A';
+      item.matId = item.id;
+      item.stockId = item.stockId;
+      item.compartmentId = item.compartmentId;
+      item.locationId = item.locationId;
+    })
     detailTableData.value = cloneDeep(res.records);
-
   };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -369,8 +379,8 @@
               return;
             }
             formState.value.dtData = cloneDeep(tableFullData);
+            console.log(formState.value.dtData)
           }
-
           const data = await audit({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
           if (data.bsStatus === 'B' && tableFullData) {
