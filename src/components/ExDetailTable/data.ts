@@ -400,7 +400,7 @@ export const invCountSheetOfDetailColumns = [
   {
     field: 'countNum',
     title: '盘点数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },

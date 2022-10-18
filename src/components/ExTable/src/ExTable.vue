@@ -28,7 +28,7 @@
         </AButton>
         <AButton
           type="primary"
-          style="margin: -10 0px"
+          style="margin: -10px 0px"
           @click="pushDownEvent"
           v-show="props.isPushDown"
           >下推</AButton
@@ -160,7 +160,11 @@
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
   <!--  </div>-->
-  <ExPushDownModel ref="ExPushDownModelRef" :tableName="tableName" />
+  <ExPushDownModel
+    ref="ExPushDownModelRef"
+    :tableName="tableName"
+    @pushDownSelect="pushDownSelect"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -174,6 +178,7 @@
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  // import { PushDown } from '/@/api/invCountSheet';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -414,6 +419,14 @@
       };
     }
   };
+  //下推功能
+  const pushDownSelect = async () => {
+    // const $grid: any = xGrid.value;
+    // const selectRecords = $grid.getCheckboxRecords();
+    // await PushDown({
+    //   params: selectRecords,
+    // });
+  };
   //下推弹框
   const pushDownEvent = async () => {
     const $grid: any = xGrid.value;
@@ -424,10 +437,9 @@
       createMessage.warning('请至少勾选一条数据。');
     }
     // console.log(selectRecords);
-    // await getPushDown({
+    // await getPushDownList({
     //   srcBillType: tableName,
     // });
-
 
     // emit('pushDownEvent', row);
   };
