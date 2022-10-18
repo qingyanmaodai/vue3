@@ -11,7 +11,6 @@
     >
       <div>
         <a-form ref="formRef" :model="formState">
-<!--        <a-form>-->
           <Row>
             <Col :span="8">
               <a-form-item label="仓库：" ref="stockId" name="stockId" class="item">
@@ -154,7 +153,7 @@
   import { StockEntity } from '/@/api/mainStock';
   import { StockLocationEntity } from '/@/api/stockLocation';
   import { StockCompartmentEntity } from '/@/api/stockCompartment';
-  import { MatEntity } from '/@/api/matTable';
+  import { MatEntity} from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
   const AButton = Button;
   const AForm = Form;
@@ -166,9 +165,13 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-
+  const emit = defineEmits<Emits>();
+  type Emits = {
+    (event: 'filterModalSearchEvent'): void; ///筛选条件查询
+  };
   interface ProType {
     tableName: string;
+    // filterModalUrl: string;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -195,19 +198,18 @@
     bdStockLocation: undefined,
   };
   const defaultData: FormState = cloneDeep(defaultF);
-  let copyDefaultData: FormState = cloneDeep(defaultF);
 
   const formStateInit = reactive({
     data: cloneDeep(defaultData),
   });
   const formState = toRef(formStateInit, 'data');
   const getSearchParams = (): SearchParams[] => {
-    let searchParams: SearchParams[] = [];
+    let getParams: SearchParams[] = [];
     if (formState.value.matId) {
-      searchParams.push({
-        table: props.tableName,
-        name: 'number',
-        column: 'number',
+      getParams.push({
+        table:props.tableName,
+        name: 'id',
+        column: 'id',
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
@@ -216,7 +218,46 @@
         endWith: '',
       });
     }
-    return searchParams;
+    if (formState.value.stockId) {
+      getParams.push({
+        table:props.tableName,
+        name: 'stockId',
+        column: 'stock_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.value.stockId,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.value.compartmentId) {
+      getParams.push({
+        table:props.tableName,
+        name: 'compartmentId',
+        column: 'compartment_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.value.compartmentId,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.value.locationId) {
+      getParams.push({
+        table:props.tableName,
+        name: 'locationId',
+        column: 'location_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.value.locationId,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    return getParams;
   };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -282,21 +323,23 @@
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
-    formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = {};
-    formState.value[currDataParam[1]].id = row.id;
-    formState.value[currDataParam[1]].name = row.name;
-    if (row.stockId) {
-      formState.value.bdStock = row.bdStock;
-      formState.value.stockId = row.stockId;
-    }
-    if (row.compartmentId) {
-      formState.value.bdStockCompartment = row.bdStockCompartment;
-      formState.value.compartmentId = row.compartmentId;
-    }
-    if (row.locationId) {
-      formState.value.bdStockLocation = row.bdStockLocation;
-      formState.value.locationId = row.locationId;
+    if(basicTableName.value === 'BdMaterial') {
+      formState.value[currDataParam[0]] = row.id;
+      formState.value[currDataParam[1]].id = row.id;
+      formState.value[currDataParam[1]].name = row.name;
+    }else {
+      formState.value[currDataParam[0]] = row.id;
+      formState.value[currDataParam[1]].id = row.id;
+      formState.value[currDataParam[1]].name = row.name;
+      if (row.stockId) {
+        formState.value.bdStock = row.bdStock;
+        formState.value.stockId = row.stockId;
+      }
+      if (row.compartmentId) {
+        formState.value.bdStockCompartment = row.bdStockCompartment;
+        formState.value.compartmentId = row.compartmentId;
+      }
     }
   };
 
@@ -306,12 +349,11 @@
   const close = () => {
     isShow.value = false;
   };
-
   //查询按钮
   const searchEvent = () => {
     isShow.value = false;
-    copyDefaultData = cloneDeep(formState.value);
-    console.log('copyDefaultData', copyDefaultData);
+    emit('filterModalSearchEvent');
+    // getList(props.filterModalUrl)
   };
 
   //重置方法
@@ -322,7 +364,7 @@
     show,
     close,
     getSearchParams,
-  });
+  })
 </script>
 <style scoped lang="less">
   .x-button {

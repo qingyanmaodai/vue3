@@ -94,7 +94,11 @@
     :tableCols="basicTableCols"
     :tableName="basicTableName"
   />
-  <ExFilterModal ref="filterModalRef" />
+  <ExFilterModal
+    ref="filterModalRef"
+    @filterModalSearchEvent="filterModalSearchEvent"
+    :tableName="props.filterTableName"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -118,6 +122,7 @@
   import { ExFilterModal } from '/@/components/ExFilterModal';
   import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
   const AButton = Button;
   const props = defineProps({
@@ -141,6 +146,14 @@
     detailTableData: {
       type: Array,
     },
+    filterTableName: {
+      type: String,
+      default: '',
+    },
+    // filterModalUrl: {
+    //   type: String,
+    //   default: '',
+    // },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
@@ -149,6 +162,7 @@
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
     // (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
+    (event: 'filterModalSearchEvent'): void; ///筛选条件查询
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
   const rowSortData = ref<number>(1); //表格顺序
@@ -158,6 +172,16 @@
   const xGrid = ref<VxeGridInstance>();
   //筛选弹框组件ref
   const filterModalRef: any = ref<any>(undefined);
+  const filterModalParams = (): SearchParams[] => {
+    let searchParams: SearchParams[] = [];
+    if (
+      filterModalRef.value.getSearchParams() &&
+      filterModalRef.value.getSearchParams().length > 0
+    ) {
+      searchParams = filterModalRef.value.getSearchParams();
+    }
+    return searchParams;
+  };
 
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
@@ -265,7 +289,10 @@
   //显示筛选弹框
   const filterEvent = () => {
     filterModalRef.value.show();
-    console.log('看看filterEvent');
+  };
+  //筛选弹框查询
+  const filterModalSearchEvent = async () => {
+    await emit('filterModalSearchEvent');
   };
   //获取校验规则
   const getValidAllData = async () => {
@@ -289,6 +316,7 @@
     tableFullData,
     rowSortData,
     getDetailData,
+    filterModalParams,
   });
 
   onMounted(() => {});
