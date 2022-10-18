@@ -13,41 +13,42 @@ import { StockLocationEntity } from '/@/api/stockLocation';
 import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
+import { EmployeeEntity } from '/@/api/employee';
 
-export interface InvCountGainEntity extends PublicModel {
+export interface InvCountSheetEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
   formatBsDate?: string;
   empId?: string;
   empName?: string;
-  srcField?: string;
+  bdEmployee?: EmployeeEntity;
   way?: string;
-  dtData?: InvCountGainDetailEntity[];
+  dtData?: InvCountLossDetailEntity[];
   dtLk?: InvCountEntity;
   srcBill?: string;
   srcBillId?: string;
   srcId?: string;
   srcType?: string;
 }
-export interface InvCountGainDetailEntity extends PublicModel {
+
+export interface InvCountLossDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
   seq: number;
   bsDate?: string;
-  compartmentId?: string;
   sort?: string;
-  matId?: string;
-  stockId?: string;
-  stockNum?: string;
   bsStatus?: string;
   countNum?: string;
-  parentId?: string;
-  gain?: string;
-  locationId?: string;
   lot?: string;
   mark?: string;
+  parentId?: string;
+  stockNum?: string;
+  matId?: string;
+  stockId?: string;
+  compartmentId?: string;
+  locationId?: string;
   bdMaterial?: MatEntity;
   bdStock?: StockEntity;
   bdStockCompartment?: StockCompartmentEntity;
@@ -55,30 +56,12 @@ export interface InvCountGainDetailEntity extends PublicModel {
 }
 
 /**
- * 获取即时库存数据
- */
-export function getInventoryList(
-  json: RequestData<SearchParams[]>,
-  mode: ErrorMessageMode = 'message',
-) {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_INV_BY_MAT_STOCK_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
  * 获取表格信息
  */
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_INV_COUNT_GAIN_LIST,
+      url: Url.GET_PAGE_INV_COUNT_LIST,
       data: json,
     },
     {
@@ -93,7 +76,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_INV_COUNT_GAIN_DTO,
+      url: Url.GET_INV_COUNT_DTO,
       data: json,
     },
     {
@@ -105,10 +88,10 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加信息
  */
-export function add(json: RequestData<InvCountGainEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountGainEntity>(
+export function add(json: RequestData<InvCountSheetEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
     {
-      url: Url.ADD_WITH_DETAIL_INV_COUNT_GAIN,
+      url: Url.ADD_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -120,10 +103,10 @@ export function add(json: RequestData<InvCountGainEntity>, mode: ErrorMessageMod
 /**
  * 编辑信息
  */
-export function update(json: RequestData<InvCountGainEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountGainEntity>(
+export function update(json: RequestData<InvCountSheetEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
     {
-      url: Url.UPDATE_INV_COUNT_GAIN,
+      url: Url.UPDATE_INV_COUNT,
       data: json,
     },
     {
@@ -136,9 +119,9 @@ export function update(json: RequestData<InvCountGainEntity>, mode: ErrorMessage
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountGainEntity>(
+  return defHttp.post<InvCountSheetEntity>(
     {
-      url: Url.AUDIT_INV_COUNT_GAIN,
+      url: Url.AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -153,7 +136,37 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_INV_COUNT_GAIN,
+      url: Url.BATCH_AUDIT_INV_COUNT,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 下推配置查询
+ */
+export function getPushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
+    {
+      url: Url.GET_PUSHDOWN_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 下推
+ */
+export function pushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
+    {
+      url: Url.PUSHDOWN_INV_COUNT,
       data: json,
     },
     {
@@ -168,7 +181,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ONE_INV_COUNT_GAIN,
+      url: Url.GET_ONE_INV_COUNT,
       data: json,
     },
     {
@@ -183,7 +196,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_WITH_DETAIL_INV_COUNT_GAIN,
+      url: Url.DELETE_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -198,7 +211,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_WITH_DETAIL_INV_COUNT_GAIN,
+      url: Url.BATCH_DELETE_WITH_DETAIL_INV_COUNT,
       data: json,
     },
     {
@@ -211,9 +224,9 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountGainEntity>(
+  return defHttp.post<InvCountSheetEntity>(
     {
-      url: Url.UN_AUDIT_INV_COUNT_GAIN,
+      url: Url.UN_AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -228,7 +241,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_INV_COUNT_GAIN,
+      url: Url.UN_BATCH_AUDIT_INV_COUNT,
       data: json,
     },
     {
@@ -243,7 +256,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_INV_COUNT_GAIN,
+      url: Url.EXPORT_INV_COUNT,
       data: json,
       responseType: 'blob',
     },
@@ -259,7 +272,7 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_INV_COUNT_GAIN,
+      url: Url.IMPORT_MODEL_INV_COUNT,
       data: json,
       responseType: 'blob',
     },

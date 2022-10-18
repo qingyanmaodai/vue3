@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCountLoss"
+        tableName="BsInventoryCount"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -14,11 +14,12 @@
         :isPushDown="true"
         :isShowImport="false"
         :isShowExport="false"
-        :columns="invCountLossColumns"
+        :columns="invCountSheetColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        tableName="BsInventoryCount"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -31,6 +32,7 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
+        @pushDownEvent="pushDownEvent"
       />
       <div>
         <Pager
@@ -70,12 +72,14 @@
     getDataList,
     getSearchOption,
     importFile,
+    pushDown,
     unAudit,
     unAuditBatch,
-  } from '/@/api/invCountLoss';
+  } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
+  import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -108,6 +112,7 @@
   };
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+    console.log('11111111111');
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -116,7 +121,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsInventoryCountLoss.update_time'],
+        descList: ['BsInventoryCount.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -170,7 +175,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.INV_COUNT_LOSS_DETAIL,
+      path: PageEnum.INV_COUNT_SHEET_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -179,7 +184,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.INV_COUNT_LOSS_DETAIL,
+      path: PageEnum.INV_COUNT_SHEET_DETAIL,
       query: {
         row: row.id,
       },
@@ -244,6 +249,14 @@
     await tableRef.value.computeData(res);
     await getList();
   };
+  //下推
+  const pushDownEvent = async (row) => {
+    let res = await pushDown({
+      params: row,
+    });
+    console.log(res);
+    // createMessage.success('操作成功');
+  };
   //下载模板
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
@@ -252,7 +265,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '盘盈单导入模板.xls', data: res };
+            const data = { title: '盘点单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -268,13 +281,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '盘盈单',
+            fileName: '盘点单',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '盘盈单.xls', data: res };
+            const data = { title: '盘点单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -295,7 +308,7 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    // getList();
+    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

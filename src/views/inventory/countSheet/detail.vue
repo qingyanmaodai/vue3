@@ -151,14 +151,13 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="invCountLossOfDetailColumns"
+            :columns="invCountSheetOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @getJudgeClickData="getJudgeClickData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -179,7 +178,7 @@
 <script lang="ts" setup>
   import {
     ruleOfExaGridOptions,
-    invCountLossOfDetailColumns,
+    invCountSheetOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -203,7 +202,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, InvCountLossEntity, getOneById } from '/@/api/invCountLoss';
+  import { add, audit, unAudit, getOneById, InvCountSheetEntity } from '/@/api/invCountSheet';
   import { getInventoryList } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
@@ -215,6 +214,7 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
+  // import {InvCountLossDetailEntity} from "/@/api/invCountSheet";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -240,7 +240,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: InvCountLossEntity = {
+  const formData: InvCountSheetEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -259,16 +259,16 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    countNum: [
-      { required: true, message: '请输入比帐存数量小的盘点数量' },
-      {
-        validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
-            return new Error('盘点数量应该大于帐存数量');
-          }
-        },
-      },
-    ],
+    // countNum: [
+    //   { required: true, message: '请输入比帐存数量小的盘点数量' },
+    //   {
+    //     validator({ cellValue, row }) {
+    //       if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
+    //         return new Error('盘点数量应该大于帐存数量');
+    //       }
+    //     },
+    //   },
+    // ],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
@@ -362,6 +362,7 @@
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
+
           const data = await audit({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
           if (data.bsStatus === 'B' && tableFullData) {
@@ -440,18 +441,6 @@
         data[column.params.param[key]] = {};
       }
     }
-  };
-
-  //获取判断双击赋值事件的值
-  const getJudgeClickData = (arr, row, callback) => {
-    let judgeClickIndex = arr.fullData.findIndex(
-      (e) =>
-        e.stockId === row.id ||
-        e.compartmentId === row.id ||
-        e.locationId === row.id ||
-        e.matId === row.id,
-    );
-    callback(judgeClickIndex);
   };
 
   //双击赋值事件

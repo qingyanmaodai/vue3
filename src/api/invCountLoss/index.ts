@@ -1,6 +1,13 @@
 import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
-import { Url, RequestData, SearchParams, PublicModel, ControlSet } from '/@/api/apiLink';
+import {
+  Url,
+  RequestData,
+  SearchParams,
+  PublicModel,
+  ControlSet,
+  InvCountEntity,
+} from '/@/api/apiLink';
 import { StockEntity } from '/@/api/mainStock';
 import { StockLocationEntity } from '/@/api/stockLocation';
 import { StockCompartmentEntity } from '/@/api/stockCompartment';
@@ -19,28 +26,11 @@ export interface InvCountLossEntity extends PublicModel {
   srcField?: string;
   way?: string;
   dtData?: InvCountLossDetailEntity[];
-  dtLk?: object;
-  // empNumber?: string;
-  // countNum?: string;
-  // loss?: string;
-  // lot?: string;
-  // mark?: string;
-  // parentId?: string;
-  // unitName?: string;
-  // matId?: string;
-  // stockId?: string;
-  // stockName?: string;
-  // stockNum?: string;
-  // compartmentId?: string;
-  // compartmentName?: string;
-  // compartmentNumber?: string;
-  // locationId?: string;
-  // locationName?: string;
-  // locationNumber?: string;
-  // matModel?: string;
-  // matName?: string;
-  // matNumber?: string;
-  // optStockNum?: string;
+  dtLk?: InvCountEntity;
+  srcBill?: string;
+  srcBillId?: string;
+  srcId?: string;
+  srcType?: string;
 }
 export interface InvCountLossDetailEntity extends PublicModel {
   id: string | undefined;

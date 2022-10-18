@@ -1,34 +1,45 @@
 <template>
   <vxe-modal v-model="demo1.value1" width="600" show-footer>
     <template #title>
-      <span style="color: #ff6a00">自定义标题</span>
-    </template>
-    <template #corner>
-      <vxe-icon name="bell-fill" />
-      <vxe-icon name="minus" />
+      <span>下推</span>
     </template>
     <template #default>
       <div class="content">
         <vxe-radio
           class="contentNode"
-          v-for="item in 6"
+          v-for="item in formState"
           name="n1"
-          v-model="item.value1"
+          v-model="item.id"
           label="1"
-          content="默认尺寸"
+          :content="item.name"
         />
       </div>
     </template>
   </vxe-modal>
 </template>
 <script lang="ts" setup>
-  import { reactive } from 'vue';
+  import { reactive, ref } from 'vue';
+  import { getPushDown } from '/@/api/invCountSheet';
+  const formState = ref<any>([{}, {}]);
+  const props = defineProps({
+    tableName: String,
+  });
   const demo1 = reactive({
-    value1: true
+    value1: false,
   });
 
-  const show = () => {
+  const show = async () => {
+    console.log(props.tableName, 'props.tableName');
     demo1.value1 = true;
+    // formState.value = await getPushDown({
+    //   srcBillType: props.tableName,
+    // });
+    formState.value = await getPushDown({
+      params: {
+        srcBillType: props.tableName,
+      },
+    });
+    console.log(formState.value, '2222222222222');
   };
   defineExpose({
     show,

@@ -28,7 +28,7 @@
         </AButton>
         <AButton
           type="primary"
-          style="margin: 0 10px"
+          style="margin: -10 0px"
           @click="pushDownEvent"
           v-show="props.isPushDown"
           >下推</AButton
@@ -160,7 +160,7 @@
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
   <!--  </div>-->
-  <ExPushDownModel ref="ExPushDownModelRef" />
+  <ExPushDownModel ref="ExPushDownModelRef" :tableName="tableName" />
 </template>
 
 <script lang="ts" setup>
@@ -190,6 +190,7 @@
     buttons: Array,
     count: Number,
     show: Boolean,
+    tableName: String,
     tableData: Array,
     isShowExport: {
       type: Boolean,
@@ -217,6 +218,7 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
+    (e: 'pushDownEvent', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -413,8 +415,21 @@
     }
   };
   //下推弹框
-  const pushDownEvent = () => {
-    ExPushDownModelRef.value.show();
+  const pushDownEvent = async () => {
+    const $grid: any = xGrid.value;
+    const selectRecords = $grid.getCheckboxRecords();
+    if (selectRecords.length > 0) {
+      ExPushDownModelRef.value.show();
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
+    }
+    // console.log(selectRecords);
+    // await getPushDown({
+    //   srcBillType: tableName,
+    // });
+
+
+    // emit('pushDownEvent', row);
   };
 
   //上传文件前的判断
