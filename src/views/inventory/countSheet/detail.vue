@@ -161,6 +161,7 @@
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
+            filterTableName="BdMaterial"
           />
         </pane>
       </a-splitpanes>
@@ -211,9 +212,9 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getMatTableById } from '/@/api/matTable';
+  import {getMatTable, getMatTableById} from '/@/api/matTable';
   // import {InvCountLossDetailEntity} from "/@/api/invCountSheet";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
@@ -276,6 +277,25 @@
   formRules[compartment] = [{ required: true, message: '请选择分仓' }];
   formRules[location] = [{ required: true, message: '请选择仓位' }];
 
+  //筛选条件查询
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+    let getParams: SearchParams[] = [];
+    if (detailTableRef.value.filterModalParams() && detailTableRef.value.filterModalParams().length > 0) {
+      getParams = getParams.concat(detailTableRef.value.filterModalParams());
+    }
+    //表格查询
+    const res: any = await getMatTable({
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: currPage,
+      pageRows: pageSize,
+    });
+    console.log('filterModalSearchEvent--res',res.records)
+    detailTableData.value = cloneDeep(res.records);
+
+  };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {

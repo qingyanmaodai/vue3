@@ -162,7 +162,7 @@
             @filterModalSearchEvent="filterModalSearchEvent"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
-            filterTableName="BdMaterial"
+            isShowFilterButton="false"
           />
         </pane>
       </a-splitpanes>
@@ -237,24 +237,6 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-
-  //筛选条件查询
-  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
-    let getParams: SearchParams[] = [];
-    if (detailTableRef.value.filterModalParams() && detailTableRef.value.filterModalParams().length > 0) {
-      getParams = getParams.concat(detailTableRef.value.filterModalParams());
-    }
-    //表格查询
-    const res: any = await getMatTable({
-      params: getParams,
-      orderByBean: {
-        descList: ['BdMaterial.update_time'],
-      },
-      pageIndex: currPage,
-      pageRows: pageSize,
-    });
-    console.log('filterModalSearchEvent--res',res.records)
-  };
 
   //获取当前时间
   const getCurrentData = () => {
