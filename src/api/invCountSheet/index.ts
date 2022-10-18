@@ -15,7 +15,7 @@ import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
 
-export interface InvCountLossEntity extends PublicModel {
+export interface InvCountSheetEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
@@ -88,8 +88,8 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加信息
  */
-export function add(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountLossEntity>(
+export function add(json: RequestData<InvCountSheetEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.ADD_WITH_DETAIL_INV_COUNT,
       data: json,
@@ -103,8 +103,8 @@ export function add(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMod
 /**
  * 编辑信息
  */
-export function update(json: RequestData<InvCountLossEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountLossEntity>(
+export function update(json: RequestData<InvCountSheetEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.UPDATE_INV_COUNT,
       data: json,
@@ -119,7 +119,7 @@ export function update(json: RequestData<InvCountLossEntity>, mode: ErrorMessage
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountLossEntity>(
+  return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.AUDIT_INV_COUNT,
       data: json,
@@ -137,6 +137,36 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
   return defHttp.post<Result>(
     {
       url: Url.BATCH_AUDIT_INV_COUNT,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 下推配置查询
+ */
+export function getPushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
+    {
+      url: Url.GET_PUSHDOWN_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 下推
+ */
+export function pushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<InvCountSheetEntity>(
+    {
+      url: Url.PUSHDOWN_INV_COUNT,
       data: json,
     },
     {
@@ -194,7 +224,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountLossEntity>(
+  return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.UN_AUDIT_INV_COUNT,
       data: json,

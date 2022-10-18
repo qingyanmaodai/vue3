@@ -26,6 +26,13 @@
           style="margin-right: 5px"
           >{{ button.label }}
         </AButton>
+        <AButton
+          type="primary"
+          style="margin: -10 0px"
+          @click="pushDownEvent"
+          v-show="props.isPushDown"
+          >下推</AButton
+        >
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -153,6 +160,7 @@
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
   <!--  </div>-->
+  <ExPushDownModel ref="ExPushDownModelRef" :tableName="tableName" />
 </template>
 
 <script lang="ts" setup>
@@ -165,8 +173,12 @@
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
+
+  //基础信息查询组件ref
+  const ExPushDownModelRef: any = ref(null); //
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -178,12 +190,17 @@
     buttons: Array,
     count: Number,
     show: Boolean,
+    tableName: String,
     tableData: Array,
+    isShowExport: {
+      type: Boolean,
+      default: true,
+    },
     isShowImport: {
       type: Boolean,
       default: true,
     },
-    isShowExport: {
+    isPushDown: {
       type: Boolean,
       default: true,
     },
@@ -201,6 +218,7 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
+    (e: 'pushDownEvent', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -395,6 +413,23 @@
         color: 'red',
       };
     }
+  };
+  //下推弹框
+  const pushDownEvent = async () => {
+    const $grid: any = xGrid.value;
+    const selectRecords = $grid.getCheckboxRecords();
+    if (selectRecords.length > 0) {
+      ExPushDownModelRef.value.show();
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
+    }
+    // console.log(selectRecords);
+    // await getPushDown({
+    //   srcBillType: tableName,
+    // });
+
+
+    // emit('pushDownEvent', row);
   };
 
   //上传文件前的判断

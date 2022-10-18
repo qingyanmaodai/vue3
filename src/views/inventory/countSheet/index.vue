@@ -11,6 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isPushDown="true"
         :isShowImport="false"
         :isShowExport="false"
         :columns="invCountSheetColumns"
@@ -18,6 +19,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        tableName="BsInventoryCount"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"
@@ -30,6 +32,7 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
+        @pushDownEvent="pushDownEvent"
       />
       <div>
         <Pager
@@ -69,12 +72,14 @@
     getDataList,
     getSearchOption,
     importFile,
+    pushDown,
     unAudit,
     unAuditBatch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -107,6 +112,7 @@
   };
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+    console.log('11111111111');
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -243,6 +249,14 @@
     await tableRef.value.computeData(res);
     await getList();
   };
+  //下推
+  const pushDownEvent = async (row) => {
+    let res = await pushDown({
+      params: row,
+    });
+    console.log(res);
+    // createMessage.success('操作成功');
+  };
   //下载模板
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
@@ -294,7 +308,7 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    // getList();
+    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

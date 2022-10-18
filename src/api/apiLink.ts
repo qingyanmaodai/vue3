@@ -251,6 +251,9 @@ export enum Url {
   ADD_INV_COUNT = '/wms/bd-inventory-count/save', //添加
   ADD_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT = '/wms/bd-inventory-count/update', //编辑
+  PUSHDOWN_INV_COUNT = '/wms/bd-inventory-count/push/BsInventoryCount', //下推
+  //下推查询配置
+  GET_PUSHDOWN_LIST = '/wms/lk-set/list', //下推查询配置
 
   // 盘亏单
   AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/audit', //审核
@@ -270,6 +273,8 @@ export enum Url {
   // ADD_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/update', //编辑
+
+
 
   //系统参数
   GET_SYSTEM_LIST = '/stock/bd-system/list', //系统参数查询
