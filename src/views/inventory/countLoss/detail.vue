@@ -274,7 +274,6 @@
     ],
   });
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
   formRules[compartment] = [{ required: true, message: '请选择分仓' }];
   formRules[location] = [{ required: true, message: '请选择仓位' }];

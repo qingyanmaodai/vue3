@@ -112,7 +112,6 @@
   };
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
-    console.log('11111111111');
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());

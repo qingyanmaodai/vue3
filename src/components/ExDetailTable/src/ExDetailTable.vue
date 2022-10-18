@@ -299,7 +299,6 @@
     const $grid: any = xGrid.value;
     validAllErrMapData.value = await $grid.validate(true);
     return validAllErrMapData.value;
-    console.log('validAllErrMapData.value',validAllErrMapData.value);
   };
   //获取表格数据
   const getDetailData = (): object[] => {

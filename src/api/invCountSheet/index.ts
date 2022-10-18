@@ -148,7 +148,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
 /**
  * 下推配置查询
  */
-export function getPushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.GET_PUSHDOWN_LIST,

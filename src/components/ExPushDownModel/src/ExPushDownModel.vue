@@ -1,5 +1,5 @@
 <template>
-  <vxe-modal v-model="visible" width="600" show-footer>
+  <vxe-modal v-model="visible" width="600" show-footer show-zoom resize>
     <template #title>
       <span>下推</span>
     </template>
@@ -7,40 +7,54 @@
       <div class="content">
         <vxe-radio
           class="contentNode"
-          v-for="item in formState"
+          v-for="(item, index) in formState"
           name="n1"
-          v-model="item.tarBillType"
-          label="1"
+          :key="index"
+          label="item"
           :content="item.name"
+          @change="change(index)"
         />
       </div>
-      <span style="display: flex; float: right">
-      <button class="x-button">重置</button>
-      <button class="x-button">取消</button>
-      <button class="x-button">查询</button>
-    </span>
     </template>
-
+    <template #footer>
+      <vxe-button type="submit" status="primary" @click="Submit(PushDownTableName)"
+        >提交</vxe-button
+      >
+      <vxe-button type="reset">取消</vxe-button>
+    </template>
   </vxe-modal>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { getPushDown } from '/@/api/invCountSheet';
-  const formState = ref<any>([]);
+  import { getPushDownList } from '/@/api/invCountSheet';
+  const formState = ref<any>([]); //得到的列表保存数据
+  const PushDownTableName = ref<string>(''); //单选框切换的表名
+  type Emits = {
+    (e: 'pushDownSelect', value: any): void;
+  };
+  const emit = defineEmits<Emits>();
   const props = defineProps({
     tableName: String,
   });
-  const visible = ref<boolean>(false);
+
+  const visible = ref<boolean>(false); //弹框可见性，默认为关闭
 
   const show = async () => {
-    console.log(props.tableName, 'props.tableName');
+    // console.log(props.tableName, 'props.tableName');
     visible.value = true;
-    formState.value = await getPushDown({
+    formState.value = await getPushDownList({
       params: {
         srcBillType: props.tableName,
       },
     });
-    console.log(formState.value, '2222222222222');
+    // console.log(formState.value, '2222222222222');
+  };
+  const Submit = (PushDownTableName) => {
+    emit('pushDownSelect', PushDownTableName);
+  };
+  const change = (index) => {
+    PushDownTableName.value = formState.value[index].tarBillType;
+    console.log(PushDownTableName.value);
   };
   defineExpose({
     show,

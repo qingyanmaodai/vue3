@@ -158,7 +158,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
-            @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
             filterTableName="BdMaterial"
@@ -204,7 +203,6 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, getOneById, InvCountSheetEntity } from '/@/api/invCountSheet';
-  import { getInventoryList } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -215,7 +213,7 @@
   import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import {getMatTable, getMatTableById} from '/@/api/matTable';
-  // import {InvCountLossDetailEntity} from "/@/api/invCountSheet";
+
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -260,18 +258,8 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    // countNum: [
-    //   { required: true, message: '请输入比帐存数量小的盘点数量' },
-    //   {
-    //     validator({ cellValue, row }) {
-    //       if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
-    //         return new Error('盘点数量应该大于帐存数量');
-    //       }
-    //     },
-    //   },
-    // ],
+    countNum: [{ required: true, message: '请输入盘点数量' }],
   });
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[material] = [{ required: true, message: '请选择检验项目' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
   formRules[compartment] = [{ required: true, message: '请选择分仓' }];
@@ -436,20 +424,9 @@
     }
   };
 
-  //计算数量
-  const getCountAmount = (row) => {
-    if (row.countNum && row.stockNum !== null) {
-      row.loss = row.stockNum - row.countNum;
-    } else {
-      row.loss = '';
-    }
-    return row;
-  };
-
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
-      data.stockNum = '';
       data.countNum = '';
       for (const key in column.params.param) {
         data[key] = '';
@@ -506,13 +483,6 @@
         }
         break;
     }
-    let stockNumData = await getInventoryList({ params: data });
-    if (stockNumData) {
-      data.stockNum = cloneDeep(stockNumData);
-    } else {
-      data.stockNum = 0;
-    }
-    await getCountAmount(data);
   };
 
   onMounted(() => {
