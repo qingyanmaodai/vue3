@@ -32,7 +32,6 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
-        @pushDownEvent="pushDownEvent"
       />
       <div>
         <Pager
@@ -247,14 +246,6 @@
     });
     await tableRef.value.computeData(res);
     await getList();
-  };
-  //下推
-  const pushDownEvent = async (row) => {
-    let res = await pushDown({
-      params: row,
-    });
-    console.log(res);
-    // createMessage.success('操作成功');
   };
   //下载模板
   const importModelEvent = async () => {

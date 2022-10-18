@@ -178,7 +178,7 @@
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
-  // import { PushDown } from '/@/api/invCountSheet';
+  import { pushDown } from '/@/api/invCountSheet';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -420,12 +420,21 @@
     }
   };
   //下推功能
-  const pushDownSelect = async () => {
-    // const $grid: any = xGrid.value;
-    // const selectRecords = $grid.getCheckboxRecords();
-    // await PushDown({
-    //   params: selectRecords,
-    // });
+  const pushDownSelect = async (PushDownTableName) => {
+    const $grid: any = xGrid.value;
+    let selectRecords = $grid.getCheckboxRecords();
+    await pushDown(
+      {
+        params: selectRecords,
+      },
+      PushDownTableName,
+    )
+      .then(() => {
+        ExPushDownModelRef.value.close();
+      })
+      .catch(() => {
+        createMessage.error('操作失败');
+      });
   };
   //下推弹框
   const pushDownEvent = async () => {
@@ -436,12 +445,6 @@
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
-    // console.log(selectRecords);
-    // await getPushDownList({
-    //   srcBillType: tableName,
-    // });
-
-    // emit('pushDownEvent', row);
   };
 
   //上传文件前的判断

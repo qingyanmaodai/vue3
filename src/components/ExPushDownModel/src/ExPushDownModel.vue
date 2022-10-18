@@ -20,15 +20,16 @@
       <vxe-button type="submit" status="primary" @click="Submit(PushDownTableName)"
         >提交</vxe-button
       >
-      <vxe-button type="reset">取消</vxe-button>
+      <vxe-button type="reset" @click="close">取消</vxe-button>
     </template>
   </vxe-modal>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { getPushDownList } from '/@/api/invCountSheet';
-  const formState = ref<any>([]); //得到的列表保存数据
-  const PushDownTableName = ref<string>(''); //单选框切换的表名
+  const visible = ref<boolean>(false); //弹框可见性，默认为关闭
+  const formState = ref<any>([]); //可下推的列表
+  const PushDownTableName = ref<string>(''); //单选框切换赋值表名
   type Emits = {
     (e: 'pushDownSelect', value: any): void;
   };
@@ -37,17 +38,16 @@
     tableName: String,
   });
 
-  const visible = ref<boolean>(false); //弹框可见性，默认为关闭
-
   const show = async () => {
-    // console.log(props.tableName, 'props.tableName');
     visible.value = true;
     formState.value = await getPushDownList({
       params: {
         srcBillType: props.tableName,
       },
     });
-    // console.log(formState.value, '2222222222222');
+  };
+  const close = () => {
+    visible.value = false;
   };
   const Submit = (PushDownTableName) => {
     emit('pushDownSelect', PushDownTableName);
@@ -74,8 +74,5 @@
     display: flex;
     width: 50%;
     margin: 0 !important;
-  }
-  .x-button {
-    margin: 10px 5px 0 5px;
   }
 </style>

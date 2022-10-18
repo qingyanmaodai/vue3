@@ -163,10 +163,14 @@ export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMod
 /**
  * 下推
  */
-export function pushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function pushDown(
+  json: RequestData<object>,
+  PushDownTableName: string, //可下推的表名
+  mode: ErrorMessageMode = 'message',
+) {
   return defHttp.post<InvCountSheetEntity>(
     {
-      url: Url.PUSHDOWN_INV_COUNT,
+      url: Url.PUSHDOWN_INV_COUNT + PushDownTableName,
       data: json,
     },
     {
