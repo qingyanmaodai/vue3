@@ -180,6 +180,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { getInventoryList } from '/@/api/realTimeInv';
   import {
     ruleOfExaGridOptions,
     invCountGainOfDetailColumns,
@@ -213,7 +214,6 @@
     InvCountGainEntity,
     getOneById,
     // update,
-    getInventoryList,
   } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';

@@ -179,6 +179,9 @@
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { pushDown } from '/@/api/invCountSheet';
+  import { cloneDeep } from 'lodash-es';
+  import { getInvList } from '/@/api/realTimeInv';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -419,10 +422,79 @@
       };
     }
   };
-  //下推功能
-  const pushDownSelect = async (PushDownTableName) => {
+  //dtData封装
+  const getdtData = async () => {
     const $grid: any = xGrid.value;
     let selectRecords = $grid.getCheckboxRecords();
+    let selectRecords1 = cloneDeep(selectRecords);
+    let selectRecords2 = cloneDeep(selectRecords);
+    //放入对象存在matId的值
+    let val: Array<string> = [];
+    for (let item of selectRecords) {
+      if (item.matId) {
+        val.push(item.matId);
+      }
+    }
+    //请求分页查询接口
+    let res: any = await getInvList({
+      pageRows: 1000000,
+      params: [
+        {
+          table: '',
+          name: 'matId',
+          column: 'mat_id',
+          link: SearchLink.AND,
+          rule: SearchMatchType.IN,
+          type: SearchDataType.string,
+          val: val,
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    console.log(res, 'resresresresresres');
+    //遍历数组赋值stockNum
+    for (let item of selectRecords2) {
+      let filterNum = res.records.filter(
+        (e) =>
+          e.matId === item.matId &&
+          e.stockId === item.stockId &&
+          e.compartmentId === item.compartmentId &&
+          e.locationId === item.locationId,
+      );
+      if (filterNum) {
+        item.stockNum = filterNum[0].stockNum;
+      } else {
+        item.stockNum = 0;
+      }
+    }
+    //根据单号去重
+    for (let i = 0; i < selectRecords1.length; i++) {
+      for (let j = i + 1; j < selectRecords1.length; j++) {
+        if (selectRecords1[i].number === selectRecords1[j].number) {
+          selectRecords1.splice(j, 1);
+          j--;
+        }
+      }
+    }
+    console.log(selectRecords1, 'selectRecords1');
+    // 赋值dtData
+    for (const item of selectRecords1) {
+      item.dtData = [];
+      for (const item2 of selectRecords2) {
+        if (item2.number === item.number) {
+          item2.id = item2.detailId;
+          item.dtData.push(item2);
+        }
+      }
+    }
+    return selectRecords1;
+  };
+
+  //下推功能
+  const pushDownSelect = async (PushDownTableName) => {
+    let selectRecords = await getdtData();
+    console.log(selectRecords,'adadadadadadada');
     await pushDown(
       {
         params: selectRecords,
@@ -430,10 +502,11 @@
       PushDownTableName,
     )
       .then(() => {
+        createMessage.success('下推成功');
         ExPushDownModelRef.value.close();
       })
       .catch(() => {
-        createMessage.error('操作失败');
+        createMessage.error('下推失败');
       });
   };
   //下推弹框

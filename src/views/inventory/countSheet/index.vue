@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="inventory-countLoss-index">
+<script setup lang="ts" name="inventory-count-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -71,7 +71,6 @@
     getDataList,
     getSearchOption,
     importFile,
-    pushDown,
     unAudit,
     unAuditBatch,
   } from '/@/api/invCountSheet';
@@ -91,7 +90,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT_LOSS');
+  let importConfig = ref<string>('IMPORT_INV_COUNT');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);

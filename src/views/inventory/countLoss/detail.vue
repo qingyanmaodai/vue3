@@ -204,7 +204,7 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, InvCountLossEntity, getOneById } from '/@/api/invCountLoss';
-  import { getInventoryList } from '/@/api/invCountGain';
+  import { getInventoryList } from '/@/api/realTimeInv';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';

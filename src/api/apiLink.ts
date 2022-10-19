@@ -212,8 +212,9 @@ export enum Url {
   UPDATE_UNIT_LIST = '/stock/bd-unit/update', //编辑
 
   //即时库存
-  GET_INVENTORY_DTO = '/stock/bd-inventory/query-dto', //获取实体信息
   GET_INV_BY_MAT_STOCK_LIST = '/stock/bd-inventory/get-inv-by-mat-stock', //物料号与仓位获取库存信息
+  GET_INV_LIST = '/stock/bd-inventory/list', //分页查询
+
   // 盘盈单
   AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/audit', //审核
   BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-audit', //批量审核
@@ -556,6 +557,7 @@ export enum SearchMatchType {
   NE = 'NE', //不等于
   GT = 'GT', //大于
   LT = 'LT', //小于
+  IN = 'IN', //数组包含
 }
 export enum SearchDataType {
   string = 'string',
@@ -578,7 +580,7 @@ export interface SearchParams {
   link: SearchLink;
   rule: SearchMatchType;
   type: SearchDataType;
-  val: string;
+  val: string | Array<string>;
   startWith?: string;
   endWith?: string;
 }
