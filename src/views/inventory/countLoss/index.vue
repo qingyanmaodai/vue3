@@ -18,6 +18,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        tableName="BsInventoryCountLoss"
         ref="tableRef"
         @addEvent="addTableEvent"
         @editEvent="editTableEvent"

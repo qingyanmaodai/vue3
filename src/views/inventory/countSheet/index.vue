@@ -32,7 +32,6 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
-        @pushDownEvent="pushDownEvent"
       />
       <div>
         <Pager
@@ -58,7 +57,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="inventory-countLoss-index">
+<script setup lang="ts" name="inventory-count-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -72,7 +71,6 @@
     getDataList,
     getSearchOption,
     importFile,
-    pushDown,
     unAudit,
     unAuditBatch,
   } from '/@/api/invCountSheet';
@@ -92,7 +90,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT_LOSS');
+  let importConfig = ref<string>('IMPORT_INV_COUNT');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
@@ -247,14 +245,6 @@
     });
     await tableRef.value.computeData(res);
     await getList();
-  };
-  //下推
-  const pushDownEvent = async (row) => {
-    let res = await pushDown({
-      params: row,
-    });
-    console.log(res);
-    // createMessage.success('操作成功');
   };
   //下载模板
   const importModelEvent = async () => {
