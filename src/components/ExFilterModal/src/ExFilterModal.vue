@@ -9,109 +9,22 @@
       width="60%"
       @close="close"
     >
-      <div>
-        <a-form ref="formRef" :model="formState">
-          <Row>
-            <Col :span="8">
-              <a-form-item label="仓库：" ref="stockId" name="stockId" class="item">
-                <ExInput
-                  autocomplete="off"
-                  class="input"
-                  placeholder="请选择"
-                  :show="formState.bsStatus !== 'B'"
-                  v-model:value="formState.bdStock"
-                  :disabled="formState.bsStatus === 'B'"
-                  @search="
-                    onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, [
-                      'stockId',
-                      'bdStock',
-                    ])
-                  "
-                  @clear="
-                    onClear([
-                      'stockId',
-                      'bdStock',
-                      'compartmentId',
-                      'bdStockCompartment',
-                      'locationId',
-                      'bdStockLocation',
-                    ])
-                  "
-                />
-              </a-form-item>
-            </Col>
-            <Col :span="8">
-              <a-form-item label="分仓：" ref="compartmentId" name="compartmentId" class="item">
-                <ExInput
-                  autocomplete="off"
-                  class="input"
-                  placeholder="请选择"
-                  :show="formState.bsStatus !== 'B'"
-                  v-model:value="formState.bdStockCompartment"
-                  :disabled="formState.bsStatus === 'B'"
-                  @search="
-                    onSearch(
-                      'GET_SUB_STOCK_DTO',
-                      'BdStockCompartment',
-                      Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
-                      ['compartmentId', 'bdStockCompartment'],
-                    )
-                  "
-                  @clear="
-                    onClear([
-                      'compartmentId',
-                      'bdStockCompartment',
-                      'locationId',
-                      'bdStockLocation',
-                    ])
-                  "
-                />
-              </a-form-item>
-            </Col>
-            <Col :span="8">
-              <a-form-item label="仓位：" ref="locationId" name="locationId" class="item">
-                <ExInput
-                  autocomplete="off"
-                  class="input"
-                  placeholder="请选择"
-                  :show="formState.bsStatus !== 'B'"
-                  v-model:value="formState.bdStockLocation"
-                  :disabled="formState.bsStatus === 'B'"
-                  @search="
-                    onSearch(
-                      'GET_LOCATION_DTO',
-                      'BdStockLocation',
-                      Url.GET_PAGE_STOCK_LOCATION_LIST,
-                      ['locationId', 'bdStockLocation'],
-                    )
-                  "
-                  @clear="onClear(['locationId', 'bdStockLocation'])"
-                />
-              </a-form-item>
-            </Col>
-          </Row>
-          <Row>
-            <Col :span="8">
-              <a-form-item label="物料：" ref="matId" name="matId" class="item">
-                <ExInput
-                  autocomplete="off"
-                  class="input"
-                  placeholder="请选择"
-                  :show="formState.bsStatus !== 'B'"
-                  v-model:value="formState.bdMaterial"
-                  :disabled="formState.bsStatus === 'B'"
-                  @search="
-                    onSearch('GET_MAT_DTO', 'BdMaterial', Url.GET_MATERIAL_LIST, [
-                      'matId',
-                      'bdMaterial',
-                    ])
-                  "
-                  @clear="onClear(['matId', 'bdMaterial'])"
-                />
-              </a-form-item>
-            </Col>
-          </Row>
-        </a-form>
+      <div class="content1">
+        <div class="contentNode" v-for="(item, index) in props.inputDataList" :key="item.id">
+          <div style="margin: 4px 5px 0 0">{{ item.addonBeforeLabel }}</div>
+          <div>
+            <ExInput
+              :key="index"
+              class="input"
+              autocomplete="off"
+              placeholder="请选择"
+              :show="formState.bsStatus !== 'B'"
+              v-model:value="formState.inputValue[index]"
+              :disabled="formState.bsStatus === 'B'"
+              @search="onSearch(item, index)"
+              @clear="onClear(item, index)"
+          /></div>
+        </div>
       </div>
       <template #title>
         <span>筛选条件</span>
@@ -134,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { Button, Col, Form, FormItem, Row } from 'ant-design-vue';
+  import { Button } from 'ant-design-vue';
   import { reactive, ref, toRef } from 'vue';
   import { ExInput } from '/@/components/ExInput';
   import { BasicSearch } from '/@/components/AMoreSearch';
@@ -149,15 +62,10 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { VXETable } from 'vxe-table';
   import { getPublicList } from '/@/api/public';
-  import { StockEntity } from '/@/api/mainStock';
-  import { StockLocationEntity } from '/@/api/stockLocation';
-  import { StockCompartmentEntity } from '/@/api/stockCompartment';
-  import { MatEntity} from '/@/api/matTable';
   import { cloneDeep } from 'lodash-es';
   const AButton = Button;
-  const AForm = Form;
-  const AFormItem = FormItem;
 
   const isShow = ref(false);
   //基础信息查询组件ref
@@ -165,37 +73,25 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
+
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'filterModalSearchEvent'): void; ///筛选条件查询
   };
   interface ProType {
     tableName: string;
-    // filterModalUrl: string;
+    inputDataList: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
   });
   interface FormState {
+    inputValue: Array<any>;
     bsStatus?: string;
-    matId?: string;
-    bdMaterial?: MatEntity;
-    stockId?: string;
-    bdStock?: StockEntity;
-    compartmentId?: string;
-    bdStockCompartment?: StockCompartmentEntity;
-    locationId?: string;
-    bdStockLocation?: StockLocationEntity;
   }
+
   const defaultF: FormState = {
-    matId: undefined,
-    bdMaterial: undefined,
-    stockId: undefined,
-    bdStock: undefined,
-    compartmentId: undefined,
-    bdStockCompartment: undefined,
-    locationId: undefined,
-    bdStockLocation: undefined,
+    inputValue: [],
   };
   const defaultData: FormState = cloneDeep(defaultF);
 
@@ -203,144 +99,83 @@
     data: cloneDeep(defaultData),
   });
   const formState = toRef(formStateInit, 'data');
+
   const getSearchParams = (): SearchParams[] => {
     let getParams: SearchParams[] = [];
-    if (formState.value.matId) {
-      getParams.push({
-        table:props.tableName,
-        name: 'id',
-        column: 'id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.value.matId,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.value.stockId) {
-      getParams.push({
-        table:props.tableName,
-        name: 'stockId',
-        column: 'stock_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.value.stockId,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.value.compartmentId) {
-      getParams.push({
-        table:props.tableName,
-        name: 'compartmentId',
-        column: 'compartment_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.value.compartmentId,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.value.locationId) {
-      getParams.push({
-        table:props.tableName,
-        name: 'locationId',
-        column: 'location_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.value.locationId,
-        startWith: '',
-        endWith: '',
-      });
+    for (let i = 0; i < props.inputDataList.length; i++) {
+      if (formState.value.inputValue[i]) {
+        getParams.push({
+          table: props.tableName,
+          name: props.inputDataList[i].nameParam,
+          column: props.inputDataList[i].columnParam,
+          link: SearchLink.AND,
+          rule: SearchMatchType.LIKE,
+          type: SearchDataType.string,
+          val: formState.value.inputValue[i]['id'],
+          startWith: '',
+          endWith: '',
+        });
+      }
     }
     return getParams;
   };
   //点击清空图标清空事件
-  const onClear = (key: string[]) => {
-    key.forEach((e) => {
-      formState.value[e] = undefined;
-    });
+  const onClear = (item, index) => {
+    if (item.tableName == 'BdStock' || item.tableName == 'BdStockCompartment') {
+      formState.value.inputValue[1] = undefined;
+      formState.value.inputValue[2] = undefined;
+    }
+    formState.value.inputValue[index] = undefined;
   };
 
-  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
+  let currIndex = 0;
   /**
    * 基础资料弹窗
-   * @param dtoUrlConfig  获取基础资料查询链接属性
-   * @param tableName  指向的表名根据DTO链接可以查询到
-   * @param tableUrl  表格列表数据链接
-   * @param dataParam 当前选中的数据包
+   * @param item
+   * @param index
    */
-  const onSearch: any = async (
-    dtoUrlConfig: string,
-    tableName: string,
-    tableUrl: string,
-    dataParam: string[],
-  ) => {
-    currDataParam = dataParam;
-    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
+  const onSearch: any = async (item, index) => {
+    currIndex = index;
+    const res = await getPublicList({ params: [] }, Url[item.dtoUrlConfig]);
     basicControl.value = res;
-    basicTableCols.value = TableColum[dtoUrlConfig];
-    basicTableName.value = tableName;
+    basicTableCols.value = TableColum[item.dtoUrlConfig];
+    basicTableName.value = item.tableName;
     let filterParams: SearchParams[] = [];
-    if (tableName === 'BdStockCompartment') {
-      if (formState.value.stockId) {
-        filterParams = [
-          {
-            table: 'BdStockCompartment',
-            name: 'stockId',
-            column: 'stock_id',
-            link: SearchLink.AND,
-            rule: SearchMatchType.EQ,
-            type: SearchDataType.string,
-            val: formState.value.stockId,
-          },
-        ];
-      }
+
+    if (item.tableName === 'BdStockCompartment' && !formState.value.inputValue[0]) {
+      await VXETable.modal.message({ content: '还未选择仓库，请先选择', status: 'error' });
+      return;
     }
-    if (tableName === 'BdStockLocation') {
-      if (formState.value.compartmentId) {
+    if (
+      item.tableName === 'BdStockLocation' &&
+      (!formState.value.inputValue[0] || !formState.value.inputValue[1])
+    ) {
+      await VXETable.modal.message({ content: '还未选择仓库或分仓，请先选择', status: 'error' });
+      return;
+    }
+    if (item.tableName === 'BdStockLocation' || item.tableName === 'BdStockCompartment') {
+      if (formState.value.inputValue[0] || formState.value.inputValue[1]) {
         filterParams = [
           {
-            table: 'BdStockLocation',
-            name: 'compartmentId',
-            column: 'compartment_id',
+            table: item.tableName,
+            name: props.inputDataList[index - 1].nameParam,
+            column: props.inputDataList[index - 1].columnParam,
             link: SearchLink.AND,
             rule: SearchMatchType.EQ,
             type: SearchDataType.string,
-            val: formState.value.compartmentId,
+            val: formState.value.inputValue[index - 1].id,
           },
         ];
       }
     }
     basicSearchRef.value.setFilter(filterParams);
-    basicSearchRef.value.init(tableUrl);
+    basicSearchRef.value.init(item.tableUrl);
   };
 
   //双击单元格选择事件——获取双击所选的值并赋值到对应字段
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
-    formState.value[currDataParam[1]] = {};
-    if(basicTableName.value === 'BdMaterial') {
-      formState.value[currDataParam[0]] = row.id;
-      formState.value[currDataParam[1]].id = row.id;
-      formState.value[currDataParam[1]].name = row.name;
-    }else {
-      formState.value[currDataParam[0]] = row.id;
-      formState.value[currDataParam[1]].id = row.id;
-      formState.value[currDataParam[1]].name = row.name;
-      if (row.stockId) {
-        formState.value.bdStock = row.bdStock;
-        formState.value.stockId = row.stockId;
-      }
-      if (row.compartmentId) {
-        formState.value.bdStockCompartment = row.bdStockCompartment;
-        formState.value.compartmentId = row.compartmentId;
-      }
-    }
+    formState.value.inputValue[currIndex] = row;
   };
 
   const show = () => {
@@ -353,7 +188,6 @@
   const searchEvent = () => {
     isShow.value = false;
     emit('filterModalSearchEvent');
-    // getList(props.filterModalUrl)
   };
 
   //重置方法
@@ -364,7 +198,7 @@
     show,
     close,
     getSearchParams,
-  })
+  });
 </script>
 <style scoped lang="less">
   .x-button {
@@ -377,5 +211,17 @@
     width: 14rem;
     height: 2rem;
     margin: 0 30px 0 2px;
+  }
+  .content1 {
+    //height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .contentNode {
+    width: 50%;
+    padding-bottom: 20px;
+    justify-content: center;
+    display: flex;
+    margin: 0 !important;
   }
 </style>

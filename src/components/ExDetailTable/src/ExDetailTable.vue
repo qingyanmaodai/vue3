@@ -98,6 +98,7 @@
     ref="filterModalRef"
     @filterModalSearchEvent="filterModalSearchEvent"
     :tableName="props.filterTableName"
+    :inputDataList="props.inputDataList"
   />
 </template>
 
@@ -124,6 +125,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { cloneDeep } from 'lodash-es';
   const { createMessage } = useMessage();
+
   const AButton = Button;
   const props = defineProps({
     gridOptions: Object,
@@ -150,10 +152,9 @@
       type: String,
       default: '',
     },
-    // filterModalUrl: {
-    //   type: String,
-    //   default: '',
-    // },
+    inputDataList: {
+      type: Array,
+    },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
