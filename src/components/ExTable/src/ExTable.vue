@@ -496,10 +496,11 @@
       .then((res) => {
         createMessage.success('下推成功');
         ExPushDownModelRef.value.close();
-        console.log(res, 'res');
+        console.log(PageEnum[routeTo], 'PageEnum[routeTo]');
+        console.log(res.result, 'res.result');
         go({
           path: PageEnum[routeTo],
-          query: res.result,
+          query: { new: JSON.stringify(res.result) },
         });
       })
       .catch(() => {

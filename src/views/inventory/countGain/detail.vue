@@ -470,8 +470,9 @@
         }
         detailTableData.value = cloneDeep(formState.value.dtData);
       } else {
-        const res: any = useRoute().query;
+        const res: any = JSON.parse(useRoute().query.new);
         formState.value = res;
+        detailTableData.value = cloneDeep(formState.value.dtData);
       }
     }
   };
@@ -543,7 +544,7 @@
   };
 
   onMounted(() => {
-    console.log(useRoute().query);
+    console.log(JSON.parse(useRoute().query.new));
     getListById();
   });
 </script>
