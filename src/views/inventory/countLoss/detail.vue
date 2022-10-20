@@ -161,7 +161,7 @@
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
-            isShowFilterButton="false"
+            :isShowFilterButton="false"
           />
         </pane>
       </a-splitpanes>

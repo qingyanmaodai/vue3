@@ -1,5 +1,5 @@
 <template>
-  <Input class="input" :placeholder="props.placeholder" :disabled="props.disabled" :value="showVal">
+  <Input class="input" :addon-before="props.addonBeforeLabel" :placeholder="props.placeholder" :disabled="props.disabled" :value="showVal">
     <template #suffix>
       <CloseIcon class="icon" v-if="props.value && props.show" @click="clearEvent" />
       <SearchIcon class="icon" v-if="props.show" @click="searchEvent" style="margin-left: 5px" />
@@ -17,6 +17,7 @@
     value: any | undefined;
     disabled: boolean;
     placeholder: string;
+    addonBeforeLabel?: string;
     show: boolean;
   }
   const props = withDefaults(defineProps<ProType>(), {
@@ -24,6 +25,7 @@
     disabled: false,
     show: true,
     placeholder: '',
+    addonBeforeLabel: '',
   });
   const showVal = computed(() => {
     if (props.value) {
