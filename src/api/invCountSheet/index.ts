@@ -186,7 +186,7 @@ export function pushDown(
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: true,
+      isTransformResponse: false,
     },
   );
 }
