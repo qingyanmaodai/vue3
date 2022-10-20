@@ -20,7 +20,7 @@
               placeholder="请选择"
               :show="formState.bsStatus !== 'B'"
               v-model:value="formState.inputValue[index]"
-              :disabled="formState.bsStatus === 'B'"
+              :disabled="formState.currInputDataList[index].disabledInput"
               @search="onSearch(item, index)"
               @clear="onClear(item, index)"
           /></div>
@@ -62,7 +62,6 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { VXETable } from 'vxe-table';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   const AButton = Button;
@@ -86,12 +85,14 @@
     tableName: '',
   });
   interface FormState {
+    currInputDataList: Array<any>;
     inputValue: Array<any>;
     bsStatus?: string;
   }
 
   const defaultF: FormState = {
     inputValue: [],
+    currInputDataList: [],
   };
   const defaultData: FormState = cloneDeep(defaultF);
 
@@ -121,9 +122,15 @@
   };
   //点击清空图标清空事件
   const onClear = (item, index) => {
-    if (item.tableName == 'BdStock' || item.tableName == 'BdStockCompartment') {
+    if (item.tableName == 'BdStock') {
       formState.value.inputValue[1] = undefined;
       formState.value.inputValue[2] = undefined;
+      formState.value.currInputDataList[1]['disabledInput'] = true;
+      formState.value.currInputDataList[2]['disabledInput'] = true;
+    }
+    if (item.tableName == 'BdStockCompartment') {
+      formState.value.inputValue[2] = undefined;
+      formState.value.currInputDataList[2]['disabledInput'] = true;
     }
     formState.value.inputValue[index] = undefined;
   };
@@ -141,20 +148,8 @@
     basicTableCols.value = TableColum[item.dtoUrlConfig];
     basicTableName.value = item.tableName;
     let filterParams: SearchParams[] = [];
-
-    if (item.tableName === 'BdStockCompartment' && !formState.value.inputValue[0]) {
-      await VXETable.modal.message({ content: '还未选择仓库，请先选择', status: 'error' });
-      return;
-    }
-    if (
-      item.tableName === 'BdStockLocation' &&
-      (!formState.value.inputValue[0] || !formState.value.inputValue[1])
-    ) {
-      await VXETable.modal.message({ content: '还未选择仓库或分仓，请先选择', status: 'error' });
-      return;
-    }
     if (item.tableName === 'BdStockLocation' || item.tableName === 'BdStockCompartment') {
-      if (formState.value.inputValue[0] || formState.value.inputValue[1]) {
+      if (formState.value.inputValue[index - 1]) {
         filterParams = [
           {
             table: item.tableName,
@@ -176,10 +171,14 @@
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
     formState.value.inputValue[currIndex] = row;
+    if (formState.value.inputValue[currIndex]) {
+      formState.value.currInputDataList[currIndex + 1]['disabledInput'] = false;
+    }
   };
 
   const show = () => {
     isShow.value = true;
+    formState.value.currInputDataList = props.inputDataList;
   };
   const close = () => {
     isShow.value = false;

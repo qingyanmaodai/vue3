@@ -277,6 +277,7 @@
       tableUrl: Url.GET_PAGE_STOCK_LIST,
       nameParam: 'stockId',
       columnParam: 'stock_id',
+      disabledInput:false,
     },
     {
       addonBeforeLabel: '分仓 : ',
@@ -285,6 +286,7 @@
       tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
       nameParam: 'compartmentId',
       columnParam: 'compartment_id',
+      disabledInput:true,
     },
     {
       addonBeforeLabel: '仓位 : ',
@@ -293,6 +295,7 @@
       tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
       nameParam: 'locationId',
       columnParam: 'location_id',
+      disabledInput:true,
     },
     {
       addonBeforeLabel: '物料 : ',
@@ -301,6 +304,7 @@
       tableUrl: Url.GET_MATERIAL_LIST,
       nameParam: 'id',
       columnParam: 'id',
+      disabledInput:false,
     },
   ]);
   //筛选条件查询
