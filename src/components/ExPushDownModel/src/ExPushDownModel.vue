@@ -17,7 +17,7 @@
       </div>
     </template>
     <template #footer>
-      <vxe-button type="submit" status="primary" @click="Submit(PushDownTableName)"
+      <vxe-button type="submit" status="primary" @click="Submit(PushDownTableName, routeTo)"
         >提交</vxe-button
       >
       <vxe-button type="reset" @click="close">取消</vxe-button>
@@ -30,8 +30,10 @@
   const visible = ref<boolean>(false); //弹框可见性，默认为关闭
   const formState = ref<any>([]); //可下推的列表
   const PushDownTableName = ref<string>(''); //单选框切换赋值表名
+  const routeTo = ref<string>(''); //单选框切换路由名
+
   type Emits = {
-    (e: 'pushDownSelect', value: any): void;
+    (e: 'pushDownSelect', PushDownTableName: any, routeTo: any): void;
   };
   const emit = defineEmits<Emits>();
   const props = defineProps({
@@ -49,12 +51,12 @@
   const close = () => {
     visible.value = false;
   };
-  const Submit = (PushDownTableName) => {
-    emit('pushDownSelect', PushDownTableName);
+  const Submit = (PushDownTableName, routeTo) => {
+    emit('pushDownSelect', PushDownTableName, routeTo);
   };
   const change = (index) => {
     PushDownTableName.value = formState.value[index].tarBillType;
-    console.log(PushDownTableName.value);
+    routeTo.value = formState.value[index].routeTo;
   };
   defineExpose({
     show,

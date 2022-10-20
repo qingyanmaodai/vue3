@@ -335,8 +335,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -460,15 +458,20 @@
   };
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
-      const res: any = await getOneById({ params: dataId });
-      formState.value = res;
-      if (formState.value.dtData) {
-        formState.value.dtData.map((r) => {
-          r.bsStatus = formState.value.bsStatus;
-        });
+    if (useRoute().query) {
+      if (useRoute().query.row) {
+        let dataId = useRoute().query.row?.toString() || '';
+        const res: any = await getOneById({ params: dataId });
+        formState.value = res;
+        if (formState.value.dtData) {
+          formState.value.dtData.map((r) => {
+            r.bsStatus = formState.value.bsStatus;
+          });
+        }
+        detailTableData.value = cloneDeep(formState.value.dtData);
+      } else {
+        formState.value = useRoute().query;
       }
-      detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
 
@@ -539,6 +542,7 @@
   };
 
   onMounted(() => {
+    console.log(useRoute().query);
     getListById();
   });
 </script>

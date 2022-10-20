@@ -24,15 +24,26 @@ export interface InvCountSheetEntity extends PublicModel {
   empName?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
-  dtData?: InvCountLossDetailEntity[];
+  dtData?: InvCountSheetDetailEntity[];
   dtLk?: InvCountEntity;
   srcBill?: string;
   srcBillId?: string;
   srcId?: string;
   srcType?: string;
+  optStockNum?: string;
+  compartmentId?: string;
+  locationId?: string;
+  lot?: string;
+  mark?: string;
+  matId?: string;
+  parentId?: string;
+  stockId?: string;
+  tenantId?: string;
+  updateBy?: string;
+  updateTime?: string;
 }
 
-export interface InvCountLossDetailEntity extends PublicModel {
+export interface InvCountSheetDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
@@ -168,7 +179,7 @@ export function pushDown(
   PushDownTableName: string, //可下推的表名
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<InvCountSheetEntity>(
+  return defHttp.post<Result>(
     {
       url: Url.PUSHDOWN_INV_COUNT + PushDownTableName,
       data: json,

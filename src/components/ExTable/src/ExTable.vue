@@ -182,6 +182,8 @@
   import { cloneDeep } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { PageEnum } from '/@/enums/pageEnum';
+  import { useGo } from '/@/hooks/web/usePage';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -452,7 +454,6 @@
         },
       ],
     });
-    console.log(res, 'resresresresresres');
     //遍历数组赋值stockNum
     for (let item of selectRecords2) {
       let filterNum = res.records.filter(
@@ -477,7 +478,6 @@
         }
       }
     }
-    console.log(selectRecords1, 'selectRecords1');
     // 赋值dtData
     for (const item of selectRecords1) {
       item.dtData = [];
@@ -490,20 +490,23 @@
     }
     return selectRecords1;
   };
-
+  const go = useGo();
   //下推功能
-  const pushDownSelect = async (PushDownTableName) => {
+  const pushDownSelect = async (PushDownTableName, routeTo) => {
     let selectRecords = await getdtData();
-    console.log(selectRecords,'adadadadadadada');
     await pushDown(
       {
         params: selectRecords,
       },
       PushDownTableName,
     )
-      .then(() => {
+      .then((res) => {
         createMessage.success('下推成功');
         ExPushDownModelRef.value.close();
+        go({
+          path: PageEnum[routeTo],
+          query: res.result,
+        });
       })
       .catch(() => {
         createMessage.error('下推失败');
