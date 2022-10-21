@@ -261,14 +261,12 @@
           backgroundColor: 'rgb(225 225 224)',
         };
       case column.field == 'bdStockCompartment.name' &&
-        (row.StockDimensionVal == 'A' || !row.bdStock.name):
+        (row.stockDis == 'A' || !row.bdStock.name):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
       case column.field == 'bdStockLocation.name' &&
-        (row.StockDimensionVal == 'B' ||
-          row.StockDimensionVal == 'A' ||
-          !row.bdStockCompartment.name):
+        (row.stockDis == 'B' || !row.bdStockCompartment.name):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

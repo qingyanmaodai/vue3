@@ -52,7 +52,6 @@ export interface InvCountGainDetailEntity extends PublicModel {
   bdStock?: StockEntity;
   bdStockCompartment?: StockCompartmentEntity;
   bdStockLocation?: StockLocationEntity;
-  StockDimensionVal?: string;
 }
 
 /**

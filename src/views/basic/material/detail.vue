@@ -204,7 +204,7 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="分仓：" ref="compartmentId" name="compartmentId" class="item">
+                <a-form-item label="分仓" ref="compartmentId" name="compartmentId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
@@ -213,7 +213,7 @@
                     :show="
                       !(
                         formState.bsStatus === 'B' ||
-                        formState.StockDimensionVal === 'A' ||
+                        stockDis === 'A' ||
                         !formState.stockId ||
                         formState.stockId === undefined
                       )
@@ -221,7 +221,7 @@
                     v-model:value="formState.bdStockCompartment"
                     :disabled="
                       formState.bsStatus === 'B' ||
-                      formState.StockDimensionVal === 'A' ||
+                      stockDis === 'A' ||
                       !formState.stockId ||
                       formState.stockId === undefined
                     "
@@ -256,7 +256,7 @@
                         formState.bsStatus === 'B' ||
                         !formState.compartmentId ||
                         formState.compartmentId === undefined ||
-                        formState.StockDimensionVal === 'B'
+                        stockDis === 'B'
                       )
                     "
                     v-model:value="formState.bdStockLocation"
@@ -264,7 +264,7 @@
                       formState.bsStatus === 'B' ||
                       !formState.compartmentId ||
                       formState.compartmentId === undefined ||
-                      formState.StockDimensionVal === 'B'
+                      stockDis === 'B'
                     "
                     @search="
                       onSearch(
@@ -578,7 +578,7 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getSystemList } from '/@/api/system';
+  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -604,10 +604,13 @@
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
-  getSystemList({}).then((res) => {
-    formState.value.StockDimensionVal = res[1].val;
-  });
-
+  let stockDis = ref<string>(''); //仓库维度
+  //获取仓库维度
+  const getStockDisData = async () => {
+    const arr: any = await getStockDis({});
+    stockDis.value = arr;
+  };
+  getStockDisData();
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
   //物料分组重新赋值
   const groupEvent = async () => {
@@ -697,21 +700,18 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
-    // if (row.stockId) {
-    //   formState.value.bdStock = row.bdStock;
-    //   formState.value.stockId = row.stockId;
-    // }
-    // if (row.compartmentId) {
-    //   formState.value.bdStockCompartment = row.bdStockCompartment;
-    //   formState.value.compartmentId = row.compartmentId;
-    // }
-
-    console.log(
-      '22',
-      formState.value.bsStatus === 'B' ||
-        !formState.value.compartmentId ||
-        formState.value.StockDimensionVal === 'B',
-    );
+    if (basicTableName.value === 'BdStock' && formState.value.compartmentId) {
+      formState.value.bdStockCompartment = {};
+      formState.value.compartmentId = undefined;
+      if (formState.value.locationId) {
+        formState.value.bdStockLocation = {};
+        formState.value.locationId = undefined;
+      }
+    }
+    if (basicTableName.value === 'BdStockCompartment' && formState.value.locationId) {
+      formState.value.bdStockLocation = {};
+      formState.value.locationId = undefined;
+    }
   };
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);
@@ -739,14 +739,12 @@
 
   //接受参数
   let rowId = useRoute().query.row?.toString() || '';
-
   const getListById = async () => {
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
     }
   };
-  getListById();
 
   //保存事件
   const onSubmit = async () => {
@@ -800,7 +798,9 @@
     router.go(-1);
   };
   //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {});
+  onMounted(() => {
+    getListById();
+  });
 </script>
 <style scoped lang="less">
   .switchDiv {

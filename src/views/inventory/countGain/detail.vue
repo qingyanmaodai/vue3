@@ -225,7 +225,7 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
-  import {getSystemList} from "/@/api/system";
+  import {getStockDis} from "/@/api/system";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -453,13 +453,15 @@
   const back = () => {
     router.go(-1);
   };
-  let getStockDimensionData = ref<any>({}); //仓库维度数据
+  let stockDis = ref<string>(''); //仓库维度
+  //获取仓库维度
+  const getStockDisData = async () => {
+    const arr: any = await getStockDis({});
+    stockDis.value = arr;
+  }
+  getStockDisData();
   //获取初始值
   const getListById = async () => {
-    /*约定拿到的数组下标为1 的是仓库维度数据:A-仓库，B-分仓，C-仓位*/
-    await getSystemList({}).then((res) => {
-      getStockDimensionData.value = res[1];
-    });
     if (useRoute().query) {
       if (useRoute().query.row) {
         let dataId = useRoute().query.row?.toString() || '';
@@ -468,7 +470,7 @@
         if (formState.value.dtData) {
           formState.value.dtData.map((r) => {
             r.bsStatus = formState.value.bsStatus;
-            r.StockDimensionVal = getStockDimensionData.value.val;
+            r['stockDis'] = stockDis.value;
           });
         }
         detailTableData.value = cloneDeep(formState.value.dtData);
@@ -509,10 +511,16 @@
       case 'bdStock':
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
+        data.compartmentId = null;
+        data.bdStockCompartment.name = null;
+        data.locationId = null;
+        data.bdStockLocation.name =null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
+        data.locationId = null;
+        data.bdStockLocation.name =null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
@@ -530,7 +538,7 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.sort = cloneDeep(detailTableRef.value.rowSortData);
-    obj.StockDimensionVal = cloneDeep(getStockDimensionData.value.val);
+    obj.stockDis = cloneDeep(stockDis.value);
   };
 
   onMounted(() => {

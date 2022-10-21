@@ -42,7 +42,6 @@ export interface MatEntity extends PublicModel {
   stockOutExamine?: number;
   produceExamine?: number;
   bdExamine?: ExaEntity;
-  StockDimensionVal?: string;
 }
 /**
  * 获取表格信息
