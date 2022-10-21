@@ -1,5 +1,11 @@
 <template>
-  <Input class="input" :addon-before="props.addonBeforeLabel" :placeholder="props.placeholder" :disabled="props.disabled" :value="showVal">
+  <Input
+    class="input"
+    :addon-before="props.addonBeforeLabel"
+    :placeholder="props.placeholder"
+    :disabled="props.disabled"
+    :value="showVal"
+  >
     <template #suffix>
       <CloseIcon class="icon" v-if="props.value && props.show" @click="clearEvent" />
       <SearchIcon class="icon" v-if="props.show" @click="searchEvent" style="margin-left: 5px" />

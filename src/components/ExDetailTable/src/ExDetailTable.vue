@@ -121,8 +121,7 @@
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExFilterModal } from '/@/components/ExFilterModal';
-  import { VxeGridEvents, VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
-  import { getSystemList } from '/@/api/system';
+  import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
 
   const AButton = Button;
   const props = defineProps({
