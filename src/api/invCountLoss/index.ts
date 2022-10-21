@@ -54,6 +54,7 @@ export interface InvCountLossDetailEntity extends PublicModel {
   bdStock?: StockEntity;
   bdStockCompartment?: StockCompartmentEntity;
   bdStockLocation?: StockLocationEntity;
+  StockDimensionVal?: string;
 }
 
 /**

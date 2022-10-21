@@ -128,7 +128,7 @@
               <Col :span="8">
                 <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
                   <InputNumber
-                    :placeholder="formState.bsStatus === 'B'?'':'请输入净重'"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入净重'"
                     class="input"
                     :min="0"
                     :step="0.1"
@@ -210,9 +210,21 @@
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择分仓'"
                     label="分仓"
-                    :show="formState.bsStatus !== 'B'"
+                    :show="
+                      !(
+                        formState.bsStatus === 'B' ||
+                        formState.StockDimensionVal === 'A' ||
+                        !formState.stockId ||
+                        formState.stockId === undefined
+                      )
+                    "
                     v-model:value="formState.bdStockCompartment"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="
+                      formState.bsStatus === 'B' ||
+                      formState.StockDimensionVal === 'A' ||
+                      !formState.stockId ||
+                      formState.stockId === undefined
+                    "
                     @search="
                       onSearch(
                         'GET_SUB_STOCK_DTO',
@@ -239,9 +251,21 @@
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓位'"
                     label="仓位"
-                    :show="formState.bsStatus !== 'B'"
+                    :show="
+                      !(
+                        formState.bsStatus === 'B' ||
+                        !formState.compartmentId ||
+                        formState.compartmentId === undefined ||
+                        formState.StockDimensionVal === 'B'
+                      )
+                    "
                     v-model:value="formState.bdStockLocation"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="
+                      formState.bsStatus === 'B' ||
+                      !formState.compartmentId ||
+                      formState.compartmentId === undefined ||
+                      formState.StockDimensionVal === 'B'
+                    "
                     @search="
                       onSearch(
                         'GET_LOCATION_DTO',
@@ -554,6 +578,7 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getSystemList } from '/@/api/system';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -573,12 +598,16 @@
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
 
-  const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A'};
+  const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
+  getSystemList({}).then((res) => {
+    formState.value.StockDimensionVal = res[1].val;
+  });
+
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
   //物料分组重新赋值
   const groupEvent = async () => {
@@ -668,14 +697,21 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
-    if (row.stockId) {
-      formState.value.bdStock = row.bdStock;
-      formState.value.stockId = row.stockId;
-    }
-    if (row.compartmentId) {
-      formState.value.bdStockCompartment = row.bdStockCompartment;
-      formState.value.compartmentId = row.compartmentId;
-    }
+    // if (row.stockId) {
+    //   formState.value.bdStock = row.bdStock;
+    //   formState.value.stockId = row.stockId;
+    // }
+    // if (row.compartmentId) {
+    //   formState.value.bdStockCompartment = row.bdStockCompartment;
+    //   formState.value.compartmentId = row.compartmentId;
+    // }
+
+    console.log(
+      '22',
+      formState.value.bsStatus === 'B' ||
+        !formState.value.compartmentId ||
+        formState.value.StockDimensionVal === 'B',
+    );
   };
   //获取物料分组数据
   let treeData = ref<TreeItem[]>([]);

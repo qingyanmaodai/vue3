@@ -158,6 +158,7 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             :detailTableData="detailTableData"
+            @setDefaultTableData="setDefaultTableData"
             @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -215,6 +216,7 @@
   import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import {getMatTable, getMatTableById} from '/@/api/matTable';
+  import {getSystemList} from "/@/api/system";
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -257,8 +259,6 @@
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
     countNum: [
@@ -272,10 +272,8 @@
       },
     ],
   });
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
+  formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: true, message: '请选择分仓' }];
-  formRules[location] = [{ required: true, message: '请选择仓位' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -435,14 +433,21 @@
   const back = () => {
     router.go(-1);
   };
+  let getStockDimensionData = ref<any>({}); //仓库维度数据
+
   //获取初始值
   const getListById = async () => {
+    /*约定拿到的数组下标为1 的是仓库维度数据:A-仓库，B-分仓，C-仓位*/
+    await getSystemList({}).then((res) => {
+      getStockDimensionData.value = res[1];
+    });
     if (dataId) {
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
+          r.StockDimensionVal = getStockDimensionData.value.val;
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
@@ -484,9 +489,7 @@
           params: row.id,
         });
         data.matId = res.id ? res.id : null;
-        data.bdMaterial.number = res.number ? res.number : null;
-        data.bdMaterial.name = res.name ? res.name : null;
-        data.bdMaterial.model = res.model ? res.model : null;
+        data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
@@ -503,20 +506,10 @@
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
-        if (row.stockId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-        }
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
         data.bdStockLocation.name = row.name ? row.name : null;
-        if (row.stockId && row.compartmentId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-          data.bdStockCompartment = row.bdStockCompartment;
-          data.compartmentId = row.compartmentId;
-        }
         break;
     }
     let stockNumData = await getInventoryList({ params: data });
@@ -527,7 +520,10 @@
     }
     await getCountAmount(data);
   };
-
+  //新增行时设置默认值
+  const setDefaultTableData = (obj) => {
+    obj.StockDimensionVal = cloneDeep(getStockDimensionData.value.val);
+  };
   onMounted(() => {
     getListById();
   });

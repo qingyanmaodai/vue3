@@ -10,7 +10,7 @@
     :columns="props.columns"
     :edit-rules="props.editRules"
     @edit-closed="editClosed"
-    :row-style="rowStyle"
+    :cell-style="cellStyle"
     auto-resize
   >
     <template #toolbar_buttons>
@@ -121,10 +121,8 @@
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExFilterModal } from '/@/components/ExFilterModal';
-  import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { cloneDeep } from 'lodash-es';
-  const { createMessage } = useMessage();
+  import { VxeGridEvents, VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
+  import { getSystemList } from '/@/api/system';
 
   const AButton = Button;
   const props = defineProps({
@@ -161,7 +159,6 @@
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'clearDetailTableEvent', data, column): void; //双击获取字段数据
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
-    // (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
     (event: 'filterModalSearchEvent'): void; ///筛选条件查询
   };
@@ -258,11 +255,24 @@
   // };
 
   //修改表格样式
-  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
-    if (row.bsStatus === 'B') {
-      return {
-        backgroundColor: 'rgb(225 225 224)',
-      };
+  const cellStyle: VxeTablePropTypes.CellStyle = ({ row, column }) => {
+    switch (true) {
+      case row.bsStatus === 'B':
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdStockCompartment.name' &&
+        (row.StockDimensionVal == 'A' || !row.bdStock.name):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdStockLocation.name' &&
+        (row.StockDimensionVal == 'B' ||
+          row.StockDimensionVal == 'A' ||
+          !row.bdStockCompartment.name):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
     }
   };
   //点击清空图标清空事件
