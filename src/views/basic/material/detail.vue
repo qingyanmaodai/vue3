@@ -214,16 +214,14 @@
                       !(
                         formState.bsStatus === 'B' ||
                         stockDis === 'A' ||
-                        !formState.stockId ||
-                        formState.stockId === undefined
+                        !formState.stockId
                       )
                     "
                     v-model:value="formState.bdStockCompartment"
                     :disabled="
                       formState.bsStatus === 'B' ||
                       stockDis === 'A' ||
-                      !formState.stockId ||
-                      formState.stockId === undefined
+                      !formState.stockId
                     "
                     @search="
                       onSearch(
@@ -254,16 +252,14 @@
                     :show="
                       !(
                         formState.bsStatus === 'B' ||
-                        !formState.compartmentId ||
-                        formState.compartmentId === undefined ||
+                        !formState.compartmentId||
                         stockDis === 'B'
                       )
                     "
                     v-model:value="formState.bdStockLocation"
                     :disabled="
                       formState.bsStatus === 'B' ||
-                      !formState.compartmentId ||
-                      formState.compartmentId === undefined ||
+                      !formState.compartmentId||
                       stockDis === 'B'
                     "
                     @search="
