@@ -37,7 +37,7 @@
                   </Col>
                   <Col :span="8">
                     <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -474,8 +474,9 @@
           });
         }
         detailTableData.value = cloneDeep(formState.value.dtData);
-      } else {
-        formState.value = useRoute().query;
+      } else if (useRoute().query.pushDownParam) {
+        formState.value = JSON.parse(useRoute().query.pushDownParam as string);
+        detailTableData.value = cloneDeep(formState.value.dtData);
       }
     }
   };
@@ -543,6 +544,12 @@
 
   onMounted(() => {
     getListById();
+    //假如有dtData 让里面的sort等于seq
+    if (detailTableRef.value.getDetailData()) {
+      detailTableRef.value.getDetailData().map((item) => {
+        item.sort = item.seq;
+      });
+    }
   });
 </script>
 <style scoped lang="less">

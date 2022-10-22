@@ -179,11 +179,12 @@
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { pushDown } from '/@/api/invCountSheet';
-  import { cloneDeep } from 'lodash-es';
+  import { cloneDeep, uniqBy } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
+  import { ResultEnum } from '/@/enums/httpEnum';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -430,14 +431,13 @@
     let selectRecords = $grid.getCheckboxRecords();
     let selectRecords1 = cloneDeep(selectRecords);
     let selectRecords2 = cloneDeep(selectRecords);
-    //放入对象存在matId的值
-    let val: Array<string> = [];
-    for (let item of selectRecords) {
+    // 放入对象存在matId的值
+    const val = selectRecords1.map((item) => {
       if (item.matId) {
-        val.push(item.matId);
+        return item.matId;
       }
-    }
-    //请求分页查询接口
+    });
+    // 请求分页查询接口
     let res: any = await getInvList({
       pageRows: 1000000,
       params: [
@@ -454,7 +454,7 @@
         },
       ],
     });
-    //遍历数组赋值stockNum
+    // 遍历数组赋值stockNum
     for (let item of selectRecords2) {
       let filterNum = res.records.filter(
         (e) =>
@@ -463,21 +463,10 @@
           e.compartmentId === item.compartmentId &&
           e.locationId === item.locationId,
       );
-      if (filterNum) {
-        item.stockNum = filterNum[0].stockNum;
-      } else {
-        item.stockNum = 0;
-      }
+      item.stockNum = filterNum ? filterNum[0].stockNum : 0;
     }
-    //根据单号去重
-    for (let i = 0; i < selectRecords1.length; i++) {
-      for (let j = i + 1; j < selectRecords1.length; j++) {
-        if (selectRecords1[i].number === selectRecords1[j].number) {
-          selectRecords1.splice(j, 1);
-          j--;
-        }
-      }
-    }
+    // 根据单号去重
+    selectRecords1 = uniqBy(selectRecords1, 'number');
     // 赋值dtData
     for (const item of selectRecords1) {
       item.dtData = [];
@@ -488,29 +477,25 @@
         }
       }
     }
+    console.log(selectRecords1, 'selectRecords1');
     return selectRecords1;
   };
   const go = useGo();
   //下推功能
-  const pushDownSelect = async (PushDownTableName, routeTo) => {
+  const pushDownSelect = async (pushDownParam) => {
+    console.log(pushDownParam, 'pushDownParam');
     let selectRecords = await getdtData();
-    await pushDown(
+    let res = await pushDown(
       {
         params: selectRecords,
       },
-      PushDownTableName,
-    )
-      .then((res) => {
-        createMessage.success('下推成功');
-        ExPushDownModelRef.value.close();
-        go({
-          path: PageEnum[routeTo],
-          query: res.result,
-        });
-      })
-      .catch(() => {
-        createMessage.error('下推失败');
-      });
+      pushDownParam.tarBillType,
+    );
+    createMessage.success('下推成功');
+    go({
+      path: PageEnum[pushDownParam.routeTo],
+      query: { pushDownParam: JSON.stringify(res.result) },
+    });
   };
   //下推弹框
   const pushDownEvent = async () => {

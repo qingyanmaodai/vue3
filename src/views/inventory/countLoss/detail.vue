@@ -213,10 +213,11 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import {getMatTable, getMatTableById} from '/@/api/matTable';
   import {getStockDis} from "/@/api/system";
+  import { getMatTableById } from '/@/api/matTable';
+
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -230,9 +231,6 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-  //筛选条件组件url
-  // let filterModalUrl: any = ref<string>('');
-  // filterModalUrl = Url.GET_MATERIAL_LIST;
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
@@ -310,8 +308,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -442,16 +438,22 @@
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
-      const res: any = await getOneById({ params: dataId });
-      formState.value = res;
-      if (formState.value.dtData) {
-        formState.value.dtData.map((r) => {
-          r.bsStatus = formState.value.bsStatus;
-          r['stockDis'] = stockDis.value;
-        });
+    if (useRoute().query) {
+      if (useRoute().query.row) {
+        let dataId = useRoute().query.row?.toString() || '';
+        const res: any = await getOneById({ params: dataId });
+        formState.value = res;
+        if (formState.value.dtData) {
+          formState.value.dtData.map((r) => {
+            r.bsStatus = formState.value.bsStatus;
+            r['stockDis'] = stockDis.value;
+          });
+        }
+        detailTableData.value = cloneDeep(formState.value.dtData);
+      } else if (useRoute().query.pushDownParam) {
+        formState.value = JSON.parse(useRoute().query.pushDownParam as string);
+        detailTableData.value = cloneDeep(formState.value.dtData);
       }
-      detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
 
@@ -533,6 +535,12 @@
   };
   onMounted(() => {
     getListById();
+    //假如有dtData 让里面的sort等于seq
+    if (detailTableRef.value.getDetailData()) {
+      detailTableRef.value.getDetailData().map((item) => {
+        item.sort = item.seq;
+      });
+    }
   });
 </script>
 <style scoped lang="less">

@@ -197,10 +197,6 @@
     tableRef.value.delTable();
   };
   const deleteBatchEvent = async (rows: any[]) => {
-    // const ids = rows.map((item) => {
-    //   return item.id;
-    // });
-    // const res = await delBatch({ params: ids });
     const res = await delBatch({ params: rows });
     await tableRef.value.computeData(res);
     await getList();
@@ -301,7 +297,7 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    // getList();
+    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

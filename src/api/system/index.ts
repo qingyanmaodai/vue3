@@ -69,7 +69,7 @@ export function getStockDis(json: any, mode: ErrorMessageMode = 'message') {
 export function getIsNeStock(json: any, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_SYSTEM_STOCK_DIS,
+      url: Url.GET_SYSTEM_IS_NE_STOCK,
       data: json,
     },
     {
