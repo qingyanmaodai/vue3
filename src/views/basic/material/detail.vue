@@ -210,19 +210,9 @@
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择分仓'"
                     label="分仓"
-                    :show="
-                      !(
-                        formState.bsStatus === 'B' ||
-                        stockDis === 'A' ||
-                        !formState.stockId
-                      )
-                    "
+                    :show="!(formState.bsStatus === 'B' || stockDis === 'A' || !formState.stockId)"
                     v-model:value="formState.bdStockCompartment"
-                    :disabled="
-                      formState.bsStatus === 'B' ||
-                      stockDis === 'A' ||
-                      !formState.stockId
-                    "
+                    :disabled="formState.bsStatus === 'B' || stockDis === 'A' || !formState.stockId"
                     @search="
                       onSearch(
                         'GET_SUB_STOCK_DTO',
@@ -250,17 +240,11 @@
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓位'"
                     label="仓位"
                     :show="
-                      !(
-                        formState.bsStatus === 'B' ||
-                        !formState.compartmentId||
-                        stockDis === 'B'
-                      )
+                      !(formState.bsStatus === 'B' || !formState.compartmentId || stockDis === 'B')
                     "
                     v-model:value="formState.bdStockLocation"
                     :disabled="
-                      formState.bsStatus === 'B' ||
-                      !formState.compartmentId||
-                      stockDis === 'B'
+                      formState.bsStatus === 'B' || !formState.compartmentId || stockDis === 'B'
                     "
                     @search="
                       onSearch(
