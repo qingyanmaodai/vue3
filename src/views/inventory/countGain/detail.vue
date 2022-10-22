@@ -225,6 +225,7 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
+  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -265,8 +266,6 @@
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
     countNum: [
@@ -280,10 +279,8 @@
       },
     ],
   });
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
+  formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: true, message: '请选择分仓' }];
-  formRules[location] = [{ required: true, message: '请选择仓位' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -456,6 +453,13 @@
   const back = () => {
     router.go(-1);
   };
+  let stockDis = ref<string>(''); //仓库维度
+  //获取仓库维度
+  const getStockDisData = async () => {
+    const arr: any = await getStockDis({});
+    stockDis.value = arr;
+  };
+  getStockDisData();
   //获取初始值
   const getListById = async () => {
     if (useRoute().query) {
@@ -466,6 +470,7 @@
         if (formState.value.dtData) {
           formState.value.dtData.map((r) => {
             r.bsStatus = formState.value.bsStatus;
+            r['stockDis'] = stockDis.value;
           });
         }
         detailTableData.value = cloneDeep(formState.value.dtData);
@@ -494,9 +499,7 @@
           params: row.id,
         });
         data.matId = res.id ? res.id : null;
-        data.bdMaterial.number = res.number ? res.number : null;
-        data.bdMaterial.name = res.name ? res.name : null;
-        data.bdMaterial.model = res.model ? res.model : null;
+        data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
@@ -509,24 +512,20 @@
       case 'bdStock':
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
+        data.compartmentId = null;
+        data.bdStockCompartment.name = null;
+        data.locationId = null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
-        if (row.stockId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-        }
+        data.locationId = null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
         data.bdStockLocation.name = row.name ? row.name : null;
-        if (row.stockId && row.compartmentId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-          data.bdStockCompartment = row.bdStockCompartment;
-          data.compartmentId = row.compartmentId;
-        }
         break;
     }
     let stockNumData = await getInventoryList({ params: data });
@@ -540,6 +539,7 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.sort = cloneDeep(detailTableRef.value.rowSortData);
+    obj.stockDis = cloneDeep(stockDis.value);
   };
 
   onMounted(() => {
