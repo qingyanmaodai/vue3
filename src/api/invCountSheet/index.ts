@@ -24,15 +24,26 @@ export interface InvCountSheetEntity extends PublicModel {
   empName?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
-  dtData?: InvCountLossDetailEntity[];
+  dtData?: InvCountSheetDetailEntity[];
   dtLk?: InvCountEntity;
   srcBill?: string;
   srcBillId?: string;
   srcId?: string;
   srcType?: string;
+  optStockNum?: string;
+  compartmentId?: string;
+  locationId?: string;
+  lot?: string;
+  mark?: string;
+  matId?: string;
+  parentId?: string;
+  stockId?: string;
+  tenantId?: string;
+  updateBy?: string;
+  updateTime?: string;
 }
 
-export interface InvCountLossDetailEntity extends PublicModel {
+export interface InvCountSheetDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
@@ -148,7 +159,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
 /**
  * 下推配置查询
  */
-export function getPushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<InvCountSheetEntity>(
     {
       url: Url.GET_PUSHDOWN_LIST,
@@ -163,10 +174,14 @@ export function getPushDown(json: RequestData<object>, mode: ErrorMessageMode = 
 /**
  * 下推
  */
-export function pushDown(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<InvCountSheetEntity>(
+export function pushDown(
+  json: RequestData<object>,
+  PushDownTableName: string, //可下推的表名
+  mode: ErrorMessageMode = 'message',
+) {
+  return defHttp.post<Result>(
     {
-      url: Url.PUSHDOWN_INV_COUNT,
+      url: Url.PUSHDOWN_INV_COUNT + PushDownTableName,
       data: json,
     },
     {

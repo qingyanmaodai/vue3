@@ -14,6 +14,7 @@
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
+        tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
         :buttons="buttons"
         :gridOptions="GridOptions"

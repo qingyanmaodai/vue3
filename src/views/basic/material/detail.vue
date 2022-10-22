@@ -128,7 +128,7 @@
               <Col :span="8">
                 <a-form-item label="净重：" ref="netWeight" name="netWeight" class="item">
                   <InputNumber
-                    :placeholder="formState.bsStatus === 'B'?'':'请输入净重'"
+                    :placeholder="formState.bsStatus === 'B' ? '' : '请输入净重'"
                     class="input"
                     :min="0"
                     :step="0.1"
@@ -204,15 +204,27 @@
                 </a-form-item>
               </Col>
               <Col :span="8">
-                <a-form-item label="分仓：" ref="compartmentId" name="compartmentId" class="item">
+                <a-form-item label="分仓" ref="compartmentId" name="compartmentId" class="item">
                   <ExInput
                     autocomplete="off"
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择分仓'"
                     label="分仓"
-                    :show="formState.bsStatus !== 'B'"
+                    :show="
+                      !(
+                        formState.bsStatus === 'B' ||
+                        stockDis === 'A' ||
+                        !formState.stockId ||
+                        formState.stockId === undefined
+                      )
+                    "
                     v-model:value="formState.bdStockCompartment"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="
+                      formState.bsStatus === 'B' ||
+                      stockDis === 'A' ||
+                      !formState.stockId ||
+                      formState.stockId === undefined
+                    "
                     @search="
                       onSearch(
                         'GET_SUB_STOCK_DTO',
@@ -239,9 +251,21 @@
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓位'"
                     label="仓位"
-                    :show="formState.bsStatus !== 'B'"
+                    :show="
+                      !(
+                        formState.bsStatus === 'B' ||
+                        !formState.compartmentId ||
+                        formState.compartmentId === undefined ||
+                        stockDis === 'B'
+                      )
+                    "
                     v-model:value="formState.bdStockLocation"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="
+                      formState.bsStatus === 'B' ||
+                      !formState.compartmentId ||
+                      formState.compartmentId === undefined ||
+                      stockDis === 'B'
+                    "
                     @search="
                       onSearch(
                         'GET_LOCATION_DTO',
@@ -554,6 +578,7 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -573,12 +598,19 @@
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
 
-  const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A'};
+  const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
+  let stockDis = ref<string>(''); //仓库维度
+  //获取仓库维度
+  const getStockDisData = async () => {
+    const arr: any = await getStockDis({});
+    stockDis.value = arr;
+  };
+  getStockDisData();
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
   //物料分组重新赋值
   const groupEvent = async () => {
@@ -668,13 +700,17 @@
     formState.value[currDataParam[1]] = {};
     formState.value[currDataParam[1]].id = row.id;
     formState.value[currDataParam[1]].name = row.name;
-    if (row.stockId) {
-      formState.value.bdStock = row.bdStock;
-      formState.value.stockId = row.stockId;
+    if (basicTableName.value === 'BdStock' && formState.value.compartmentId) {
+      formState.value.bdStockCompartment = {};
+      formState.value.compartmentId = undefined;
+      if (formState.value.locationId) {
+        formState.value.bdStockLocation = {};
+        formState.value.locationId = undefined;
+      }
     }
-    if (row.compartmentId) {
-      formState.value.bdStockCompartment = row.bdStockCompartment;
-      formState.value.compartmentId = row.compartmentId;
+    if (basicTableName.value === 'BdStockCompartment' && formState.value.locationId) {
+      formState.value.bdStockLocation = {};
+      formState.value.locationId = undefined;
     }
   };
   //获取物料分组数据
@@ -703,14 +739,12 @@
 
   //接受参数
   let rowId = useRoute().query.row?.toString() || '';
-
   const getListById = async () => {
     if (rowId) {
       const res: any = await getMatTableById({ params: rowId });
       formState.value = res;
     }
   };
-  getListById();
 
   //保存事件
   const onSubmit = async () => {
@@ -764,7 +798,9 @@
     router.go(-1);
   };
   //刚进入页面——加载完后，需要执行的方法
-  onMounted(() => {});
+  onMounted(() => {
+    getListById();
+  });
 </script>
 <style scoped lang="less">
   .switchDiv {

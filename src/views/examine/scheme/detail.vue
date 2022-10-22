@@ -30,7 +30,7 @@
                         class="input"
                         autocomplete="off"
                         v-model:value="formState.number"
-                        :placeholder="formState.bsStatus === 'B'?'':'请输入方案编码'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入方案编码'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -43,7 +43,7 @@
                         autocomplete="off"
                         v-model:value="formState.name"
                         name="name"
-                        :placeholder="formState.bsStatus === 'B'?'':'请输入方案名称'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入方案名称'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -84,7 +84,7 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B'?'':'请选择抽检规则'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择抽检规则'"
                         label="抽检规则"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.bdExamineRule"
@@ -132,7 +132,7 @@
                     >
                       <a-textArea
                         v-model:value="formState.description"
-                        :placeholder="formState.bsStatus === 'B'?'':'请添加方案描述'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加方案描述'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
@@ -143,7 +143,7 @@
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
-                        :placeholder="formState.bsStatus === 'B'?'':'请输入备注'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入备注'"
                         :rows="3"
                         class="textArea"
                         :disabled="formState.bsStatus === 'B'"
@@ -252,7 +252,7 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getInventoryList } from '/@/api/invCountGain';
+  import { getInventoryList } from '/@/api/realTimeInv';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const RuleOfExaGridOptions = ruleOfExaGridOptions;
@@ -357,23 +357,23 @@
     console.log(formState.value);
   };
   //接受参数
-  const dataId = useRoute().query.row?.toString()||'';
+  const dataId = useRoute().query.row?.toString() || '';
 
   //保存
   const onSubmit = async () => {
     formRef.value
       .validate()
       .then(async () => {
-          const tableFullData = detailTableRef.value.getDetailData();
-          const validAllErrMapData = await detailTableRef.value.getValidAllData();
-          if (tableFullData) {
-            if (validAllErrMapData) {
-              await VXETable.modal.message({
-                status: 'error',
-                message: '明细表数据校检不通过，请检查!',
-              });
-              return;
-            }
+        const tableFullData = detailTableRef.value.getDetailData();
+        const validAllErrMapData = await detailTableRef.value.getValidAllData();
+        if (tableFullData) {
+          if (validAllErrMapData) {
+            await VXETable.modal.message({
+              status: 'error',
+              message: '明细表数据校检不通过，请检查!',
+            });
+            return;
+          }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
         let data;

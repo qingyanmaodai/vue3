@@ -157,10 +157,13 @@
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
+            @setDefaultTableData="setDefaultTableData"
             :detailTableData="detailTableData"
-            @getCountAmount="getCountAmount"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
+            @filterModalSearchEvent="filterModalSearchEvent"
+            filterTableName="BdMaterial"
+            :inputDataList="inputDataList"
           />
         </pane>
       </a-splitpanes>
@@ -203,7 +206,6 @@
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
   import { add, audit, unAudit, getOneById, InvCountSheetEntity } from '/@/api/invCountSheet';
-  import { getInventoryList } from '/@/api/invCountGain';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -211,10 +213,11 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getMatTableById } from '/@/api/matTable';
-  // import {InvCountLossDetailEntity} from "/@/api/invCountSheet";
+  import { getMatTable, getMatTableById } from '/@/api/matTable';
+  import {getStockDis} from "/@/api/system";
+
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -255,27 +258,93 @@
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    // countNum: [
-    //   { required: true, message: '请输入比帐存数量小的盘点数量' },
-    //   {
-    //     validator({ cellValue, row }) {
-    //       if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
-    //         return new Error('盘点数量应该大于帐存数量');
-    //       }
-    //     },
-    //   },
-    // ],
+    countNum: [{ required: true, message: '请输入盘点数量' }],
   });
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
-  formRules[material] = [{ required: true, message: '请选择检验项目' }];
+  formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: true, message: '请选择分仓' }];
-  formRules[location] = [{ required: true, message: '请选择仓位' }];
-
+  //筛选条件弹框组件
+  /*约定数组下标，0：仓库，1：分仓，2，仓位，3：物料*/
+  let inputDataList: any = ref<object[]>([
+    {
+      addonBeforeLabel: '仓库 : ',
+      dtoUrlConfig: 'GET_STOCK_DTO',
+      tableName: 'BdStock',
+      tableUrl: Url.GET_PAGE_STOCK_LIST,
+      nameParam: 'stockId',
+      columnParam: 'stock_id',
+      disabledInput:false,
+    },
+    {
+      addonBeforeLabel: '分仓 : ',
+      dtoUrlConfig: 'GET_SUB_STOCK_DTO',
+      tableName: 'BdStockCompartment',
+      tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
+      nameParam: 'compartmentId',
+      columnParam: 'compartment_id',
+      disabledInput:true,
+    },
+    {
+      addonBeforeLabel: '仓位 : ',
+      dtoUrlConfig: 'GET_LOCATION_DTO',
+      tableName: 'BdStockLocation',
+      tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
+      nameParam: 'locationId',
+      columnParam: 'location_id',
+      disabledInput:true,
+    },
+    {
+      addonBeforeLabel: '物料 : ',
+      dtoUrlConfig: 'GET_MAT_DTO',
+      tableName: 'BdMaterial',
+      tableUrl: Url.GET_MATERIAL_LIST,
+      nameParam: 'id',
+      columnParam: 'id',
+      disabledInput:false,
+    },
+  ]);
+  //筛选条件查询
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+    let getParams: SearchParams[] = [];
+    if (
+      detailTableRef.value.filterModalParams() &&
+      detailTableRef.value.filterModalParams().length > 0
+    ) {
+      getParams = getParams.concat(detailTableRef.value.filterModalParams());
+    }
+    const res: any = await getMatTable({
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: currPage,
+      pageRows: pageSize,
+    });
+    let bdMaterial = res.records.map((item) => {
+      return Object.assign(
+        {},
+        {
+          id: item.id,
+          name: item.name,
+          number: item.number,
+          model: item.model,
+          baseUnitName: item.baseUnit.name,
+          weightUnitName: item.weightUnit.name,
+          baseUnitId: item.baseUnit.id,
+          weightUnitId: item.weightUnit.id,
+        },
+      );
+    });
+    res.records.forEach((item, index) => {
+      item.bdMaterial = bdMaterial[index];
+      item.bsStatus = 'A';
+      item.matId = item.id;
+    });
+    let data = cloneDeep(res.records);
+    const tableFullData = detailTableRef.value.getDetailData();
+    detailTableData.value = tableFullData.concat(data);
+  };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
@@ -310,9 +379,6 @@
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
-    // formState.value[currDataParam[1]] = {};
-    // formState.value[currDataParam[1]].id = row.id;
-    // formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';
@@ -324,10 +390,29 @@
         const tableFullData = detailTableRef.value.getDetailData();
         const validAllErrMapData = await detailTableRef.value.getValidAllData();
         if (tableFullData) {
+
           if (validAllErrMapData) {
             await VXETable.modal.message({
               status: 'error',
               message: '明细表数据校检不通过，请检查!',
+            });
+            return;
+          }
+          if (
+            tableFullData.some(
+              (e) =>
+                tableFullData.filter(
+                  (e1) =>
+                    e1.stockId === e.stockId &&
+                    e1.compartmentId === e.compartmentId &&
+                    e1.locationId === e.locationId &&
+                    e1.matId === e.matId,
+                ).length > 1,
+            )
+          ) {
+            await VXETable.modal.message({
+              status: 'error',
+              message: '明细表存在相同数据，请检查!',
             });
             return;
           }
@@ -360,9 +445,26 @@
               });
               return;
             }
+            if (
+              tableFullData.some(
+                (e) =>
+                  tableFullData.filter(
+                    (e1) =>
+                      e1.stockId === e.stockId &&
+                      e1.compartmentId === e.compartmentId &&
+                      e1.locationId === e.locationId &&
+                      e1.matId === e.matId,
+                  ).length > 1,
+              )
+            ) {
+              await VXETable.modal.message({
+                status: 'error',
+                message: '明细表存在相同数据，请检查!',
+              });
+              return;
+            }
             formState.value.dtData = cloneDeep(tableFullData);
           }
-
           const data = await audit({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
           if (data.bsStatus === 'B' && tableFullData) {
@@ -402,6 +504,13 @@
   const back = () => {
     router.go(-1);
   };
+  let stockDis = ref<string>(''); //仓库维度
+  //获取仓库维度
+  const getStockDisData = async () => {
+    const arr: any = await getStockDis({});
+    stockDis.value = arr;
+  }
+  getStockDisData();
   //获取初始值
   const getListById = async () => {
     if (dataId) {
@@ -410,26 +519,16 @@
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
+          r['stockDis'] = stockDis.value;
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
 
-  //计算数量
-  const getCountAmount = (row) => {
-    if (row.countNum && row.stockNum !== null) {
-      row.loss = row.stockNum - row.countNum;
-    } else {
-      row.loss = '';
-    }
-    return row;
-  };
-
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
-      data.stockNum = '';
       data.countNum = '';
       for (const key in column.params.param) {
         data[key] = '';
@@ -451,9 +550,7 @@
           params: row.id,
         });
         data.matId = res.id ? res.id : null;
-        data.bdMaterial.number = res.number ? res.number : null;
-        data.bdMaterial.name = res.name ? res.name : null;
-        data.bdMaterial.model = res.model ? res.model : null;
+        data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
@@ -466,35 +563,27 @@
       case 'bdStock':
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
+        data.compartmentId = null;
+        data.bdStockCompartment.name = null;
+        data.locationId = null;
+        data.bdStockLocation.name =null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
-        if (row.stockId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-        }
+        data.locationId = null;
+        data.bdStockLocation.name =null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
         data.bdStockLocation.name = row.name ? row.name : null;
-        if (row.stockId && row.compartmentId) {
-          data.bdStock = row.bdStock;
-          data.stockId = row.stockId;
-          data.bdStockCompartment = row.bdStockCompartment;
-          data.compartmentId = row.compartmentId;
-        }
         break;
     }
-    let stockNumData = await getInventoryList({ params: data });
-    if (stockNumData) {
-      data.stockNum = cloneDeep(stockNumData);
-    } else {
-      data.stockNum = 0;
-    }
-    await getCountAmount(data);
   };
-
+  //新增行时设置默认值
+  const setDefaultTableData = (obj) => {
+    obj.stockDis = cloneDeep(stockDis.value);
+  };
   onMounted(() => {
     getListById();
   });

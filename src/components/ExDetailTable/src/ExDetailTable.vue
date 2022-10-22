@@ -10,7 +10,7 @@
     :columns="props.columns"
     :edit-rules="props.editRules"
     @edit-closed="editClosed"
-    :row-style="rowStyle"
+    :cell-style="cellStyle"
     auto-resize
   >
     <template #toolbar_buttons>
@@ -98,6 +98,7 @@
     ref="filterModalRef"
     @filterModalSearchEvent="filterModalSearchEvent"
     :tableName="props.filterTableName"
+    :inputDataList="props.inputDataList"
   />
 </template>
 
@@ -121,9 +122,7 @@
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { ExFilterModal } from '/@/components/ExFilterModal';
   import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { cloneDeep } from 'lodash-es';
-  const { createMessage } = useMessage();
+
   const AButton = Button;
   const props = defineProps({
     gridOptions: Object,
@@ -150,17 +149,15 @@
       type: String,
       default: '',
     },
-    // filterModalUrl: {
-    //   type: String,
-    //   default: '',
-    // },
+    inputDataList: {
+      type: Array,
+    },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
     (event: 'clearDetailTableEvent', data, column): void; //双击获取字段数据
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
-    // (event: 'getJudgeClickData', arr, row, callback): void; //获取判断双击赋值事件的值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
     (event: 'filterModalSearchEvent'): void; ///筛选条件查询
   };
@@ -257,11 +254,22 @@
   // };
 
   //修改表格样式
-  const rowStyle: VxeTablePropTypes.RowStyle = ({ row }) => {
-    if (row.bsStatus === 'B') {
-      return {
-        backgroundColor: 'rgb(225 225 224)',
-      };
+  const cellStyle: VxeTablePropTypes.CellStyle = ({ row, column }) => {
+    switch (true) {
+      case row.bsStatus === 'B':
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdStockCompartment.name' &&
+        (row.stockDis == 'A' || !row.bdStock.name):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdStockLocation.name' &&
+        (row.stockDis == 'B' || !row.bdStockCompartment.name):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
     }
   };
   //点击清空图标清空事件

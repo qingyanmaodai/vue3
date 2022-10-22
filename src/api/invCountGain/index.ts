@@ -55,24 +55,6 @@ export interface InvCountGainDetailEntity extends PublicModel {
 }
 
 /**
- * 获取即时库存数据
- */
-export function getInventoryList(
-  json: RequestData<SearchParams[]>,
-  mode: ErrorMessageMode = 'message',
-) {
-  return defHttp.post<Result>(
-    {
-      url: Url.GET_INV_BY_MAT_STOCK_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
  * 获取表格信息
  */
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
