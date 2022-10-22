@@ -49,7 +49,7 @@ export interface InvCountSheetDetailEntity extends PublicModel {
   name?: string;
   seq: number;
   bsDate?: string;
-  sort?: string;
+  sort?: number;
   bsStatus?: string;
   countNum?: string;
   lot?: string;
@@ -186,7 +186,7 @@ export function pushDown(
     },
     {
       errorMessageMode: mode,
-      isTransformResponse: false,
+      isTransformResponse: true,
     },
   );
 }

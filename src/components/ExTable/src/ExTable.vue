@@ -184,6 +184,7 @@
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
+  import { ResultEnum } from '/@/enums/httpEnum';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -462,11 +463,7 @@
           e.compartmentId === item.compartmentId &&
           e.locationId === item.locationId,
       );
-      if (filterNum) {
-        item.stockNum = filterNum[0].stockNum;
-      } else {
-        item.stockNum = 0;
-      }
+      item.stockNum = filterNum ? filterNum[0].stockNum : 0;
     }
     // 根据单号去重
     selectRecords1 = uniqBy(selectRecords1, 'number');
@@ -485,27 +482,20 @@
   };
   const go = useGo();
   //下推功能
-  const pushDownSelect = async (PushDownTableName, routeTo) => {
+  const pushDownSelect = async (pushDownParam) => {
+    console.log(pushDownParam, 'pushDownParam');
     let selectRecords = await getdtData();
-    await pushDown(
+    let res = await pushDown(
       {
         params: selectRecords,
       },
-      PushDownTableName,
-    )
-      .then((res) => {
-        createMessage.success('下推成功');
-        ExPushDownModelRef.value.close();
-        console.log(PageEnum[routeTo], 'PageEnum[routeTo]');
-        console.log(res.result, 'res.result');
-        go({
-          path: PageEnum[routeTo],
-          query: { new: JSON.stringify(res.result) },
-        });
-      })
-      .catch(() => {
-        createMessage.error('下推失败');
-      });
+      pushDownParam.tarBillType,
+    );
+    createMessage.success('下推成功');
+    go({
+      path: PageEnum[pushDownParam.routeTo],
+      query: { pushDownParam: JSON.stringify(res.result) },
+    });
   };
   //下推弹框
   const pushDownEvent = async () => {

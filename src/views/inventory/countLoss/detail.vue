@@ -212,9 +212,9 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import {getMatTable, getMatTableById} from '/@/api/matTable';
+  import { getMatTableById } from '/@/api/matTable';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -312,8 +312,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -437,15 +435,21 @@
   };
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
-      const res: any = await getOneById({ params: dataId });
-      formState.value = res;
-      if (formState.value.dtData) {
-        formState.value.dtData.map((r) => {
-          r.bsStatus = formState.value.bsStatus;
-        });
+    if (useRoute().query) {
+      if (useRoute().query.row) {
+        let dataId = useRoute().query.row?.toString() || '';
+        const res: any = await getOneById({ params: dataId });
+        formState.value = res;
+        if (formState.value.dtData) {
+          formState.value.dtData.map((r) => {
+            r.bsStatus = formState.value.bsStatus;
+          });
+        }
+        detailTableData.value = cloneDeep(formState.value.dtData);
+      } else if (useRoute().query.pushDownParam) {
+        formState.value = JSON.parse(useRoute().query.pushDownParam as string);
+        detailTableData.value = cloneDeep(formState.value.dtData);
       }
-      detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
 
@@ -530,6 +534,12 @@
 
   onMounted(() => {
     getListById();
+    //假如有dtData 让里面的sort等于seq
+    if (detailTableRef.value.getDetailData()) {
+      detailTableRef.value.getDetailData().map((item) => {
+        item.sort = item.seq;
+      });
+    }
   });
 </script>
 <style scoped lang="less">

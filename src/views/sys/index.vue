@@ -2,7 +2,7 @@
   <div style="height: 100%">
     <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
       <div style="display: flex; float: right">
-        <Button type="primary" class="button" @click="onSubmit">保存</Button>
+        <a-button type="primary" class="button" @click="onSubmit">保存</a-button>
       </div>
     </LayoutHeader>
     <div class="content">
@@ -34,18 +34,22 @@
 
 <script lang="ts" setup>
   import { Select, Form, FormItem, Switch, Button, LayoutHeader } from 'ant-design-vue';
-  import { ref } from 'vue';
+  const AButton = Button;
+  import { onMounted, ref } from 'vue';
   import { config } from '/@/utils/publicParamConfig';
   const { createMessage } = useMessage();
   import { getSystemList, updateSystemList } from '/@/api/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   const formState = ref<any>([{}, {}]);
-  getSystemList({}).then((res) => {
-    formState.value = res;
+
+  onMounted(() => {
+    getSystemList({}).then((res) => {
+      formState.value = res;
+    });
   });
   //保存事件
   const onSubmit = async () => {
-    await updateSystemList({ params: formState.value })
+    updateSystemList({ params: formState.value })
       .then(() => {
         createMessage.success('操作成功');
       })

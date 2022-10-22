@@ -469,9 +469,8 @@
           });
         }
         detailTableData.value = cloneDeep(formState.value.dtData);
-      } else {
-        const res: any = JSON.parse(useRoute().query.new);
-        formState.value = res;
+      } else if (useRoute().query.pushDownParam) {
+        formState.value = JSON.parse(useRoute().query.pushDownParam as string);
         detailTableData.value = cloneDeep(formState.value.dtData);
       }
     }
@@ -544,8 +543,13 @@
   };
 
   onMounted(() => {
-    console.log(JSON.parse(useRoute().query.new));
     getListById();
+    //假如有dtData 让里面的sort等于seq
+    if (detailTableRef.value.getDetailData()) {
+      detailTableRef.value.getDetailData().map((item) => {
+        item.sort = item.seq;
+      });
+    }
   });
 </script>
 <style scoped lang="less">
