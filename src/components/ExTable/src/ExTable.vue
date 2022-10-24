@@ -18,17 +18,28 @@
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
         <AButton
-          v-for="(button, key) in buttons"
-          :type="button.type !== 'danger' ? button.type : 'default'"
-          :key="key"
-          :danger="button.type === 'danger'"
-          @click="button.onClick()"
+          type="primary"
           style="margin-right: 5px"
-          >{{ button.label }}
-        </AButton>
+          @click="addTableEvent"
+          v-show="props.isShow"
+          >添加</AButton
+        >
+        <AButton type="primary" style="margin-right: 5px" @click="auditTable" v-show="props.isShow"
+          >审核</AButton
+        >
+        <AButton
+          type="default"
+          style="margin-right: 5px"
+          @click="unAuditTable"
+          v-show="props.isShow"
+          >反审核</AButton
+        >
+        <AButton style="margin-right: 5px" @click="delTable" v-show="props.isShow" danger
+          >批量删除</AButton
+        >
         <AButton
           type="primary"
-          style="margin: -10px 0px"
+          style="margin-right: 5px"
           @click="pushDownEvent"
           v-show="props.isPushDown"
           >下推</AButton
@@ -51,7 +62,7 @@
       </div>
     </template>
     <template #number="{ row }">
-      <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
+      <a style="color: #0960bd" @click="editTableEvent(row)">{{ row.number }}</a>
     </template>
     <template #SupplierLevel="{ row }">
       <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
@@ -80,7 +91,7 @@
     </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
-      <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
+      <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton
         v-if="row.bsStatus === 'A'"
         type="link"
@@ -182,9 +193,8 @@
   import { cloneDeep, uniqBy } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
-  import { ResultEnum } from '/@/enums/httpEnum';
+  // import { ResultEnum } from '/@/enums/httpEnum';
   // import dayjs from 'dayjs';
   // import { Moment } from 'moment';
 
@@ -203,6 +213,7 @@
     show: Boolean,
     tableName: String,
     tableData: Array,
+    tableURL: String,
     isShowExport: {
       type: Boolean,
       default: true,
@@ -215,11 +226,15 @@
       type: Boolean,
       default: true,
     },
+    isShow: {
+      type: Boolean,
+      default: true,
+    },
     importConfig: String,
   });
   type Emits = {
-    (e: 'addEvent'): void;
-    (e: 'editEvent', row: any): void;
+    (e: 'addTableEvent'): void;
+    (e: 'editTableEvent', row: any): void;
     (e: 'deleteRowEvent', row: object): void;
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
@@ -229,7 +244,6 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
-    (e: 'pushDownEvent', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -292,14 +306,13 @@
     }
   };
   //新增
-  const addTable = () => {
-    emit('addEvent');
+  const addTableEvent = () => {
+    emit('addTableEvent');
   };
   //编辑
-  const editTable = (row: any) => {
-    emit('editEvent', row);
+  const editTableEvent = (row: any) => {
+    emit('editTableEvent', row);
   };
-
   //删除单条
   const deleteRowEvent = async (row: any) => {
     //删除确认窗口
@@ -477,13 +490,11 @@
         }
       }
     }
-    console.log(selectRecords1, 'selectRecords1');
     return selectRecords1;
   };
   const go = useGo();
   //下推功能
   const pushDownSelect = async (pushDownParam) => {
-    console.log(pushDownParam, 'pushDownParam');
     let selectRecords = await getdtData();
     let res = await pushDown(
       {
@@ -491,11 +502,17 @@
       },
       pushDownParam.tarBillType,
     );
-    createMessage.success('下推成功');
-    go({
-      path: PageEnum[pushDownParam.routeTo],
-      query: { pushDownParam: JSON.stringify(res.result) },
-    });
+    if (res.dtData.length > 0) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+        // path: PageEnum[pushDownParam.routeTo],
+        // query: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      createMessage.error('无法下推到该下游单据/已有下游单据');
+    }
   };
   //下推弹框
   const pushDownEvent = async () => {
@@ -601,11 +618,7 @@
     });
   };
   defineExpose({
-    addTable,
     delTable,
-    auditTable,
-    unAuditTable,
-    editTable,
     init,
     computeData,
   });

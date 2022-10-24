@@ -12,13 +12,12 @@
       />
       <ExTable
         :columns="stockColumns"
-        :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         ref="tableRef"
-        @addEvent="addTableEvent"
-        @editEvent="editTableEvent"
+        @addTableEvent="addTableEvent"
+        @editTableEvent="editTableEvent"
         @deleteRowEvent="deleteRowTableEvent"
         @delBatchEvent="deleteBatchEvent"
         @auditRowEvent="auditRowEvent"
@@ -134,39 +133,6 @@
     searchRef.value.formState.wlName = null;
     getList(1);
   };
-
-  //按钮----批量
-  const buttons = [
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        addTableEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        auditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        unAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        delTableEvent();
-      },
-    },
-  ];
-
   //添加
   const addTableEvent = () => {
     go({
@@ -189,9 +155,6 @@
     await getList();
   };
   //批量删除表格
-  const delTableEvent = () => {
-    tableRef.value.delTable();
-  };
   const deleteBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -217,9 +180,6 @@
     await getList();
   };
   //批量审核事件
-  const auditEvent = () => {
-    tableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -232,9 +192,6 @@
   };
 
   //批量反审核
-  const unAuditEvent = () => {
-    tableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;

@@ -28,12 +28,11 @@
           />
           <ExTable
             :columns="supplierColumns"
-            :buttons="tableButtons"
             :gridOptions="GridOptions"
             :tableData="tableData"
             ref="supplierTableRef"
-            @addEvent="tableAddEvent"
-            @editEvent="editTableEvent"
+            @addTableEvent="addTableEvent"
+            @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
             @delBatchEvent="deleteMatBatchEvent"
             @auditRowEvent="auditRowEvent"
@@ -123,37 +122,6 @@
     pageSize: 10,
     total: 0,
   });
-  const tableButtons = [
-    //表格按钮数据
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        tableAddEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        tableAuditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        tableUnAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        tableBatchDelEvent();
-      },
-    },
-  ];
 
   /* method */
 
@@ -205,7 +173,7 @@
   /**
    * 表格新增数据
    */
-  const tableAddEvent = () => {
+  const addTableEvent = () => {
     let groupId = supplierGroupTreeRef.value.getSelectedKeys();
     routerGo({
       path: PageEnum.SUPPLIER_DETAIL, //供应商详情页
@@ -243,9 +211,6 @@
   /**
    * 表格批量审核事件
    */
-  const tableAuditEvent = () => {
-    supplierTableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -272,9 +237,6 @@
   /**
    * 表格批量反审核事件
    */
-  const tableUnAuditEvent = () => {
-    supplierTableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -289,9 +251,6 @@
   /**
    * 表格批量删除事件
    */
-  const tableBatchDelEvent = () => {
-    supplierTableRef.value.delTable();
-  };
   const deleteMatBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
