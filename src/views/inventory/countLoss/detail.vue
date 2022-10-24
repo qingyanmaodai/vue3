@@ -230,9 +230,6 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-  //筛选条件组件url
-  // let filterModalUrl: any = ref<string>('');
-  // filterModalUrl = Url.GET_MATERIAL_LIST;
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
@@ -533,7 +530,9 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
+    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
     obj.stockDis = cloneDeep(stockDis.value);
+    obj.seq = obj.sort;
   };
   onMounted(() => {
     getListById();
