@@ -251,4 +251,15 @@ export const config = {
       label: '仓位',
     },
   ],
+  //关联查询
+  LINK_QUERY: [
+    {
+      value: 'A',
+      label: '上查',
+    },
+    {
+      value: 'B',
+      label: '下查',
+    },
+  ],
 };

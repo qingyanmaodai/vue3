@@ -28,11 +28,29 @@
         </AButton>
         <AButton
           type="primary"
-          style="margin: -10px 0px"
+          style="margin: 0 10px"
           @click="pushDownEvent"
           v-show="props.isPushDown"
           >下推</AButton
         >
+        <!--           style="margin: 0 10px"
+          v-show="props.isPushDown"
+          v-model:value="linkQueryData"
+          class="select"
+          :options="config.LINK_QUERY"       -->
+        <a-drop-down style="margin: 0 10px">
+          <a-button type="primary">
+            关联查询
+            <a-down-outlined />
+          </a-button>
+          <template #overlay>
+            <a-menu @click="onClick">
+              <a-menu-item key="1">1st menu item</a-menu-item>
+              <a-menu-item key="2">2nd menu item</a-menu-item>
+              <a-menu-item key="3">3rd menu item</a-menu-item>
+            </a-menu>
+          </template>
+        </a-drop-down>
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -168,10 +186,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, VNodeChild } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import { Tag, Button, Upload, message } from 'ant-design-vue';
-  import { UploadOutlined } from '@ant-design/icons-vue';
+  import { Tag, Button, Upload, message, Dropdown, MenuItem } from 'ant-design-vue';
+  import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
@@ -184,9 +202,6 @@
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
-  import { ResultEnum } from '/@/enums/httpEnum';
-  // import dayjs from 'dayjs';
-  // import { Moment } from 'moment';
 
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null); //
@@ -194,6 +209,9 @@
   const AButton = Button;
   const AUpload = Upload;
   const ResultGridOptions = resultGridOptions;
+  const ADownOutlined = DownOutlined;
+  const AMenuItem = MenuItem;
+  const ADropdown = Dropdown;
 
   const props = defineProps({
     gridOptions: Object,
@@ -240,7 +258,16 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-
+  let linkQueryData = ref<string>('关联查询'); //关联查询下拉框所选值
+  interface MenuInfo {
+    key: string;
+    keyPath: string[];
+    item: VNodeChild;
+    domEvent: MouseEvent;
+  }
+  const onClick = ({ key }: MenuInfo) => {
+    console.log(`Click on item ${key}`);
+  };
   //上传文件
   interface FileItem {
     uid: string;
