@@ -34,6 +34,7 @@
         :basicGridOptions="basicGridOptions"
         modalTitle="盘点单-下查"
         @getDownSearchList="getDownSearchList"
+        @getUpSearchList="getUpSearchList"
       />
       <div>
         <Pager
@@ -76,6 +77,7 @@
     importFile,
     unAudit,
     unAuditBatch,
+    upSearch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -136,8 +138,15 @@
   //下查
   const getDownSearchList = async (row) => {
     const res: any = await downSearch({ params: row });
-    console.log('res', res);
+    console.log('downSearch-res', res);
   };
+
+  //上查
+  const getUpSearchList = async (row) => {
+    const res: any = await upSearch({ params: row });
+    console.log('upSearch-res', res);
+  };
+
   //重置
   const resetTable = () => {
     searchRef.value.formState.wlNo = null;

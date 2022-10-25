@@ -215,7 +215,6 @@
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { useGo } from '/@/hooks/web/usePage';
-  import qs from 'qs';
 
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
@@ -300,6 +299,7 @@
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'getDownSearchList', row: any): void;
+    (e: 'getUpSearchList', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -311,30 +311,16 @@
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
 
+  /*约定 A是上查，B是下查*/
   const linkQuerySelect = async () => {
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
-
-    let a = new URLSearchParams();
-    for (let key in selectRecords[0]) {
-      a.append(key, selectRecords[0][key]);
+    if (selectRecords.length > 0) {
+      exLinkQueryModelRef.value.show();
+      emit('getDownSearchList', selectRecords);
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
     }
-    let b = [];
-    b.push(a);
-    emit('getDownSearchList', qs.stringify(b));
-
-    // let obj = {};
-    // for (var key in selectRecords) {
-    //   obj[key] = selectRecords[key];
-    // }
-    // if (selectRecords.length > 0) {
-    //   exLinkQueryModelRef.value.show();
-    //   console.log('obj', obj);
-    //   console.log('selectRecords', qs.stringify(obj));
-    //   emit('getDownSearchList', qs.stringify(obj));
-    // } else {
-    //   createMessage.warning('请至少勾选一条数据。');
-    // }
   };
   //上传文件
   interface FileItem {

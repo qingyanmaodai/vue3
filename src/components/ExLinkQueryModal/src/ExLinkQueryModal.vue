@@ -1,19 +1,12 @@
 <template>
-  <vxe-modal
-    v-model="isShow"
-    height="82%"
-    width="80%"
-    show-zoom
-    resize
-    :position="{ top: 40 }"
-  >
+  <vxe-modal v-model="isShow" height="82%" width="80%" show-zoom resize :position="{ top: 40 }">
     <template #title>
       <span>{{ props.modalTitle }}</span>
     </template>
-    <a-splitPanes class="default-theme" style="padding: 15px; height: 100%">
+    <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
-          <a-tree :tree-data="treeData" v-model:expandedKeys="expandedKeys" />
+          <a-tree :tree-data="treeData" v-model:expandedKeys="expandedKeys" @select="selectTree" />
         </div>
       </pane>
       <pane :size="100 - paneSize">
@@ -112,7 +105,9 @@
       ],
     },
   ];
-
+  const selectTree = () => {
+    console.log('selectTree');
+  };
   const expandedKeys = ref<string[]>(['0-0-0', '0-0-1']);
 
   const show = async () => {
@@ -138,22 +133,22 @@
     // await getList(currentPage);
   };
   //表格查询
-  // const getList = async (currPage = 1, pageSize = pages.pageSize) => {
-  //   getParams = [];
-  //   //表格查询
-  //   const res: any = await getMatTable({
-  //     params: getParams,
-  //     orderByBean: {
-  //       descList: ['BdMaterial.update_time'],
-  //     },
-  //     pageIndex: currPage,
-  //     pageRows: pageSize,
-  //   });
-  //   pages.total = res.total;
-  //   pages.currentPage = currPage;
-  //   tableData.value = res.records;
-  // };
-  // getList();
+  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+    getParams = [];
+    //表格查询
+    const res: any = await getMatTable({
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: currPage,
+      pageRows: pageSize,
+    });
+    pages.total = res.total;
+    pages.currentPage = currPage;
+    tableData.value = res.records;
+  };
+  getList();
   defineExpose({
     show,
     close,
