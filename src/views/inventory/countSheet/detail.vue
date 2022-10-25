@@ -178,7 +178,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name="inventory-countGain-detail">
   import {
     ruleOfExaGridOptions,
     invCountSheetOfDetailColumns,
@@ -216,7 +216,7 @@
   import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTable, getMatTableById } from '/@/api/matTable';
-  import {getStockDis} from "/@/api/system";
+  import { getStockDis } from '/@/api/system';
 
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
@@ -274,7 +274,7 @@
       tableUrl: Url.GET_PAGE_STOCK_LIST,
       nameParam: 'stockId',
       columnParam: 'stock_id',
-      disabledInput:false,
+      disabledInput: false,
     },
     {
       addonBeforeLabel: '分仓 : ',
@@ -283,7 +283,7 @@
       tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
       nameParam: 'compartmentId',
       columnParam: 'compartment_id',
-      disabledInput:true,
+      disabledInput: true,
     },
     {
       addonBeforeLabel: '仓位 : ',
@@ -292,7 +292,7 @@
       tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
       nameParam: 'locationId',
       columnParam: 'location_id',
-      disabledInput:true,
+      disabledInput: true,
     },
     {
       addonBeforeLabel: '物料 : ',
@@ -301,7 +301,7 @@
       tableUrl: Url.GET_MATERIAL_LIST,
       nameParam: 'id',
       columnParam: 'id',
-      disabledInput:false,
+      disabledInput: false,
     },
   ]);
   //筛选条件查询
@@ -419,7 +419,7 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        formState.value = Object.assign({}, formState.value, data);
+        formState.value = data;
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -489,7 +489,7 @@
         formState.value.dtData = cloneDeep(tableFullData);
       }
       const data = await unAudit({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
+      formState.value = data;
       if (data.bsStatus === 'A' && tableFullData) {
         tableFullData.map((e) => {
           e.bsStatus = 'A';
@@ -508,7 +508,7 @@
   const getStockDisData = async () => {
     const arr: any = await getStockDis({});
     stockDis.value = arr;
-  }
+  };
   getStockDisData();
   //获取初始值
   const getListById = async () => {
@@ -565,13 +565,13 @@
         data.compartmentId = null;
         data.bdStockCompartment.name = null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
@@ -581,6 +581,8 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
+    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
+    obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
   };
   onMounted(() => {

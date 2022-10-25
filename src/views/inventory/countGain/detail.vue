@@ -179,7 +179,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name="inventory-countGain-detail">
   import { getInventoryList } from '/@/api/realTimeInv';
   import {
     ruleOfExaGridOptions,
@@ -225,7 +225,7 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
-  import {getStockDis} from "/@/api/system";
+  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -458,26 +458,24 @@
   const getStockDisData = async () => {
     const arr: any = await getStockDis({});
     stockDis.value = arr;
-  }
+  };
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (useRoute().query) {
-      if (useRoute().query.row) {
-        let dataId = useRoute().query.row?.toString() || '';
-        const res: any = await getOneById({ params: dataId });
-        formState.value = res;
-        if (formState.value.dtData) {
-          formState.value.dtData.map((r) => {
-            r.bsStatus = formState.value.bsStatus;
-            r['stockDis'] = stockDis.value;
-          });
-        }
-        detailTableData.value = cloneDeep(formState.value.dtData);
-      } else if (useRoute().query.pushDownParam) {
-        formState.value = JSON.parse(useRoute().query.pushDownParam as string);
-        detailTableData.value = cloneDeep(formState.value.dtData);
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
+      const res: any = await getOneById({ params: dataId });
+      formState.value = res;
+      if (formState.value.dtData) {
+        formState.value.dtData.map((r) => {
+          r.bsStatus = formState.value.bsStatus;
+          r['stockDis'] = stockDis.value;
+        });
       }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+      detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
 
@@ -515,13 +513,13 @@
         data.compartmentId = null;
         data.bdStockCompartment.name = null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
@@ -539,6 +537,7 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.sort = cloneDeep(detailTableRef.value.rowSortData);
+    obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
   };
 

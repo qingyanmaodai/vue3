@@ -14,14 +14,13 @@
         :isShowImport="false"
         :isShowExport="false"
         :columns="invCountLossColumns"
-        :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         tableName="BsInventoryCountLoss"
         ref="tableRef"
-        @addEvent="addTableEvent"
-        @editEvent="editTableEvent"
+        @addTableEvent="addTableEvent"
+        @editTableEvent="editTableEvent"
         @deleteRowEvent="deleteRowTableEvent"
         @delBatchEvent="deleteBatchEvent"
         @auditRowEvent="auditRowEvent"
@@ -78,12 +77,9 @@
   import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
-  import { PageEnum } from '/@/enums/pageEnum';
-  import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
 
   const { createMessage } = useMessage();
-  const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
@@ -94,6 +90,9 @@
   let tableData = ref<object[]>([]);
   //查询组件
   const searchRef: any = ref<String | null>(null);
+  const go = useGo();
+  import { useGo } from '/@/hooks/web/usePage';
+  import { PageEnum } from '/@/enums/pageEnum';
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -126,46 +125,6 @@
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
-
-  //重置
-  const resetTable = () => {
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
-    getList(1);
-  };
-
-  //按钮
-  const buttons = [
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        addTableEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        auditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        unAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        delTableEvent();
-      },
-    },
-  ];
-
   //添加
   const addTableEvent = () => {
     let groupId = '';
@@ -185,15 +144,18 @@
       },
     });
   };
+  //重置
+  const resetTable = () => {
+    searchRef.value.formState.wlNo = null;
+    searchRef.value.formState.wlName = null;
+    getList(1);
+  };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
     await delById({ params: row });
     await getList();
   };
   //批量删除表格
-  const delTableEvent = () => {
-    tableRef.value.delTable();
-  };
   const deleteBatchEvent = async (rows: any[]) => {
     const res = await delBatch({ params: rows });
     await tableRef.value.computeData(res);
@@ -209,9 +171,6 @@
   };
 
   //审核事件
-  const auditEvent = () => {
-    tableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -231,9 +190,6 @@
     createMessage.success('操作成功');
   };
   //批量反审核
-  const unAuditEvent = () => {
-    tableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;

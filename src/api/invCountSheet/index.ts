@@ -180,7 +180,7 @@ export function pushDown(
   PushDownTableName: string, //可下推的表名
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<Result>(
+  return defHttp.post<any>(
     {
       url: Url.PUSHDOWN_INV_COUNT + PushDownTableName,
       data: json,
