@@ -46,7 +46,6 @@
   import { MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { ExTable } from '/@/components/ExTable';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
 
@@ -63,6 +62,12 @@
     (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
+  //分页信息
+  // const pages = reactive({
+  //   currentPage: 1,
+  //   pageSize: 10,
+  //   total: 0,
+  // });
 
   interface ProType {
     modalTitle: string;
@@ -108,17 +113,6 @@
         row: row.id,
       },
     });
-  };
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    // await getList(currentPage);
   };
 
   defineExpose({
