@@ -52,6 +52,22 @@ export const gridOptions = reactive<VxeGridProps>({
   //表格数据
   data: [],
 });
+
+export const linkQueryGridOptions = reactive<VxeGridProps>({
+  border: true,
+  align: 'center',
+  loading: false,
+  columnConfig: {
+    resizable: true,
+  },
+  rowConfig: {
+    isHover: true,
+  },
+  //表头数据
+  columns: [],
+  //表格数据
+  data: [],
+});
 //操作结果
 export const resultGridOptions = reactive<VxeGridProps>({
   border: true,
@@ -104,7 +120,7 @@ export const matColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*供应商列表表头*/
@@ -138,7 +154,7 @@ export const supplierColumns = [
     slots: { default: 'status' },
     width: 120,
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*客户列表表头*/
@@ -164,7 +180,7 @@ export const customerColumns = [
     slots: { default: 'status' },
     width: 120,
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*人员列表表头*/
@@ -189,7 +205,7 @@ export const employeeColumns = [
     slots: { default: 'status' },
     width: 120,
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*仓库列表表头*/
@@ -210,7 +226,7 @@ export const stockColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*分仓列表表头*/
@@ -231,7 +247,7 @@ export const stockCompartmentColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 /*仓位列表表头*/
@@ -251,7 +267,7 @@ export const stockLocationColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //检验项目
@@ -269,7 +285,7 @@ export const exaProjectColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //计量单位
@@ -296,7 +312,7 @@ export const unitColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //检验规则
@@ -315,7 +331,7 @@ export const exaRuleColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //检验方案
@@ -333,7 +349,7 @@ export const exaSchemeColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
 //盘盈单
@@ -400,7 +416,7 @@ export const invCountLossColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 //盘点单
 export const invCountSheetColumns = [
@@ -426,5 +442,5 @@ export const invCountSheetColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];

@@ -22,27 +22,10 @@
           tableName="BsInventoryCountGainModel"
           :columns="tableCols"
           :gridOptions="props.gridOptions"
+          :totalData="linkQueryTableData.length"
           :tableData="linkQueryTableData"
           ref="tableRef"
           @editTableEvent="editTableEvent"
-        />
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
         />
       </pane>
     </a-splitPanes>
@@ -50,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {nextTick, reactive, ref } from 'vue';
+  import { nextTick, reactive, ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { Tag, MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';

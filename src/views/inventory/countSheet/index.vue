@@ -16,8 +16,10 @@
         :isShowExport="false"
         :columns="invCountSheetColumns"
         :gridOptions="GridOptions"
+        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :totalData="totalData"
         tableName="BsInventoryCount"
         ref="tableRef"
         @addTableEvent="addTableEvent"
@@ -30,36 +32,15 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
-        @refreshTable="refreshTable"
-        :basicGridOptions="basicGridOptions"
+        @getList="getList"
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
         @getDownSearchList="getDownSearchList"
-        @uPSearchEvent="uPSearchEvent"
+        @upSearchEvent="upSearchEvent"
         :linkQueryMenuData="linkQueryMenuData"
         :linkQueryTableData="linkQueryTableData"
         :linkQueryTableCols="linkQueryTableCols"
       />
-      <div>
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -68,7 +49,6 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     auditBatch,
@@ -84,14 +64,14 @@
     upSearch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
-  import {cloneDeep, uniqBy} from 'lodash-es';
+  import { cloneDeep, uniqBy } from 'lodash-es';
   import {
+    linkQueryGridOptions,
     gridOptions,
     invCountGainColumns,
     invCountLossColumns,
     invCountSheetColumns,
   } from '/@/components/ExTable/data';
-  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -105,6 +85,7 @@
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -119,11 +100,6 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -139,7 +115,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
@@ -195,7 +171,7 @@
     }
   };
   //上查
-  const uPSearchEvent = async (row) => {
+  const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
     modalTitle.value = '盘点单-上查';
     console.log('upSearch-res', res);
@@ -318,9 +294,9 @@
     };
   };
   //导入文件刷新
-  const refreshTable = () => {
-    getList();
-  };
+  // const refreshTable = () => {
+  //   getList();
+  // };
 
   //获取高级查询字段数据
   const moreSearchData = ref();
