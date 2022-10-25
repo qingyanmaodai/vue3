@@ -195,6 +195,7 @@
     :tableName="props.tableName"
     :gridOptions="props.basicGridOptions"
     :modalTitle="props.modalTitle"
+    :linkQueryMenuData="linkQueryMenuData"
   />
 </template>
 
@@ -255,6 +256,7 @@
       default: true,
     },
     importConfig: String,
+    linkQueryMenuData: Array,
   });
   // interface ProType {
   //   gridOptions: object;
@@ -312,11 +314,12 @@
   let resF = ref(0); //审核失败
 
   /*约定 A是上查，B是下查*/
-  const linkQuerySelect = async () => {
+  const linkQuerySelect = async (item) => {
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
     if (selectRecords.length > 0) {
       exLinkQueryModelRef.value.show();
+      console.log(item,'item')
       emit('getDownSearchList', selectRecords);
     } else {
       createMessage.warning('请至少勾选一条数据。');

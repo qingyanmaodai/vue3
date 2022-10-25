@@ -6,7 +6,16 @@
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
-          <a-tree :tree-data="treeData" v-model:expandedKeys="expandedKeys" @select="selectTree" />
+          <a-menu>
+            <a-sub-menu key="sub4">
+              <template #icon>
+                <QqOutlined />
+              </template>
+            <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
+              <a-menu-item> {{ item.name }} ({{ item.tarBillIds.length }})</a-menu-item>
+            </template>
+            </a-sub-menu>
+          </a-menu>
         </div>
       </pane>
       <pane :size="100 - paneSize">
@@ -54,11 +63,12 @@
 
 <script lang="ts" setup>
   import { reactive, ref, watch } from 'vue';
+  import { MailOutlined, QqOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
   import { Pane, Splitpanes } from 'splitpanes';
-  import { Tree, Tag } from 'ant-design-vue';
+  import { Tag, MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { config, configEntity } from '/@/utils/publicParamConfig';
-  import { ControlSet, SearchParams } from '/@/api/apiLink';
+  import { SearchParams } from '/@/api/apiLink';
   import { Pager, VxePagerEvents } from 'vxe-table';
   import { getMatTable } from '/@/api/matTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
@@ -68,7 +78,9 @@
   const paneSize = ref<number>(12);
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   let tableData = ref<object[]>([]);
-  const ATree = Tree;
+  const AMenuItem = MenuItem;
+  const AMenu = Menu;
+  const ASubMenu = SubMenu;
   // type Emits = {};
   // const emit = defineEmits<Emits>();
 
@@ -86,13 +98,14 @@
     // control: ControlSet[];
     gridOptions: any;
     tableCols: VxeGridPropTypes.Columns;
+    linkQueryMenuData: object[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
     modalTitle: '下查',
-    // control: () => {
-    //   return [];
-    // },
+    linkQueryMenuData: () => {
+      return [];
+    },
   });
   const treeData = [
     {

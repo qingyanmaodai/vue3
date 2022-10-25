@@ -32,9 +32,10 @@
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
         :basicGridOptions="basicGridOptions"
-        modalTitle="盘点单-下查"
+        :modalTitle="modalTitle"
         @getDownSearchList="getDownSearchList"
         @getUpSearchList="getUpSearchList"
+        :linkQueryMenuData="linkQueryMenuData"
       />
       <div>
         <Pager
@@ -134,11 +135,14 @@
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
+  const linkQueryMenuData: any = ref<any>([]);
+  const modalTitle: string = ref<any>('盘点单--下查/上查');
 
   //下查
   const getDownSearchList = async (row) => {
     const res: any = await downSearch({ params: row });
     console.log('downSearch-res', res);
+    linkQueryMenuData.value = res;
   };
 
   //上查
