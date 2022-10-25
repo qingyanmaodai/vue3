@@ -195,16 +195,18 @@
   />
   <ExLinkQueryModal
     ref="exLinkQueryModelRef"
-    :tableCols="props.columns"
+    :linkQueryTableCols="props.linkQueryTableCols"
     :tableName="props.tableName"
     :gridOptions="props.basicGridOptions"
     :modalTitle="props.modalTitle"
-    :linkQueryMenuData="linkQueryMenuData"
+    :linkQueryMenuData="props.linkQueryMenuData"
+    :linkQueryTableData="props.linkQueryTableData"
+    @getDownSearchList="getDownSearchList"
   />
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+import {nextTick, reactive, ref} from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
@@ -220,10 +222,14 @@
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { useGo } from '/@/hooks/web/usePage';
+  // import { VxeGridPropTypes } from 'vxe-table/types/all';
 
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
+  // const linkQueryTableData = ref<any>([]);
+  // const tableCols = ref<any>([]);
+
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -261,6 +267,8 @@
     },
     importConfig: String,
     linkQueryMenuData: Array,
+    linkQueryTableData: Array,
+    linkQueryTableCols: Array,
   });
   // interface ProType {
   //   gridOptions: object;
@@ -304,8 +312,9 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
-    (e: 'getDownSearchList', row: any): void;
-    (e: 'getUpSearchList', row: any): void;
+    (e: 'downSearchEvent', row: any): void;
+    (e: 'uPSearchEvent', row: any): void;
+    (e: 'getDownSearchList'): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -324,16 +333,36 @@
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
-          emit('getUpSearchList', selectRecords);
+          emit('uPSearchEvent', selectRecords);
           break;
         case 'B':
-          emit('getDownSearchList', selectRecords);
+          emit('downSearchEvent', selectRecords);
           break;
       }
+      // linkQueryTableData.value = [];
+      // tableCols.value = [];
       exLinkQueryModelRef.value.show();
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
+  };
+  const getDownSearchList = () => {
+    // linkQueryTableData.value = props.linkQueryTableData;
+    // // $grid.hideColumn();
+    // tableCols.value = props.linkQueryTableCols;
+    // nextTick(function () {
+    //   linkQueryTableData.value = props.linkQueryTableData;
+    //   tableCols.value = props.linkQueryTableCols;
+    //   tableRef.value.hideColumn('operate');
+    // });
+    nextTick(function () {
+      emit('getDownSearchList');
+      console.log('222', props.linkQueryTableData, props.linkQueryTableCols);
+    });
+  };
+  const hideColumn = (str) => {
+    const $grid: any = xGrid.value;
+    $grid.hideColumn(str);
   };
   //上传文件
   interface FileItem {
@@ -701,6 +730,7 @@
     delTable,
     init,
     computeData,
+    hideColumn,
   });
 </script>
 

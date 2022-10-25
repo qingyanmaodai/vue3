@@ -7,37 +7,25 @@
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <a-menu>
-            <a-sub-menu key="sub4">
-              <template #icon>
-                <QqOutlined />
-              </template>
             <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
-              <a-menu-item> {{ item.name }} ({{ item.tarBillIds.length }})</a-menu-item>
+              <a-menu-item @click="onSelectItem(item)">
+                {{ item.name }} ({{ item.tarBillIds.length }})</a-menu-item
+              >
             </template>
-            </a-sub-menu>
           </a-menu>
         </div>
       </pane>
       <pane :size="100 - paneSize">
-        <vxe-grid
-          ref="xGrid"
-          v-bind="props.gridOptions"
-          :data="tableData"
-          :columns="unitColumns"
-          :export-config="{}"
-        >
-          <template #status="{ row }">
-            <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-              formatData(row.bsStatus, config['DATA_STATUS'])
-            }}</Tag>
-          </template>
-          <template #bsType="{ row }">
-            <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
-          </template>
-          <template #attr="{ row }">
-            <Tag v-if="row.attr">{{ formatData(row.attr, config['MATERIAL_ATTR']) }}</Tag>
-          </template>
-        </vxe-grid>
+        <ExTable
+          :isShowImport="false"
+          :isShowExport="false"
+          tableName="BsInventoryCountGainModel"
+          :columns="tableCols"
+          :gridOptions="props.gridOptions"
+          :tableData="linkQueryTableData"
+          ref="tableRef"
+          @editTableEvent="editTableEvent"
+        />
         <Pager
           background
           v-model:current-page="pages.currentPage"
@@ -62,43 +50,36 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref, watch } from 'vue';
-  import { MailOutlined, QqOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import {nextTick, reactive, ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
-  import { Tag, MenuItem, Menu, SubMenu } from 'ant-design-vue';
+  import { Tag, MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
-  import { config, configEntity } from '/@/utils/publicParamConfig';
-  import { SearchParams } from '/@/api/apiLink';
+  import { ExTable } from '/@/components/ExTable';
   import { Pager, VxePagerEvents } from 'vxe-table';
-  import { getMatTable } from '/@/api/matTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { unitColumns } from '/@/components/AMoreSearch/data';
+  import { useGo } from '/@/hooks/web/usePage';
 
   const ASplitPanes = Splitpanes;
   const paneSize = ref<number>(12);
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
-  let tableData = ref<object[]>([]);
+  const currItem = ref<any>({});
+  const tableRef = ref<any>('');
+  const linkQueryTableData = ref<any>([]);
+  const tableCols = ref<any>([]);
   const AMenuItem = MenuItem;
   const AMenu = Menu;
-  const ASubMenu = SubMenu;
-  // type Emits = {};
-  // const emit = defineEmits<Emits>();
-
-  //格式化数据
-  const formatData = (data: string | number, source: configEntity[]) => {
-    let res;
-    if (source && source.length > 0) {
-      res = source.find((item) => item.value === data);
-    }
-    return res ? res.label : '';
+  type Emits = {
+    (e: 'getDownSearchList'): void;
   };
+  const emit = defineEmits<Emits>();
+
   interface ProType {
     modalTitle: string;
     tableName: string;
-    // control: ControlSet[];
     gridOptions: any;
-    tableCols: VxeGridPropTypes.Columns;
+    linkQueryTableCols: VxeGridPropTypes.Columns;
     linkQueryMenuData: object[];
+    linkQueryTableData: object[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -107,61 +88,48 @@
       return [];
     },
   });
-  const treeData = [
-    {
-      title: '0-0',
-      key: '0-0',
-      children: [
-        { title: '0-0-0-0', key: '0-0-0-0' },
-        { title: '0-0-0-1', key: '0-0-0-1' },
-        { title: '0-0-0-2', key: '0-0-0-2' },
-      ],
-    },
-  ];
-  const selectTree = () => {
-    console.log('selectTree');
-  };
-  const expandedKeys = ref<string[]>(['0-0-0', '0-0-1']);
 
   const show = async () => {
     isShow.value = true;
   };
   const close = () => {
+    linkQueryTableData.value = [];
+    tableCols.value = [];
     isShow.value = false;
   };
-
-  watch(expandedKeys, () => {
-    console.log('expandedKeys', expandedKeys);
-  });
+  //点击列表项查询
+  const onSelectItem = (item) => {
+    console.log('item', item);
+    emit('getDownSearchList');
+    nextTick(function () {
+      linkQueryTableData.value = props.linkQueryTableData;
+      tableCols.value = props.linkQueryTableCols;
+      tableRef.value.hideColumn('operate');
+    });
+    currItem.value = item;
+  };
+  const go = useGo();
+  //跳转到详情
+  const editTableEvent = (row) => {
+    go({
+      name: currItem.value.routeTo,
+      query: {
+        row: row.id,
+      },
+    });
+  };
   //分页信息
   const pages = reactive({
     currentPage: 1,
     pageSize: 10,
     total: 0,
   });
-  let getParams: SearchParams[] = [];
   const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
     pages.currentPage = currentPage;
     pages.pageSize = pageSize;
     // await getList(currentPage);
   };
-  //表格查询
-  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
-    getParams = [];
-    //表格查询
-    const res: any = await getMatTable({
-      params: getParams,
-      orderByBean: {
-        descList: ['BdMaterial.update_time'],
-      },
-      pageIndex: currPage,
-      pageRows: pageSize,
-    });
-    pages.total = res.total;
-    pages.currentPage = currPage;
-    tableData.value = res.records;
-  };
-  getList();
+
   defineExpose({
     show,
     close,

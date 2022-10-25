@@ -33,9 +33,12 @@
         @refreshTable="refreshTable"
         :basicGridOptions="basicGridOptions"
         :modalTitle="modalTitle"
+        @downSearchEvent="downSearchEvent"
         @getDownSearchList="getDownSearchList"
-        @getUpSearchList="getUpSearchList"
+        @uPSearchEvent="uPSearchEvent"
         :linkQueryMenuData="linkQueryMenuData"
+        :linkQueryTableData="linkQueryTableData"
+        :linkQueryTableCols="linkQueryTableCols"
       />
       <div>
         <Pager
@@ -81,11 +84,15 @@
     upSearch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+  import {cloneDeep, uniqBy} from 'lodash-es';
+  import {
+    gridOptions,
+    invCountGainColumns,
+    invCountLossColumns,
+    invCountSheetColumns,
+  } from '/@/components/ExTable/data';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
-
-  import { SearchParams } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -101,6 +108,8 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { getPublicList } from '/@/api/public';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -136,18 +145,59 @@
     searchRef.value.moreSearchClose();
   };
   const linkQueryMenuData: any = ref<any>([]);
-  const modalTitle: string = ref<any>('盘点单--下查/上查');
+  const linkQueryTableData: any = ref<any>([]);
+  const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
+  const modalTitle: any = ref<any>('');
 
   //下查
-  const getDownSearchList = async (row) => {
+  const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    console.log('downSearch-res', res);
+    modalTitle.value = '盘点单-下查';
     linkQueryMenuData.value = res;
   };
-
+  const getDownSearchList = async (currPage = 1, pageSize = pages.pageSize) => {
+    let listUrl = '';
+    for (let i = 0; i < linkQueryMenuData.value.length; i++) {
+      switch (linkQueryMenuData.value[i].tarBillType) {
+        case 'BsInventoryCountGain':
+          listUrl = 'GET_PAGE_INV_COUNT_GAIN_LIST';
+          linkQueryTableCols.value = invCountGainColumns;
+          break;
+        case 'BsInventoryCountLoss':
+          listUrl = 'GET_PAGE_INV_COUNT_LOSS_LIST';
+          linkQueryTableCols.value = invCountLossColumns;
+          break;
+      }
+      // 查询表格
+      let listData: any = await getPublicList(
+        {
+          params: [
+            {
+              table: '',
+              name: 'id',
+              column: 'id',
+              link: SearchLink.AND,
+              rule: SearchMatchType.IN,
+              type: SearchDataType.string,
+              val: linkQueryMenuData.value[i].tarBillIds,
+              startWith: '',
+              endWith: '',
+            },
+          ],
+          pageIndex: currPage,
+          pageRows: pageSize,
+        },
+        Url[listUrl],
+      );
+      let arr = uniqBy(listData.records, 'id');
+      linkQueryTableData.value = arr;
+      console.log(linkQueryTableData.value,'linkQueryTableData');
+    }
+  };
   //上查
-  const getUpSearchList = async (row) => {
+  const uPSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
+    modalTitle.value = '盘点单-上查';
     console.log('upSearch-res', res);
   };
 

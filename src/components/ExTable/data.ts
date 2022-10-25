@@ -367,7 +367,7 @@ export const invCountGainColumns = [
     sortable: true,
     slots: { default: 'status' },
   },
-  { title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 //盘亏单
 export const invCountLossColumns = [
