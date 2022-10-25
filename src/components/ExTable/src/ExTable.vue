@@ -50,10 +50,14 @@
             <a-down-outlined />
           </a-button>
           <template #overlay>
-            <a-menu @click="linkQuerySelect">
-              <template v-for="item in config.LINK_QUERY" :key="item.key">
-                <a-menu-item> {{ item.label }} </a-menu-item>
-              </template>
+            <a-menu>
+              <a-menu-item
+                v-for="item in config.LINK_QUERY"
+                :key="item.value"
+                @click="linkQuerySelect(item)"
+              >
+                {{ item.label }}
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -318,9 +322,15 @@
     const $grid: any = xGrid.value;
     const selectRecords = $grid.getCheckboxRecords();
     if (selectRecords.length > 0) {
+      switch (item.value) {
+        case 'A':
+          emit('getUpSearchList', selectRecords);
+          break;
+        case 'B':
+          emit('getDownSearchList', selectRecords);
+          break;
+      }
       exLinkQueryModelRef.value.show();
-      console.log(item,'item')
-      emit('getDownSearchList', selectRecords);
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
