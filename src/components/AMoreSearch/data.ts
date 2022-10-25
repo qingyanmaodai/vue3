@@ -1,22 +1,6 @@
 import { reactive } from 'vue';
 import { VxeGridProps } from 'vxe-table';
 
-//初始化表格
-export interface DataItem {
-  bsStatus: string; //状态
-  bsType: string;
-  createBy: string; //创建人
-  createTime: string; //创建日期
-  erpCode: string;
-  id: number; //唯一ID
-  isDelete: number;
-  mark: string; //备注
-  name: string; //单位名称
-  number: string; //编码
-  tenantId: number;
-  updateBy: string; //修改人
-  updateTime: string; //修改日期
-}
 export const basicGridOptions = reactive<VxeGridProps>({
   border: true,
   height: 400,

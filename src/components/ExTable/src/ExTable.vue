@@ -18,7 +18,7 @@
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
         <AButton
-          v-for="(button, key) in buttons"
+          v-for="(button, key) in props.buttons"
           :type="button.type !== 'danger' ? button.type : 'default'"
           :key="key"
           :danger="button.type === 'danger'"
@@ -33,24 +33,19 @@
           v-show="props.isPushDown"
           >下推</AButton
         >
-        <!--           style="margin: 0 10px"
-          v-show="props.isPushDown"
-          v-model:value="linkQueryData"
-          class="select"
-          :options="config.LINK_QUERY"       -->
-        <a-drop-down style="margin: 0 10px">
+        <a-dropdown style="margin: 0 10px">
           <a-button type="primary">
             关联查询
             <a-down-outlined />
           </a-button>
           <template #overlay>
-            <a-menu @click="onClick">
-              <a-menu-item key="1">1st menu item</a-menu-item>
-              <a-menu-item key="2">2nd menu item</a-menu-item>
-              <a-menu-item key="3">3rd menu item</a-menu-item>
+            <a-menu @click="linkQuerySelect">
+              <template v-for="item in config.LINK_QUERY" :key="item.key">
+                <a-menu-item> {{ item.label }} </a-menu-item>
+              </template>
             </a-menu>
           </template>
-        </a-drop-down>
+        </a-dropdown>
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -180,15 +175,22 @@
   <!--  </div>-->
   <ExPushDownModel
     ref="ExPushDownModelRef"
-    :tableName="tableName"
+    :tableName="props.tableName"
     @pushDownSelect="pushDownSelect"
+  />
+  <ExLinkQueryModal
+    ref="exLinkQueryModelRef"
+    :tableCols="props.columns"
+    :tableName="props.tableName"
+    :gridOptions="props.basicGridOptions"
+    :modalTitle="props.modalTitle"
   />
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref, VNodeChild } from 'vue';
+  import { reactive, ref } from 'vue';
   import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import { Tag, Button, Upload, message, Dropdown, MenuItem } from 'ant-design-vue';
+  import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -196,15 +198,18 @@
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { pushDown } from '/@/api/invCountSheet';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
+  import qs from 'qs';
 
   //基础信息查询组件ref
-  const ExPushDownModelRef: any = ref(null); //
+  const ExPushDownModelRef: any = ref(null);
+  const exLinkQueryModelRef: any = ref(null);
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
@@ -212,14 +217,16 @@
   const ADownOutlined = DownOutlined;
   const AMenuItem = MenuItem;
   const ADropdown = Dropdown;
-
+  const AMenu = Menu;
   const props = defineProps({
     gridOptions: Object,
+    basicGridOptions: Object,
     columns: Array,
     buttons: Array,
     count: Number,
     show: Boolean,
     tableName: String,
+    modalTitle: String,
     tableData: Array,
     isShowExport: {
       type: Boolean,
@@ -235,6 +242,36 @@
     },
     importConfig: String,
   });
+  // interface ProType {
+  //   gridOptions: object;
+  //   columns: any[];
+  //   buttons: any[];
+  //   count: number;
+  //   show: boolean;
+  //   tableName: string;
+  //   tableData: any[];
+  //   isShowExport: boolean;
+  //   isShowImport: boolean;
+  //   isPushDown: boolean;
+  //   importConfig: string;
+  // }
+  // const props = withDefaults(defineProps<ProType>(), {
+  //   tableName: '',
+  //   columns: () => {
+  //     return [];
+  //   },
+  //   buttons: () => {
+  //     return [];
+  //   },
+  //   tableData: () => {
+  //     return [];
+  //   },
+  //   isShowExport: true,
+  //   isShowImport: true,
+  //   isPushDown: true,
+  //   show: true,
+  // });
+
   type Emits = {
     (e: 'addEvent'): void;
     (e: 'editEvent', row: any): void;
@@ -247,7 +284,7 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
-    (e: 'pushDownEvent', row: any): void;
+    (e: 'getDownSearchList', row: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -258,15 +295,31 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-  let linkQueryData = ref<string>('关联查询'); //关联查询下拉框所选值
-  interface MenuInfo {
-    key: string;
-    keyPath: string[];
-    item: VNodeChild;
-    domEvent: MouseEvent;
-  }
-  const onClick = ({ key }: MenuInfo) => {
-    console.log(`Click on item ${key}`);
+
+  const linkQuerySelect = async () => {
+    const $grid: any = xGrid.value;
+    const selectRecords = $grid.getCheckboxRecords();
+
+    let a = new URLSearchParams();
+    for (let key in selectRecords[0]) {
+      a.append(key, selectRecords[0][key]);
+    }
+    let b = [];
+    b.push(a);
+    emit('getDownSearchList', qs.stringify(b));
+
+    // let obj = {};
+    // for (var key in selectRecords) {
+    //   obj[key] = selectRecords[key];
+    // }
+    // if (selectRecords.length > 0) {
+    //   exLinkQueryModelRef.value.show();
+    //   console.log('obj', obj);
+    //   console.log('selectRecords', qs.stringify(obj));
+    //   emit('getDownSearchList', qs.stringify(obj));
+    // } else {
+    //   createMessage.warning('请至少勾选一条数据。');
+    // }
   };
   //上传文件
   interface FileItem {

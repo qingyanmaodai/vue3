@@ -390,7 +390,6 @@
         const tableFullData = detailTableRef.value.getDetailData();
         const validAllErrMapData = await detailTableRef.value.getValidAllData();
         if (tableFullData) {
-
           if (validAllErrMapData) {
             await VXETable.modal.message({
               status: 'error',

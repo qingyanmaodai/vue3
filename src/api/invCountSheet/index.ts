@@ -14,6 +14,7 @@ import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
+import {ContentTypeEnum} from "/@/enums/httpEnum";
 
 export interface InvCountSheetEntity extends PublicModel {
   id: string | undefined;
@@ -290,6 +291,39 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
       url: Url.IMPORT_MODEL_INV_COUNT,
       data: json,
       responseType: 'blob',
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: false,
+    },
+  );
+}
+
+/**
+ * 下查
+ */
+export function downSearch(json: any, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.DOWN_SEARCH_INV_COUNT,
+      data: json,
+      headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: false,
+    },
+  );
+}
+/**
+ * 上查
+ */
+export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UP_SEARCH_INV_COUNT,
+      data: json,
+      headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },
     },
     {
       errorMessageMode: mode,

@@ -32,6 +32,9 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @refreshTable="refreshTable"
+        :basicGridOptions="basicGridOptions"
+        modalTitle="盘点单-下查"
+        @getDownSearchList="getDownSearchList"
       />
       <div>
         <Pager
@@ -67,6 +70,7 @@
     auditBatch,
     delBatch,
     delById,
+    downSearch,
     exportExcel,
     getDataList,
     getSearchOption,
@@ -77,6 +81,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+  import { basicGridOptions } from '/@/components/AMoreSearch/data';
 
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
@@ -129,6 +134,11 @@
     searchRef.value.moreSearchClose();
   };
 
+  //下查
+  const getDownSearchList = async (row) => {
+    const res: any = await downSearch({ params: row });
+    console.log('res', res);
+  };
   //重置
   const resetTable = () => {
     searchRef.value.formState.wlNo = null;

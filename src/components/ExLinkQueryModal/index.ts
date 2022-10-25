@@ -1,5 +1,5 @@
 import { withInstall } from '/@/utils';
 
-import exLinkQueryModel from './src/ExLinkQueryModel.vue';
+import exLinkQueryModal from './src/ExLinkQueryModal.vue';
 
-export const ExLinkQueryModel = withInstall(exLinkQueryModel);
+export const ExLinkQueryModal = withInstall(exLinkQueryModal);

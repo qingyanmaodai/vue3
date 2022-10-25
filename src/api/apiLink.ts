@@ -253,6 +253,8 @@ export enum Url {
   ADD_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT = '/wms/bd-inventory-count/update', //编辑
   PUSHDOWN_INV_COUNT = '/wms/bd-inventory-count/push/', //下推
+  DOWN_SEARCH_INV_COUNT = '/wms/bd-inventory-count/down-search', //下查
+  UP_SEARCH_INV_COUNT = '/wms/bd-inventory-count/up-search', //上查
   //下推查询配置
   GET_PUSHDOWN_LIST = '/wms/lk-set/list', //下推查询配置
 

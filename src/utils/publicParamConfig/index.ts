@@ -1,4 +1,3 @@
-
 export interface configEntity {
   label: string;
   value: string | number;
