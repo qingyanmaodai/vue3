@@ -1,5 +1,13 @@
 <template>
-  <vxe-modal v-model="isShow" height="82%" width="80%" show-zoom resize :position="{ top: 40 }">
+  <vxe-modal
+    v-model="isShow"
+    height="82%"
+    width="80%"
+    show-zoom
+    resize
+    :position="{ top: 40 }"
+    @close="close"
+  >
     <template #title>
       <span>{{ props.modalTitle }}</span>
     </template>
@@ -35,7 +43,7 @@
 <script lang="ts" setup>
   import { nextTick, reactive, ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
-  import { Tag, MenuItem, Menu } from 'ant-design-vue';
+  import { MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { ExTable } from '/@/components/ExTable';
   import { Pager, VxePagerEvents } from 'vxe-table';
@@ -52,7 +60,7 @@
   const AMenuItem = MenuItem;
   const AMenu = Menu;
   type Emits = {
-    (e: 'getDownSearchList'): void;
+    (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
 
@@ -76,14 +84,14 @@
     isShow.value = true;
   };
   const close = () => {
+    isShow.value = false;
     linkQueryTableData.value = [];
     tableCols.value = [];
-    isShow.value = false;
   };
   //点击列表项查询
   const onSelectItem = (item) => {
     console.log('item', item);
-    emit('getDownSearchList');
+    emit('getSearchList', item);
     nextTick(function () {
       linkQueryTableData.value = props.linkQueryTableData;
       tableCols.value = props.linkQueryTableCols;

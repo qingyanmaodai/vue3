@@ -220,13 +220,13 @@
     :modalTitle="props.modalTitle"
     :linkQueryMenuData="props.linkQueryMenuData"
     :linkQueryTableData="props.linkQueryTableData"
-    @getDownSearchList="getDownSearchList"
+    @getSearchList="getSearchList"
   />
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, reactive, ref } from 'vue';
   import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
+  import { reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -246,8 +246,6 @@
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
-  // const linkQueryTableData = ref<any>([]);
-  // const tableCols = ref<any>([]);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -308,7 +306,7 @@
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
-    (e: 'getDownSearchList'): void;
+    (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -364,26 +362,13 @@
           emit('downSearchEvent', selectRecords);
           break;
       }
-      // linkQueryTableData.value = [];
-      // tableCols.value = [];
       exLinkQueryModelRef.value.show();
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
   };
-  const getDownSearchList = () => {
-    // linkQueryTableData.value = props.linkQueryTableData;
-    // // $grid.hideColumn();
-    // tableCols.value = props.linkQueryTableCols;
-    // nextTick(function () {
-    //   linkQueryTableData.value = props.linkQueryTableData;
-    //   tableCols.value = props.linkQueryTableCols;
-    //   tableRef.value.hideColumn('operate');
-    // });
-    nextTick(function () {
-      emit('getDownSearchList');
-      console.log('222', props.linkQueryTableData, props.linkQueryTableCols);
-    });
+  const getSearchList = (item) => {
+    emit('getSearchList', item);
   };
   const hideColumn = (str) => {
     const $grid: any = xGrid.value;
