@@ -14,14 +14,16 @@
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
-          <a-menu>
-            <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
-              <a-menu-item @click="onSelectItem(item)">
-                {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
-                  item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
-                }})</a-menu-item
-              >
-            </template>
+          <a-menu mode="inline">
+            <a-menu-item
+              @click="onSelectItem(item)"
+              v-for="(item, index) in props.linkQueryMenuData"
+              :key="index"
+            >
+              {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
+                item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
+              }})</a-menu-item
+            >
           </a-menu>
         </div>
       </pane>
@@ -30,12 +32,14 @@
           :isShowImport="false"
           :isShowExport="false"
           tableName="BsInventoryCountGainModel"
-          :columns="tableCols"
+          :columns="props.linkQueryTableCols"
           :gridOptions="props.gridOptions"
-          :totalData="linkQueryTableData.length"
-          :tableData="linkQueryTableData"
+          :totalData="props.linkQueryTableData.total"
+          :tableData="props.linkQueryTableData"
+          :height="height"
           ref="tableRef"
           @editTableEvent="editTableEvent"
+          v-if="tableShow"
         />
       </pane>
     </a-splitPanes>
@@ -43,41 +47,33 @@
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, reactive, ref } from 'vue';
+  import { ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { ExTable } from '/@/components/ExTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
-
+  let height = '90%';
   const ASplitPanes = Splitpanes;
   const paneSize = ref<number>(12);
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
+  const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currItem = ref<any>({});
   const tableRef = ref<any>('');
-  const linkQueryTableData = ref<any>([]);
-  const tableCols = ref<any>([]);
   const AMenuItem = MenuItem;
   const AMenu = Menu;
   type Emits = {
     (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
-  //分页信息
-  // const pages = reactive({
-  //   currentPage: 1,
-  //   pageSize: 10,
-  //   total: 0,
-  // });
-
   interface ProType {
     modalTitle: string;
     tableName: string;
     gridOptions: any;
     linkQueryTableCols: VxeGridPropTypes.Columns;
     linkQueryMenuData: object[];
-    linkQueryTableData: object[];
+    linkQueryTableData: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -92,18 +88,16 @@
   };
   const close = () => {
     isShow.value = false;
-    linkQueryTableData.value = [];
-    tableCols.value = [];
+    tableShow.value = false;
   };
   //点击列表项查询
-  const onSelectItem = (item) => {
+  const onSelectItem = async (item) => {
     console.log('item', item);
     emit('getSearchList', item);
-    nextTick(function () {
-      linkQueryTableData.value = props.linkQueryTableData;
-      tableCols.value = props.linkQueryTableCols;
-      tableRef.value.hideColumn('operate');
-    });
+    tableShow.value = true;
+    setTimeout(() => {
+      tableRef.value.hideColumn(['operate']);
+    }, 0);
     currItem.value = item;
   };
   const go = useGo();

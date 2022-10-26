@@ -11,7 +11,7 @@
     :show="props.show"
     show-overflow
     show-header-overflow
-    height="83%"
+    :height="height"
     auto-resize
     :column-config="{ resizable: true }"
   >
@@ -258,6 +258,7 @@
   interface ProType {
     gridOptions?: object;
     linkQueryGridOptions?: object;
+    height?: string;
     columns?: any[];
     buttons?: any[];
     show?: boolean;
@@ -271,7 +272,7 @@
     importConfig?: string;
     modalTitle?: string;
     linkQueryMenuData?: object[];
-    linkQueryTableData?: object[];
+    linkQueryTableData?: any;
     linkQueryTableCols?: VxeGridPropTypes.Columns;
   }
   const props = withDefaults(defineProps<ProType>(), {
@@ -281,6 +282,7 @@
     isPushDown: true,
     show: true,
     isShow: true,
+    height: '83%',
     columns: () => {
       return [];
     },
@@ -362,17 +364,26 @@
           emit('downSearchEvent', selectRecords);
           break;
       }
-      exLinkQueryModelRef.value.show();
+      console.log(props.linkQueryMenuData, 'props.linkQueryMenuData');
+      if (props.linkQueryMenuData ? props.linkQueryMenuData.length : 0 > 0) {
+        exLinkQueryModelRef.value.show();
+      } else {
+        createMessage.warning('没有相关关联单据');
+      }
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
   };
+  //上下查的列表页
   const getSearchList = (item) => {
     emit('getSearchList', item);
   };
-  const hideColumn = (str) => {
+  //隐藏行
+  const hideColumn = (arr) => {
     const $grid: any = xGrid.value;
-    $grid.hideColumn(str);
+    arr.map((e) => {
+      $grid.hideColumn(e);
+    });
   };
   /**
    * 格式化数据
@@ -599,6 +610,7 @@
       },
       pushDownParam.tarBillType,
     );
+    console.log(res.dtData.length, 'res.dtData.length');
     if (res.dtData.length > 0) {
       createMessage.success('下推成功');
       go({

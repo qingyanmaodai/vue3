@@ -64,7 +64,7 @@
     upSearch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep, uniqBy } from 'lodash-es';
+  import { cloneDeep } from 'lodash-es';
   import {
     linkQueryGridOptions,
     getUpDownSearchList,
