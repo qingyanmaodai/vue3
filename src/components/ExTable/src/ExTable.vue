@@ -10,7 +10,7 @@
     :show="props.show"
     show-overflow
     show-header-overflow
-    height="85%"
+    :height="height"
     auto-resize
     :column-config="{ resizable: true }"
   >
@@ -224,7 +224,7 @@
 
 <script lang="ts" setup>
   import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -256,6 +256,7 @@
   interface ProType {
     gridOptions?: object;
     linkQueryGridOptions?: object;
+    height?: string;
     columns?: any[];
     buttons?: any[];
     show?: boolean;
@@ -268,8 +269,8 @@
     isPushDown?: boolean;
     importConfig?: string;
     modalTitle?: string;
-    linkQueryMenuData?: object[];
-    linkQueryTableData?: object[];
+    linkQueryMenuData?: any;
+    linkQueryTableData?: any;
     linkQueryTableCols?: VxeGridPropTypes.Columns;
   }
   const props = withDefaults(defineProps<ProType>(), {
@@ -279,6 +280,7 @@
     isPushDown: true,
     show: true,
     isShow: true,
+    height: '83%',
     columns: () => {
       return [];
     },
@@ -289,7 +291,7 @@
       return [];
     },
   });
-
+  const linkQueryMenuData = toRef(props, 'linkQueryMenuData');
   type Emits = {
     (e: 'addTableEvent'): void;
     (e: 'editTableEvent', row: any): void;
@@ -360,17 +362,29 @@
           emit('downSearchEvent', selectRecords);
           break;
       }
-      exLinkQueryModelRef.value.show();
+      console.log(linkQueryMenuData.value.length, 'props.linkQueryMenuData.length');
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
   };
+  //判断是否上下查
+  const isUpDownSearch = (res) => {
+    if (res.length > 0) {
+      exLinkQueryModelRef.value.show();
+    } else {
+      createMessage.warning('没有相关关联单据');
+    }
+  };
+  //上下查的列表页
   const getSearchList = (item) => {
     emit('getSearchList', item);
   };
-  const hideColumn = (str) => {
+  //隐藏行
+  const hideColumn = (arr) => {
     const $grid: any = xGrid.value;
-    $grid.hideColumn(str);
+    arr.map((e) => {
+      $grid.hideColumn(e);
+    });
   };
   /**
    * 格式化数据
@@ -597,6 +611,7 @@
       },
       pushDownParam.tarBillType,
     );
+    console.log(res.dtData.length, 'res.dtData.length');
     if (res.dtData.length > 0) {
       createMessage.success('下推成功');
       go({
@@ -717,6 +732,7 @@
     init,
     computeData,
     hideColumn,
+    isUpDownSearch,
   });
 </script>
 

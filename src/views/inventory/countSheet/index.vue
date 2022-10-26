@@ -64,7 +64,7 @@
     upSearch,
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep, uniqBy } from 'lodash-es';
+  import { cloneDeep } from 'lodash-es';
   import {
     linkQueryGridOptions,
     getUpDownSearchList,
@@ -163,12 +163,14 @@
     const res: any = await upSearch({ params: row });
     modalTitle.value = '盘点单-上查';
     linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
     modalTitle.value = '盘点单-下查';
     linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //重置
   const resetTable = () => {
