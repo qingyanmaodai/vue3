@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, reactive, ref } from 'vue';
+  import { ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
