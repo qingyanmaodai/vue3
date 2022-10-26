@@ -30,6 +30,7 @@
             :columns="supplierColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"
+            :totalData="totalData"
             ref="supplierTableRef"
             @addTableEvent="addTableEvent"
             @editTableEvent="editTableEvent"
@@ -43,24 +44,7 @@
             @importModelEvent="importModelEvent"
             @refreshTable="getSupplierList"
           />
-          <div>
-            <Pager
-              background
-              v-model:current-page="pages.currentPage"
-              v-model:page-size="pages.pageSize"
-              :total="pages.total"
-              :layouts="[
-                'PrevJump',
-                'PrevPage',
-                'JumpNumber',
-                'NextPage',
-                'NextJump',
-                'Sizes',
-                'FullJump',
-                'Total',
-              ]"
-              @page-change="tablePagerChange"
-          /></div>
+
         </div>
       </a-pane>
     </a-splitPanes>
@@ -155,7 +139,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
     tableData.value = res.records;
     supplierSearchRef.value.moreSearchClose();

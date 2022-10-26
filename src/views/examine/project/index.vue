@@ -31,6 +31,7 @@
             :gridOptions="GridOptions"
             :importConfig="importConfig"
             :tableData="tableData"
+            :totalData="totalData"
             ref="tableRef"
             @addTableEvent="addTableEvent"
             @editTableEvent="editTableEvent"
@@ -44,26 +45,7 @@
             @importModelEvent="importModelEvent"
             @refreshTable="refreshTable"
           />
-          <div>
-            <Pager
-              background
-              v-model:current-page="pages.currentPage"
-              v-model:page-size="pages.pageSize"
-              :total="pages.total"
-              :layouts="[
-                'PrevJump',
-                'PrevPage',
-                'JumpNumber',
-                'NextPage',
-                'NextJump',
-                'Sizes',
-                'FullJump',
-                'Total',
-              ]"
-              @page-change="tablePagerChange"
-              style="width: calc(100% - 5px); height: 42px; margin: 4px"
-            />
-          </div>
+
         </div>
       </pane>
     </a-splitpanes>
@@ -234,7 +216,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
