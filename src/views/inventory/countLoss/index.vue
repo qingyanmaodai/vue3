@@ -17,6 +17,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :totalData="totalData"
         tableName="BsInventoryCountLoss"
         ref="tableRef"
         @addTableEvent="addTableEvent"
@@ -29,28 +30,15 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
-        @refreshTable="refreshTable"
+        @getList="getList"
+        :modalTitle="modalTitle"
+        @downSearchEvent="downSearchEvent"
+        @upSearchEvent="upSearchEvent"
+        @getSearchList="getSearchList"
+        :linkQueryMenuData="linkQueryMenuData"
+        :linkQueryTableData="linkQueryTableData"
+        :linkQueryTableCols="linkQueryTableCols"
       />
-      <div>
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -59,7 +47,6 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     auditBatch,
@@ -71,11 +58,17 @@
     importFile,
     unAudit,
     unAuditBatch,
+    downSearch,
+    upSearch,
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { cloneDeep, uniqBy } from 'lodash-es';
+  import {
+    getUpDownSearchList,
+    gridOptions,
+    invCountLossColumns,
+  } from '/@/components/ExTable/data';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -88,11 +81,14 @@
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getPublicList } from '/@/api/public';
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -100,11 +96,6 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -120,10 +111,56 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
+  };
+  const linkQueryMenuData: any = ref<any>([]);
+  const linkQueryTableData: any = ref<any>([]);
+  const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
+  const modalTitle: any = ref<any>('');
+
+  const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
+    let filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
+    let listUrl = filter[0].listUrl;
+    linkQueryTableCols.value = filter[0].TableCols;
+    // 查询表格
+    let listData: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'id',
+            column: 'id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.IN,
+            type: SearchDataType.string,
+            val: item.tarBillIds ? item.srcBillIds : item.tarBillIds,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+        pageIndex: currPage,
+        pageRows: pageSize,
+      },
+      Url[listUrl],
+    );
+    let arr = uniqBy(listData.records, 'id');
+    linkQueryTableData.value = arr;
+    console.log(linkQueryTableData.value, 'linkQueryTableData');
+  };
+  //上查
+  const upSearchEvent = async (row) => {
+    const res: any = await upSearch({ params: row });
+    modalTitle.value = '盘点单-上查';
+    linkQueryMenuData.value = res;
+  };
+  //下查
+  const downSearchEvent = async (row) => {
+    const res: any = await downSearch({ params: row });
+    modalTitle.value = '盘点单-下查';
+    linkQueryMenuData.value = res;
   };
   //添加
   const addTableEvent = () => {
@@ -238,10 +275,6 @@
           });
       });
     };
-  };
-  //导入文件刷新
-  const refreshTable = () => {
-    getList();
   };
 
   //获取高级查询字段数据

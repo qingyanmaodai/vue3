@@ -30,27 +30,10 @@
           tableName="BsInventoryCountGainModel"
           :columns="tableCols"
           :gridOptions="props.gridOptions"
+          :totalData="linkQueryTableData.length"
           :tableData="linkQueryTableData"
           ref="tableRef"
           @editTableEvent="editTableEvent"
-        />
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
         />
       </pane>
     </a-splitPanes>
@@ -63,7 +46,6 @@
   import { MenuItem, Menu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { ExTable } from '/@/components/ExTable';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
 
@@ -80,6 +62,12 @@
     (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
+  //分页信息
+  // const pages = reactive({
+  //   currentPage: 1,
+  //   pageSize: 10,
+  //   total: 0,
+  // });
 
   interface ProType {
     modalTitle: string;
@@ -125,17 +113,6 @@
         row: row.id,
       },
     });
-  };
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    // await getList(currentPage);
   };
 
   defineExpose({

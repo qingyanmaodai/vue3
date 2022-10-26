@@ -125,6 +125,26 @@
       >
     </template>
   </vxe-grid>
+  <div>
+    <Pager
+      background
+      v-model:current-page="pages.currentPage"
+      v-model:page-size="pages.pageSize"
+      :total="props.totalData"
+      :layouts="[
+        'PrevJump',
+        'PrevPage',
+        'JumpNumber',
+        'NextPage',
+        'NextJump',
+        'Sizes',
+        'FullJump',
+        'Total',
+      ]"
+      @page-change="tablePagerChange"
+      style="width: calc(100% - 5px); height: 42px; margin: 4px"
+    />
+  </div>
   <vxe-modal
     v-model="resultModal"
     id="resultByBatchModal"
@@ -168,7 +188,6 @@
       ]"
     />
   </vxe-modal>
-
   <vxe-modal v-model="visibleUploadModal" width="400px" :position="{ top: 40 }">
     <template #title>
       <span>上传文件</span>
@@ -197,7 +216,7 @@
     ref="exLinkQueryModelRef"
     :linkQueryTableCols="props.linkQueryTableCols"
     :tableName="props.tableName"
-    :gridOptions="props.basicGridOptions"
+    :gridOptions="props.linkQueryGridOptions"
     :modalTitle="props.modalTitle"
     :linkQueryMenuData="props.linkQueryMenuData"
     :linkQueryTableData="props.linkQueryTableData"
@@ -206,8 +225,8 @@
 </template>
 
 <script lang="ts" setup>
+  import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
   import { reactive, ref } from 'vue';
-  import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -222,13 +241,11 @@
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { useGo } from '/@/hooks/web/usePage';
-  // import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
 
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
-  // const linkQueryTableData = ref<any>([]);
-  // const tableCols = ref<any>([]);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -238,67 +255,42 @@
   const AMenuItem = MenuItem;
   const ADropdown = Dropdown;
   const AMenu = Menu;
-  const props = defineProps({
-    gridOptions: Object,
-    basicGridOptions: Object,
-    columns: Array,
-    buttons: Array,
-    count: Number,
-    show: Boolean,
-    tableName: String,
-    modalTitle: String,
-    tableData: Array,
-    tableURL: String,
-    isShowExport: {
-      type: Boolean,
-      default: true,
+  interface ProType {
+    gridOptions?: object;
+    linkQueryGridOptions?: object;
+    columns?: any[];
+    buttons?: any[];
+    show?: boolean;
+    tableName?: string;
+    tableData?: any[];
+    totalData?: number;
+    isShowExport?: boolean;
+    isShowImport?: boolean;
+    isShow?: boolean;
+    isPushDown?: boolean;
+    importConfig?: string;
+    modalTitle?: string;
+    linkQueryMenuData?: object[];
+    linkQueryTableData?: object[];
+    linkQueryTableCols?: VxeGridPropTypes.Columns;
+  }
+  const props = withDefaults(defineProps<ProType>(), {
+    tableName: '',
+    isShowExport: true,
+    isShowImport: true,
+    isPushDown: true,
+    show: true,
+    isShow: true,
+    columns: () => {
+      return [];
     },
-    isShowImport: {
-      type: Boolean,
-      default: true,
+    buttons: () => {
+      return [];
     },
-    isPushDown: {
-      type: Boolean,
-      default: true,
+    tableData: () => {
+      return [];
     },
-    isShow: {
-      type: Boolean,
-      default: true,
-    },
-    importConfig: String,
-    linkQueryMenuData: Array,
-    linkQueryTableData: Array,
-    linkQueryTableCols: Array,
   });
-  // interface ProType {
-  //   gridOptions: object;
-  //   columns: any[];
-  //   buttons: any[];
-  //   count: number;
-  //   show: boolean;
-  //   tableName: string;
-  //   tableData: any[];
-  //   isShowExport: boolean;
-  //   isShowImport: boolean;
-  //   isPushDown: boolean;
-  //   importConfig: string;
-  // }
-  // const props = withDefaults(defineProps<ProType>(), {
-  //   tableName: '',
-  //   columns: () => {
-  //     return [];
-  //   },
-  //   buttons: () => {
-  //     return [];
-  //   },
-  //   tableData: () => {
-  //     return [];
-  //   },
-  //   isShowExport: true,
-  //   isShowImport: true,
-  //   isPushDown: true,
-  //   show: true,
-  // });
 
   type Emits = {
     (e: 'addTableEvent'): void;
@@ -307,13 +299,13 @@
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
     (e: 'importModelEvent'): void;
-    (e: 'refreshTable'): void; //刷新表格
+    (e: 'getList', currPage?: number, pageSize?: number): void; //刷新表格
     (e: 'auditRowEvent', row: any): void;
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'downSearchEvent', row: any): void;
-    (e: 'uPSearchEvent', row: any): void;
+    (e: 'upSearchEvent', row: any): void;
     (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
@@ -325,33 +317,16 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-
-  /*约定 A是上查，B是下查*/
-  const linkQuerySelect = async (item) => {
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
-    if (selectRecords.length > 0) {
-      switch (item.value) {
-        case 'A':
-          emit('uPSearchEvent', selectRecords);
-          break;
-        case 'B':
-          emit('downSearchEvent', selectRecords);
-          break;
-      }
-      // linkQueryTableData.value = [];
-      // tableCols.value = [];
-      exLinkQueryModelRef.value.show();
-    } else {
-      createMessage.warning('请至少勾选一条数据。');
-    }
-  };
-  const getSearchList = (item) => {
-      emit('getSearchList', item);
-  };
-  const hideColumn = (str) => {
-    const $grid: any = xGrid.value;
-    $grid.hideColumn(str);
+  //分页信息
+  const pages = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    emit('getList', currentPage, pageSize);
   };
   //上传文件
   interface FileItem {
@@ -374,7 +349,31 @@
     console.log(data);
     // tableData.data = data;
   };
-
+  /*约定 A是上查，B是下查*/
+  const linkQuerySelect = async (item) => {
+    const $grid: any = xGrid.value;
+    const selectRecords = $grid.getCheckboxRecords();
+    if (selectRecords.length > 0) {
+      switch (item.value) {
+        case 'A':
+          emit('upSearchEvent', selectRecords);
+          break;
+        case 'B':
+          emit('downSearchEvent', selectRecords);
+          break;
+      }
+      exLinkQueryModelRef.value.show();
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
+    }
+  };
+  const getSearchList = (item) => {
+    emit('getSearchList', item);
+  };
+  const hideColumn = (str) => {
+    const $grid: any = xGrid.value;
+    $grid.hideColumn(str);
+  };
   /**
    * 格式化数据
    * @param data
@@ -646,7 +645,7 @@
     if (info.file.status === 'done') {
       message.success(`${info.file.response}`);
       //重新加载表格数据
-      emit('refreshTable');
+      emit('getList');
     } else if (info.file.status === 'error') {
       info.fileList = [];
       message.error(`${info.file.error}`);
@@ -749,14 +748,6 @@
   .form-body {
     padding: 20px;
   }
-  //:deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
-  //  color: #409eff;
-  //  border-color: #409eff;
-  //}
-  //:deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
-  //  color: #409eff;
-  //  border-color: #409eff;
-  //}
   :deep(.vxe-toolbar .vxe-tools--operate) {
     margin-right: 10px;
   }
