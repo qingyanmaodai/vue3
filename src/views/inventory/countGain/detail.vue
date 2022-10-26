@@ -473,7 +473,7 @@
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
-    } else if (useRoute().params) {
+    } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
       detailTableData.value = cloneDeep(formState.value.dtData);
     }

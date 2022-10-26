@@ -70,7 +70,7 @@
     tableName: string;
     gridOptions: any;
     linkQueryTableCols: VxeGridPropTypes.Columns;
-    linkQueryMenuData: object[];
+    linkQueryMenuData: any;
     linkQueryTableData: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
@@ -80,7 +80,6 @@
       return [];
     },
   });
-
   const show = async () => {
     isShow.value = true;
   };

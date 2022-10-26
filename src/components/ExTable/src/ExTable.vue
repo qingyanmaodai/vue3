@@ -224,7 +224,7 @@
 
 <script lang="ts" setup>
   import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -269,7 +269,7 @@
     isPushDown?: boolean;
     importConfig?: string;
     modalTitle?: string;
-    linkQueryMenuData?: object[];
+    linkQueryMenuData?: any;
     linkQueryTableData?: any;
     linkQueryTableCols?: VxeGridPropTypes.Columns;
   }
@@ -291,7 +291,7 @@
       return [];
     },
   });
-
+  const linkQueryMenuData = toRef(props, 'linkQueryMenuData');
   type Emits = {
     (e: 'addTableEvent'): void;
     (e: 'editTableEvent', row: any): void;
@@ -362,14 +362,17 @@
           emit('downSearchEvent', selectRecords);
           break;
       }
-      console.log(props.linkQueryMenuData, 'props.linkQueryMenuData');
-      if (props.linkQueryMenuData ? props.linkQueryMenuData.length : 0 > 0) {
-        exLinkQueryModelRef.value.show();
-      } else {
-        createMessage.warning('没有相关关联单据');
-      }
+      console.log(linkQueryMenuData.value.length, 'props.linkQueryMenuData.length');
     } else {
       createMessage.warning('请至少勾选一条数据。');
+    }
+  };
+  //判断是否上下查
+  const isUpDownSearch = (res) => {
+    if (res.length > 0) {
+      exLinkQueryModelRef.value.show();
+    } else {
+      createMessage.warning('没有相关关联单据');
     }
   };
   //上下查的列表页
@@ -729,6 +732,7 @@
     init,
     computeData,
     hideColumn,
+    isUpDownSearch,
   });
 </script>
 
