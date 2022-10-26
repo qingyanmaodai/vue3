@@ -30,6 +30,14 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
+        @getList="getList"
+        :modalTitle="modalTitle"
+        @downSearchEvent="downSearchEvent"
+        @upSearchEvent="upSearchEvent"
+        @getSearchList="getSearchList"
+        :linkQueryMenuData="linkQueryMenuData"
+        :linkQueryTableData="linkQueryTableData"
+        :linkQueryTableCols="linkQueryTableCols"
       />
     </div>
   </div>
@@ -52,9 +60,9 @@
     unAuditBatch,
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import {cloneDeep, uniqBy} from 'lodash-es';
+  import {getUpDownSearchList, gridOptions, invCountLossColumns} from '/@/components/ExTable/data';
+  import {SearchDataType, SearchLink, SearchMatchType, SearchParams, Url} from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -73,6 +81,9 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import {VxeGridPropTypes} from "vxe-table/types/all";
+  import {getPublicList} from "/@/api/public";
+  import {downSearch, upSearch} from "/@/api/invCountSheet";
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -99,6 +110,52 @@
     pages.currentPage = currPage;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
+  };
+  const linkQueryMenuData: any = ref<any>([]);
+  const linkQueryTableData: any = ref<any>([]);
+  const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
+  const modalTitle: any = ref<any>('');
+
+  const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
+    let filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
+    let listUrl = filter[0].listUrl;
+    linkQueryTableCols.value = filter[0].TableCols;
+    // 查询表格
+    let listData: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'id',
+            column: 'id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.IN,
+            type: SearchDataType.string,
+            val: item.tarBillIds ? item.srcBillIds : item.tarBillIds,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+        pageIndex: currPage,
+        pageRows: pageSize,
+      },
+      Url[listUrl],
+    );
+    let arr = uniqBy(listData.records, 'id');
+    linkQueryTableData.value = arr;
+    console.log(linkQueryTableData.value, 'linkQueryTableData');
+  };
+  //上查
+  const upSearchEvent = async (row) => {
+    const res: any = await upSearch({ params: row });
+    modalTitle.value = '盘点单-上查';
+    linkQueryMenuData.value = res;
+  };
+  //下查
+  const downSearchEvent = async (row) => {
+    const res: any = await downSearch({ params: row });
+    modalTitle.value = '盘点单-下查';
+    linkQueryMenuData.value = res;
   };
   //添加
   const addTableEvent = () => {

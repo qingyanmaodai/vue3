@@ -31,6 +31,7 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
+        @getList="getList"
       />
     </div>
   </div>
