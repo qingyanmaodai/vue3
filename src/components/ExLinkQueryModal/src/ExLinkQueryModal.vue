@@ -17,7 +17,9 @@
           <a-menu>
             <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
               <a-menu-item @click="onSelectItem(item)">
-                {{ item.name }} ({{ item.tarBillIds.length }})</a-menu-item
+                {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
+                  item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
+                }})</a-menu-item
               >
             </template>
           </a-menu>

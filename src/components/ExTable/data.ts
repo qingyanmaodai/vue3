@@ -447,13 +447,18 @@ export const invCountSheetColumns = [
 //上查下查公共配置
 export const getUpDownSearchList = [
   {
-    type: 'BsInventoryCountGain',
+    type: 'BsInventoryCountGain', //盘盈
     listUrl: 'GET_PAGE_INV_COUNT_GAIN_LIST',
     TableCols: invCountGainColumns,
   },
   {
-    type: 'BsInventoryCountLoss',
+    type: 'BsInventoryCountLoss', //盘亏
     listUrl: 'GET_PAGE_INV_COUNT_LOSS_LIST',
     TableCols: invCountLossColumns,
+  },
+  {
+    type: 'BsInventoryCount', //盘点
+    listUrl: 'GET_PAGE_INV_COUNT_LIST',
+    TableCols: invCountSheetColumns,
   },
 ];

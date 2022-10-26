@@ -573,7 +573,7 @@
           e.compartmentId === item.compartmentId &&
           e.locationId === item.locationId,
       );
-      item.stockNum = filterNum ? filterNum[0].stockNum : 0;
+      item.stockNum = filterNum[0] ? filterNum[0].stockNum : 0;
     }
     // 根据单号去重
     selectRecords1 = uniqBy(selectRecords1, 'number');

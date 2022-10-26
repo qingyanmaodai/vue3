@@ -122,8 +122,14 @@
   const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
   const modalTitle: any = ref<any>('');
 
+  //关联查询
   const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
-    let filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
+    let filter;
+    if (item.tarBillIds.length > 0) {
+      filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
+    } else {
+      filter = getUpDownSearchList.filter((e) => e.type === item.srcBillType);
+    }
     let listUrl = filter[0].listUrl;
     linkQueryTableCols.value = filter[0].TableCols;
     // 查询表格
@@ -137,7 +143,7 @@
             link: SearchLink.AND,
             rule: SearchMatchType.IN,
             type: SearchDataType.string,
-            val: item.tarBillIds ? item.srcBillIds : item.tarBillIds,
+            val: item.tarBillIds.length > 0 ? item.tarBillIds : item.srcBillIds,
             startWith: '',
             endWith: '',
           },
@@ -147,20 +153,19 @@
       },
       Url[listUrl],
     );
-    let arr = uniqBy(listData.records, 'id');
-    linkQueryTableData.value = arr;
+    linkQueryTableData.value = listData.records;
     console.log(linkQueryTableData.value, 'linkQueryTableData');
   };
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '盘点单-上查';
+    modalTitle.value = '盘亏单-上查';
     linkQueryMenuData.value = res;
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '盘点单-下查';
+    modalTitle.value = '盘亏单-下查';
     linkQueryMenuData.value = res;
   };
   //添加
