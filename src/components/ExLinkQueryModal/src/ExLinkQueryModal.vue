@@ -1,7 +1,7 @@
 <template>
   <vxe-modal
     v-model="isShow"
-    height="82%"
+    height="83%"
     width="80%"
     show-zoom
     resize
@@ -13,21 +13,19 @@
     </template>
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
-        <div style="background-color: #fff; height: 100%; padding: 0 6px">
-          <a-menu mode="inline">
-            <a-menu-item
-              @click="onSelectItem(item)"
-              v-for="(item, index) in props.linkQueryMenuData"
-              :key="index"
-            >
-              {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
-                item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
-              }})</a-menu-item
-            >
+        <div style="background-color: #fff; height: 100%">
+          <a-menu>
+            <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
+              <a-menu-item @click="onSelectItem(item)">
+                {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
+                  item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
+                }})</a-menu-item
+              >
+            </template>
           </a-menu>
         </div>
       </pane>
-      <pane :size="100 - paneSize">
+      <pane :size="100 - paneSize" style="background-color: #fff">
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
