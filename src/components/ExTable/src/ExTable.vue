@@ -1,5 +1,4 @@
 <template>
-  <!--  <div class="table">-->
   <vxe-grid
     style="padding-right: 2px"
     border
@@ -11,7 +10,7 @@
     :show="props.show"
     show-overflow
     show-header-overflow
-    height="83%"
+    height="85%"
     auto-resize
     :column-config="{ resizable: true }"
   >
@@ -142,7 +141,7 @@
         'Total',
       ]"
       @page-change="tablePagerChange"
-      style="width: calc(100% - 5px); height: 42px; margin: 4px"
+      style="width: calc(100% - 5px); height: 42px; margin: 5px 0px"
     />
   </div>
   <vxe-modal
@@ -206,7 +205,6 @@
     <br />
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
-  <!--  </div>-->
   <ExPushDownModel
     ref="ExPushDownModelRef"
     :tableName="props.tableName"
@@ -723,15 +721,6 @@
 </script>
 
 <style scoped lang="less">
-  .table {
-    background-color: #fff;
-    border-bottom: none;
-    width: 100%;
-    height: calc(100vh - 250px);
-    max-height: 640px;
-    padding: 0 5px;
-    //overflow: auto;
-  }
   .button-group {
     margin: 5px 0;
   }

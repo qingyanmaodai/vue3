@@ -1,7 +1,7 @@
 <template>
   <vxe-modal
     v-model="isShow"
-    height="82%"
+    height="83%"
     width="80%"
     show-zoom
     resize
@@ -13,7 +13,7 @@
     </template>
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
-        <div style="background-color: #fff; height: 100%; padding: 0 6px">
+        <div style="background-color: #fff; height: 100%">
           <a-menu>
             <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
               <a-menu-item @click="onSelectItem(item)">
@@ -25,7 +25,7 @@
           </a-menu>
         </div>
       </pane>
-      <pane :size="100 - paneSize">
+      <pane :size="100 - paneSize" style="background-color: #fff">
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
@@ -99,11 +99,11 @@
   const onSelectItem = (item) => {
     console.log('item', item);
     emit('getSearchList', item);
-    nextTick(function () {
-      linkQueryTableData.value = props.linkQueryTableData;
-      tableCols.value = props.linkQueryTableCols;
-      tableRef.value.hideColumn('operate');
-    });
+    // nextTick(function () {
+    linkQueryTableData.value = props.linkQueryTableData;
+    tableCols.value = props.linkQueryTableCols;
+    tableRef.value.hideColumn('operate'); //隐藏表格的"操作"列
+    // });
     currItem.value = item;
   };
   const go = useGo();
