@@ -260,8 +260,7 @@
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'bdStockCompartment.name' &&
-        (row.stockDis == 'A' || !row.bdStock.name):
+      case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.bdStock.name):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

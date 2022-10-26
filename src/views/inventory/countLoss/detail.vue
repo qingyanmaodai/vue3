@@ -182,7 +182,7 @@
     ruleOfExaGridOptions,
     invCountLossOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import {computed, onMounted, reactive, ref, toRef} from 'vue';
   import {
     Button,
     Col,
@@ -252,10 +252,18 @@
   const formStateInit = reactive({
     data: formData,
   });
+  const requiredLocation: any = computed(() => {
+    return stockDis.value=== 'C';
+  });
+  const requiredCompartment: any = computed(() => {
+    return stockDis.value!== 'A';
+  });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
+  const compartment = 'bdStockCompartment.name';
+  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
     countNum: [
@@ -271,6 +279,8 @@
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
+  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
+  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -496,10 +506,10 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
         data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId = res.compartmentId ? res.compartmentId : null;
-        data.bdStockCompartment.name = res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = res.locationId ? res.locationId : null;
-        data.bdStockLocation.name = res.bdStockLocation ? res.bdStockLocation.name : null;
+        data.compartmentId = stockDis.value!=='A'&&res.compartmentId ? res.compartmentId : null;
+        data.bdStockCompartment.name = stockDis.value!=='A'&&res.bdStockCompartment ? res.bdStockCompartment.name : null;
+        data.locationId = stockDis.value==='C'&&res.locationId ? res.locationId : null;
+        data.bdStockLocation.name = stockDis.value==='C'&&res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
         data.stockId = row.id ? row.id : null;
