@@ -27,28 +27,8 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
-        @refreshTable="refreshTable"
+        @getList="getList"
       />
-      <div>
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -57,7 +37,6 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, unitColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
@@ -86,6 +65,7 @@
   const tableRef: any = ref<String | null>(null);
   //表格数据
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //导入上传文件api
@@ -97,11 +77,6 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
   //获取高级查询字段数据
   const moreSearchData = ref();
   getUnitOption({ params: '' }).then((res) => {
@@ -124,6 +99,7 @@
     });
     totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -241,10 +217,6 @@
           });
       });
     };
-  };
-  //导入文件页面刷新
-  const refreshTable = () => {
-    getList();
   };
 
   onMounted(() => {

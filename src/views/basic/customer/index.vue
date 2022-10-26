@@ -139,6 +139,7 @@
     });
     totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     customerSearchRef.value.moreSearchClose();
   };

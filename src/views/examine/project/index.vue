@@ -43,9 +43,8 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @refreshTable="refreshTable"
+            @getList="getList"
           />
-
         </div>
       </pane>
     </a-splitpanes>
@@ -57,7 +56,6 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     addExaGroup,
     deleteExaGroup,
@@ -101,14 +99,14 @@
   const tableRef: any = ref<String | null>(null);
   //表格数据
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
   const treeRef: any = ref<String | null>(null);
   //分组数据
   let treeData = ref<TreeItem[]>([]);
-  // const groupId = ref(['']);
-  // const groupName = ref('');
+
   //加载分组
   const refreshTree = async () => {
     const tree = await treeExaGroup({ params: '0' });
@@ -188,11 +186,7 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
+
   //获取高级查询字段数据
   const moreSearchData = ref();
   getSearchOption({ params: '' }).then((res) => {
@@ -218,6 +212,7 @@
     });
     totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -340,11 +335,6 @@
       });
     };
   };
-  //导入文件刷新
-  const refreshTable = () => {
-    getList();
-  };
-
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     refreshTree();

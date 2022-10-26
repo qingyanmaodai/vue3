@@ -42,9 +42,8 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @refreshTable="getSupplierList"
+            @getList="getSupplierList"
           />
-
         </div>
       </a-pane>
     </a-splitPanes>
@@ -69,7 +68,6 @@
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     batchAuditSupplier,
@@ -97,6 +95,7 @@
   const supplierSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
   const supplierTableRef: any = ref<String | null>(null); //表格组件引用ref
   let tableData = ref<object[]>([]); //表格数据
+  let totalData = ref<number>(0);
   const supplierGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
@@ -115,7 +114,6 @@
    * @param pageSize
    */
   const getSupplierList = async (currPage = 1, pageSize = pages.pageSize) => {
-    console.log(currPage, pageSize);
     ParamsData = [];
     if (
       supplierGroupTreeRef.value.getSearchParams() &&
@@ -141,17 +139,9 @@
     });
     totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     supplierSearchRef.value.moreSearchClose();
-  };
-
-  /**
-   * 表格每页显示数改变事件
-   */
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getSupplierList(currentPage);
   };
 
   /**
@@ -321,7 +311,6 @@
    * @param data
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
-    console.log(selectedKeys, data);
     getSupplierList();
   };
 
