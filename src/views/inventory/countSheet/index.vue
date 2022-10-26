@@ -123,7 +123,7 @@
   const linkQueryTableData: any = ref<any>([]);
   const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
   const modalTitle: any = ref<any>('');
-
+  //关联查询
   const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
     let filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
     let listUrl = filter[0].listUrl;

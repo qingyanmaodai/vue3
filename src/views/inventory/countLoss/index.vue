@@ -58,11 +58,17 @@
     importFile,
     unAudit,
     unAuditBatch,
+    downSearch,
+    upSearch,
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
-  import {cloneDeep, uniqBy} from 'lodash-es';
-  import {getUpDownSearchList, gridOptions, invCountLossColumns} from '/@/components/ExTable/data';
-  import {SearchDataType, SearchLink, SearchMatchType, SearchParams, Url} from '/@/api/apiLink';
+  import { cloneDeep, uniqBy } from 'lodash-es';
+  import {
+    getUpDownSearchList,
+    gridOptions,
+    invCountLossColumns,
+  } from '/@/components/ExTable/data';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -81,9 +87,8 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
-  import {VxeGridPropTypes} from "vxe-table/types/all";
-  import {getPublicList} from "/@/api/public";
-  import {downSearch, upSearch} from "/@/api/invCountSheet";
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getPublicList } from '/@/api/public';
   //分页信息
   const pages = reactive({
     currentPage: 1,
