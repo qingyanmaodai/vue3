@@ -444,21 +444,3 @@ export const invCountSheetColumns = [
   },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
-//上查下查公共配置
-export const getUpDownSearchList = [
-  {
-    type: 'BsInventoryCountGain', //盘盈
-    listUrl: 'GET_PAGE_INV_COUNT_GAIN_LIST',
-    TableCols: invCountGainColumns,
-  },
-  {
-    type: 'BsInventoryCountLoss', //盘亏
-    listUrl: 'GET_PAGE_INV_COUNT_LOSS_LIST',
-    TableCols: invCountLossColumns,
-  },
-  {
-    type: 'BsInventoryCount', //盘点
-    listUrl: 'GET_PAGE_INV_COUNT_LIST',
-    TableCols: invCountSheetColumns,
-  },
-];

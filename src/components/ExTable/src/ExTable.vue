@@ -621,7 +621,10 @@
         // query: { pushDownParam: JSON.stringify(res) },
       });
     } else {
-      createMessage.error('无法下推到该下游单据/已有下游单据');
+      await VXETable.modal.message({
+        content: '无法下推到该下游单据/已有下游单据',
+        status: 'error',
+      });
     }
   };
   //下推弹框

@@ -67,11 +67,10 @@
   import { cloneDeep } from 'lodash-es';
   import {
     linkQueryGridOptions,
-    getUpDownSearchList,
     gridOptions,
     invCountSheetColumns,
   } from '/@/components/ExTable/data';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -90,6 +89,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getUpDownSearchList } from '/@/enums/routeEnum';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -153,7 +153,7 @@
         pageIndex: currPage,
         pageRows: pageSize,
       },
-      Url[listUrl],
+      listUrl,
     );
     linkQueryTableData.value = listData;
   };

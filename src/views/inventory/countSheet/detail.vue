@@ -183,7 +183,7 @@
     ruleOfExaGridOptions,
     invCountSheetOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import {computed, onMounted, reactive, ref, toRef} from 'vue';
+  import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -255,10 +255,10 @@
     data: formData,
   });
   const requiredLocation: any = computed(() => {
-    return stockDis.value=== 'C';
+    return stockDis.value === 'C';
   });
   const requiredCompartment: any = computed(() => {
-    return stockDis.value!== 'A';
+    return stockDis.value !== 'A';
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
@@ -564,10 +564,12 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
         data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId = stockDis.value!=='A'&&res.compartmentId ? res.compartmentId : null;
-        data.bdStockCompartment.name = stockDis.value!=='A'&&res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = stockDis.value==='C'&&res.locationId ? res.locationId : null;
-        data.bdStockLocation.name = stockDis.value==='C'&&res.bdStockLocation ? res.bdStockLocation.name : null;
+        data.compartmentId = stockDis.value !== 'A' && res.compartmentId ? res.compartmentId : null;
+        data.bdStockCompartment.name =
+          stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
+        data.locationId = stockDis.value === 'C' && res.locationId ? res.locationId : null;
+        data.bdStockLocation.name =
+          stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
         data.stockId = row.id ? row.id : null;

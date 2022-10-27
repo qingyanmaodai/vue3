@@ -62,13 +62,9 @@
     upSearch,
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
-  import { cloneDeep} from 'lodash-es';
-  import {
-    getUpDownSearchList,
-    gridOptions,
-    invCountLossColumns,
-  } from '/@/components/ExTable/data';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
+  import { cloneDeep } from 'lodash-es';
+  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -89,6 +85,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getPublicList } from '/@/api/public';
+  import { getUpDownSearchList } from '/@/enums/routeEnum';
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -151,7 +148,7 @@
         pageIndex: currPage,
         pageRows: pageSize,
       },
-      Url[listUrl],
+      listUrl,
     );
     linkQueryTableData.value = listData;
   };

@@ -64,12 +64,8 @@
   } from '/@/api/invCountGain';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import {
-    getUpDownSearchList,
-    gridOptions,
-    invCountGainColumns,
-  } from '/@/components/ExTable/data';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
+  import { gridOptions, invCountGainColumns } from '/@/components/ExTable/data';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
   const go = useGo();
@@ -77,6 +73,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getPublicList } from '/@/api/public';
+  import { getUpDownSearchList } from '/@/enums/routeEnum';
   const { createMessage } = useMessage();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -152,7 +149,7 @@
         pageIndex: currPage,
         pageRows: pageSize,
       },
-      Url[listUrl],
+      listUrl,
     );
     linkQueryTableData.value = listData;
   };

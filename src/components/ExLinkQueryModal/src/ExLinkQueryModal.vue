@@ -57,6 +57,7 @@
   import { ExTable } from '/@/components/ExTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
+  import { getUpDownSearchList } from '/@/enums/routeEnum';
   let height = '90%';
   const ASplitPanes = Splitpanes;
   const paneSize = ref<number>(12);
@@ -79,6 +80,7 @@
     linkQueryTableCols: VxeGridPropTypes.Columns;
     linkQueryMenuData: any;
     linkQueryTableData: any;
+    linkQueryTableDetail: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -108,8 +110,15 @@
   const go = useGo();
   //跳转到详情
   const editTableEvent = (row) => {
+    let filter;
+    if (currItem.value.tarBillIds.length > 0) {
+      filter = getUpDownSearchList.filter((e) => e.type === currItem.value.tarBillType);
+    } else {
+      filter = getUpDownSearchList.filter((e) => e.type === currItem.value.srcBillType);
+    }
+    let detailUrl = filter[0].detailUrl;
     go({
-      name: currItem.value.routeTo,
+      path: detailUrl,
       query: {
         row: row.id,
       },
