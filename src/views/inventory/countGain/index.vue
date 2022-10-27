@@ -154,20 +154,21 @@
       },
       Url[listUrl],
     );
-    linkQueryTableData.value = listData.records;
-    console.log(linkQueryTableData.value, 'linkQueryTableData');
+    linkQueryTableData.value = listData;
   };
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
     modalTitle.value = '盘盈单-上查';
     linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
     modalTitle.value = '盘盈单-下查';
     linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //添加
   const addTableEvent = () => {

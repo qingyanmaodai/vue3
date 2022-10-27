@@ -155,8 +155,7 @@
       },
       Url[listUrl],
     );
-    linkQueryTableData.value = listData.records;
-    console.log(linkQueryTableData.value, 'linkQueryTableData');
+    linkQueryTableData.value = listData;
   };
   //上查
   const upSearchEvent = async (row) => {

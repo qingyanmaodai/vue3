@@ -16,7 +16,7 @@
         <div style="background-color: #fff; height: 100%">
           <a-menu>
             <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
-              <a-menu-item @click="onSelectItem(item)">
+              <a-menu-item :selectedKeys="currSelectedKeys" @click="onSelectItem(item)">
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
                   item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
                 }})</a-menu-item
@@ -33,7 +33,7 @@
           :columns="props.linkQueryTableCols"
           :gridOptions="props.gridOptions"
           :totalData="props.linkQueryTableData.total"
-          :tableData="props.linkQueryTableData"
+          :tableData="props.linkQueryTableData.records"
           :height="height"
           ref="tableRef"
           @editTableEvent="editTableEvent"
@@ -58,6 +58,7 @@
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currItem = ref<any>({});
+  const currSelectedKeys = ref<any>('0');
   const tableRef = ref<any>('');
   const AMenuItem = MenuItem;
   const AMenu = Menu;
@@ -89,7 +90,7 @@
   };
   //点击列表项查询
   const onSelectItem = async (item) => {
-    console.log('item', item);
+    console.log(currSelectedKeys, 'item', item);
     emit('getSearchList', item);
     tableShow.value = true;
     setTimeout(() => {
