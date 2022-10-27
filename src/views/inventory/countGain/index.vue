@@ -17,6 +17,7 @@
         tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
+        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
@@ -67,6 +68,7 @@
   import {
     getUpDownSearchList,
     gridOptions,
+    linkQueryGridOptions,
     invCountGainColumns,
   } from '/@/components/ExTable/data';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';

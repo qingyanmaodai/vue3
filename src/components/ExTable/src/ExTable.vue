@@ -464,7 +464,9 @@
   //审核单条
   const auditRow = async (row) => {
     //VXETable自带的弹框
-    const type = await VXETable.modal.confirm('您确定要审该数据吗?(【已审核】状态的数据不可审核)');
+    const type = await VXETable.modal.confirm(
+      '您确定要审核该数据吗?(【已审核】状态的数据不可审核)',
+    );
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
@@ -479,7 +481,7 @@
   //反审核单条
   const unAuditRow = async (row) => {
     const type = await VXETable.modal.confirm(
-      '您确定要反审核该数据?(【审核】状态的数据不可反审核)',
+      '您确定要反审核该数据?(【创建】状态的数据不可反审核)',
     );
     const $grid = xGrid.value;
     if ($grid) {
@@ -523,7 +525,7 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的数据不可反审核)',
+          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【创建】状态的数据不可反审核)',
       });
       if (type === 'confirm') {
         okRow.push(...selectRecords);

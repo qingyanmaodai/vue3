@@ -15,6 +15,7 @@
         :isShowExport="false"
         :columns="invCountLossColumns"
         :gridOptions="GridOptions"
+        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
@@ -66,6 +67,7 @@
   import {
     getUpDownSearchList,
     gridOptions,
+    linkQueryGridOptions,
     invCountLossColumns,
   } from '/@/components/ExTable/data';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
