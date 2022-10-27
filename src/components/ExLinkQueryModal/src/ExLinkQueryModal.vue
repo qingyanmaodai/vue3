@@ -14,7 +14,7 @@
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%">
-          <a-menu mode="inline" :selectedKeys="selectedKeys">
+          <a-menu mode="inline" :selectedKeys="selectedKeys" :openKeys="['sub1']">
             <a-sub-menu key="sub1">
               <template #title>全部</template>
               <a-menu-item
@@ -98,8 +98,6 @@
   };
   //点击列表项查询
   const onSelectItem = async (item) => {
-    // selectedKeys.value = selectedKeys.value.push(index);
-    console.log('item', item);
     emit('getSearchList', item);
     tableShow.value = true;
     setTimeout(() => {

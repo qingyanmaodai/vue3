@@ -15,6 +15,7 @@
         :isShowExport="false"
         :columns="invCountLossColumns"
         :gridOptions="GridOptions"
+        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
@@ -63,7 +64,11 @@
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountLossColumns } from '/@/components/ExTable/data';
+  import {
+    gridOptions,
+    invCountLossColumns,
+    linkQueryGridOptions,
+  } from '/@/components/ExTable/data';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';

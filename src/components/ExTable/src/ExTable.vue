@@ -347,7 +347,6 @@
   // const tableData = reactive<any>({ data: [] });
   const init = (data) => {
     console.log(data);
-    // tableData.data = data;
   };
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
@@ -362,7 +361,6 @@
           emit('downSearchEvent', selectRecords);
           break;
       }
-      console.log(linkQueryMenuData.value.length, 'props.linkQueryMenuData.length');
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
@@ -464,7 +462,9 @@
   //审核单条
   const auditRow = async (row) => {
     //VXETable自带的弹框
-    const type = await VXETable.modal.confirm('您确定要审该数据吗?(【已审核】状态的数据不可审核)');
+    const type = await VXETable.modal.confirm(
+      '您确定要审核该数据吗?(【已审核】状态的数据不可审核)',
+    );
     const $grid = xGrid.value;
     if ($grid) {
       if (type === 'confirm') {
@@ -479,7 +479,7 @@
   //反审核单条
   const unAuditRow = async (row) => {
     const type = await VXETable.modal.confirm(
-      '您确定要反审核该数据?(【审核】状态的数据不可反审核)',
+      '您确定要反审核该数据?(【创建】状态的数据不可反审核)',
     );
     const $grid = xGrid.value;
     if ($grid) {
@@ -523,7 +523,7 @@
         title: '警告',
         status: 'info',
         content:
-          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【审核】状态的数据不可反审核)',
+          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【创建】状态的数据不可反审核)',
       });
       if (type === 'confirm') {
         okRow.push(...selectRecords);
@@ -611,7 +611,6 @@
       },
       pushDownParam.tarBillType,
     );
-    console.log(res.dtData.length, 'res.dtData.length');
     if (res.dtData.length > 0) {
       createMessage.success('下推成功');
       go({
@@ -640,7 +639,6 @@
 
   //上传文件前的判断
   const beforeUpload = (file, UpFileList) => {
-    console.log(file, UpFileList);
     //控制上传文件的类型 arr是上传类型的白名单
     const type = file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase();
     const arr = ['.xls', '.xlsx'];
@@ -681,7 +679,6 @@
     // 调用上传接口
     let url = props.importConfig || '';
     const res: any = await importData(url, { file: file.file }, onUploadProgress);
-    console.log(res.data, 'result');
     if (res.data.code !== 200) {
       file.status = 'error';
       file.onError(res.data.message);

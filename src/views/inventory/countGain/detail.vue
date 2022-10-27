@@ -264,10 +264,10 @@
     data: formData,
   });
   const requiredLocation: any = computed(() => {
-    return stockDis.value=== 'C';
+    return stockDis.value === 'C';
   });
   const requiredCompartment: any = computed(() => {
-    return stockDis.value!== 'A';
+    return stockDis.value !== 'A';
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');

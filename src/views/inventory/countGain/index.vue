@@ -17,6 +17,7 @@
         tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
+        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
@@ -64,7 +65,11 @@
   } from '/@/api/invCountGain';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountGainColumns } from '/@/components/ExTable/data';
+  import {
+    gridOptions,
+    invCountGainColumns,
+    linkQueryGridOptions,
+  } from '/@/components/ExTable/data';
   import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';

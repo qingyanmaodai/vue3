@@ -8,11 +8,11 @@
         <vxe-radio
           class="contentNode"
           v-for="(item, index) in formState"
-          name="n1"
+          :name="index"
           :key="index"
-          label="item"
+          :label="index"
           :content="item.name"
-          @change="change(index)"
+          v-model="currentIndex"
         />
       </div>
     </template>
@@ -27,7 +27,7 @@
   import { getPushDownList } from '/@/api/invCountSheet';
   const visible = ref<boolean>(false); //弹框可见性，默认为关闭
   const formState = ref<any>([]); //可下推的列表
-
+  let currentIndex = ref<any>(-1);
   type Emits = {
     (e: 'pushDownSelect', pushDownParam: object): void;
   };
@@ -48,12 +48,9 @@
     visible.value = false;
   };
   const Submit = () => {
-    emit('pushDownSelect', formState.value[currentIndex]);
+    emit('pushDownSelect', formState.value[currentIndex.value]);
   };
-  let currentIndex = 0; //当前选中的index
-  const change = (index) => {
-    currentIndex = index;
-  };
+
   defineExpose({
     show,
     close,
