@@ -28,13 +28,13 @@
           />
           <ExTable
             :columns="matColumns"
-            :buttons="buttons"
             :gridOptions="GridOptions"
             :importConfig="importConfig"
             :tableData="tableData"
+            :totalData="totalData"
             ref="tableRef"
-            @addEvent="addTableEvent"
-            @editEvent="editTableEvent"
+            @addTableEvent="addTableEvent"
+            @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
             @delBatchEvent="deleteBatchEvent"
             @auditRowEvent="auditRowEvent"
@@ -43,28 +43,8 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @refreshTable="refreshTable"
+            @getList="getList"
           />
-          <div>
-            <Pager
-              background
-              v-model:current-page="pages.currentPage"
-              v-model:page-size="pages.pageSize"
-              :total="pages.total"
-              :layouts="[
-                'PrevJump',
-                'PrevPage',
-                'JumpNumber',
-                'NextPage',
-                'NextJump',
-                'Sizes',
-                'FullJump',
-                'Total',
-              ]"
-              @page-change="tablePagerChange"
-              style="width: calc(100% - 5px); height: 42px; margin: 4px"
-            />
-          </div>
         </div>
       </pane>
     </a-splitPanes>
@@ -76,7 +56,6 @@
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     addMatGroup,
     deleteMatGroup,
@@ -118,6 +97,7 @@
   const tableRef: any = ref<String | null>(null);
   //表格数据
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
@@ -206,11 +186,7 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
+
   //获取高级查询字段数据
   const moreSearchData = ref();
   getMatOption({ params: '' }).then((res) => {
@@ -234,8 +210,9 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -247,39 +224,6 @@
     searchRef.value.formState.wlName = null;
     getList(1);
   };
-
-  //按钮----批量
-  const buttons = [
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        addTableEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        auditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        unAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        delTableEvent();
-      },
-    },
-  ];
-
   //添加
   const addTableEvent = () => {
     let groupId = treeRef.value.getSelectedKeys();
@@ -306,9 +250,6 @@
     await getList();
   };
   //批量删除表格
-  const delTableEvent = () => {
-    tableRef.value.delTable();
-  };
   const deleteBatchEvent = async (rows: any[]) => {
     //将数组中的所有id组成一个数组
     const ids = rows.map((item) => {
@@ -328,9 +269,6 @@
   };
 
   //审核事件
-  const auditEvent = () => {
-    tableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -350,9 +288,6 @@
     await getList();
   };
   //批量反审核
-  const unAuditEvent = () => {
-    tableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -402,10 +337,6 @@
           });
       });
     };
-  };
-  //导入文件页面刷新
-  const refreshTable = () => {
-    getList();
   };
 
   onMounted(() => {

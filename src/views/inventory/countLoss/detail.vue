@@ -177,12 +177,12 @@
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name="inventory-countLoss-detail">
   import {
     ruleOfExaGridOptions,
     invCountLossOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import {computed, onMounted, reactive, ref, toRef} from 'vue';
   import {
     Button,
     Col,
@@ -213,10 +213,10 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import {ControlSet, SearchParams, TableColum, Url} from '/@/api/apiLink';
+  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import {getMatTable, getMatTableById} from '/@/api/matTable';
-  import {getStockDis} from "/@/api/system";
+  import { getMatTableById } from '/@/api/matTable';
+  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -230,9 +230,6 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-  //筛选条件组件url
-  // let filterModalUrl: any = ref<string>('');
-  // filterModalUrl = Url.GET_MATERIAL_LIST;
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
@@ -255,10 +252,18 @@
   const formStateInit = reactive({
     data: formData,
   });
+  const requiredLocation: any = computed(() => {
+    return stockDis.value=== 'C';
+  });
+  const requiredCompartment: any = computed(() => {
+    return stockDis.value!== 'A';
+  });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
+  const compartment = 'bdStockCompartment.name';
+  const location = 'bdStockLocation.name';
 
   const formRules = reactive({
     countNum: [
@@ -274,6 +279,8 @@
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
+  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
+  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
 
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -310,8 +317,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -438,11 +443,12 @@
   const getStockDisData = async () => {
     const arr: any = await getStockDis({});
     stockDis.value = arr;
-  }
+  };
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
@@ -451,6 +457,9 @@
           r['stockDis'] = stockDis.value;
         });
       }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params.pushDownParam) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
@@ -495,10 +504,10 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
         data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId = res.compartmentId ? res.compartmentId : null;
-        data.bdStockCompartment.name = res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = res.locationId ? res.locationId : null;
-        data.bdStockLocation.name = res.bdStockLocation ? res.bdStockLocation.name : null;
+        data.compartmentId = stockDis.value!=='A'&&res.compartmentId ? res.compartmentId : null;
+        data.bdStockCompartment.name = stockDis.value!=='A'&&res.bdStockCompartment ? res.bdStockCompartment.name : null;
+        data.locationId = stockDis.value==='C'&&res.locationId ? res.locationId : null;
+        data.bdStockLocation.name = stockDis.value==='C'&&res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
         data.stockId = row.id ? row.id : null;
@@ -506,13 +515,13 @@
         data.compartmentId = null;
         data.bdStockCompartment.name = null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockCompartment':
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
         data.locationId = null;
-        data.bdStockLocation.name =null;
+        data.bdStockLocation.name = null;
         break;
       case 'bdStockLocation':
         data.locationId = row.id ? row.id : null;
@@ -529,10 +538,18 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
+    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
     obj.stockDis = cloneDeep(stockDis.value);
+    obj.seq = obj.sort;
   };
   onMounted(() => {
     getListById();
+    //假如有dtData 让里面的sort等于seq
+    if (detailTableRef.value.getDetailData()) {
+      detailTableRef.value.getDetailData().map((item) => {
+        item.sort = item.seq;
+      });
+    }
   });
 </script>
 <style scoped lang="less">

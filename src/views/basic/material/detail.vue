@@ -510,7 +510,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -600,12 +600,22 @@
       formState.value.bdMaterialGroup = result;
     }
   };
+  //判断仓位，分仓是否必填
+  const requiredLocation: any = computed(() => {
+    return stockDis.value === 'C';
+  });
+  const requiredCompartment: any = computed(() => {
+    return stockDis.value !== 'A';
+  });
   groupEvent();
   const formRules = reactive({
     name: [{ required: true, message: '请输入物料名称' }],
     number: [{ required: true, message: '请输入物料编码' }],
     baseUnitId: [{ required: true, message: '请选择基本单位' }],
     attr: [{ required: true, message: '请选择物料属性' }],
+    stockId: [{ required: true, message: '请选择仓库' }],
+    compartmentId: [{ required: requiredCompartment, message: '请选择分仓' }],
+    locationId: [{ required: requiredLocation, message: '请选择仓位' }],
   });
 
   //物料分组弹框

@@ -16,13 +16,13 @@
         :isShowExport="false"
         tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
-        :buttons="buttons"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :totalData="totalData"
         ref="tableRef"
-        @addEvent="addTableEvent"
-        @editEvent="editTableEvent"
+        @addTableEvent="addTableEvent"
+        @editTableEvent="editTableEvent"
         @deleteRowEvent="deleteRowTableEvent"
         @delBatchEvent="deleteBatchEvent"
         @auditRowEvent="auditRowEvent"
@@ -31,37 +31,23 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
-        @refreshTable="refreshTable"
+        @getList="getList"
+        :modalTitle="modalTitle"
+        @downSearchEvent="downSearchEvent"
+        @upSearchEvent="upSearchEvent"
+        @getSearchList="getSearchList"
+        :linkQueryMenuData="linkQueryMenuData"
+        :linkQueryTableData="linkQueryTableData"
+        :linkQueryTableCols="linkQueryTableCols"
       />
-      <div>
-        <Pager
-          background
-          v-model:current-page="pages.currentPage"
-          v-model:page-size="pages.pageSize"
-          :total="pages.total"
-          :layouts="[
-            'PrevJump',
-            'PrevPage',
-            'JumpNumber',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'FullJump',
-            'Total',
-          ]"
-          @page-change="tablePagerChange"
-          style="width: calc(100% - 5px); height: 42px; margin: 4px"
-        />
-      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts" name="inventory-countGain-index">
+<script setup lang="ts" name="inventory-countSheet-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
-  import { Pager, VxePagerEvents } from 'vxe-table';
   import {
     audit,
     auditBatch,
@@ -73,18 +59,25 @@
     importFile,
     unAudit,
     unAuditBatch,
+    downSearch,
+    upSearch,
   } from '/@/api/invCountGain';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountGainColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import {
+    getUpDownSearchList,
+    gridOptions,
+    invCountGainColumns,
+  } from '/@/components/ExTable/data';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams, Url } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
-  import { PageEnum } from '/@/enums/pageEnum';
-  import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
-
-  const { createMessage } = useMessage();
   const go = useGo();
+  import { useGo } from '/@/hooks/web/usePage';
+  import { PageEnum } from '/@/enums/pageEnum';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { getPublicList } from '/@/api/public';
+  const { createMessage } = useMessage();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
@@ -93,6 +86,7 @@
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -102,11 +96,7 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(currentPage);
-  };
+
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -122,51 +112,64 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
+  const linkQueryMenuData: any = ref<any>([]);
+  const linkQueryTableData: any = ref<any>([]);
+  const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
+  const modalTitle: any = ref<any>('');
 
-  //重置
-  const resetTable = () => {
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
-    getList(1);
+  //关联查询
+  const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
+    let filter;
+    if (item.tarBillIds.length > 0) {
+      filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
+    } else {
+      filter = getUpDownSearchList.filter((e) => e.type === item.srcBillType);
+    }
+    let listUrl = filter[0].listUrl;
+    linkQueryTableCols.value = filter[0].TableCols;
+    // 查询表格
+    let listData: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'id',
+            column: 'id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.IN,
+            type: SearchDataType.string,
+            val: item.tarBillIds.length > 0 ? item.tarBillIds : item.srcBillIds,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+        pageIndex: currPage,
+        pageRows: pageSize,
+      },
+      Url[listUrl],
+    );
+    linkQueryTableData.value = listData;
   };
-
-  //按钮
-  const buttons = [
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        addTableEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        auditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        unAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        delTableEvent();
-      },
-    },
-  ];
-
+  //上查
+  const upSearchEvent = async (row) => {
+    const res: any = await upSearch({ params: row });
+    modalTitle.value = '盘盈单-上查';
+    linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
+  };
+  //下查
+  const downSearchEvent = async (row) => {
+    const res: any = await downSearch({ params: row });
+    modalTitle.value = '盘盈单-下查';
+    linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
+  };
   //添加
   const addTableEvent = () => {
     let groupId = '';
@@ -186,6 +189,12 @@
       },
     });
   };
+  //重置
+  const resetTable = () => {
+    searchRef.value.formState.wlNo = null;
+    searchRef.value.formState.wlName = null;
+    getList(1);
+  };
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
     await delById({ params: row });
@@ -193,14 +202,7 @@
     await getList();
   };
   //批量删除表格
-  const delTableEvent = () => {
-    tableRef.value.delTable();
-  };
   const deleteBatchEvent = async (rows: any[]) => {
-    // const ids = rows.map((item) => {
-    //   return item.id;
-    // });
-    // const res = await delBatch({ params: ids });
     const res = await delBatch({ params: rows });
     await tableRef.value.computeData(res);
     await getList();
@@ -215,9 +217,6 @@
   };
 
   //审核事件
-  const auditEvent = () => {
-    tableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -237,9 +236,6 @@
     createMessage.success('操作成功');
   };
   //批量反审核
-  const unAuditEvent = () => {
-    tableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -289,10 +285,6 @@
       });
     };
   };
-  //导入文件刷新
-  const refreshTable = () => {
-    getList();
-  };
 
   //获取高级查询字段数据
   const moreSearchData = ref();
@@ -301,7 +293,7 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    // getList();
+    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

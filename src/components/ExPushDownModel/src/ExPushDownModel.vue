@@ -17,9 +17,7 @@
       </div>
     </template>
     <template #footer>
-      <vxe-button type="submit" status="primary" @click="Submit(PushDownTableName, routeTo)"
-        >提交</vxe-button
-      >
+      <vxe-button type="submit" status="primary" @click="Submit()">提交</vxe-button>
       <vxe-button type="reset" @click="close">取消</vxe-button>
     </template>
   </vxe-modal>
@@ -29,11 +27,9 @@
   import { getPushDownList } from '/@/api/invCountSheet';
   const visible = ref<boolean>(false); //弹框可见性，默认为关闭
   const formState = ref<any>([]); //可下推的列表
-  const PushDownTableName = ref<string>(''); //单选框切换赋值表名
-  const routeTo = ref<string>(''); //单选框切换路由名
 
   type Emits = {
-    (e: 'pushDownSelect', PushDownTableName: any, routeTo: any): void;
+    (e: 'pushDownSelect', pushDownParam: object): void;
   };
   const emit = defineEmits<Emits>();
   const props = defineProps({
@@ -51,12 +47,12 @@
   const close = () => {
     visible.value = false;
   };
-  const Submit = (PushDownTableName, routeTo) => {
-    emit('pushDownSelect', PushDownTableName, routeTo);
+  const Submit = () => {
+    emit('pushDownSelect', formState.value[currentIndex]);
   };
+  let currentIndex = 0; //当前选中的index
   const change = (index) => {
-    PushDownTableName.value = formState.value[index].tarBillType;
-    routeTo.value = formState.value[index].routeTo;
+    currentIndex = index;
   };
   defineExpose({
     show,

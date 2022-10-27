@@ -253,3 +253,34 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
     },
   );
 }
+
+/**
+ * 下查
+ */
+export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.DOWN_SEARCH_INV_COUNT_LOSS,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 上查
+ */
+export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UP_SEARCH_INV_COUNT_LOSS,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}

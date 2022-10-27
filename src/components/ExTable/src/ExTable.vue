@@ -1,5 +1,4 @@
 <template>
-  <!--  <div class="table">-->
   <vxe-grid
     style="padding-right: 2px"
     border
@@ -11,28 +10,56 @@
     :show="props.show"
     show-overflow
     show-header-overflow
-    height="83%"
+    :height="height"
     auto-resize
     :column-config="{ resizable: true }"
   >
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
         <AButton
-          v-for="(button, key) in buttons"
-          :type="button.type !== 'danger' ? button.type : 'default'"
-          :key="key"
-          :danger="button.type === 'danger'"
-          @click="button.onClick()"
+          type="primary"
           style="margin-right: 5px"
-          >{{ button.label }}
-        </AButton>
+          @click="addTableEvent"
+          v-show="props.isShow"
+          >添加</AButton
+        >
+        <AButton type="primary" style="margin-right: 5px" @click="auditTable" v-show="props.isShow"
+          >审核</AButton
+        >
+        <AButton
+          type="default"
+          style="margin-right: 5px"
+          @click="unAuditTable"
+          v-show="props.isShow"
+          >反审核</AButton
+        >
+        <AButton style="margin-right: 5px" @click="delTable" v-show="props.isShow" danger
+          >批量删除</AButton
+        >
         <AButton
           type="primary"
-          style="margin: -10px 0px"
+          style="margin-right: 5px"
           @click="pushDownEvent"
           v-show="props.isPushDown"
           >下推</AButton
         >
+        <a-dropdown style="margin-right: 5px">
+          <a-button type="primary">
+            关联查询
+            <a-down-outlined />
+          </a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item
+                v-for="item in config.LINK_QUERY"
+                :key="item.value"
+                @click="linkQuerySelect(item)"
+              >
+                {{ item.label }}
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -51,7 +78,7 @@
       </div>
     </template>
     <template #number="{ row }">
-      <a style="color: #0960bd" @click="editTable(row)">{{ row.number }}</a>
+      <a style="color: #0960bd" @click="editTableEvent(row)">{{ row.number }}</a>
     </template>
     <template #SupplierLevel="{ row }">
       <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
@@ -80,7 +107,7 @@
     </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
     <template #operate="{ row }">
-      <AButton type="link" class="link" @click="editTable(row)">编辑</AButton>
+      <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton
         v-if="row.bsStatus === 'A'"
         type="link"
@@ -97,6 +124,26 @@
       >
     </template>
   </vxe-grid>
+  <div>
+    <Pager
+      background
+      v-model:current-page="pages.currentPage"
+      v-model:page-size="pages.pageSize"
+      :total="props.totalData"
+      :layouts="[
+        'PrevJump',
+        'PrevPage',
+        'JumpNumber',
+        'NextPage',
+        'NextJump',
+        'Sizes',
+        'FullJump',
+        'Total',
+      ]"
+      @page-change="tablePagerChange"
+      style="width: calc(100% - 5px); height: 42px; margin: 5px 0px"
+    />
+  </div>
   <vxe-modal
     v-model="resultModal"
     id="resultByBatchModal"
@@ -140,7 +187,6 @@
       ]"
     />
   </vxe-modal>
-
   <vxe-modal v-model="visibleUploadModal" width="400px" :position="{ top: 40 }">
     <template #title>
       <span>上传文件</span>
@@ -159,76 +205,108 @@
     <br />
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
-  <!--  </div>-->
   <ExPushDownModel
     ref="ExPushDownModelRef"
-    :tableName="tableName"
+    :tableName="props.tableName"
     @pushDownSelect="pushDownSelect"
+  />
+  <ExLinkQueryModal
+    ref="exLinkQueryModelRef"
+    :linkQueryTableCols="props.linkQueryTableCols"
+    :tableName="props.tableName"
+    :gridOptions="props.linkQueryGridOptions"
+    :modalTitle="props.modalTitle"
+    :linkQueryMenuData="props.linkQueryMenuData"
+    :linkQueryTableData="props.linkQueryTableData"
+    @getSearchList="getSearchList"
   />
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
-  import { VXETable, VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
-  import { Tag, Button, Upload, message } from 'ant-design-vue';
-  import { UploadOutlined } from '@ant-design/icons-vue';
+  import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
+  import { reactive, ref, toRef } from 'vue';
+  import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
+  import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { pushDown } from '/@/api/invCountSheet';
-  import { cloneDeep } from 'lodash-es';
+  import { cloneDeep, uniqBy } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
-  // import dayjs from 'dayjs';
-  // import { Moment } from 'moment';
+  import { VxeGridPropTypes } from 'vxe-table/types/all';
 
   //基础信息查询组件ref
-  const ExPushDownModelRef: any = ref(null); //
+  const ExPushDownModelRef: any = ref(null);
+  const exLinkQueryModelRef: any = ref(null);
+
   const { createMessage } = useMessage();
   const AButton = Button;
   const AUpload = Upload;
   const ResultGridOptions = resultGridOptions;
-
-  const props = defineProps({
-    gridOptions: Object,
-    columns: Array,
-    buttons: Array,
-    count: Number,
-    show: Boolean,
-    tableName: String,
-    tableData: Array,
-    isShowExport: {
-      type: Boolean,
-      default: true,
+  const ADownOutlined = DownOutlined;
+  const AMenuItem = MenuItem;
+  const ADropdown = Dropdown;
+  const AMenu = Menu;
+  interface ProType {
+    gridOptions?: object;
+    linkQueryGridOptions?: object;
+    height?: string;
+    columns?: any[];
+    buttons?: any[];
+    show?: boolean;
+    tableName?: string;
+    tableData?: any[];
+    totalData?: number;
+    isShowExport?: boolean;
+    isShowImport?: boolean;
+    isShow?: boolean;
+    isPushDown?: boolean;
+    importConfig?: string;
+    modalTitle?: string;
+    linkQueryMenuData?: any;
+    linkQueryTableData?: any;
+    linkQueryTableCols?: VxeGridPropTypes.Columns;
+  }
+  const props = withDefaults(defineProps<ProType>(), {
+    tableName: '',
+    isShowExport: true,
+    isShowImport: true,
+    isPushDown: true,
+    show: true,
+    isShow: true,
+    height: '83%',
+    columns: () => {
+      return [];
     },
-    isShowImport: {
-      type: Boolean,
-      default: true,
+    buttons: () => {
+      return [];
     },
-    isPushDown: {
-      type: Boolean,
-      default: true,
+    tableData: () => {
+      return [];
     },
-    importConfig: String,
   });
+  const linkQueryMenuData = toRef(props, 'linkQueryMenuData');
   type Emits = {
-    (e: 'addEvent'): void;
-    (e: 'editEvent', row: any): void;
+    (e: 'addTableEvent'): void;
+    (e: 'editTableEvent', row: any): void;
     (e: 'deleteRowEvent', row: object): void;
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
     (e: 'importModelEvent'): void;
-    (e: 'refreshTable'): void; //刷新表格
+    (e: 'getList', currPage?: number, pageSize?: number): void; //刷新表格
     (e: 'auditRowEvent', row: any): void;
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
-    (e: 'pushDownEvent', row: any): void;
+    (e: 'downSearchEvent', row: any): void;
+    (e: 'upSearchEvent', row: any): void;
+    (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -239,7 +317,17 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-
+  //分页信息
+  const pages = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+    pages.currentPage = currentPage;
+    pages.pageSize = pageSize;
+    emit('getList', currentPage, pageSize);
+  };
   //上传文件
   interface FileItem {
     uid: string;
@@ -261,7 +349,43 @@
     console.log(data);
     // tableData.data = data;
   };
-
+  /*约定 A是上查，B是下查*/
+  const linkQuerySelect = async (item) => {
+    const $grid: any = xGrid.value;
+    const selectRecords = $grid.getCheckboxRecords();
+    if (selectRecords.length > 0) {
+      switch (item.value) {
+        case 'A':
+          emit('upSearchEvent', selectRecords);
+          break;
+        case 'B':
+          emit('downSearchEvent', selectRecords);
+          break;
+      }
+      console.log(linkQueryMenuData.value.length, 'props.linkQueryMenuData.length');
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
+    }
+  };
+  //判断是否上下查
+  const isUpDownSearch = (res) => {
+    if (res.length > 0) {
+      exLinkQueryModelRef.value.show();
+    } else {
+      createMessage.warning('没有相关关联单据');
+    }
+  };
+  //上下查的列表页
+  const getSearchList = (item) => {
+    emit('getSearchList', item);
+  };
+  //隐藏行
+  const hideColumn = (arr) => {
+    const $grid: any = xGrid.value;
+    arr.map((e) => {
+      $grid.hideColumn(e);
+    });
+  };
   /**
    * 格式化数据
    * @param data
@@ -291,14 +415,13 @@
     }
   };
   //新增
-  const addTable = () => {
-    emit('addEvent');
+  const addTableEvent = () => {
+    emit('addTableEvent');
   };
   //编辑
-  const editTable = (row: any) => {
-    emit('editEvent', row);
+  const editTableEvent = (row: any) => {
+    emit('editTableEvent', row);
   };
-
   //删除单条
   const deleteRowEvent = async (row: any) => {
     //删除确认窗口
@@ -430,14 +553,13 @@
     let selectRecords = $grid.getCheckboxRecords();
     let selectRecords1 = cloneDeep(selectRecords);
     let selectRecords2 = cloneDeep(selectRecords);
-    //放入对象存在matId的值
-    let val: Array<string> = [];
-    for (let item of selectRecords) {
+    // 放入对象存在matId的值
+    const val = selectRecords1.map((item) => {
       if (item.matId) {
-        val.push(item.matId);
+        return item.matId;
       }
-    }
-    //请求分页查询接口
+    });
+    // 请求分页查询接口
     let res: any = await getInvList({
       pageRows: 1000000,
       params: [
@@ -454,7 +576,7 @@
         },
       ],
     });
-    //遍历数组赋值stockNum
+    // 遍历数组赋值stockNum
     for (let item of selectRecords2) {
       let filterNum = res.records.filter(
         (e) =>
@@ -463,21 +585,10 @@
           e.compartmentId === item.compartmentId &&
           e.locationId === item.locationId,
       );
-      if (filterNum) {
-        item.stockNum = filterNum[0].stockNum;
-      } else {
-        item.stockNum = 0;
-      }
+      item.stockNum = filterNum[0] ? filterNum[0].stockNum : 0;
     }
-    //根据单号去重
-    for (let i = 0; i < selectRecords1.length; i++) {
-      for (let j = i + 1; j < selectRecords1.length; j++) {
-        if (selectRecords1[i].number === selectRecords1[j].number) {
-          selectRecords1.splice(j, 1);
-          j--;
-        }
-      }
-    }
+    // 根据单号去重
+    selectRecords1 = uniqBy(selectRecords1, 'number');
     // 赋值dtData
     for (const item of selectRecords1) {
       item.dtData = [];
@@ -492,25 +603,26 @@
   };
   const go = useGo();
   //下推功能
-  const pushDownSelect = async (PushDownTableName, routeTo) => {
+  const pushDownSelect = async (pushDownParam) => {
     let selectRecords = await getdtData();
-    await pushDown(
+    let res = await pushDown(
       {
         params: selectRecords,
       },
-      PushDownTableName,
-    )
-      .then((res) => {
-        createMessage.success('下推成功');
-        ExPushDownModelRef.value.close();
-        go({
-          path: PageEnum[routeTo],
-          query: res.result,
-        });
-      })
-      .catch(() => {
-        createMessage.error('下推失败');
+      pushDownParam.tarBillType,
+    );
+    console.log(res.dtData.length, 'res.dtData.length');
+    if (res.dtData.length > 0) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+        // path: PageEnum[pushDownParam.routeTo],
+        // query: { pushDownParam: JSON.stringify(res) },
       });
+    } else {
+      createMessage.error('无法下推到该下游单据/已有下游单据');
+    }
   };
   //下推弹框
   const pushDownEvent = async () => {
@@ -546,7 +658,7 @@
     if (info.file.status === 'done') {
       message.success(`${info.file.response}`);
       //重新加载表格数据
-      emit('refreshTable');
+      emit('getList');
     } else if (info.file.status === 'error') {
       info.fileList = [];
       message.error(`${info.file.error}`);
@@ -616,26 +728,15 @@
     });
   };
   defineExpose({
-    addTable,
     delTable,
-    auditTable,
-    unAuditTable,
-    editTable,
     init,
     computeData,
+    hideColumn,
+    isUpDownSearch,
   });
 </script>
 
 <style scoped lang="less">
-  .table {
-    background-color: #fff;
-    border-bottom: none;
-    width: 100%;
-    height: calc(100vh - 250px);
-    max-height: 640px;
-    padding: 0 5px;
-    //overflow: auto;
-  }
   .button-group {
     margin: 5px 0;
   }
@@ -652,14 +753,6 @@
   .form-body {
     padding: 20px;
   }
-  //:deep(.vxe-table .vxe-sort--desc-btn.sort--active) {
-  //  color: #409eff;
-  //  border-color: #409eff;
-  //}
-  //:deep(.vxe-table .vxe-sort--asc-btn.sort--active) {
-  //  color: #409eff;
-  //  border-color: #409eff;
-  //}
   :deep(.vxe-toolbar .vxe-tools--operate) {
     margin-right: 10px;
   }

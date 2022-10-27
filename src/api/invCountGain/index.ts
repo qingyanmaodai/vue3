@@ -40,11 +40,11 @@ export interface InvCountGainDetailEntity extends PublicModel {
   sort?: string;
   matId?: string;
   stockId?: string;
-  stockNum?: string;
+  stockNum?: number;
   bsStatus?: string;
-  countNum?: string;
+  countNum?: number;
   parentId?: string;
-  gain?: string;
+  gain?: number;
   locationId?: string;
   lot?: string;
   mark?: string;
@@ -248,6 +248,37 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
     {
       errorMessageMode: mode,
       isTransformResponse: false,
+    },
+  );
+}
+
+/**
+ * 下查
+ */
+export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.DOWN_SEARCH_INV_COUNT_GAIN,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 上查
+ */
+export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UP_SEARCH_INV_COUNT_GAIN,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
     },
   );
 }

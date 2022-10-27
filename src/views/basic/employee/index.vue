@@ -28,12 +28,12 @@
           />
           <ExTable
             :columns="employeeColumns"
-            :buttons="tableButtons"
             :gridOptions="GridOptions"
             :tableData="tableData"
+            :totalData="totalData"
             ref="employeeTableRef"
-            @addEvent="tableAddEvent"
-            @editEvent="editTableEvent"
+            @addTableEvent="addTableEvent"
+            @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
             @delBatchEvent="deleteMatBatchEvent"
             @auditRowEvent="auditRowEvent"
@@ -42,26 +42,8 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @refreshTable="getEmployeeList"
+            @getList="getEmployeeList"
           />
-          <div>
-            <Pager
-              background
-              v-model:current-page="pages.currentPage"
-              v-model:page-size="pages.pageSize"
-              :total="pages.total"
-              :layouts="[
-                'PrevJump',
-                'PrevPage',
-                'JumpNumber',
-                'NextPage',
-                'NextJump',
-                'Sizes',
-                'FullJump',
-                'Total',
-              ]"
-              @page-change="tablePagerChange"
-          /></div>
         </div>
       </a-pane>
     </a-splitPanes>
@@ -86,7 +68,6 @@
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
   const { createMessage } = useMessage();
-  import { Pager } from 'vxe-table';
   import {
     audit,
     batchAuditEmployee,
@@ -117,43 +98,13 @@
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
   const tableData = ref<object[]>([]); //表格数据
+  let totalData = ref<number>(0);
   //分页参数
   const pages = reactive({
     currentPage: 1,
     pageSize: 10,
     total: 0,
   });
-  const tableButtons = [
-    //表格按钮数据
-    {
-      type: 'primary',
-      label: '添加',
-      onClick: () => {
-        tableAddEvent();
-      },
-    },
-    {
-      type: 'primary',
-      label: '审核',
-      onClick: () => {
-        tableAuditEvent();
-      },
-    },
-    {
-      type: 'default',
-      label: '反审核',
-      onClick: () => {
-        tableUnAuditEvent();
-      },
-    },
-    {
-      type: 'danger',
-      label: '批量删除',
-      onClick: () => {
-        tableBatchDelEvent();
-      },
-    },
-  ];
 
   /* method */
 
@@ -182,21 +133,17 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    pages.total = res.total;
+    totalData.value = res.total;
     pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
 
   /**
-   * 表格每页显示数改变事件
-   */
-  const tablePagerChange = () => {};
-
-  /**
    * 表格新增数据
    */
-  const tableAddEvent = () => {
+  const addTableEvent = () => {
     let groupId = treeRef.value.getSelectedKeys();
     routerGo({
       path: PageEnum.EMPLOYEE_DETAIL, //人员详情页
@@ -234,9 +181,6 @@
   /**
    * 表格批量审核事件
    */
-  const tableAuditEvent = () => {
-    employeeTableRef.value.auditTable();
-  };
   const auditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -263,9 +207,6 @@
   /**
    * 表格批量反审核事件
    */
-  const tableUnAuditEvent = () => {
-    employeeTableRef.value.unAuditTable();
-  };
   const unAuditBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;
@@ -280,9 +221,6 @@
   /**
    * 表格批量删除事件
    */
-  const tableBatchDelEvent = () => {
-    employeeTableRef.value.delTable();
-  };
   const deleteMatBatchEvent = async (rows: any[]) => {
     const ids = rows.map((item) => {
       return item.id;

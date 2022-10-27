@@ -11,7 +11,7 @@
       </div>
       <div>
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
-        <a-button class="button" @click="resetEvent">重置</a-button>
+        <a-button class="button" @click="resetEvent">重置/刷新</a-button>
         <a-button
           class="button"
           style="background-color: #2f4056; color: #fff"

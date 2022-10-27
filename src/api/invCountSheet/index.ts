@@ -49,7 +49,7 @@ export interface InvCountSheetDetailEntity extends PublicModel {
   name?: string;
   seq: number;
   bsDate?: string;
-  sort?: string;
+  sort?: number;
   bsStatus?: string;
   countNum?: string;
   lot?: string;
@@ -179,7 +179,7 @@ export function pushDown(
   PushDownTableName: string, //可下推的表名
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<Result>(
+  return defHttp.post<any>(
     {
       url: Url.PUSHDOWN_INV_COUNT + PushDownTableName,
       data: json,
@@ -294,6 +294,37 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
     {
       errorMessageMode: mode,
       isTransformResponse: false,
+    },
+  );
+}
+
+/**
+ * 下查
+ */
+export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.DOWN_SEARCH_INV_COUNT,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 上查
+ */
+export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.UP_SEARCH_INV_COUNT,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
     },
   );
 }
