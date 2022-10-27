@@ -223,6 +223,7 @@ export const usePermissionStore = defineStore({
               const meta = menu.meta;
               return meta.title === '首页' || menu.name === 'isystem';
             });
+            setKeepAlive(routeList2);
             routeList2.forEach((menu) => {
               menu.meta.orderNo = 3;
               routeList.push(menu);
@@ -254,7 +255,15 @@ export const usePermissionStore = defineStore({
     },
   },
 });
-
+//设置KeepAlive
+function setKeepAlive(menus: AppRouteRecordRaw[]) {
+  menus.forEach((m) => {
+    m.meta.ignoreKeepAlive = m.meta.keepAlive === false;
+    if (m.children && m.children.length > 0) {
+      setKeepAlive(m.children);
+    }
+  });
+}
 // Need to be used outside the setup
 export function usePermissionStoreWithOut() {
   return usePermissionStore(store);
