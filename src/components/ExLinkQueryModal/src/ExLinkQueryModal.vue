@@ -14,14 +14,19 @@
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%">
-          <a-menu>
-            <template v-for="(item, index) in props.linkQueryMenuData" :key="index">
-              <a-menu-item :selectedKeys="currSelectedKeys" @click="onSelectItem(item)">
+          <a-menu mode="inline" :selectedKeys="selectedKeys">
+            <a-sub-menu key="sub1">
+              <template #title>全部</template>
+              <a-menu-item
+                v-for="(item, index) in props.linkQueryMenuData"
+                :key="index"
+                @click="onSelectItem(item)"
+              >
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
                   item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
                 }})</a-menu-item
               >
-            </template>
+            </a-sub-menu>
           </a-menu>
         </div>
       </pane>
@@ -47,7 +52,7 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
-  import { MenuItem, Menu } from 'ant-design-vue';
+  import { MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
   import { ExTable } from '/@/components/ExTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
@@ -58,10 +63,11 @@
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currItem = ref<any>({});
-  const currSelectedKeys = ref<any>('0');
   const tableRef = ref<any>('');
   const AMenuItem = MenuItem;
   const AMenu = Menu;
+  const ASubMenu = SubMenu;
+  const selectedKeys = ref<any[]>([]);
   type Emits = {
     (e: 'getSearchList', item: any): void;
   };
@@ -90,7 +96,8 @@
   };
   //点击列表项查询
   const onSelectItem = async (item) => {
-    console.log(currSelectedKeys, 'item', item);
+    // selectedKeys.value = selectedKeys.value.push(index);
+    console.log('item', item);
     emit('getSearchList', item);
     tableShow.value = true;
     setTimeout(() => {
