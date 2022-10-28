@@ -3,19 +3,11 @@ import { defHttp } from '/@/utils/http/axios';
 import { Url, PublicModel } from '/@/api/apiLink';
 
 export interface SystemEntity extends PublicModel {
-  bsStatus: string;
-  createBy: string;
-  createTime: string;
-  erpCode: string;
   id: number;
   info: object;
-  isDelete: number;
-  mark: string;
   name: string;
   number: string;
   tenantId: number;
-  updateBy: string;
-  updateTime: string;
   val?: string;
 }
 /**

@@ -7,8 +7,6 @@ export interface UnitEntity extends PublicModel {
   number?: string;
   name?: string;
   info?: string;
-  isDelete?: string;
-  tenantId?: string;
   bsType?: string;
 }
 

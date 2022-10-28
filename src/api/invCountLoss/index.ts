@@ -39,11 +39,9 @@ export interface InvCountLossDetailEntity extends PublicModel {
   seq: number;
   bsDate?: string;
   sort?: string;
-  bsStatus?: string;
   countNum?: string;
   loss?: string;
   lot?: string;
-  mark?: string;
   parentId?: string;
   stockNum?: string;
   matId?: string;
