@@ -95,7 +95,6 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入业务日期'"
                       />
                     </a-form-item>
                   </Col>
@@ -239,7 +238,6 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框

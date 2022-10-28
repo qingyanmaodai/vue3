@@ -291,7 +291,6 @@
       return [];
     },
   });
-  const linkQueryMenuData = toRef(props, 'linkQueryMenuData');
   type Emits = {
     (e: 'addTableEvent'): void;
     (e: 'editTableEvent', row: any): void;
@@ -611,13 +610,11 @@
       },
       pushDownParam.tarBillType,
     );
-    if (res.dtData.length > 0) {
+    if (res) {
       createMessage.success('下推成功');
       go({
         name: pushDownParam.routeTo,
         params: { pushDownParam: JSON.stringify(res) },
-        // path: PageEnum[pushDownParam.routeTo],
-        // query: { pushDownParam: JSON.stringify(res) },
       });
     } else {
       await VXETable.modal.message({

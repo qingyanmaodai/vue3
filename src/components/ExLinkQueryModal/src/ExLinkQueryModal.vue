@@ -80,7 +80,6 @@
     linkQueryTableCols: VxeGridPropTypes.Columns;
     linkQueryMenuData: any;
     linkQueryTableData: any;
-    linkQueryTableDetail: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
