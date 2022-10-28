@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="inventory-count-index">
+<script setup lang="ts" name="inventory-countSheet-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';

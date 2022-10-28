@@ -178,7 +178,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="inventory-countGain-detail">
+<script lang="ts" setup name="inventory-countSheet-detail">
   import {
     ruleOfExaGridOptions,
     invCountSheetOfDetailColumns,
