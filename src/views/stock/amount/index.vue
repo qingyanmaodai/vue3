@@ -2,11 +2,19 @@
   <div style="height: 100%; padding: 15px">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
-        :control="moreSearchData"
+        :showSearchNo="false"
+        :showSearchName="false"
+        :showSearchMatID="true"
+        :showSearchStockId="true"
+        :showSearchCompartmentId="true"
+        :showSearchLocationId="true"
+        :showMoreSearch="false"
         ref="searchRef"
-        tableName=""
-        searchNo="单位编码："
-        searchName="单位名称："
+        tableName="BdInventory"
+        searchMatID="物料ID"
+        searchStockId="仓库ID"
+        searchCompartmentId="分仓ID"
+        searchLocationId="仓位ID"
         @getList="getList"
         @resetEvent="resetTable"
       />
@@ -19,30 +27,25 @@
         :isPushDown="false"
         :isShowExport="false"
         :isShowImport="false"
-        tableName="BdInventoryPreUse"
+        tableName="BdInventory"
         :columns="StockAmountColumns"
         :gridOptions="GridOptions"
-        :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
         ref="tableRef"
-        @exportTable="exportTable"
-        @importModelEvent="importModelEvent"
         @getList="getList"
       />
     </div>
   </div>
 </template>
 
-<script setup lang="ts" name="basic-unit-index">
+<script setup lang="ts">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
-  import { OptTableHook } from '/@/api/utilHook';
-  import { exportUnitList, getUnitOption, importUnitModel } from '/@/api/unit';
   import { getInvList } from '/@/api/realTimeInv';
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -54,8 +57,6 @@
   let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
-  //导入上传文件api
-  let importConfig = ref<string>('IMPORT_UNIT_LIST');
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -63,11 +64,6 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  //获取高级查询字段数据
-  const moreSearchData = ref();
-  getUnitOption({ params: '' }).then((res) => {
-    moreSearchData.value = res;
-  });
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -87,53 +83,15 @@
     pages.currentPage = currPage;
     pages.pageSize = pageSize;
     tableData.value = res.records;
-    searchRef.value.moreSearchClose();
   };
 
   //重置
   const resetTable = () => {
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
+    searchRef.value.formState.wlMatID = null;
+    searchRef.value.formState.wlStockId = null;
+    searchRef.value.formState.wlCompartmentId = null;
+    searchRef.value.formState.wlLocationId = null;
     getList(1);
-  };
-  //下载模板
-  const importModelEvent = async () => {
-    OptTableHook.importModel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        importUnitModel({
-          params: '导入模板',
-        })
-          .then((res) => {
-            const data = { title: '计量单位信息导入模板.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
-  };
-  //导出
-  const exportTable = async () => {
-    OptTableHook.exportExcel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        exportUnitList({
-          params: {
-            list: getParams,
-            fileName: '计量单位列表',
-          },
-          pageIndex: 1,
-          pageRows: pages.pageSize,
-        })
-          .then((res) => {
-            const data = { title: '计量单位列表信息.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
   };
 
   onMounted(() => {

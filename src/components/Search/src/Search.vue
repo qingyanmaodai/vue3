@@ -9,12 +9,29 @@
         <span>{{ props.searchName }}</span>
         <a-input class="input" v-model:value="formState.wlName" />
       </div>
+      <div v-show="props.showSearchMatID">
+        <span>{{ props.searchMatID }}</span>
+        <a-input class="input" v-model:value="formState.wlMatID" />
+      </div>
+      <div v-show="props.showSearchStockId">
+        <span>{{ props.searchStockId }}</span>
+        <a-input class="input" v-model:value="formState.wlStockId" />
+      </div>
+      <div v-show="props.showSearchCompartmentId">
+        <span>{{ props.searchCompartmentId }}</span>
+        <a-input class="input" v-model:value="formState.wlCompartmentId" />
+      </div>
+      <div v-show="props.showSearchLocationId">
+        <span>{{ props.searchLocationId }}</span>
+        <a-input class="input" v-model:value="formState.wlLocationId" />
+      </div>
       <div>
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
         <a-button class="button" @click="resetEvent">重置/刷新</a-button>
         <a-button
           class="button"
           style="background-color: #2f4056; color: #fff"
+          v-show="props.showMoreSearch"
           @click="moreSearchEvent"
           >高级查询</a-button
         >
@@ -51,14 +68,28 @@
     tableName: string;
     showSearchNo?: boolean;
     showSearchName?: boolean;
+    showSearchMatID?: boolean;
+    showSearchStockId?: boolean;
+    showSearchCompartmentId?: boolean;
+    showSearchLocationId?: boolean;
+    showMoreSearch?: boolean;
     searchNo?: string;
     searchName?: string;
+    searchMatID?: string;
+    searchStockId?: string;
+    searchCompartmentId?: string;
+    searchLocationId?: string;
     control: ControlSet[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
     showSearchNo: true,
     showSearchName: true,
+    showSearchMatID: false,
+    showSearchStockId: false,
+    showSearchCompartmentId: false,
+    showSearchLocationId: false,
+    showMoreSearch: true,
     searchNo: '',
     searchName: '',
     control: () => {
@@ -68,6 +99,10 @@
   interface FormState {
     wlNo: string;
     wlName: string;
+    wlMatID: string;
+    wlStockId: string;
+    wlCompartmentId: string;
+    wlLocationId: string;
     tableName: string;
     searchNo: string;
     searchName: string;
@@ -76,6 +111,10 @@
   const formState: UnwrapRef<FormState> = reactive({
     wlNo: '',
     wlName: '',
+    wlMatID: '',
+    wlStockId: '',
+    wlCompartmentId: '',
+    wlLocationId: '',
     tableName: props.tableName,
     searchNo: props.searchNo,
     searchName: props.searchName,
@@ -113,6 +152,58 @@
         endWith: '',
       });
     }
+    if (formState.wlMatID) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'matId',
+        column: 'mat_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlMatID,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.wlStockId) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'stockId',
+        column: 'stock_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlStockId,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.wlCompartmentId) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'compartmentId',
+        column: 'compartment_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlCompartmentId,
+        startWith: '',
+        endWith: '',
+      });
+    }
+    if (formState.wlLocationId) {
+      searchParams.push({
+        table: formState.tableName,
+        name: 'locationId',
+        column: 'location_id',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        val: formState.wlLocationId,
+        startWith: '',
+        endWith: '',
+      });
+    }
     if (moreSearchRef.value.getSearchParams() && moreSearchRef.value.getSearchParams().length > 0) {
       searchParams = searchParams.concat(moreSearchRef.value.getSearchParams());
     }
@@ -145,9 +236,16 @@
     display: flex;
     height: 75px;
     padding: 10px;
+    div {
+      display: flex;
+      align-items: center;
+      span {
+        white-space: nowrap;
+      }
+    }
   }
   .input {
-    width: 200px;
+    width: 190px;
     margin: 10px 10px;
   }
   .button {
