@@ -11,12 +11,10 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :isPushDown="true"
         :isShowImport="false"
         :isShowExport="false"
         :columns="invCountSheetColumns"
         :gridOptions="GridOptions"
-        :linkQueryGridOptions="linkQueryGridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
@@ -36,16 +34,13 @@
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
-        @getSearchList="getSearchList"
         :linkQueryMenuData="linkQueryMenuData"
-        :linkQueryTableData="linkQueryTableData"
-        :linkQueryTableCols="linkQueryTableCols"
       />
     </div>
   </div>
 </template>
 
-<script setup lang="ts" name="inventory-count-index">
+<script setup lang="ts" name="inventory-countSheet-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -65,12 +60,8 @@
   } from '/@/api/invCountSheet';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import {
-    linkQueryGridOptions,
-    gridOptions,
-    invCountSheetColumns,
-  } from '/@/components/ExTable/data';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
+  import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+  import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -87,9 +78,6 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
-  import { getPublicList } from '/@/api/public';
-  import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getUpDownSearchList } from '/@/enums/routeEnum';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -121,42 +109,7 @@
     searchRef.value.moreSearchClose();
   };
   const linkQueryMenuData: any = ref<any>([]);
-  const linkQueryTableData: any = ref<any>([]);
-  const linkQueryTableCols: any = ref<VxeGridPropTypes.Columns[]>([]);
   const modalTitle: any = ref<any>('');
-  //关联查询
-  const getSearchList = async (item, currPage = 1, pageSize = pages.pageSize) => {
-    let filter;
-    if (item.tarBillIds.length > 0) {
-      filter = getUpDownSearchList.filter((e) => e.type === item.tarBillType);
-    } else {
-      filter = getUpDownSearchList.filter((e) => e.type === item.srcBillType);
-    }
-    let listUrl = filter[0].listUrl;
-    linkQueryTableCols.value = filter[0].TableCols;
-    // 查询表格
-    let listData: any = await getPublicList(
-      {
-        params: [
-          {
-            table: '',
-            name: 'id',
-            column: 'id',
-            link: SearchLink.AND,
-            rule: SearchMatchType.IN,
-            type: SearchDataType.string,
-            val: item.tarBillIds.length > 0 ? item.tarBillIds : item.srcBillIds,
-            startWith: '',
-            endWith: '',
-          },
-        ],
-        pageIndex: currPage,
-        pageRows: pageSize,
-      },
-      listUrl,
-    );
-    linkQueryTableData.value = listData;
-  };
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });

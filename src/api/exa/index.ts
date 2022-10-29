@@ -15,7 +15,6 @@ export interface ExaEntity extends PublicModel {
   ruleId?: string;
   ruleName?: string;
   bdExamineRule?: ExaRuleEntity;
-  bsStatus?: string;
   bdExamineDetailList?: ExaDetailEntity[];
 }
 export interface ExaDetailEntity extends PublicModel {
@@ -27,7 +26,6 @@ export interface ExaDetailEntity extends PublicModel {
   max?: number;
   refer?: string;
   isOpen?: number;
-  bsStatus?: string;
   isRequire: number;
   description?: string;
   parentId?: string;

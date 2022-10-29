@@ -10,7 +10,7 @@
     :show="props.show"
     show-overflow
     show-header-overflow
-    :height="height"
+    :height="props.height"
     auto-resize
     :column-config="{ resizable: true }"
   >
@@ -20,20 +20,24 @@
           type="primary"
           style="margin-right: 5px"
           @click="addTableEvent"
-          v-show="props.isShow"
+          v-show="props.isAddShow"
           >添加</AButton
         >
-        <AButton type="primary" style="margin-right: 5px" @click="auditTable" v-show="props.isShow"
+        <AButton
+          type="primary"
+          style="margin-right: 5px"
+          @click="auditTable"
+          v-show="props.isAuditShow"
           >审核</AButton
         >
         <AButton
           type="default"
           style="margin-right: 5px"
           @click="unAuditTable"
-          v-show="props.isShow"
+          v-show="props.isUnAuditShow"
           >反审核</AButton
         >
-        <AButton style="margin-right: 5px" @click="delTable" v-show="props.isShow" danger
+        <AButton style="margin-right: 5px" @click="delTable" v-show="props.isDeleteShow" danger
           >批量删除</AButton
         >
         <AButton
@@ -43,7 +47,7 @@
           v-show="props.isPushDown"
           >下推</AButton
         >
-        <a-dropdown style="margin-right: 5px">
+        <a-dropdown style="margin-right: 5px" v-if="props.isRelatedShow">
           <a-button type="primary">
             关联查询
             <a-down-outlined />
@@ -212,19 +216,15 @@
   />
   <ExLinkQueryModal
     ref="exLinkQueryModelRef"
-    :linkQueryTableCols="props.linkQueryTableCols"
     :tableName="props.tableName"
-    :gridOptions="props.linkQueryGridOptions"
     :modalTitle="props.modalTitle"
     :linkQueryMenuData="props.linkQueryMenuData"
-    :linkQueryTableData="props.linkQueryTableData"
-    @getSearchList="getSearchList"
   />
 </template>
 
 <script lang="ts" setup>
   import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
-  import { reactive, ref, toRef } from 'vue';
+  import { reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -239,8 +239,6 @@
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { useGo } from '/@/hooks/web/usePage';
-  import { VxeGridPropTypes } from 'vxe-table/types/all';
-
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -255,36 +253,37 @@
   const AMenu = Menu;
   interface ProType {
     gridOptions?: object;
-    linkQueryGridOptions?: object;
     height?: string;
     columns?: any[];
-    buttons?: any[];
     show?: boolean;
     tableName?: string;
     tableData?: any[];
     totalData?: number;
+    isAddShow?: boolean;
+    isAuditShow?: boolean;
+    isUnAuditShow?: boolean;
+    isDeleteShow?: boolean;
+    isRelatedShow?: boolean;
+    isPushDown?: boolean;
     isShowExport?: boolean;
     isShowImport?: boolean;
-    isShow?: boolean;
-    isPushDown?: boolean;
     importConfig?: string;
     modalTitle?: string;
     linkQueryMenuData?: any;
-    linkQueryTableData?: any;
-    linkQueryTableCols?: VxeGridPropTypes.Columns;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
+    show: true,
+    isAddShow: true,
+    isAuditShow: true,
+    isUnAuditShow: true,
+    isDeleteShow: true,
+    isRelatedShow: true,
+    isPushDown: true,
     isShowExport: true,
     isShowImport: true,
-    isPushDown: true,
-    show: true,
-    isShow: true,
     height: '83%',
     columns: () => {
-      return [];
-    },
-    buttons: () => {
       return [];
     },
     tableData: () => {
@@ -305,7 +304,6 @@
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
-    (e: 'getSearchList', item: any): void;
   };
   const emit = defineEmits<Emits>();
   const xGrid = ref<VxeGridInstance>();
@@ -371,10 +369,6 @@
     } else {
       createMessage.warning('没有相关关联单据');
     }
-  };
-  //上下查的列表页
-  const getSearchList = (item) => {
-    emit('getSearchList', item);
   };
   //隐藏行
   const hideColumn = (arr) => {
@@ -547,7 +541,7 @@
     }
   };
   //dtData封装
-  const getdtData = async () => {
+  const getDtData = async () => {
     const $grid: any = xGrid.value;
     let selectRecords = $grid.getCheckboxRecords();
     let selectRecords1 = cloneDeep(selectRecords);
@@ -603,7 +597,7 @@
   const go = useGo();
   //下推功能
   const pushDownSelect = async (pushDownParam) => {
-    let selectRecords = await getdtData();
+    let selectRecords = await getDtData();
     let res = await pushDown(
       {
         params: selectRecords,

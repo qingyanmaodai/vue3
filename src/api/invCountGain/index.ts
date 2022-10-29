@@ -41,13 +41,11 @@ export interface InvCountGainDetailEntity extends PublicModel {
   matId?: string;
   stockId?: string;
   stockNum?: number;
-  bsStatus?: string;
   countNum?: number;
   parentId?: string;
   gain?: number;
   locationId?: string;
   lot?: string;
-  mark?: string;
   bdMaterial?: MatEntity;
   bdStock?: StockEntity;
   bdStockCompartment?: StockCompartmentEntity;

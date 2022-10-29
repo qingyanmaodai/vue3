@@ -34,13 +34,10 @@ export interface InvCountSheetEntity extends PublicModel {
   compartmentId?: string;
   locationId?: string;
   lot?: string;
-  mark?: string;
   matId?: string;
   parentId?: string;
   stockId?: string;
   tenantId?: string;
-  updateBy?: string;
-  updateTime?: string;
 }
 
 export interface InvCountSheetDetailEntity extends PublicModel {
@@ -50,10 +47,8 @@ export interface InvCountSheetDetailEntity extends PublicModel {
   seq: number;
   bsDate?: string;
   sort?: number;
-  bsStatus?: string;
   countNum?: string;
   lot?: string;
-  mark?: string;
   parentId?: string;
   stockNum?: string;
   matId?: string;
