@@ -35,7 +35,7 @@
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
-          tableName="BsInventoryCountGainModel"
+          :tableName="props.tableName"
           :columns="tableColumns"
           :gridOptions="linkQueryGridOptions"
           :totalData="totalData"
