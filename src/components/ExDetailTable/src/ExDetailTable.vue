@@ -98,7 +98,6 @@
     ref="filterModalRef"
     @filterModalSearchEvent="filterModalSearchEvent"
     :tableName="props.filterTableName"
-    :inputDataList="props.inputDataList"
   />
 </template>
 
@@ -149,9 +148,6 @@
       type: String,
       default: '',
     },
-    inputDataList: {
-      type: Array,
-    },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
@@ -170,14 +166,7 @@
   //筛选弹框组件ref
   const filterModalRef: any = ref<any>(undefined);
   const filterModalParams = (): SearchParams[] => {
-    let searchParams: SearchParams[] = [];
-    if (
-      filterModalRef.value.getSearchParams() &&
-      filterModalRef.value.getSearchParams().length > 0
-    ) {
-      searchParams = filterModalRef.value.getSearchParams();
-    }
-    return searchParams;
+    return filterModalRef.value.getSearchParams();
   };
 
   //基础信息查询组件ref
@@ -292,7 +281,6 @@
     const $grid: any = xGrid.value;
     $grid.removeCheckboxRow();
   };
-
   //显示筛选弹框
   const filterEvent = () => {
     filterModalRef.value.show();

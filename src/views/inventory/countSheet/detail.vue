@@ -163,7 +163,6 @@
             :isDisableButton="formState.bsStatus === 'B'"
             @filterModalSearchEvent="filterModalSearchEvent"
             filterTableName="BdMaterial"
-            :inputDataList="inputDataList"
           />
         </pane>
       </a-splitpanes>
@@ -275,45 +274,6 @@
   formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
   formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
-  /*约定数组下标，0：仓库，1：分仓，2，仓位，3：物料*/
-  let inputDataList: any = ref<object[]>([
-    {
-      addonBeforeLabel: '仓库 : ',
-      dtoUrlConfig: 'GET_STOCK_DTO',
-      tableName: 'BdStock',
-      tableUrl: Url.GET_PAGE_STOCK_LIST,
-      nameParam: 'stockId',
-      columnParam: 'stock_id',
-      disabledInput: false,
-    },
-    {
-      addonBeforeLabel: '分仓 : ',
-      dtoUrlConfig: 'GET_SUB_STOCK_DTO',
-      tableName: 'BdStockCompartment',
-      tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
-      nameParam: 'compartmentId',
-      columnParam: 'compartment_id',
-      disabledInput: true,
-    },
-    {
-      addonBeforeLabel: '仓位 : ',
-      dtoUrlConfig: 'GET_LOCATION_DTO',
-      tableName: 'BdStockLocation',
-      tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
-      nameParam: 'locationId',
-      columnParam: 'location_id',
-      disabledInput: true,
-    },
-    {
-      addonBeforeLabel: '物料 : ',
-      dtoUrlConfig: 'GET_MAT_DTO',
-      tableName: 'BdMaterial',
-      tableUrl: Url.GET_MATERIAL_LIST,
-      nameParam: 'id',
-      columnParam: 'id',
-      disabledInput: false,
-    },
-  ]);
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
     let getParams: SearchParams[] = [];
@@ -352,8 +312,7 @@
       item.matId = item.id;
     });
     let data = cloneDeep(res.records);
-    const tableFullData = detailTableRef.value.getDetailData();
-    detailTableData.value = tableFullData.concat(data);
+    detailTableData.value = data;
   };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -599,12 +558,6 @@
   };
   onMounted(() => {
     getListById();
-    //假如有dtData 让里面的sort等于seq
-    if (detailTableRef.value.getDetailData()) {
-      detailTableRef.value.getDetailData().map((item) => {
-        item.sort = item.seq;
-      });
-    }
   });
 </script>
 <style scoped lang="less">

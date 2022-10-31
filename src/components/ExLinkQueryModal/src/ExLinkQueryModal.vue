@@ -121,7 +121,7 @@
     pageSize: 10,
     total: 0,
   });
-  //点击关联查询
+  //点击关联查询,区分上下查
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
@@ -173,7 +173,7 @@
     tableData.value = res.records;
   };
   const go = useGo();
-  //跳转到详情
+  //跳转到详情,区分上下查
   const editTableEvent = (row) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {

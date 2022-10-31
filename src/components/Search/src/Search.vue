@@ -79,7 +79,7 @@
     searchStockId?: string;
     searchCompartmentId?: string;
     searchLocationId?: string;
-    control: ControlSet[];
+    control?: ControlSet[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -245,7 +245,7 @@
     }
   }
   .input {
-    width: 190px;
+    width: 200px;
     margin: 10px 10px;
   }
   .button {
