@@ -14,14 +14,15 @@
     <a-splitPanes class="default-theme" style="padding: 5px; height: 100%">
       <pane :size="paneSize">
         <div style="background-color: #fff; height: 100%">
-          <a-menu mode="inline" :selectedKeys="selectedKeys" :openKeys="['sub1']">
+          <a-menu
+            mode="inline"
+            v-model:selectedKeys="selectedKeys"
+            :openKeys="['sub1']"
+            @click="handleClick"
+          >
             <a-sub-menu key="sub1">
               <template #title>全部</template>
-              <a-menu-item
-                v-for="(item, index) in props.linkQueryMenuData"
-                :key="index"
-                @click="onSelectItem(item)"
-              >
+              <a-menu-item v-for="(item, index) in props.linkQueryMenuData" :key="index">
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
                   item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
                 }})</a-menu-item
@@ -34,15 +35,16 @@
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
-          tableName="BsInventoryCountGainModel"
-          :columns="props.linkQueryTableCols"
-          :gridOptions="props.gridOptions"
-          :totalData="props.linkQueryTableData.total"
-          :tableData="props.linkQueryTableData.records"
+          :tableName="props.tableName"
+          :columns="tableColumns"
+          :gridOptions="linkQueryGridOptions"
+          :totalData="totalData"
+          :tableData="tableData"
           :height="height"
           ref="tableRef"
           @editTableEvent="editTableEvent"
           v-if="tableShow"
+          @getList="getList"
         />
       </pane>
     </a-splitPanes>
@@ -50,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { reactive, ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
@@ -58,28 +60,41 @@
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
   import { getUpDownSearchList } from '/@/enums/routeEnum';
+  import { linkQueryGridOptions } from '/@/components/ExTable/data';
+  import { getPublicList } from '/@/api/public';
+  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import { cloneDeep } from 'lodash-es';
   let height = '90%';
   const ASplitPanes = Splitpanes;
   const paneSize = ref<number>(12);
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
-  const currItem = ref<any>({});
+  const currKey = ref<any>({});
   const tableRef = ref<any>('');
+  const tableColumns: any = ref<VxeGridPropTypes.Columns[]>([]);
+  let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   const AMenuItem = MenuItem;
   const AMenu = Menu;
   const ASubMenu = SubMenu;
   const selectedKeys = ref<any[]>([]);
-  type Emits = {
-    (e: 'getSearchList', item: any): void;
-  };
-  const emit = defineEmits<Emits>();
+  interface linkQueryMenuData {
+    source: string;
+    id?: string;
+    mark?: string;
+    name: string;
+    routeTo: string;
+    srcBillIds: any[];
+    srcBillType: string;
+    tarBillIds: any[];
+    tarBillLkType: string;
+    tarBillType: string;
+    tenantId: number;
+  }
   interface ProType {
     modalTitle: string;
     tableName: string;
-    gridOptions: any;
-    linkQueryTableCols: VxeGridPropTypes.Columns;
-    linkQueryMenuData: any;
-    linkQueryTableData: any;
+    linkQueryMenuData: linkQueryMenuData[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -94,24 +109,81 @@
   const close = () => {
     isShow.value = false;
     tableShow.value = false;
+    selectedKeys.value = [];
   };
-  //点击列表项查询
-  const onSelectItem = async (item) => {
-    emit('getSearchList', item);
+  const handleClick = (e) => {
+    currKey.value = e.key;
+    getList();
+  };
+  //分页信息
+  const pages = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  //点击关联查询,区分上下查
+  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+    let filter;
+    if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
+      filter = getUpDownSearchList.filter(
+        (arr) => arr.type === props.linkQueryMenuData[currKey.value].tarBillType,
+      );
+    } else {
+      filter = getUpDownSearchList.filter(
+        (arr) => arr.type === props.linkQueryMenuData[currKey.value].srcBillType,
+      );
+    }
+    let listUrl = filter[0].listUrl;
+    //删除筛选出来的操作那一列
+    tableColumns.value = cloneDeep(filter[0].TableCols);
+    tableColumns.value.splice(
+      cloneDeep(filter[0].TableCols).findIndex((item) => {
+        return item.field === 'operate';
+      }),
+      1,
+    );
+    // 查询表格
+    let res: any = await getPublicList(
+      {
+        params: [
+          {
+            table: '',
+            name: 'id',
+            column: 'id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.IN,
+            type: SearchDataType.string,
+            val:
+              props.linkQueryMenuData[currKey.value].tarBillIds.length > 0
+                ? props.linkQueryMenuData[currKey.value].tarBillIds
+                : props.linkQueryMenuData[currKey.value].srcBillIds,
+            startWith: '',
+            endWith: '',
+          },
+        ],
+        pageIndex: currPage,
+        pageRows: pageSize,
+      },
+      listUrl,
+    );
     tableShow.value = true;
-    setTimeout(() => {
-      tableRef.value.hideColumn(['operate']);
-    }, 0);
-    currItem.value = item;
+    totalData.value = res.total;
+    pages.currentPage = currPage;
+    pages.pageSize = pageSize;
+    tableData.value = res.records;
   };
   const go = useGo();
-  //跳转到详情
+  //跳转到详情,区分上下查
   const editTableEvent = (row) => {
     let filter;
-    if (currItem.value.tarBillIds.length > 0) {
-      filter = getUpDownSearchList.filter((e) => e.type === currItem.value.tarBillType);
+    if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
+      filter = getUpDownSearchList.filter(
+        (e) => e.type === props.linkQueryMenuData[currKey.value].tarBillType,
+      );
     } else {
-      filter = getUpDownSearchList.filter((e) => e.type === currItem.value.srcBillType);
+      filter = getUpDownSearchList.filter(
+        (e) => e.type === props.linkQueryMenuData[currKey.value].srcBillType,
+      );
     }
     let detailUrl = filter[0].detailUrl;
     go({

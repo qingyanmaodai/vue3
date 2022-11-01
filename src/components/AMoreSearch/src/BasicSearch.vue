@@ -181,7 +181,7 @@
     Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { reactive, ref, toRef, onMounted} from 'vue';
+  import { reactive, ref, toRef } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { getPublicList } from '/@/api/public';
@@ -229,7 +229,7 @@
   }
   interface ProType {
     tableName: string;
-    control: ControlSet[];
+    control?: ControlSet[];
     gridOptions: any;
     tableCols: VxeGridPropTypes.Columns;
   }

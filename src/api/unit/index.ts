@@ -7,6 +7,7 @@ export interface UnitEntity extends PublicModel {
   number?: string;
   name?: string;
   info?: string;
+  tenantId?: string;
   bsType?: string;
 }
 
@@ -46,10 +47,7 @@ export function getUnitTable(
 /**
  * 添加计量单位信息
  */
-export function addUnitList(
-  json: RequestData<UnitEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function addUnitList(json: RequestData<UnitEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.ADD_UNIT_LIST,
@@ -64,10 +62,7 @@ export function addUnitList(
 /**
  * 编辑计量单位信息
  */
-export function updateUnitList(
-  json: RequestData<UnitEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function updateUnitList(json: RequestData<UnitEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.UPDATE_UNIT_LIST,

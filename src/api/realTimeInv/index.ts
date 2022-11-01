@@ -36,3 +36,35 @@ export function getInvList(json: RequestData<SearchParams[]>, mode: ErrorMessage
     },
   );
 }
+
+/**
+ * 增加库存
+ */
+export function addStock(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_INV_ADD_STOCK,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
+ * 减少库存
+ */
+export function reduceStock(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.GET_INV_REDUCE_STOCK,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}

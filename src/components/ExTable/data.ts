@@ -315,6 +315,27 @@ export const unitColumns = [
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
+//计量单位
+export const StockAmountColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'matId', title: '物料ID', sortable: true, width: 160 },
+  { field: 'stockId', title: '仓库ID', sortable: true, width: 160 },
+  { field: 'compartmentId', title: '分仓ID', sortable: true, width: 160 },
+  { field: 'locationId', title: '仓位ID', sortable: true, width: 160 },
+  { field: 'bdStock.name', title: '仓库', sortable: true, width: 120 },
+  { field: 'bdStockCompartment.name', title: '分仓', sortable: true, width: 120 },
+  { field: 'bdStockLocation.name', title: '仓位', sortable: true, width: 120 },
+  { field: 'bdMaterial.number', title: '物料编号', sortable: true, width: 120 },
+  { field: 'bdMaterial.name', title: '物料名称', sortable: true, width: 120 },
+  { field: 'bdMaterial.model', title: '规格型号', sortable: true, width: 120 },
+  { field: 'bdMaterial.baseUnitName', title: '基本单位', sortable: true, width: 120 },
+  { field: 'bdMaterial.weightUnitName', title: '重量单位', sortable: true, width: 120 },
+  { field: 'bdMaterial.createTime', title: '创建日期', sortable: true, width: 160 },
+  { field: 'bdMaterial.updateTime', title: '更新日期', sortable: true, width: 160 },
+  { field: 'stockNum', title: '库存数量', sortable: true, width: 120 },
+  { field: 'preUse', title: '即时库存', sortable: true, width: 120 },
+];
 //检验规则
 export const exaRuleColumns = [
   { type: 'checkbox', width: 50 },

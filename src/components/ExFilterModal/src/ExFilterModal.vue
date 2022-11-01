@@ -9,12 +9,11 @@
       width="60%"
       @close="close"
     >
-      <div class="content1">
-        <div class="contentNode" v-for="(item, index) in props.inputDataList" :key="item.id">
+      <div class="content">
+        <div class="contentNode" v-for="(item, index) in inputDataList" :key="index">
           <div style="margin: 4px 5px 0 0">{{ item.addonBeforeLabel }}</div>
           <div>
             <ExInput
-              :key="index"
               class="input"
               autocomplete="off"
               placeholder="请选择"
@@ -79,7 +78,6 @@
   };
   interface ProType {
     tableName: string;
-    inputDataList: any;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -100,15 +98,54 @@
     data: cloneDeep(defaultData),
   });
   const formState = toRef(formStateInit, 'data');
-
+  /*约定数组下标，0：仓库，1：分仓，2，仓位，3：物料*/
+  let inputDataList: any = ref<object[]>([
+    {
+      addonBeforeLabel: '仓库 : ',
+      dtoUrlConfig: 'GET_STOCK_DTO',
+      tableName: 'BdStock',
+      tableUrl: Url.GET_PAGE_STOCK_LIST,
+      nameParam: 'stockId',
+      columnParam: 'stock_id',
+      disabledInput: false,
+    },
+    {
+      addonBeforeLabel: '分仓 : ',
+      dtoUrlConfig: 'GET_SUB_STOCK_DTO',
+      tableName: 'BdStockCompartment',
+      tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
+      nameParam: 'compartmentId',
+      columnParam: 'compartment_id',
+      disabledInput: true,
+    },
+    {
+      addonBeforeLabel: '仓位 : ',
+      dtoUrlConfig: 'GET_LOCATION_DTO',
+      tableName: 'BdStockLocation',
+      tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
+      nameParam: 'locationId',
+      columnParam: 'location_id',
+      disabledInput: true,
+    },
+    {
+      addonBeforeLabel: '物料 : ',
+      dtoUrlConfig: 'GET_MAT_DTO',
+      tableName: 'BdMaterial',
+      tableUrl: Url.GET_MATERIAL_LIST,
+      nameParam: 'id',
+      columnParam: 'id',
+      disabledInput: false,
+    },
+  ]);
+  //查询赋值dtData
   const getSearchParams = (): SearchParams[] => {
     let getParams: SearchParams[] = [];
-    for (let i = 0; i < props.inputDataList.length; i++) {
+    for (let i = 0; i < inputDataList.value.length; i++) {
       if (formState.value.inputValue[i]) {
         getParams.push({
           table: props.tableName,
-          name: props.inputDataList[i].nameParam,
-          column: props.inputDataList[i].columnParam,
+          name: inputDataList.value[i].nameParam,
+          column: inputDataList.value[i].columnParam,
           link: SearchLink.AND,
           rule: SearchMatchType.LIKE,
           type: SearchDataType.string,
@@ -148,13 +185,14 @@
     basicTableCols.value = TableColum[item.dtoUrlConfig];
     basicTableName.value = item.tableName;
     let filterParams: SearchParams[] = [];
+    //筛选仓库，分仓
     if (item.tableName === 'BdStockLocation' || item.tableName === 'BdStockCompartment') {
       if (formState.value.inputValue[index - 1]) {
         filterParams = [
           {
             table: item.tableName,
-            name: props.inputDataList[index - 1].nameParam,
-            column: props.inputDataList[index - 1].columnParam,
+            name: inputDataList.value[index - 1].nameParam,
+            column: inputDataList.value[index - 1].columnParam,
             link: SearchLink.AND,
             rule: SearchMatchType.EQ,
             type: SearchDataType.string,
@@ -172,13 +210,15 @@
     basicSearchRef.value.close();
     formState.value.inputValue[currIndex] = row;
     if (formState.value.inputValue[currIndex]) {
-      formState.value.currInputDataList[currIndex + 1]['disabledInput'] = false;
+      if (currIndex === 1 || currIndex === 0) {
+        formState.value.currInputDataList[currIndex + 1]['disabledInput'] = false;
+      }
     }
   };
 
   const show = () => {
     isShow.value = true;
-    formState.value.currInputDataList = props.inputDataList;
+    formState.value.currInputDataList = inputDataList.value;
   };
   const close = () => {
     isShow.value = false;
@@ -211,7 +251,7 @@
     height: 2rem;
     margin: 0 30px 0 2px;
   }
-  .content1 {
+  .content {
     //height: 100%;
     display: flex;
     flex-wrap: wrap;
