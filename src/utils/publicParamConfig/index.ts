@@ -261,4 +261,27 @@ export const config = {
       label: '下查',
     },
   ],
+  //退货原因
+  RETURN_REASON: [
+    {
+      value: 'A',
+      label: '7天无理由退货返修',
+    },
+    {
+      value: 'B',
+      label: '品质原因',
+    },
+    {
+      value: 'C',
+      label: '供应商缺货',
+    },
+    {
+      value: 'D',
+      label: '产线品质不良退料',
+    },
+    {
+      value: 'E',
+      label: '其他',
+    },
+  ],
 };

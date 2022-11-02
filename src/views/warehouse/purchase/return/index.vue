@@ -1,21 +1,24 @@
 <template>
-  <div style="height: 100%; padding: 15px">
+  <div class="default-theme" style="padding: 15px; height: 100%">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BdStock"
-        searchNo="仓库编码："
-        searchName="仓库名称："
+        tableName="BsInventoryCount"
+        searchNo="单据编号"
+        :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
-        :columns="stockColumns"
+        :isShowImport="false"
+        :isShowExport="false"
+        :columns="warPurReturnColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
+        tableName="BsInventoryCount"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -28,48 +31,54 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @getList="getList"
+        :modalTitle="modalTitle"
+        @downSearchEvent="downSearchEvent"
+        @upSearchEvent="upSearchEvent"
+        :linkQueryMenuData="linkQueryMenuData"
       />
     </div>
   </div>
 </template>
-
-<script setup lang="ts" name="basic-mainStock-index">
+<script setup lang="ts" name="warehouse-purchase-return-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
+  import {
+    audit,
+    auditBatch,
+    delBatch,
+    delById,
+    downSearch,
+    exportExcel,
+    getDataList,
+    getSearchOption,
+    importFile,
+    unAudit,
+    unAuditBatch,
+    upSearch,
+  } from '/@/api/invCountSheet';
+  import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, stockColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warPurReturnColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
-  import { useGo } from '/@/hooks/web/usePage';
-  import { PageEnum } from '/@/enums/pageEnum';
-  import {
-    getStockOption,
-    auditStockList,
-    auditStockListBatch,
-    delStockListBatch,
-    delStockListById,
-    exportStockList,
-    getStockTable,
-    importStockModel,
-    unAuditStockList,
-    unAuditStockListBatch,
-  } from '/@/api/mainStock';
   import { useMessage } from '/@/hooks/web/useMessage';
+
   const { createMessage } = useMessage();
-  const go = useGo();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
+  //导入上传文件api
+  let importConfig = ref<string>('IMPORT_INV_COUNT');
   //表格事件
   const tableRef: any = ref<String | null>(null);
-  //表格数据
   let tableData = ref<object[]>([]);
   let totalData = ref<number>(0);
+  const go = useGo();
+  import { useGo } from '/@/hooks/web/usePage';
+  import { PageEnum } from '/@/enums/pageEnum';
   //查询组件
   const searchRef: any = ref<String | null>(null);
-  //导入上传文件api
-  let importConfig = ref<string>('IMPORT_STOCK_LIST');
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -77,11 +86,6 @@
     total: 0,
   });
   let getParams: SearchParams[] = [];
-  //获取高级查询字段数据
-  const moreSearchData = ref();
-  getStockOption({ params: '' }).then((res) => {
-    moreSearchData.value = res;
-  });
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
@@ -89,10 +93,10 @@
       getParams = getParams.concat(searchRef.value.getSearchParams());
     }
     //表格查询
-    const res: any = await getStockTable({
+    const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['update_time'],
+        descList: ['BsInventoryCount.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -103,77 +107,94 @@
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
-
+  const linkQueryMenuData: any = ref<any>([]);
+  const modalTitle: any = ref<any>('');
+  //上查
+  const upSearchEvent = async (row) => {
+    const res: any = await upSearch({ params: row });
+    modalTitle.value = '采购退货-上查';
+    linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
+  };
+  //下查
+  const downSearchEvent = async (row) => {
+    const res: any = await downSearch({ params: row });
+    modalTitle.value = '采购退货-下查';
+    linkQueryMenuData.value = res;
+    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
+  };
   //重置
   const resetTable = () => {
     searchRef.value.formState.wlNo = null;
     searchRef.value.formState.wlName = null;
     getList(1);
   };
+
   //添加
   const addTableEvent = () => {
+    let groupId = '';
     go({
-      path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
+      path: PageEnum.WAR_PUR_RETURN_DETAIL,
+      query: {
+        groupId: groupId == '' ? '' : groupId,
+      },
     });
   };
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.MAIN_STOCK_DETAIL_AND_EDIT,
+      path: PageEnum.WAR_PUR_RETURN_DETAIL,
       query: {
         row: row.id,
       },
     });
   };
+
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
-    await delStockListById({ params: row.id });
-    createMessage.success('删除成功');
+    await delById({ params: row });
     await getList();
   };
   //批量删除表格
   const deleteBatchEvent = async (rows: any[]) => {
-    const ids = rows.map((item) => {
-      return item.id;
-    });
-    const res = await delStockListBatch({ params: ids });
+    const res = await delBatch({ params: rows });
     await tableRef.value.computeData(res);
     await getList();
   };
   //审核单条
   const auditRowEvent = async (row) => {
-    await auditStockList({
+    await audit({
       params: row,
     });
-    createMessage.success('审核成功');
     await getList();
+    createMessage.success('操作成功');
   };
-  //单条反审核
-  const unAuditRowEvent = async (row: any) => {
-    await unAuditStockList({
-      params: row,
-    });
-    createMessage.success('反审核成功');
-    await getList();
-  };
-  //批量审核事件
-  const auditBatchEvent = async (rows: any[]) => {
+
+  //审核事件
+  const auditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    const res = await auditStockListBatch({
+    const res = await auditBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
     await getList();
   };
-
+  //单条反审核
+  const unAuditRowEvent = async (row: any) => {
+    await unAudit({
+      params: row,
+    });
+    await getList();
+    createMessage.success('操作成功');
+  };
   //批量反审核
-  const unAuditBatchEvent = async (rows: any[]) => {
+  const unAuditBatchEvent = async (rows) => {
     const ids = rows.map((item) => {
       return item.id;
     });
-    const res = await unAuditStockListBatch({
+    const res = await unAuditBatch({
       params: ids,
     });
     await tableRef.value.computeData(res);
@@ -183,11 +204,11 @@
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        importStockModel({
+        importFile({
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '仓库信息导入模板.xls', data: res };
+            const data = { title: '采购退货导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -200,16 +221,16 @@
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
       return new Promise((resolve, reject) => {
-        exportStockList({
+        exportExcel({
           params: {
             list: getParams,
-            fileName: '仓库列表',
+            fileName: '采购退货',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '仓库列表信息.xls', data: res };
+            const data = { title: '采购退货.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -218,7 +239,16 @@
       });
     };
   };
+  //导入文件刷新
+  // const refreshTable = () => {
+  //   getList();
+  // };
 
+  //获取高级查询字段数据
+  const moreSearchData = ref();
+  getSearchOption({ params: '' }).then((res) => {
+    moreSearchData.value = res;
+  });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     getList();

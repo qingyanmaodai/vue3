@@ -257,7 +257,6 @@ export const invCountGainOfDetailColumns = [
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
-
 //盘点单详情
 export const invCountSheetOfDetailColumns = [
   { type: 'checkbox', width: 50 },
@@ -451,6 +450,125 @@ export const invCountLossOfDetailColumns = [
     title: '盘亏数量',
     slots: { default: 'loss' },
     className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStock.name',
+    title: '仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
+      param: {
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockCompartment.name',
+    title: '分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_STOCK_DTO',
+      param: {
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockLocation.name',
+    title: '仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
+      param: {
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
+  { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
+];
+//采购退货详情明细
+export const warPurReturnOfDetailColumns = [
+  { type: 'checkbox', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
+  {
+    field: 'bdMaterial.number',
+    title: '物料编码',
+    sortable: true,
+    width: 150,
+    params: {
+      tableName: 'bdMaterial', //物料信息表名
+      list: 'GET_MATERIAL_LIST', //物料信息表格数据
+      select: 'GET_MAT_DTO', //基本信息下拉框+表头
+      param: {
+        matId: 'bdMaterial',
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
+    field: 'bdMaterial.name',
+    title: '物料名称',
+    className: 'disableProp',
+    sortable: true,
+    width: 150,
+  },
+  {
+    field: 'bdMaterial.model',
+    title: '规格型号',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.baseUnitName',
+    title: '基本单位',
+    className: 'disableProp',
+    // editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.weightUnitName',
+    title: '重量单位',
+    className: 'disableProp',
+    // editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'countNum',
+    title: '实退数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },

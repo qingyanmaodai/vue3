@@ -127,6 +127,9 @@
         <template #attr="{ row }">
           <Tag v-if="row.attr">{{ formatData(row.attr, config['MATERIAL_ATTR']) }}</Tag>
         </template>
+        <template #SupplierLevel="{ row }">
+          <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
+        </template>
       </vxe-grid>
       <vxe-pager
         v-model:current-page="pages.currentPage"

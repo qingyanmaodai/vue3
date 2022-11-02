@@ -383,6 +383,38 @@ export const TableColum = {
       slots: { default: 'status' },
     },
   ],
+  GET_SUPPLIER_DTO: [
+    { type: 'checkbox', width: 50 },
+    { type: 'seq', title: '序号', width: 50 },
+    { field: 'number', title: '编码', width: 120, sortable: true },
+    { field: 'name', title: '供应商', sortable: true, width: 120 },
+    { field: 'shortName', title: '供应商简称', sortable: true, width: 120 },
+    { field: 'contact', title: '联系人', sortable: true, width: 120 },
+    { field: 'phone', title: '联系电话', sortable: true, width: 120 },
+    { field: 'bdEmployee.name', title: '负责人', sortable: true, width: 120 },
+    { field: 'address', title: '地址', sortable: true, width: 120 },
+    {
+      field: 'level',
+      title: '等级',
+      sortable: true,
+      slots: { default: 'SupplierLevel' },
+      width: 120,
+    },
+    { field: 'bdCountryCountry.name', title: '国家', sortable: true, width: 120 },
+    { field: 'bdCountryProvincial.name', title: '省', sortable: true, width: 120 },
+    { field: 'bdCountryMunicipal.name', title: '市', sortable: true, width: 120 },
+    { field: 'bdCountryDistrict.name', title: '区', sortable: true, width: 120 },
+    { field: 'bdSupplierGroup.name', title: '供应商分组', sortable: true, width: 120 },
+    { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+    { field: 'updateTime', title: '修改日期', sortable: true, width: 160 },
+    {
+      field: 'bsStatus',
+      title: '业务状态',
+      slots: { default: 'status' },
+      width: 120,
+    },
+  ],
+
   //检验方案
   GET_EXA_PROJECT_DTO: [
     { type: 'seq', title: '序号', width: 50 },
