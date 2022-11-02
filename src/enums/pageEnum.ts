@@ -35,6 +35,8 @@ export enum PageEnum {
   INV_COUNT_LOSS_DETAIL = '/inventory/countLoss/detail',
   //盘点单详情页
   INV_COUNT_SHEET_DETAIL = '/inventory/countSheet/detail',
+  //采购订单详情页
+  WAR_PUR_ORDERS_DETAIL = '/warehouse/purchase/orders/detail',
   //采购退货详情页
   WAR_PUR_RETURN_DETAIL = '/warehouse/purchase/return/detail',
 }

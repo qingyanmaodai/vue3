@@ -55,12 +55,12 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="负责人：" ref="empId" name="empId" class="item">
+                    <a-form-item label="采购员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择负责人'"
-                        label="负责人"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择采购员'"
+                        label="采购员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -75,12 +75,12 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="退货原因：" ref="reason" name="reason" class="item">
+                    <a-form-item label="验收方式：" ref="reason" name="reason" class="item">
                       <Select
                         allowClear
                         v-model:value="formState.reason"
                         class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择验收方式'"
                         :options="config.RETURN_REASON"
                         :disabled="formState.bsStatus === 'B'"
                       />
@@ -172,7 +172,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warPurReturnOfDetailColumns"
+            :columns="warPurOrdersOfDetailColumns"
             :gridOptions="RuleOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -198,10 +198,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-purchase-return-detail">
+<script lang="ts" setup name="warehouse-purchase-orders-detail">
   import {
     ruleOfExaGridOptions,
-    warPurReturnOfDetailColumns,
+    warPurOrdersOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {

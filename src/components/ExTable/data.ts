@@ -466,7 +466,35 @@ export const invCountSheetColumns = [
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
-//采购退货
+//采购订单
+export const warPurOrdersColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'empName', title: '负责人', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '采购日期', width: 120, sortable: true },
+  { field: 'supId', title: '供应商', width: 120, sortable: true },
+  { field: 'countNum', title: '采购数量', width: 120, sortable: true },
+  { field: 'bsDate11', title: '交货日期', width: 120, sortable: true },
+  { field: 'stockName', title: '仓库', width: 120, sortable: true },
+  { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
+  { field: 'locationName', title: '仓位', width: 120, sortable: true },
+  // { field: 'way', title: '退货方式', width: 120, slots: { default: 'way' }, sortable: true },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+//采购退货单
 export const warPurReturnColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },

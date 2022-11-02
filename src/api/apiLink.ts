@@ -288,6 +288,28 @@ export enum Url {
   GET_SYSTEM_IS_NE_STOCK = '/stock/bd-system/is-ne-stock', //查询是否允许负库存
   GET_SYSTEM_STOCK_DIS = '/stock/bd-system/stock-dis', //查询仓库维度
   UPDATE_SYSTEM = '/stock/bd-system/update', //更新系统参数
+
+  // 采购订单
+  AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/audit', //审核
+  BATCH_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/batch-audit', //批量审核
+  UN_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/un-audit', //反审核
+  UN_BATCH_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/batch-un-audit', //批量反审核
+  DELETE_PURCHASE_ORDER = '/wms/purchaseOrder/delete', //删除
+  BATCH_DELETE_PURCHASE_ORDER = '/wms/purchaseOrder/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/delete-with-detail', //删除含详情信息
+  GET_PAGE_PURCHASE_ORDER_LIST = '/wms/purchaseOrder/list', //分页查询--获取列表
+  GET_PURCHASE_ORDER_DTO = '/wms/purchaseOrder/query-dto', //获取实体信息
+  GET_ONE_PURCHASE_ORDER = '/wms/purchaseOrder/query-one', //查询单条
+  IMPORT_PURCHASE_ORDER = 'http://192.168.200.136:9999/wms/purchaseOrder/import-list', //导入
+  IMPORT_MODEL_PURCHASE_ORDER = '/wms/purchaseOrder/import-model', //导入模板下载
+  EXPORT_PURCHASE_ORDER = '/wms/purchaseOrder/export-list', //导出
+  ADD_PURCHASE_ORDER = '/wms/purchaseOrder/save', //添加
+  ADD_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/save-with-detail', //添加含详情信息
+  UPDATE_PURCHASE_ORDER = '/wms/purchaseOrder/update', //编辑
+  PUSHDOWN_PURCHASE_ORDER = '/wms/purchaseOrder/push/', //下推
+  DOWN_SEARCH_PURCHASE_ORDER = '/wms/purchaseOrder/down-search', //下查
+  UP_SEARCH_PURCHASE_ORDER = '/wms/purchaseOrder/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
