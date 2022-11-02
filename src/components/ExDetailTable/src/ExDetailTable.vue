@@ -254,7 +254,7 @@
           backgroundColor: 'rgb(225 225 224)',
         };
       case column.field == 'bdStockLocation.name' &&
-        (row.stockDis == 'B' || !row.bdStockCompartment.name):
+        (row.stockDis !== 'C' || !row.bdStockCompartment.name):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

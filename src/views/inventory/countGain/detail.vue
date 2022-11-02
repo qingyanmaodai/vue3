@@ -478,6 +478,14 @@
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
           r['stockDis'] = stockDis.value;
+          if (r.bdStockCompartment&&r.bdStockCompartment.name) {
+            r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
+            r.bdStockCompartment.name = stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+          }
+          if (r.bdStockLocation&&r.bdStockLocation.name) {
+            r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
+            r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+          }
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);

@@ -236,6 +236,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
+  let stockDis = ref<string>(''); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -307,9 +308,17 @@
       );
     });
     res.records.forEach((item, index) => {
+      item['stockDis'] = stockDis.value;
       item.bdMaterial = bdMaterial[index];
       item.bsStatus = 'A';
       item.matId = item.id;
+      item.compartmentId =
+        stockDis.value !== 'A' && item.bdStockCompartment ? item.compartmentId : null;
+      item.bdStockCompartment.name =
+        stockDis.value !== 'A' && item.bdStockCompartment ? item.bdStockCompartment.name : null;
+      item.locationId = stockDis.value === 'C' && item.bdStockLocation ? item.locationId : null;
+      item.bdStockLocation.name =
+        stockDis.value === 'C' && item.bdStockLocation ? item.bdStockLocation.name : null;
     });
     let data = cloneDeep(res.records);
     detailTableData.value = data;
@@ -472,7 +481,6 @@
   const back = () => {
     router.go(-1);
   };
-  let stockDis = ref<string>(''); //仓库维度
   //获取仓库维度
   const getStockDisData = async () => {
     const arr: any = await getStockDis({});
@@ -488,6 +496,14 @@
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
           r['stockDis'] = stockDis.value;
+          if (r.bdStockCompartment&&r.bdStockCompartment.name) {
+            r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
+            r.bdStockCompartment.name = stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+          }
+          if (r.bdStockLocation&&r.bdStockLocation.name) {
+            r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
+            r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+          }
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
@@ -523,10 +539,11 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
         data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId = stockDis.value !== 'A' && res.compartmentId ? res.compartmentId : null;
+        data.compartmentId =
+          stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
         data.bdStockCompartment.name =
           stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = stockDis.value === 'C' && res.locationId ? res.locationId : null;
+        data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
         data.bdStockLocation.name =
           stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
