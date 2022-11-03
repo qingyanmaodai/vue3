@@ -477,7 +477,7 @@ export const warPurOrdersColumns = [
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '业务日期', width: 120, sortable: true },
-  { field: 'supId', title: '供应商', width: 120, sortable: true },
+  { field: 'supName', title: '供应商', width: 120, sortable: true },
   { field: 'countNum', title: '采购数量', width: 120, sortable: true },
   { field: 'stockName', title: '仓库', width: 120, sortable: true },
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },

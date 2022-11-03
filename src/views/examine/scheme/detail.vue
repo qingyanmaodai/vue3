@@ -192,7 +192,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="exaProjectOfDetailColumns"
-            :gridOptions="detailOfExaGridOptions"
+            :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @cellClickTableEvent="cellClickTableEvent"
@@ -255,7 +255,7 @@
   import { getInventoryList } from '/@/api/realTimeInv';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
-  const ADetailOfExaGridOptions = detailOfExaGridOptions;
+  const DetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;

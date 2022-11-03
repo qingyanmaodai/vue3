@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseOrder"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -18,7 +18,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseOrder"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -56,7 +56,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
-  } from '/@/api/invCountSheet';
+  } from '/@/api/warPurchase/orders';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warPurOrdersColumns } from '/@/components/ExTable/data';
@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT');
+  let importConfig = ref<string>('IMPORT_PURCHASE_ORDER');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
@@ -96,7 +96,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsInventoryCount.update_time'],
+        descList: ['BsPurchaseOrder.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -112,14 +112,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '采购退货-上查';
+    modalTitle.value = '采购订单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '采购退货-下查';
+    modalTitle.value = '采购订单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -208,7 +208,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '采购退货导入模板.xls', data: res };
+            const data = { title: '采购订单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -224,13 +224,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '采购退货',
+            fileName: '采购订单',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '采购退货.xls', data: res };
+            const data = { title: '采购订单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -239,10 +239,6 @@
       });
     };
   };
-  //导入文件刷新
-  // const refreshTable = () => {
-  //   getList();
-  // };
 
   //获取高级查询字段数据
   const moreSearchData = ref();

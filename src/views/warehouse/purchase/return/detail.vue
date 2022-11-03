@@ -173,7 +173,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="warPurReturnOfDetailColumns"
-            :gridOptions="detailOfExaGridOptions"
+            :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
@@ -241,7 +241,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
-  const ADetailOfExaGridOptions = detailOfExaGridOptions;
+  const DetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;

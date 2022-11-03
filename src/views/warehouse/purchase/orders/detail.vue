@@ -161,7 +161,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="warPurOrdersOfDetailColumns"
-            :gridOptions="detailOfExaGridOptions"
+            :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
@@ -203,7 +203,6 @@
     DatePicker,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -213,7 +212,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, InvCountSheetEntity } from '/@/api/invCountSheet';
+  import { add, audit, unAudit, getOneById, purchaseOrdersEntity } from '/@/api/warPurchase/orders';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -229,7 +228,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
-  const ADetailOfExaGridOptions = detailOfExaGridOptions;
+  const DetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;
@@ -252,7 +251,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: InvCountSheetEntity = {
+  const formData: purchaseOrdersEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -277,7 +276,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    countNum: [{ required: true, message: '请输入实退数量' }],
+    countNum: [{ required: true, message: '请输入采购数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
@@ -339,11 +338,11 @@
     });
   };
 
-  // 负责人弹框选放大镜事件
+  // 供应商、负责人输入框弹框选放大镜事件
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
-   * 负责人弹窗
-   * @param dtoUrlConfig  获取负责人查询链接属性
+   * 供应商、负责人弹窗
+   * @param dtoUrlConfig  获取供应商、负责人查询链接属性
    * @param tableName  指向的表名根据DTO链接可以查询到
    * @param tableUrl  表格列表数据链接
    * @param dataParam 当前选中的数据包
