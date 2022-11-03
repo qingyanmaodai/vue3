@@ -53,7 +53,7 @@ export const gridOptions = reactive<VxeGridProps>({
   data: [],
 });
 
-export const linkQueryGridOptions = reactive<VxeGridProps>({
+export const notToolInGridOptions = reactive<VxeGridProps>({
   border: true,
   align: 'center',
   loading: false,

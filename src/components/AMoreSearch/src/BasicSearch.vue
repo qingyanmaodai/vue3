@@ -5,9 +5,12 @@
     show-zoom
     resize
     :position="{ top: 40 }"
-    width="55%"
+    width="65%"
     @close="handleClose"
   >
+    <template #title>
+      <span>基础信息查询</span>
+    </template>
     <div class="form-style">
       <Row class="row">
         <a-space>
@@ -107,52 +110,23 @@
           </span>
         </a-space>
       </Row>
-      <!--          table表单                  -->
-      <vxe-grid
-        ref="xGrid"
-        v-bind="props.gridOptions"
-        :data="tableData"
+    </div>
+    <div>
+      <ExTable
+        :isShowImport="false"
+        :isShowExport="false"
         :columns="props.tableCols"
-        :export-config="{}"
-        @cell-dblclick="cellClickEvent"
-      >
-        <template #status="{ row }">
-          <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-            formatData(row.bsStatus, config['DATA_STATUS'])
-          }}</Tag>
-        </template>
-        <template #bsType="{ row }">
-          <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
-        </template>
-        <template #attr="{ row }">
-          <Tag v-if="row.attr">{{ formatData(row.attr, config['MATERIAL_ATTR']) }}</Tag>
-        </template>
-        <template #SupplierLevel="{ row }">
-          <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
-        </template>
-      </vxe-grid>
-      <vxe-pager
-        v-model:current-page="pages.currentPage"
-        v-model:page-size="pages.pageSize"
-        :total="pages.total"
-        :layouts="[
-          'PrevJump',
-          'PrevPage',
-          'JumpNumber',
-          'NextPage',
-          'NextJump',
-          'Sizes',
-          'FullJump',
-          'Total',
-        ]"
-        @page-change="tablePagerChange"
+        :gridOptions="notToolInGridOptions"
+        :totalData="pages.total"
+        :tableData="tableData"
+        ref="tableRef"
+        height="90%"
+        :urlConfig="listUrl"
+        @getList="getList"
+        @basicClickEvent="basicCellClickEvent"
       />
     </div>
-    <template #title>
-      <span>基础信息查询</span>
-    </template>
   </vxe-modal>
-  <!--    高级查询弹框     -->
   <MoreSearchByBasic
     v-if="isShow"
     ref="childMoreSearchRef"
@@ -160,12 +134,10 @@
     :control="controlOfBasic"
     :tableName="basicTableName"
   />
-
-  <!--  基础信息查询-->
   <BasicSearch
     v-if="isShow"
     @basicClickEvent="basicClickEvent"
-    :gridOptions="basicGridOptions"
+    :gridOptions="notToolInGridOptions"
     ref="childBasicSearchRef"
     :control="basicControl"
     :tableCols="basicTableCols"
@@ -186,11 +158,12 @@
   } from 'ant-design-vue';
   import { reactive, ref, toRef } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
+  import { ExTable } from '/@/components/ExTable';
+  import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { BasicSearch, MoreSearch } from '/@/components/AMoreSearch';
-  import { basicGridOptions } from '/@/components/AMoreSearch/data';
   const MoreSearchByBasic = MoreSearch;
   const ASpace = Space;
   const AButton = Button;
@@ -356,8 +329,8 @@
 
   //双击单元格事件
   const emit = defineEmits<Emits>();
-  const cellClickEvent: VxeGridEvents.CellClick = (row) => {
-    emit('basicClickEvent', row.row);
+  const basicCellClickEvent = (row) => {
+    emit('basicClickEvent', row);
   };
 
   //关闭
@@ -367,7 +340,7 @@
   };
   //查询按钮
   const searchEvent = async () => {
-    await getList(listUrl.value, 1);
+    await getList(1, pages.pageSize,listUrl.value);
   };
   //重置
   const resetSearch = async () => {
@@ -375,18 +348,12 @@
   };
   //分页信息
   const pages = reactive({
-    currentPage: 0,
+    currentPage: 1,
     pageSize: 10,
     total: 0,
   });
-  //分页处理
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
-    await getList(listUrl.value, currentPage);
-  };
 
-  const getList = async (url, currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async ( currPage = 1, pageSize = pages.pageSize, url) => {
     getParams = [];
     const data = defaultParam.value;
     if (filterParams.value && filterParams.value.length > 0) {
@@ -445,7 +412,7 @@
   const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    getList(tableUrl);
+    getList(1, pages.pageSize,tableUrl);
   };
   const filterParams = ref<SearchParams[]>([]);
   /**

@@ -19,7 +19,7 @@
               placeholder="请选择"
               :show="formState.bsStatus !== 'B'"
               v-model:value="formState.inputValue[index]"
-              :disabled="formState.currInputDataList[index].disabledInput"
+              :disabled="inputDataList[index].disabledInput"
               @search="onSearch(item, index)"
               @clear="onClear(item, index)"
           /></div>
@@ -83,14 +83,12 @@
     tableName: '',
   });
   interface FormState {
-    currInputDataList: Array<any>;
     inputValue: Array<any>;
     bsStatus?: string;
   }
 
   const defaultF: FormState = {
     inputValue: [],
-    currInputDataList: [],
   };
   const defaultData: FormState = cloneDeep(defaultF);
 
@@ -162,12 +160,12 @@
     if (item.tableName == 'BdStock') {
       formState.value.inputValue[1] = undefined;
       formState.value.inputValue[2] = undefined;
-      formState.value.currInputDataList[1]['disabledInput'] = true;
-      formState.value.currInputDataList[2]['disabledInput'] = true;
+      inputDataList.value[1]['disabledInput'] = true;
+      inputDataList.value[2]['disabledInput'] = true;
     }
     if (item.tableName == 'BdStockCompartment') {
       formState.value.inputValue[2] = undefined;
-      formState.value.currInputDataList[2]['disabledInput'] = true;
+      inputDataList.value[2]['disabledInput'] = true;
     }
     formState.value.inputValue[index] = undefined;
   };
@@ -211,14 +209,13 @@
     formState.value.inputValue[currIndex] = row;
     if (formState.value.inputValue[currIndex]) {
       if (currIndex === 1 || currIndex === 0) {
-        formState.value.currInputDataList[currIndex + 1]['disabledInput'] = false;
+        inputDataList.value[currIndex + 1]['disabledInput'] = false;
       }
     }
   };
 
   const show = () => {
     isShow.value = true;
-    formState.value.currInputDataList = inputDataList.value;
   };
   const close = () => {
     isShow.value = false;
@@ -232,6 +229,11 @@
   //重置方法
   const resetEvent = () => {
     formState.value = cloneDeep(defaultData);
+    inputDataList.value.map((item) => {
+      if (item.tableName === 'BdStockLocation' || item.tableName === 'BdStockCompartment') {
+        item['disabledInput'] = true;
+      }
+    });
   };
   defineExpose({
     show,

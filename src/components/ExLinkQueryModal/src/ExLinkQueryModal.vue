@@ -37,7 +37,7 @@
           :isShowExport="false"
           :tableName="props.tableName"
           :columns="tableColumns"
-          :gridOptions="linkQueryGridOptions"
+          :gridOptions="notToolInGridOptions"
           :totalData="totalData"
           :tableData="tableData"
           :height="height"
@@ -60,7 +60,7 @@
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
   import { getUpDownSearchList } from '/@/enums/routeEnum';
-  import { linkQueryGridOptions } from '/@/components/ExTable/data';
+  import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { cloneDeep } from 'lodash-es';

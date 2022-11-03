@@ -13,6 +13,7 @@
     :height="props.height"
     auto-resize
     :column-config="{ resizable: true }"
+    @cell-dblclick="cellClickEvent"
   >
     <template #toolbar_buttons>
       <div style="width: 100%; margin-left: 10px">
@@ -223,7 +224,14 @@
 </template>
 
 <script lang="ts" setup>
-  import { Pager, VXETable, VxeGridInstance, VxeTablePropTypes, VxePagerEvents } from 'vxe-table';
+  import {
+    Pager,
+    VXETable,
+    VxeGridInstance,
+    VxeTablePropTypes,
+    VxePagerEvents,
+    VxeGridEvents,
+  } from 'vxe-table';
   import { reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
@@ -270,6 +278,7 @@
     importConfig?: string;
     modalTitle?: string;
     linkQueryMenuData?: any;
+    urlConfig?: string;
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
@@ -297,15 +306,19 @@
     (e: 'delBatchEvent', row: any): void;
     (e: 'exportTable'): void;
     (e: 'importModelEvent'): void;
-    (e: 'getList', currPage?: number, pageSize?: number): void; //刷新表格
+    (e: 'getList', currPage?: number, pageSize?: number, url?: string): void; //刷新表格
     (e: 'auditRowEvent', row: any): void;
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
+    (e: 'basicClickEvent', data: object): void; //表格双击事件
   };
   const emit = defineEmits<Emits>();
+  const cellClickEvent: VxeGridEvents.CellClick = (row) => {
+    emit('basicClickEvent', row.row);
+  };
   const xGrid = ref<VxeGridInstance>();
 
   const visibleUploadModal: any = ref<boolean>(false);
@@ -320,10 +333,10 @@
     pageSize: 10,
     total: 0,
   });
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize}) => {
     pages.currentPage = currentPage;
     pages.pageSize = pageSize;
-    emit('getList', currentPage, pageSize);
+    emit('getList', currentPage, pageSize, props.urlConfig);
   };
   //上传文件
   interface FileItem {
