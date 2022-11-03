@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import { VxeGridProps } from 'vxe-table';
 
-export const ruleOfExaGridOptions = reactive<VxeGridProps>({
+export const detailOfExaGridOptions = reactive<VxeGridProps>({
   border: true,
   keepSource: true,
   align: 'center',
@@ -566,6 +566,21 @@ export const warPurOrdersOfDetailColumns = [
     sortable: true,
   },
   {
+    field: 'bd',
+    title: '交货日期',
+    // className: 'disableProp',
+    // editRender: { name: '$input' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'countNum11',
+    title: '单价',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    width: 150,
+    sortable: true,
+  },
+  {
     field: 'countNum',
     title: '采购数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
@@ -573,32 +588,11 @@ export const warPurOrdersOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'bdMaterial11.number',
-    title: '供应商编码',
-    sortable: true,
+    field: 'countNum111',
+    title: '金额',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
-    params: {
-      tableName: 'bdMaterial', //物料信息表名
-      list: 'GET_MATERIAL_LIST', //物料信息表格数据
-      select: 'GET_MAT_DTO', //基本信息下拉框+表头
-      param: {
-        matId: 'bdMaterial',
-        stockId: 'bdStock',
-        compartmentId: 'bdStockCompartment',
-        locationId: 'bdStockLocation',
-      },
-    },
-    editRender: { name: '$input' },
-    slots: {
-      edit: 'model',
-    },
-  },
-  {
-    field: 'bdMaterial11.name',
-    title: '供应商名称',
-    className: 'disableProp',
     sortable: true,
-    width: 150,
   },
   {
     field: 'bdStock.name',

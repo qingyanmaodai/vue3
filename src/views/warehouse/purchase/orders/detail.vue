@@ -75,32 +75,6 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="验收方式：" ref="reason" name="reason" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.reason"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择验收方式'"
-                        :options="config.RETURN_REASON"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
-                      <a-date-picker
-                        :showToday="false"
-                        class="select"
-                        valueFormat="YYYY-MM-DD HH:mm:ss"
-                        format="YYYY-MM-DD"
-                        v-model:value="formState.bsDate"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col :span="8">
                     <a-form-item label="供应商：" ref="supId" name="supId" class="item">
                       <ExInput
                         autocomplete="off"
@@ -120,6 +94,20 @@
                       />
                     </a-form-item>
                   </Col>
+                  <Col :span="8">
+                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
+                      <a-date-picker
+                        :showToday="false"
+                        class="select"
+                        valueFormat="YYYY-MM-DD HH:mm:ss"
+                        format="YYYY-MM-DD"
+                        v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -173,7 +161,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="warPurOrdersOfDetailColumns"
-            :gridOptions="RuleOfExaGridOptions"
+            :gridOptions="detailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
@@ -200,7 +188,7 @@
 </template>
 <script lang="ts" setup name="warehouse-purchase-orders-detail">
   import {
-    ruleOfExaGridOptions,
+    detailOfExaGridOptions,
     warPurOrdersOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
@@ -241,7 +229,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
-  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const ADetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;

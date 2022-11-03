@@ -192,7 +192,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="exaProjectOfDetailColumns"
-            :gridOptions="RuleOfExaGridOptions"
+            :gridOptions="detailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @cellClickTableEvent="cellClickTableEvent"
@@ -218,7 +218,7 @@
 </template>
 <script lang="ts" setup>
   import {
-    ruleOfExaGridOptions,
+    detailOfExaGridOptions,
     exaProjectOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
@@ -255,7 +255,7 @@
   import { getInventoryList } from '/@/api/realTimeInv';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
-  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const ADetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;

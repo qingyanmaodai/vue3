@@ -153,7 +153,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="invCountLossOfDetailColumns"
-            :gridOptions="RuleOfExaGridOptions"
+            :gridOptions="detailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
@@ -180,7 +180,7 @@
 </template>
 <script lang="ts" setup name="inventory-countLoss-detail">
   import {
-    ruleOfExaGridOptions,
+    detailOfExaGridOptions,
     invCountLossOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
@@ -221,7 +221,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
-  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const ADetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;

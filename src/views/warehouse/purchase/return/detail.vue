@@ -173,7 +173,7 @@
         <pane :size="100 - paneSize">
           <ExDetailTable
             :columns="warPurReturnOfDetailColumns"
-            :gridOptions="RuleOfExaGridOptions"
+            :gridOptions="detailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
@@ -200,7 +200,7 @@
 </template>
 <script lang="ts" setup name="warehouse-purchase-return-detail">
   import {
-    ruleOfExaGridOptions,
+    detailOfExaGridOptions,
     warPurReturnOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
@@ -241,7 +241,7 @@
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
-  const RuleOfExaGridOptions = ruleOfExaGridOptions;
+  const ADetailOfExaGridOptions = detailOfExaGridOptions;
   const paneSize = ref<number>(50);
   const AForm = Form;
   const AFormItem = FormItem;
