@@ -111,6 +111,7 @@
       <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
     </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
+    <template #bsDate="{ row }">{{ formatDate(row.bsDate) }}11 </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton
@@ -247,6 +248,7 @@
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import { useGo } from '/@/hooks/web/usePage';
+  import XEUtils from 'xe-utils';
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -333,7 +335,7 @@
     pageSize: 10,
     total: 0,
   });
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize}) => {
+  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
     pages.currentPage = currentPage;
     pages.pageSize = pageSize;
     emit('getList', currentPage, pageSize, props.urlConfig);
@@ -402,7 +404,13 @@
     }
     return res ? res.label : '';
   };
-
+  const formatDate = (value: any) => {
+    if (value) {
+      return XEUtils.toDateString(value, 'yyyy-MM-dd');
+    } else {
+      return '';
+    }
+  };
   //操作结果输出
   const computeData = (res) => {
     if (res) {

@@ -58,6 +58,16 @@
         @clear="onClear(row, column)"
       />
     </template>
+    <template #date="{ row }">
+      <DatePicker
+        placeholder="请选择交货日期"
+        :showToday="true"
+        class="select"
+        valueFormat="YYYY-MM-DD HH:mm:ss"
+        format="YYYY-MM-DD"
+        v-model.lazy:value="row.dlDate"
+      />
+    </template>
     <template #open="{ row }">
       <Switch
         :disabled="row.bsStatus === 'B'"
@@ -74,7 +84,9 @@
     <template #loss="{ row }">
       <span>{{ row.loss }}</span>
     </template>
-
+    <template #totalPrices="{ row }">
+      <span>{{ row.totalPrices }}</span>
+    </template>
     <template #isRequire="{ row }">
       <Switch
         :disabled="row.bsStatus === 'B'"
@@ -105,7 +117,7 @@
   import { onMounted, PropType, reactive, ref } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { ExInput } from '/@/components/ExInput';
-  import { Button, Switch } from 'ant-design-vue';
+  import { Button, Switch, DatePicker } from 'ant-design-vue';
   import { config } from '/@/utils/publicParamConfig';
   import {
     ControlSet,

@@ -5,6 +5,7 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
   border: true,
   keepSource: true,
   align: 'center',
+  // syncResize: true,
   loading: false,
   columnConfig: {
     resizable: true,
@@ -12,6 +13,7 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
   rowConfig: {
     isHover: true,
   },
+
   // sortConfig: {
   //   trigger: 'cell',
   //   defaultSort: { field: 'sort', order: 'asc' },
@@ -565,32 +567,50 @@ export const warPurOrdersOfDetailColumns = [
     width: 150,
     sortable: true,
   },
+  // {
+  //   field: 'select',
+  //   title: '下拉选择类型',
+  //   sortable: true,
+  //   width: 222,
+  //   slots: { edit: 'select' },
+  //   editRender: { name: '$select' },
+  // },
   {
-    field: 'bd',
+    field: 'dlDate',
     title: '交货日期',
-    // className: 'disableProp',
     // editRender: { name: '$input' },
+    // slots: {
+    //   edit: 'date',
+    // },
+    // slots: { default: 'date' },
+
+    editRender: {
+      name: '$input',
+      props: { clearable: 'true', valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
+    },
     width: 150,
     sortable: true,
   },
   {
-    field: 'countNum11',
+    field: 'prices',
     title: '单价',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
     sortable: true,
   },
   {
-    field: 'countNum',
+    field: 'num',
     title: '采购数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },
   {
-    field: 'countNum111',
+    field: 'totalPrices',
     title: '金额',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    className: 'disableProp',
+    // editRender: { name: '$input', props: { type: 'float', min: 0 } },
+    slots: { default: 'totalPrices' },
     width: 150,
     sortable: true,
   },
