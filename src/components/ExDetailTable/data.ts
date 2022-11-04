@@ -586,7 +586,7 @@ export const warPurOrdersOfDetailColumns = [
 
     editRender: {
       name: '$input',
-      props: { clearable: 'true', valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
+      props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
     },
     width: 150,
     sortable: true,

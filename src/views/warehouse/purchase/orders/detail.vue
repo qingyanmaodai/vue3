@@ -62,15 +62,15 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择采购员'"
                         label="采购员"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.empName"
+                        :value="formState.bdEmployee"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
                             'empId',
-                            'empName',
+                            'bdEmployee',
                           ])
                         "
-                        @clear="onClear(['empId', 'empName'])"
+                        @clear="onClear(['empId', 'bdEmployee'])"
                       />
                     </a-form-item>
                   </Col>
@@ -82,15 +82,15 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
                         label="供应商"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.supName"
+                        :value="formState.bdSupplier"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_SUPPLIER_DTO', 'BdSupplier', Url.SUPPLIER_GET_DATA, [
                             'supId',
-                            'supName',
+                            'bdSupplier',
                           ])
                         "
-                        @clear="onClear(['supId', 'supName'])"
+                        @clear="onClear(['supId', 'bdSupplier'])"
                       />
                     </a-form-item>
                   </Col>
@@ -365,7 +365,9 @@
   const basicClickEvent = async (row) => {
     basicSearchRef.value.close();
     formState.value[currDataParam[0]] = row.id;
-    formState.value[currDataParam[1]] = row.name;
+    formState.value[currDataParam[1]] = {};
+    formState.value[currDataParam[1]].id = row.id;
+    formState.value[currDataParam[1]].name = row.name;
   };
   //接受参数
   let dataId = useRoute().query.row?.toString() || '';

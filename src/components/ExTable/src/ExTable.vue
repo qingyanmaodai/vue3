@@ -111,7 +111,7 @@
       <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
     </template>
     <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
-    <template #bsDate="{ row }">{{ formatDate(row.bsDate) }}11 </template>
+    <template #bsDate="{ row }">{{ formatDate(row.bsDate) }} </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton

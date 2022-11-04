@@ -14,15 +14,16 @@ import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
+import { SupplierGroupEntity } from '/@/api/supplierGroup';
 
 export interface purchaseOrdersEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
-  formatBsDate?: string;
   empId?: string;
-  empName?: string;
+  // empName?: string;
   bdEmployee?: EmployeeEntity;
+  bdSupplier?: SupplierGroupEntity;
   way?: string;
   dtData?: purOrdersDetailEntity[];
   dtLk?: InvCountEntity;
