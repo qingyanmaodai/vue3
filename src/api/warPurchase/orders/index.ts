@@ -21,7 +21,8 @@ export interface purchaseOrdersEntity extends PublicModel {
   number: string;
   bsDate?: string | Moment;
   empId?: string;
-  // empName?: string;
+  empName?: string;
+  supplierName?: string;
   bdEmployee?: EmployeeEntity;
   bdSupplier?: SupplierGroupEntity;
   way?: string;
