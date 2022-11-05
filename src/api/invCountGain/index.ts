@@ -143,6 +143,25 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
   );
 }
 /**
+ * 下推
+ */
+export function pushDown(
+  json: RequestData<object>,
+  PushDownTableName: string, //可下推的表名
+  mode: ErrorMessageMode = 'message',
+) {
+  return defHttp.post<any>(
+    {
+      url: Url.PUSHDOWN_INV_COUNT_GAIN + PushDownTableName,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
  * 查询单条
  */
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {

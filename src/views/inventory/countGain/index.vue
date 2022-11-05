@@ -33,6 +33,7 @@
         @importModelEvent="importModelEvent"
         @getList="getList"
         :modalTitle="modalTitle"
+        @pushDownEvent="pushDownEvent"
         @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
         :linkQueryMenuData="linkQueryMenuData"
@@ -58,6 +59,7 @@
     unAuditBatch,
     downSearch,
     upSearch,
+    pushDown,
   } from '/@/api/invCountGain';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -68,6 +70,7 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { VXETable } from 'vxe-table';
   const { createMessage } = useMessage();
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -201,6 +204,27 @@
     });
     await tableRef.value.computeData(res);
     await getList();
+  };
+  //下推
+  const pushDownEvent = async (selectRecords, pushDownParam) => {
+    let res = await pushDown(
+      {
+        params: selectRecords,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      await VXETable.modal.message({
+        content: '无法下推到该下游单据/已有下游单据',
+        status: 'error',
+      });
+    }
   };
   //下载模板
   const importModelEvent = async () => {

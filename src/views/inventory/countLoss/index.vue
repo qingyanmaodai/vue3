@@ -34,6 +34,7 @@
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
+        @pushDownEvent="pushDownEvent"
         :linkQueryMenuData="linkQueryMenuData"
       />
     </div>
@@ -57,6 +58,7 @@
     unAuditBatch,
     downSearch,
     upSearch,
+    pushDown,
   } from '/@/api/invCountLoss';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -80,6 +82,7 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { VXETable } from 'vxe-table';
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -199,6 +202,27 @@
     });
     await tableRef.value.computeData(res);
     await getList();
+  };
+  //下推
+  const pushDownEvent = async (selectRecords, pushDownParam) => {
+    let res = await pushDown(
+      {
+        params: selectRecords,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      await VXETable.modal.message({
+        content: '无法下推到该下游单据/已有下游单据',
+        status: 'error',
+      });
+    }
   };
   //下载模板
   const importModelEvent = async () => {
