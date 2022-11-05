@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseInStock"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -13,12 +13,12 @@
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
-        :columns="invCountSheetColumns"
+        :columns="warPurInputColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseInStock"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -30,7 +30,6 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
-        @pushDownEvent="pushDownEvent"
         @getList="getList"
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
@@ -40,8 +39,7 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts" name="inventory-countSheet-index">
+<script setup lang="ts" name="warehouse-purchase-instock-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -55,14 +53,13 @@
     getDataList,
     getSearchOption,
     importFile,
-    pushDown,
     unAudit,
     unAuditBatch,
     upSearch,
-  } from '/@/api/invCountSheet';
+  } from '/@/api/warPurchase/input';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warPurInputColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -72,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT');
+  let importConfig = ref<string>('IMPORT_PURCHASE_INSTOCK');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
@@ -80,7 +77,6 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
-  import { VXETable } from 'vxe-table';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -100,7 +96,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsInventoryCount.update_time'],
+        descList: ['BsPurchaseInStock.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -116,14 +112,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '盘点单-上查';
+    modalTitle.value = '采购入库单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '盘点单-下查';
+    modalTitle.value = '采购入库单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -138,7 +134,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.INV_COUNT_SHEET_DETAIL,
+      path: PageEnum.WAR_PUR_INPUT_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -147,33 +143,13 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.INV_COUNT_SHEET_DETAIL,
+      path: PageEnum.WAR_PUR_INPUT_DETAIL,
       query: {
         row: row.id,
       },
     });
   };
-  //下推
-  const pushDownEvent = async (selectRecords, pushDownParam) => {
-    let res = await pushDown(
-      {
-        params: selectRecords,
-      },
-      pushDownParam.tarBillType,
-    );
-    if (res) {
-      createMessage.success('下推成功');
-      go({
-        name: pushDownParam.routeTo,
-        params: { pushDownParam: JSON.stringify(res) },
-      });
-    } else {
-      await VXETable.modal.message({
-        content: '无法下推到该下游单据/已有下游单据',
-        status: 'error',
-      });
-    }
-  };
+
   //删除表格单条数据
   const deleteRowTableEvent = async (row) => {
     await delById({ params: row });
@@ -232,7 +208,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '盘点单导入模板.xls', data: res };
+            const data = { title: '采购入库单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -248,13 +224,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '盘点单',
+            fileName: '采购入库单',
           },
           pageIndex: 1,
           pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '盘点单.xls', data: res };
+            const data = { title: '采购入库单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -263,10 +239,6 @@
       });
     };
   };
-  //导入文件刷新
-  // const refreshTable = () => {
-  //   getList();
-  // };
 
   //获取高级查询字段数据
   const moreSearchData = ref();

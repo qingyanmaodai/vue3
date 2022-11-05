@@ -284,4 +284,39 @@ export const config = {
       label: '其他',
     },
   ],
+  //单据类型
+  NUMBER_REASON: [
+    {
+      value: 'A',
+      label: '标准采购入库',
+    },
+    {
+      value: 'B',
+      label: '零散采购入库单',
+    },
+    {
+      value: 'C',
+      label: '委外入库单',
+    },
+    {
+      value: 'D',
+      label: '分销购销入库单',
+    },
+    {
+      value: 'E',
+      label: '资产入库单',
+    },
+    {
+      value: 'F',
+      label: '费用入库单',
+    },
+    {
+      value: 'G',
+      label: 'VMI入库单',
+    },
+    {
+      value: 'H',
+      label: '现购入库单',
+    },
+  ],
 };

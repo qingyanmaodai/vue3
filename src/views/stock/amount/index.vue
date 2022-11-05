@@ -1,20 +1,10 @@
 <template>
   <div style="height: 100%; padding: 15px">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
-      <Search
-        :showSearchNo="false"
-        :showSearchName="false"
-        :showSearchMatID="true"
-        :showSearchStockId="true"
-        :showSearchCompartmentId="true"
-        :showSearchLocationId="true"
+      <StockAmountSearch
         :showMoreSearch="false"
-        ref="searchRef"
+        ref="stockAmountSearchRef"
         tableName="BdInventory"
-        searchMatID="物料ID"
-        searchStockId="仓库ID"
-        searchCompartmentId="分仓ID"
-        searchLocationId="仓位ID"
         @getList="getList"
         @resetEvent="resetTable"
       />
@@ -41,7 +31,7 @@
 
 <script setup lang="ts">
   import { ExTable } from '/@/components/ExTable';
-  import { Search } from '/@/components/Search';
+  import { StockAmountSearch } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
@@ -56,7 +46,7 @@
   let tableData = ref<object[]>([]);
   let totalData = ref<number>(0);
   //查询组件
-  const searchRef: any = ref<String | null>(null);
+  const stockAmountSearchRef: any = ref<String | null>(null);
   //分页信息
   const pages = reactive({
     currentPage: 1,
@@ -67,8 +57,11 @@
   //表格查询
   const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
-    if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
-      getParams = getParams.concat(searchRef.value.getSearchParams());
+    if (
+      stockAmountSearchRef.value.getSearchParams() &&
+      stockAmountSearchRef.value.getSearchParams().length > 0
+    ) {
+      getParams = getParams.concat(stockAmountSearchRef.value.getSearchParams());
     }
     //表格查询
     const res: any = await getInvList({
@@ -87,10 +80,10 @@
 
   //重置
   const resetTable = () => {
-    searchRef.value.formState.wlMatID = null;
-    searchRef.value.formState.wlStockId = null;
-    searchRef.value.formState.wlCompartmentId = null;
-    searchRef.value.formState.wlLocationId = null;
+    stockAmountSearchRef.value.formState.wlMatID = null;
+    stockAmountSearchRef.value.formState.wlStockId = null;
+    stockAmountSearchRef.value.formState.wlCompartmentId = null;
+    stockAmountSearchRef.value.formState.wlLocationId = null;
     getList(1);
   };
 

@@ -39,4 +39,6 @@ export enum PageEnum {
   WAR_PUR_ORDERS_DETAIL = '/warehouse/purchase/orders/detail',
   //采购退货详情页
   WAR_PUR_RETURN_DETAIL = '/warehouse/purchase/return/detail',
+  //采购入库详情页
+  WAR_PUR_INPUT_DETAIL = '/warehouse/purchase/input/detail',
 }

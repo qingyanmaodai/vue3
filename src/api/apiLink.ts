@@ -235,6 +235,7 @@ export enum Url {
   ADD_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/update', //编辑
+  PUSHDOWN_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/push/', //下推
   DOWN_SEARCH_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/down-search', //下查
   UP_SEARCH_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/up-search', //上查
 
@@ -280,6 +281,7 @@ export enum Url {
   // ADD_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/update', //编辑
+  PUSHDOWN_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/push/', //下推
   DOWN_SEARCH_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/down-search', //下查
   UP_SEARCH_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/up-search', //上查
 
@@ -310,6 +312,28 @@ export enum Url {
   PUSHDOWN_PURCHASE_ORDER = '/wms/purchaseOrder/push/', //下推
   DOWN_SEARCH_PURCHASE_ORDER = '/wms/purchaseOrder/down-search', //下查
   UP_SEARCH_PURCHASE_ORDER = '/wms/purchaseOrder/up-search', //上查
+
+  // 采购入库
+  AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/audit', //审核
+  BATCH_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-audit', //批量审核
+  UN_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/un-audit', //反审核
+  UN_BATCH_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-un-audit', //批量反审核
+  DELETE_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete', //删除
+  BATCH_DELETE_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete-with-detail', //删除含详情信息
+  GET_PAGE_PURCHASE_INSTOCK_LIST = '/wms/purchaseInStock/list', //分页查询--获取列表
+  GET_PURCHASE_INSTOCK_DTO = '/wms/purchaseInStock/query-dto', //获取实体信息
+  GET_ONE_PURCHASE_INSTOCK = '/wms/purchaseInStock/query-one', //查询单条
+  IMPORT_PURCHASE_INSTOCK = 'http://192.168.200.136:9999/wms/purchaseInStock/import-list', //导入
+  IMPORT_MODEL_PURCHASE_INSTOCK = '/wms/purchaseInStock/import-model', //导入模板下载
+  EXPORT_PURCHASE_INSTOCK = '/wms/purchaseInStock/export-list', //导出
+  ADD_PURCHASE_INSTOCK = '/wms/purchaseInStock/save', //添加
+  ADD_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/save-with-detail', //添加含详情信息
+  UPDATE_PURCHASE_INSTOCK = '/wms/purchaseInStock/update', //编辑
+  PUSHDOWN_PURCHASE_INSTOCK = '/wms/purchaseInStock/push/', //下推
+  DOWN_SEARCH_PURCHASE_INSTOCK = '/wms/purchaseInStock/down-search', //下查
+  UP_SEARCH_PURCHASE_INSTOCK = '/wms/purchaseInStock/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

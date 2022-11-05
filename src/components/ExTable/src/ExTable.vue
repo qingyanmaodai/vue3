@@ -234,11 +234,9 @@
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
-  import { pushDown } from '/@/api/invCountSheet';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import { getInvList } from '/@/api/realTimeInv';
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
-  import { useGo } from '/@/hooks/web/usePage';
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -302,6 +300,7 @@
     (e: 'auditBatchEvent', row: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
+    (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
   };
@@ -594,28 +593,10 @@
     }
     return selectRecords1;
   };
-  const go = useGo();
   //下推功能
   const pushDownSelect = async (pushDownParam) => {
     let selectRecords = await getDtData();
-    let res = await pushDown(
-      {
-        params: selectRecords,
-      },
-      pushDownParam.tarBillType,
-    );
-    if (res) {
-      createMessage.success('下推成功');
-      go({
-        name: pushDownParam.routeTo,
-        params: { pushDownParam: JSON.stringify(res) },
-      });
-    } else {
-      await VXETable.modal.message({
-        content: '无法下推到该下游单据/已有下游单据',
-        status: 'error',
-      });
-    }
+    emit('pushDownEvent', selectRecords, pushDownParam);
   };
   //下推弹框
   const pushDownEvent = async () => {
