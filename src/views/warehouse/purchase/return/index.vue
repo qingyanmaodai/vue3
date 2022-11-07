@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseReturn"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -18,7 +18,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :totalData="totalData"
-        tableName="BsInventoryCount"
+        tableName="BsPurchaseReturn"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -56,7 +56,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
-  } from '/@/api/invCountSheet';
+  } from '/@/api/warPurchase/return';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warPurReturnColumns } from '/@/components/ExTable/data';
@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT');
+  let importConfig = ref<string>('IMPORT_PURCHASE_RETURN');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
@@ -96,7 +96,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsInventoryCount.update_time'],
+        descList: ['BsPurchaseReturn.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -239,10 +239,6 @@
       });
     };
   };
-  //导入文件刷新
-  // const refreshTable = () => {
-  //   getList();
-  // };
 
   //获取高级查询字段数据
   const moreSearchData = ref();

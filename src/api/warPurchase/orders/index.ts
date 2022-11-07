@@ -28,6 +28,7 @@ export interface purchaseOrdersEntity extends PublicModel {
   way?: string;
   dtData?: purOrdersDetailEntity[];
   dtLk?: InvCountEntity;
+  srcField?: string;
   srcBill?: string;
   srcBillId?: string;
   srcId?: string;

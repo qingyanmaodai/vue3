@@ -26,6 +26,7 @@ export interface InvCountSheetEntity extends PublicModel {
   way?: string;
   dtData?: InvCountSheetDetailEntity[];
   dtLk?: InvCountEntity;
+  srcField?: string;
   srcBill?: string;
   srcBillId?: string;
   srcId?: string;

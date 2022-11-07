@@ -727,7 +727,7 @@ export const warPurReturnOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'countNum',
+    field: 'num',
     title: '实退数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,

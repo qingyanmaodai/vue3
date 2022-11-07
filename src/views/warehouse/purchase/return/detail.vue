@@ -225,7 +225,6 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, InvCountSheetEntity } from '/@/api/invCountSheet';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -237,6 +236,7 @@
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTable, getMatTableById } from '/@/api/matTable';
   import { getStockDis } from '/@/api/system';
+  import { add, audit, unAudit, getOneById, purchaseReturnEntity } from '/@/api/warPurchase/return';
 
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
@@ -264,7 +264,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: InvCountSheetEntity = {
+  const formData: purchaseReturnEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -289,7 +289,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    countNum: [{ required: true, message: '请输入实退数量' }],
+    num: [{ required: true, message: '请输入实退数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
