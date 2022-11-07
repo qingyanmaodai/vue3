@@ -504,11 +504,10 @@ export const warPurReturnColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '退货日期', width: 120, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supId', title: '供应商', width: 120, sortable: true },
-  { field: 'countNum', title: '实退数量', width: 120, sortable: true },
+  { field: 'num', title: '实退数量', width: 120, sortable: true },
   { field: 'stockName', title: '仓库', width: 120, sortable: true },
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },
-  // { field: 'way', title: '退货方式', width: 120, slots: { default: 'way' }, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {
     field: 'bsStatus',
