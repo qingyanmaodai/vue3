@@ -62,7 +62,7 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓管员'"
                         label="仓管员"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.bdEmployee"
+                        :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
@@ -108,7 +108,7 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
                         label="供应商"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.bdSupplier"
+                        :value="formState.supName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_SUPPLIER_DTO', 'BdSupplier', Url.SUPPLIER_GET_DATA, [
