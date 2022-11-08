@@ -23,6 +23,8 @@ export interface purchaseInstockEntity extends PublicModel {
   formatBsDate?: string;
   empId?: string;
   empName?: string;
+  supId?: string;
+  supName?: string;
   bdEmployee?: EmployeeEntity;
   bdSupplier?: SupplierEntity;
   way?: string;

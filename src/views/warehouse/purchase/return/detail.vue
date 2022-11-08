@@ -36,8 +36,8 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -510,7 +510,8 @@
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
@@ -529,9 +530,11 @@
         });
       }
       detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params.pushDownParam) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+      detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
-
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {

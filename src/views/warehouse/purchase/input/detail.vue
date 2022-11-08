@@ -36,8 +36,8 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -75,32 +75,6 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="单据类型：" ref="reason" name="reason" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.reason"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择单据类型'"
-                        :options="config.NUMBER_REASON"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
-                      <a-date-picker
-                        :showToday="false"
-                        class="select"
-                        valueFormat="YYYY-MM-DD HH:mm:ss"
-                        format="YYYY-MM-DD"
-                        v-model:value="formState.bsDate"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col :span="8">
                     <a-form-item label="供应商：" ref="supId" name="supId" class="item">
                       <ExInput
                         autocomplete="off"
@@ -120,6 +94,20 @@
                       />
                     </a-form-item>
                   </Col>
+                  <Col :span="8">
+                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
+                      <a-date-picker
+                        :showToday="false"
+                        class="select"
+                        valueFormat="YYYY-MM-DD HH:mm:ss"
+                        format="YYYY-MM-DD"
+                        v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -198,7 +186,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-purchase-return-detail">
+<script lang="ts" setup name="warehouse-purchase-input-detail">
   import {
     detailOfExaGridOptions,
     warPurInputOfDetailColumns,
@@ -215,7 +203,6 @@
     DatePicker,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -380,8 +367,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -511,7 +496,8 @@
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
@@ -529,6 +515,9 @@
           }
         });
       }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params.pushDownParam) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
@@ -569,7 +558,6 @@
         data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
         data.bdStockLocation.name =
           stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
-        debugger
         break;
       case 'bdStock':
         data.stockId = row.id ? row.id : null;

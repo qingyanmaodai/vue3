@@ -36,7 +36,7 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
                       <Input class="input" v-model:value="formState.srcField" disabled />
                     </a-form-item>
                   </Col>
@@ -193,7 +193,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, purchaseOrdersEntity } from '/@/api/warPurchase/orders';
+  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -232,7 +232,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: purchaseOrdersEntity = {
+  const formData: produceOrderEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -478,7 +478,8 @@
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
@@ -496,6 +497,9 @@
           }
         });
       }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params.pushDownParam) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };

@@ -36,7 +36,7 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
                       <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
@@ -478,11 +478,12 @@
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
           r['stockDis'] = stockDis.value;
-          if (r.bdStockCompartment&&r.bdStockCompartment.name) {
+          if (r.bdStockCompartment && r.bdStockCompartment.name) {
             r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-            r.bdStockCompartment.name = stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+            r.bdStockCompartment.name =
+              stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
           }
-          if (r.bdStockLocation&&r.bdStockLocation.name) {
+          if (r.bdStockLocation && r.bdStockLocation.name) {
             r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
             r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
           }

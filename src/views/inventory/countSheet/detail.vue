@@ -36,8 +36,8 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -489,23 +489,28 @@
   getStockDisData();
   //获取初始值
   const getListById = async () => {
-    if (dataId) {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
       if (formState.value.dtData) {
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
           r['stockDis'] = stockDis.value;
-          if (r.bdStockCompartment&&r.bdStockCompartment.name) {
+          if (r.bdStockCompartment && r.bdStockCompartment.name) {
             r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-            r.bdStockCompartment.name = stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+            r.bdStockCompartment.name =
+              stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
           }
-          if (r.bdStockLocation&&r.bdStockLocation.name) {
+          if (r.bdStockLocation && r.bdStockLocation.name) {
             r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
             r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
           }
         });
       }
+      detailTableData.value = cloneDeep(formState.value.dtData);
+    } else if (useRoute().params.pushDownParam) {
+      formState.value = JSON.parse(useRoute().params.pushDownParam as string);
       detailTableData.value = cloneDeep(formState.value.dtData);
     }
   };
