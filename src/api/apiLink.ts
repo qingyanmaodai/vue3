@@ -356,6 +356,28 @@ export enum Url {
   PUSHDOWN_PURCHASE_RETURN = '/wms/purchaseReturn/push/', //下推
   DOWN_SEARCH_PURCHASE_RETURN = '/wms/purchaseReturn/down-search', //下查
   UP_SEARCH_PURCHASE_RETURN = '/wms/purchaseReturn/up-search', //上查
+
+  // 生产订单
+  AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/audit', //审核
+  BATCH_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-un-audit', //批量反审核
+  DELETE_PRODUCE_ORDER = '/wms/bs-pro-mo/delete', //删除
+  BATCH_DELETE_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_ORDER_LIST = '/wms/bs-pro-mo/list', //分页查询--获取列表
+  GET_PRODUCE_ORDER_DTO = '/wms/bs-pro-mo/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_ORDER = '/wms/bs-pro-mo/query-one', //查询单条
+  IMPORT_PRODUCE_ORDER = 'http://192.168.200.136:9999/wms/bs-pro-mo/import-list', //导入
+  IMPORT_MODEL_PRODUCE_ORDER = '/wms/bs-pro-mo/import-model', //导入模板下载
+  EXPORT_PRODUCE_ORDER = '/wms/bs-pro-mo/export-list', //导出
+  ADD_PRODUCE_ORDER = '/wms/bs-pro-mo/save', //添加
+  ADD_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_ORDER = '/wms/bs-pro-mo/update', //编辑
+  PUSHDOWN_PRODUCE_ORDER = '/wms/bs-pro-mo/push/', //下推
+  DOWN_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/down-search', //下查
+  UP_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
