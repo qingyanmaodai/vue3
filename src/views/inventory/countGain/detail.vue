@@ -224,7 +224,6 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
-  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -243,7 +242,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  let stockDis = ref<string>(''); //仓库维度
+  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -463,11 +462,6 @@
     router.go(-1);
   };
 
-  //获取仓库维度
-  const getStockDisData = async () => {
-    const arr: any = await getStockDis({});
-    stockDis.value = arr;
-  };
   //获取初始值
   const getListById = async () => {
     if (useRoute().query.row) {
@@ -562,7 +556,7 @@
 
   onMounted(() => {
     getListById();
-    getStockDisData();
+    // localStorage.getItem('stockDis');
   });
 </script>
 <style scoped lang="less">

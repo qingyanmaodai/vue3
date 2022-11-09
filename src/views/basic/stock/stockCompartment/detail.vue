@@ -53,9 +53,9 @@
                     class="input"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择所属仓库'"
                     label="仓库"
-                    :show="formState.bsStatus !== 'B'"
+                    :show="!formState.bsStatus"
                     v-model:value="formState.bdStock"
-                    :disabled="formState.bsStatus === 'B'"
+                    :disabled="formState.bsStatus === 'B' || formState.bsStatus === 'A'"
                     @search="
                       onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, [
                         'stockId',

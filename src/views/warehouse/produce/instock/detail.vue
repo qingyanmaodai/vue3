@@ -236,7 +236,6 @@
   import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTable, getMatTableById } from '/@/api/matTable';
-  import { getStockDis } from '/@/api/system';
 
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
@@ -257,7 +256,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  let stockDis = ref<string>(''); //仓库维度
+  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -503,12 +502,7 @@
   const back = () => {
     router.go(-1);
   };
-  //获取仓库维度
-  const getStockDisData = async () => {
-    const arr: any = await getStockDis({});
-    stockDis.value = arr;
-  };
-  getStockDisData();
+
   //获取初始值
   const getListById = async () => {
     if (dataId) {
