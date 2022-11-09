@@ -86,8 +86,6 @@
                       />
                     </a-form-item>
                   </Col>
-                </Row>
-                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -100,6 +98,19 @@
                     </a-form-item>
                   </Col>
                 </Row>
+                <!--                <Row>-->
+                <!--                  <Col :span="8">-->
+                <!--                    <a-form-item label="备注：" ref="mark" name="mark" class="item">-->
+                <!--                      <a-textArea-->
+                <!--                        v-model:value="formState.mark"-->
+                <!--                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"-->
+                <!--                        :rows="3"-->
+                <!--                        class="textArea"-->
+                <!--                        :disabled="formState.bsStatus === 'B'"-->
+                <!--                      />-->
+                <!--                    </a-form-item>-->
+                <!--                  </Col>-->
+                <!--                </Row>-->
               </a-form>
             </TabPane>
             <TabPane key="2" tab="其他信息">

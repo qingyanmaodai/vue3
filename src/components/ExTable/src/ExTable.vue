@@ -608,6 +608,7 @@
       for (const item2 of selectRecords2) {
         if (item2.number === item.number) {
           item2.id = item2.detailId;
+          item2.bsStatus = 'A';
           item.dtData.push(item2);
         }
       }
