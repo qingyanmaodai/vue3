@@ -244,8 +244,6 @@
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
-  import { getInvList } from '/@/api/realTimeInv';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   import XEUtils from 'xe-utils';
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
@@ -565,40 +563,6 @@
     let selectRecords = $grid.getCheckboxRecords();
     let selectRecords1 = cloneDeep(selectRecords);
     let selectRecords2 = cloneDeep(selectRecords);
-    // 放入对象存在matId的值
-    const val = selectRecords1.map((item) => {
-      if (item.matId) {
-        return item.matId;
-      }
-    });
-    // 请求分页查询接口
-    let res: any = await getInvList({
-      pageRows: 1000000,
-      params: [
-        {
-          table: '',
-          name: 'matId',
-          column: 'mat_id',
-          link: SearchLink.AND,
-          rule: SearchMatchType.IN,
-          type: SearchDataType.string,
-          val: val,
-          startWith: '',
-          endWith: '',
-        },
-      ],
-    });
-    // 遍历数组赋值stockNum
-    for (let item of selectRecords2) {
-      let filterNum = res.records.filter(
-        (e) =>
-          e.matId === item.matId &&
-          e.stockId === item.stockId &&
-          e.compartmentId === item.compartmentId &&
-          e.locationId === item.locationId,
-      );
-      item.stockNum = filterNum[0] ? filterNum[0].stockNum : 0;
-    }
     // 根据单号去重
     selectRecords1 = uniqBy(selectRecords1, 'number');
     // 赋值dtData

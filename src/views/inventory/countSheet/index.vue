@@ -62,7 +62,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -79,6 +79,7 @@
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
   import { VXETable } from 'vxe-table';
+  import { getInvList } from '/@/api/realTimeInv';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   let getParams: SearchParams[] = [];
@@ -147,6 +148,46 @@
   };
   //下推
   const pushDownEvent = async (selectRecords, pushDownParam) => {
+    let val: string[] = [];
+    selectRecords.map((item) => {
+      if (item.dtData && item.dtData.length > 0) {
+        item.dtData.map((i) => {
+          val.push(i.matId);
+        });
+      }
+    });
+    // 请求分页查询接口
+    let setStockNum: any = await getInvList({
+      pageRows: 1000000,
+      params: [
+        {
+          table: '',
+          name: 'matId',
+          column: 'mat_id',
+          link: SearchLink.AND,
+          rule: SearchMatchType.IN,
+          type: SearchDataType.string,
+          val: val,
+          startWith: '',
+          endWith: '',
+        },
+      ],
+    });
+    // 遍历数组赋值stockNum
+    selectRecords.map((item) => {
+      if (item.dtData && item.dtData.length > 0) {
+        item.dtData.map((i) => {
+          let filterNum = setStockNum.records.filter(
+            (e) =>
+              e.matId === i.matId &&
+              e.stockId === i.stockId &&
+              e.compartmentId === i.compartmentId &&
+              e.locationId === i.locationId,
+          );
+          i.stockNum = filterNum[0] ? filterNum[0].stockNum : 0;
+        });
+      }
+    });
     let res = await pushDown(
       {
         params: selectRecords,
