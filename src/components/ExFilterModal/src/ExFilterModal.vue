@@ -51,6 +51,7 @@
   import { ExInput } from '/@/components/ExInput';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
+  import { inputDataList } from '/@/components/ExFilterModal/data';
   import {
     ControlSet,
     SearchDataType,
@@ -96,54 +97,16 @@
     data: cloneDeep(defaultData),
   });
   const formState = toRef(formStateInit, 'data');
-  /*约定数组下标，0：仓库，1：分仓，2，仓位，3：物料*/
-  let inputDataList: any = ref<object[]>([
-    {
-      addonBeforeLabel: '仓库 : ',
-      dtoUrlConfig: 'GET_STOCK_DTO',
-      tableName: 'BdStock',
-      tableUrl: Url.GET_PAGE_STOCK_LIST,
-      nameParam: 'stockId',
-      columnParam: 'stock_id',
-      disabledInput: false,
-    },
-    {
-      addonBeforeLabel: '分仓 : ',
-      dtoUrlConfig: 'GET_SUB_STOCK_DTO',
-      tableName: 'BdStockCompartment',
-      tableUrl: Url.GET_PAGE_STOCK_COMPARTMENT_LIST,
-      nameParam: 'compartmentId',
-      columnParam: 'compartment_id',
-      disabledInput: true,
-    },
-    {
-      addonBeforeLabel: '仓位 : ',
-      dtoUrlConfig: 'GET_LOCATION_DTO',
-      tableName: 'BdStockLocation',
-      tableUrl: Url.GET_PAGE_STOCK_LOCATION_LIST,
-      nameParam: 'locationId',
-      columnParam: 'location_id',
-      disabledInput: true,
-    },
-    {
-      addonBeforeLabel: '物料 : ',
-      dtoUrlConfig: 'GET_MAT_DTO',
-      tableName: 'BdMaterial',
-      tableUrl: Url.GET_MATERIAL_LIST,
-      nameParam: 'id',
-      columnParam: 'id',
-      disabledInput: false,
-    },
-  ]);
+
   //查询赋值dtData
   const getSearchParams = (): SearchParams[] => {
     let getParams: SearchParams[] = [];
-    for (let i = 0; i < inputDataList.value.length; i++) {
+    for (let i = 0; i < inputDataList.length; i++) {
       if (formState.value.inputValue[i]) {
         getParams.push({
           table: props.tableName,
-          name: inputDataList.value[i].nameParam,
-          column: inputDataList.value[i].columnParam,
+          name: inputDataList[i].nameParam,
+          column: inputDataList[i].columnParam,
           link: SearchLink.AND,
           rule: SearchMatchType.LIKE,
           type: SearchDataType.string,
@@ -160,12 +123,12 @@
     if (item.tableName == 'BdStock') {
       formState.value.inputValue[1] = undefined;
       formState.value.inputValue[2] = undefined;
-      inputDataList.value[1]['disabledInput'] = true;
-      inputDataList.value[2]['disabledInput'] = true;
+      inputDataList[1]['disabledInput'] = true;
+      inputDataList[2]['disabledInput'] = true;
     }
     if (item.tableName == 'BdStockCompartment') {
       formState.value.inputValue[2] = undefined;
-      inputDataList.value[2]['disabledInput'] = true;
+      inputDataList[2]['disabledInput'] = true;
     }
     formState.value.inputValue[index] = undefined;
   };
@@ -189,8 +152,8 @@
         filterParams = [
           {
             table: item.tableName,
-            name: inputDataList.value[index - 1].nameParam,
-            column: inputDataList.value[index - 1].columnParam,
+            name: inputDataList[index - 1].nameParam,
+            column: inputDataList[index - 1].columnParam,
             link: SearchLink.AND,
             rule: SearchMatchType.EQ,
             type: SearchDataType.string,
@@ -209,7 +172,7 @@
     formState.value.inputValue[currIndex] = row;
     if (formState.value.inputValue[currIndex]) {
       if (currIndex === 1 || currIndex === 0) {
-        inputDataList.value[currIndex + 1]['disabledInput'] = false;
+        inputDataList[currIndex + 1]['disabledInput'] = false;
       }
     }
   };
@@ -229,7 +192,7 @@
   //重置方法
   const resetEvent = () => {
     formState.value = cloneDeep(defaultData);
-    inputDataList.value.map((item) => {
+    inputDataList.map((item) => {
       if (item.tableName === 'BdStockLocation' || item.tableName === 'BdStockCompartment') {
         item['disabledInput'] = true;
       }
