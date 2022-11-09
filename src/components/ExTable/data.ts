@@ -480,6 +480,8 @@ export const warPurOrdersColumns = [
   { field: 'bsDate', title: '业务日期', width: 120, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supplierName', title: '供应商', width: 120, sortable: true },
   { field: 'num', title: '采购数量', width: 120, sortable: true },
+  { field: 'pushNum', title: '已下推数量', width: 120, sortable: true },
+  { field: 'doneNum', title: '已入库数量', width: 120, sortable: true },
   { field: 'stockName', title: '仓库', width: 120, sortable: true },
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },

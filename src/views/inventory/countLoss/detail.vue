@@ -271,8 +271,8 @@
       { required: true, message: '请输入比帐存数量小的盘点数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
-            return new Error('盘点数量应该大于帐存数量');
+          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+            return new Error('盘点数量应该小于帐存数量');
           }
         },
       },
@@ -456,11 +456,12 @@
         formState.value.dtData.map((r) => {
           r.bsStatus = formState.value.bsStatus;
           r['stockDis'] = stockDis.value;
-          if (r.bdStockCompartment&&r.bdStockCompartment.name) {
+          if (r.bdStockCompartment && r.bdStockCompartment.name) {
             r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-            r.bdStockCompartment.name = stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+            r.bdStockCompartment.name =
+              stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
           }
-          if (r.bdStockLocation&&r.bdStockLocation.name) {
+          if (r.bdStockLocation && r.bdStockLocation.name) {
             r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
             r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
           }

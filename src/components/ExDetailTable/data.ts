@@ -567,23 +567,9 @@ export const warPurOrdersOfDetailColumns = [
     width: 150,
     sortable: true,
   },
-  // {
-  //   field: 'select',
-  //   title: '下拉选择类型',
-  //   sortable: true,
-  //   width: 222,
-  //   slots: { edit: 'select' },
-  //   editRender: { name: '$select' },
-  // },
   {
     field: 'dlDate',
     title: '交货日期',
-    // editRender: { name: '$input' },
-    // slots: {
-    //   edit: 'date',
-    // },
-    // slots: { default: 'date' },
-
     editRender: {
       name: '$input',
       props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
@@ -601,6 +587,20 @@ export const warPurOrdersOfDetailColumns = [
   {
     field: 'num',
     title: '采购数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已入库数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
@@ -668,7 +668,6 @@ export const warPurOrdersOfDetailColumns = [
     width: 150,
     sortable: true,
   },
-  { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
 //采购退货单详情明细

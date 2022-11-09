@@ -358,8 +358,6 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
   //保存
   const onSubmit = async () => {
     formRef.value
