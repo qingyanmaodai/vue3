@@ -27,11 +27,10 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
       switch (true) {
         case row.bsStatus === 'B':
           return false;
-        case column.field == 'bdStockCompartment.name' &&
-          (row.stockDis == 'A' || !row.bdStock.name):
+        case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.bdStock):
           return false;
         case column.field == 'bdStockLocation.name' &&
-          (row.stockDis !== 'C' || !row.bdStockCompartment.name):
+          (row.stockDis !== 'C' || !row.bdStockCompartment):
           return false;
         default:
           return true;

@@ -53,7 +53,7 @@
         :disabled="row.bsStatus === 'B'"
         :show="props.isShowIcon"
         placeholder="请选择"
-        v-model:value="row[sliceBasicProp(column.field)].name"
+        v-model:value="row[sliceBasicProp(column.field)]"
         @search="onSearch(row, column)"
         @clear="onClear(row, column)"
       />
@@ -261,12 +261,12 @@
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.bdStock.name):
+      case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.bdStock):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
       case column.field == 'bdStockLocation.name' &&
-        (row.stockDis !== 'C' || !row.bdStockCompartment.name):
+        (row.stockDis !== 'C' || !row.bdStockCompartment):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

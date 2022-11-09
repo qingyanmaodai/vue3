@@ -544,6 +544,9 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         data.stockId = res.bdStock ? res.bdStock.id : null;
         data.bdStock.name = res.bdStock ? res.bdStock.name : null;
+        data.bdStock = {};
+        data.bdStockCompartment = {};
+        data.bdStockLocation = {};
         data.compartmentId =
           stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
         data.bdStockCompartment.name =
@@ -556,17 +559,19 @@
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
         data.compartmentId = null;
-        data.bdStockCompartment.name = null;
         data.locationId = null;
-        data.bdStockLocation.name = null;
+        data.bdStockCompartment = {};
+        data.bdStockLocation = {};
         break;
       case 'bdStockCompartment':
+        data.bdStockCompartment = {};
         data.compartmentId = row.id ? row.id : null;
         data.bdStockCompartment.name = row.name ? row.name : null;
         data.locationId = null;
-        data.bdStockLocation.name = null;
+        data.bdStockLocation = {};
         break;
       case 'bdStockLocation':
+        data.bdStockLocation = {};
         data.locationId = row.id ? row.id : null;
         data.bdStockLocation.name = row.name ? row.name : null;
         break;
