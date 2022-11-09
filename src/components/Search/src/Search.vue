@@ -9,22 +9,6 @@
         <span>{{ props.searchName }}</span>
         <a-input class="input" v-model:value="formState.wlName" />
       </div>
-      <div v-show="props.showSearchMatID">
-        <span>{{ props.searchMatID }}</span>
-        <a-input class="input" v-model:value="formState.wlMatID" />
-      </div>
-      <div v-show="props.showSearchStockId">
-        <span>{{ props.searchStockId }}</span>
-        <a-input class="input" v-model:value="formState.wlStockId" />
-      </div>
-      <div v-show="props.showSearchCompartmentId">
-        <span>{{ props.searchCompartmentId }}</span>
-        <a-input class="input" v-model:value="formState.wlCompartmentId" />
-      </div>
-      <div v-show="props.showSearchLocationId">
-        <span>{{ props.searchLocationId }}</span>
-        <a-input class="input" v-model:value="formState.wlLocationId" />
-      </div>
       <div>
         <a-button class="button" type="primary" @click="searchEvent">查询</a-button>
         <a-button class="button" @click="resetEvent">重置/刷新</a-button>
@@ -68,27 +52,15 @@
     tableName: string;
     showSearchNo?: boolean;
     showSearchName?: boolean;
-    showSearchMatID?: boolean;
-    showSearchStockId?: boolean;
-    showSearchCompartmentId?: boolean;
-    showSearchLocationId?: boolean;
     showMoreSearch?: boolean;
     searchNo?: string;
     searchName?: string;
-    searchMatID?: string;
-    searchStockId?: string;
-    searchCompartmentId?: string;
-    searchLocationId?: string;
     control?: ControlSet[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
     showSearchNo: true,
     showSearchName: true,
-    showSearchMatID: false,
-    showSearchStockId: false,
-    showSearchCompartmentId: false,
-    showSearchLocationId: false,
     showMoreSearch: true,
     searchNo: '',
     searchName: '',
@@ -99,10 +71,6 @@
   interface FormState {
     wlNo: string;
     wlName: string;
-    wlMatID: string;
-    wlStockId: string;
-    wlCompartmentId: string;
-    wlLocationId: string;
     tableName: string;
     searchNo: string;
     searchName: string;
@@ -148,58 +116,6 @@
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
         val: formState.wlName,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.wlMatID) {
-      searchParams.push({
-        table: formState.tableName,
-        name: 'matId',
-        column: 'mat_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.wlMatID,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.wlStockId) {
-      searchParams.push({
-        table: formState.tableName,
-        name: 'stockId',
-        column: 'stock_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.wlStockId,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.wlCompartmentId) {
-      searchParams.push({
-        table: formState.tableName,
-        name: 'compartmentId',
-        column: 'compartment_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.wlCompartmentId,
-        startWith: '',
-        endWith: '',
-      });
-    }
-    if (formState.wlLocationId) {
-      searchParams.push({
-        table: formState.tableName,
-        name: 'locationId',
-        column: 'location_id',
-        link: SearchLink.AND,
-        rule: SearchMatchType.LIKE,
-        type: SearchDataType.string,
-        val: formState.wlLocationId,
         startWith: '',
         endWith: '',
       });

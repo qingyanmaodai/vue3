@@ -5,7 +5,7 @@
         <span>物料</span>
         <ExInput
           class="input"
-          label="物料"
+          :placeholder="'请输入物料'"
           v-model:value="formState.matName"
           @search="
             onSearch('GET_MAT_DTO', 'bdMaterial', Url.GET_MATERIAL_LIST, ['matId', 'matName'])
@@ -17,8 +17,8 @@
         <span>仓库</span>
         <ExInput
           class="input"
-          label="仓库"
           v-model:value="formState.stockName"
+          :placeholder="'请输入仓库'"
           @search="
             onSearch('GET_STOCK_DTO', 'BdStock', Url.GET_PAGE_STOCK_LIST, ['stockId', 'stockName'])
           "
@@ -29,8 +29,8 @@
         <span>分仓</span>
         <ExInput
           class="input"
-          label="分仓"
           v-model:value="formState.compartmentName"
+          :placeholder="'请输入分仓'"
           @search="
             onSearch(
               'GET_SUB_STOCK_DTO',
@@ -46,8 +46,8 @@
         <span>仓位</span>
         <ExInput
           class="input"
-          label="仓位"
           v-model:value="formState.locationName"
+          :placeholder="'请输入仓位'"
           @search="
             onSearch('GET_LOCATION_DTO', 'BdStockLocation', Url.GET_PAGE_STOCK_LOCATION_LIST, [
               'locationId',
@@ -147,6 +147,10 @@
     stockName: '',
     compartmentName: '',
     locationName: '',
+    matId: '',
+    stockId: '',
+    compartmentId: '',
+    locationId: '',
     tableName: props.tableName,
   });
   type Emits = {
@@ -158,6 +162,7 @@
     key.forEach((e) => {
       formState[e] = null;
     });
+    emit('getList');
   };
   // 负责人弹框选放大镜事件
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包

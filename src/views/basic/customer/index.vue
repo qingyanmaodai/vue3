@@ -23,15 +23,14 @@
             tableName="BdCustomer"
             searchNo="编码"
             searchName="客户"
-            @getList="getCustomerList"
+            @getList="getList"
             @resetEvent="resetTable"
           />
           <ExTable
             :columns="customerColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"
-            :totalData="totalData"
-            ref="customerTableRef"
+            ref="tableRef"
             @addTableEvent="addTableEvent"
             @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
@@ -42,7 +41,7 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @getList="getCustomerList"
+            @getList="getList"
           />
         </div>
       </a-pane>
@@ -51,7 +50,7 @@
 </template>
 
 <script setup lang="ts" name="basic-customer-index">
-  import { onActivated, onMounted, reactive, ref } from 'vue';
+  import { onActivated, onMounted, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -93,18 +92,11 @@
   /* data */
   const paneSize = ref(16); //面板尺寸
   const customerSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
-  const customerTableRef: any = ref<String | null>(null); //表格组件引用ref
+  const tableRef: any = ref<String | null>(null); //表格组件引用ref
   let tableData = ref<object[]>([]); //表格数据
-  let totalData = ref<number>(0);
   const customerGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
-  //分页参数
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
 
   /* method */
 
@@ -113,7 +105,7 @@
    * @param currPage
    * @param pageSize
    */
-  const getCustomerList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
     ParamsData = [];
     if (
       customerGroupTreeRef.value.getSearchParams() &&
@@ -137,9 +129,9 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    totalData.value = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
     customerSearchRef.value.moreSearchClose();
   };
@@ -178,7 +170,7 @@
     await audit({
       params: row,
     });
-    await getCustomerList();
+    await getList();
     createMessage.success('操作成功');
   };
 
@@ -192,8 +184,8 @@
     let res = await batchAuditCustomer({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
 
   /**
@@ -204,7 +196,7 @@
     await unAudit({
       params: row,
     });
-    await getCustomerList();
+    await getList();
     createMessage.success('操作成功');
   };
 
@@ -218,8 +210,8 @@
     let res = await batchUnAuditCustomer({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
 
   /**
@@ -230,8 +222,8 @@
       return item.id;
     });
     let res = await batchDeleteCustomer({ params: ids });
-    await customerTableRef.value.computeData(res);
-    await getCustomerList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
   /**
    * 表格删除事件
@@ -239,7 +231,7 @@
    */
   const deleteRowTableEvent = async (row) => {
     await deleteCustomer({ params: row.id });
-    await getCustomerList();
+    await getList();
   };
 
   /**
@@ -249,7 +241,7 @@
     customerGroupTreeRef.value.setSelectedKeys([]);
     customerSearchRef.value.formState.wlNo = null;
     customerSearchRef.value.formState.wlName = null;
-    getCustomerList();
+    getList();
   };
 
   /**
@@ -264,7 +256,7 @@
             fileName: '客户列表',
           },
           pageIndex: 1,
-          pageRows: pages.pageSize,
+          pageRows: tableRef.value.pages.pageSize,
         })
           .then((res) => {
             const data = { title: '客户列表信息.xls', data: res };
@@ -312,7 +304,7 @@
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
     console.log(selectedKeys, data);
-    getCustomerList();
+    getList();
   };
 
   /**
@@ -407,13 +399,13 @@
    */
   onMounted(() => {
     refreshTree();
-    getCustomerList();
+    getList();
   });
   /**
    * 被keep-alive 缓存的组件激活时调用
    */
   onActivated(() => {
-    getCustomerList();
+    getList();
   });
 </script>
 

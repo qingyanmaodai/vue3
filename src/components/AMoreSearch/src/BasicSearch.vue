@@ -117,7 +117,6 @@
         :isShowExport="false"
         :columns="props.tableCols"
         :gridOptions="notToolInGridOptions"
-        :totalData="pages.total"
         :tableData="tableData"
         ref="tableRef"
         height="90%"
@@ -182,7 +181,8 @@
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { TreeItem } from '/@/components/Tree';
-
+  //表格事件
+  const tableRef: any = ref<String | null>(null);
   type Emits = {
     (event: 'basicClickEvent', data: object): void; //表格双击事件
     (event: 'onSearch', data: object): void; //基本信息的的选择框点击事件
@@ -340,20 +340,14 @@
   };
   //查询按钮
   const searchEvent = async () => {
-    await getList(1, pages.pageSize,listUrl.value);
+    await getList(1, tableRef.value.pages.pageSize,listUrl.value);
   };
   //重置
   const resetSearch = async () => {
     defaultParam.value = cloneDeep(defaultP);
   };
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
 
-  const getList = async ( currPage = 1, pageSize = pages.pageSize, url) => {
+  const getList = async ( currPage = 1, pageSize = tableRef.value.pages.pageSize, url) => {
     getParams = [];
     const data = defaultParam.value;
     if (filterParams.value && filterParams.value.length > 0) {
@@ -397,9 +391,9 @@
       },
       url,
     );
-    pages.total = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
   };
 
@@ -412,7 +406,7 @@
   const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    getList(1, pages.pageSize,tableUrl);
+    getList(1, 10,tableUrl);
   };
   const filterParams = ref<SearchParams[]>([]);
   /**

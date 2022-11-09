@@ -38,7 +38,6 @@
           :tableName="props.tableName"
           :columns="tableColumns"
           :gridOptions="notToolInGridOptions"
-          :totalData="totalData"
           :tableData="tableData"
           :height="height"
           ref="tableRef"
@@ -52,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { ref } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
@@ -73,7 +72,6 @@
   const tableRef = ref<any>('');
   const tableColumns: any = ref<VxeGridPropTypes.Columns[]>([]);
   let tableData = ref<object[]>([]);
-  let totalData = ref<number>(0);
   const AMenuItem = MenuItem;
   const AMenu = Menu;
   const ASubMenu = SubMenu;
@@ -115,14 +113,8 @@
     currKey.value = e.key;
     getList();
   };
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
   //点击关联查询,区分上下查
-  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
       filter = getUpDownSearchList.filter(
@@ -167,9 +159,9 @@
       listUrl,
     );
     tableShow.value = true;
-    totalData.value = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
   };
   const go = useGo();

@@ -17,7 +17,6 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
-        :totalData="totalData"
         tableName="BsInventoryCountLoss"
         ref="tableRef"
         @addTableEvent="addTableEvent"
@@ -44,7 +43,7 @@
 <script setup lang="ts" name="inventory-countLoss-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onActivated, onMounted, reactive, ref } from 'vue';
+  import { onActivated, onMounted, ref } from 'vue';
   import {
     audit,
     auditBatch,
@@ -76,22 +75,15 @@
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
-  let totalData = ref<number>(0);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
   import { VXETable } from 'vxe-table';
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
   let getParams: SearchParams[] = [];
   //表格查询
-  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -105,9 +97,9 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    totalData.value = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -251,7 +243,7 @@
             fileName: '盘亏单',
           },
           pageIndex: 1,
-          pageRows: pages.pageSize,
+          pageRows: tableRef.value.pages.pageSize,
         })
           .then((res) => {
             const data = { title: '盘亏单.xls', data: res };

@@ -135,7 +135,7 @@
       background
       v-model:current-page="pages.currentPage"
       v-model:page-size="pages.pageSize"
-      :total="props.totalData"
+      :total="pages.total"
       :layouts="[
         'PrevJump',
         'PrevPage',
@@ -266,7 +266,6 @@
     show?: boolean;
     tableName?: string;
     tableData?: any[];
-    totalData?: number;
     isAddShow?: boolean;
     isAuditShow?: boolean;
     isUnAuditShow?: boolean;
@@ -727,6 +726,7 @@
     computeData,
     hideColumn,
     isUpDownSearch,
+    pages,
   });
 </script>
 
