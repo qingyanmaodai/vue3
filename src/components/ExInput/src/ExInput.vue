@@ -21,10 +21,10 @@
   const SearchIcon = SearchOutlined;
   interface ProType {
     value: any | undefined;
-    disabled: boolean;
+    disabled?: boolean;
     placeholder: string;
     addonBeforeLabel?: string;
-    show: boolean;
+    show?: boolean;
   }
   const props = withDefaults(defineProps<ProType>(), {
     value: undefined,

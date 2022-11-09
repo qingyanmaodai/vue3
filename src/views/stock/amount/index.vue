@@ -18,10 +18,10 @@
         :isShowExport="false"
         :isShowImport="false"
         tableName="BdInventory"
+        :pages="pages"
         :columns="StockAmountColumns"
         :gridOptions="GridOptions"
         :tableData="tableData"
-        :totalData="totalData"
         ref="tableRef"
         @getList="getList"
       />
@@ -44,7 +44,6 @@
   const tableRef: any = ref<String | null>(null);
   //表格数据
   let tableData = ref<object[]>([]);
-  let totalData = ref<number>(0);
   //查询组件
   const stockAmountSearchRef: any = ref<String | null>(null);
   //分页信息
@@ -72,18 +71,18 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    totalData.value = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
   };
 
   //重置
   const resetTable = () => {
-    stockAmountSearchRef.value.formState.wlMatID = null;
-    stockAmountSearchRef.value.formState.wlStockId = null;
-    stockAmountSearchRef.value.formState.wlCompartmentId = null;
-    stockAmountSearchRef.value.formState.wlLocationId = null;
+    stockAmountSearchRef.value.formState.matName = null;
+    stockAmountSearchRef.value.formState.stockName = null;
+    stockAmountSearchRef.value.formState.compartmentName = null;
+    stockAmountSearchRef.value.formState.locationName = null;
     getList(1);
   };
 

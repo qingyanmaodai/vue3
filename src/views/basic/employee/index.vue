@@ -23,15 +23,14 @@
             tableName="BdEmployee"
             searchNo="编码"
             searchName="人员"
-            @getList="getEmployeeList"
+            @getList="getList"
             @resetEvent="resetTable"
           />
           <ExTable
             :columns="employeeColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"
-            :totalData="totalData"
-            ref="employeeTableRef"
+            ref="tableRef"
             @addTableEvent="addTableEvent"
             @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
@@ -42,7 +41,7 @@
             @unAuditBatchEvent="unAuditBatchEvent"
             @exportTable="exportTable"
             @importModelEvent="importModelEvent"
-            @getList="getEmployeeList"
+            @getList="getList"
           />
         </div>
       </a-pane>
@@ -51,7 +50,7 @@
 </template>
 
 <script setup lang="ts" name="basic-employee-index">
-  import { onActivated, onMounted, reactive, ref } from 'vue';
+  import { onActivated, onMounted, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -93,18 +92,11 @@
   /* data */
   const paneSize = ref(16); //面板尺寸
   const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
-  const employeeTableRef: any = ref<String | null>(null); //表格组件引用ref
+  const tableRef: any = ref<String | null>(null); //表格组件引用ref
   const treeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
   const tableData = ref<object[]>([]); //表格数据
-  let totalData = ref<number>(0);
-  //分页参数
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
 
   /* method */
 
@@ -113,7 +105,7 @@
    * @param currPage
    * @param pageSize
    */
-  const getEmployeeList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
     ParamsData = [];
     if (
       treeRef.value.getSearchParams('deptId', 'dept_id') &&
@@ -133,9 +125,9 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    totalData.value = res.total;
-    pages.currentPage = currPage;
-    pages.pageSize = pageSize;
+    tableRef.value.pages.total = res.total;
+    tableRef.value.pages.currentPage = currPage;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -174,7 +166,7 @@
     await audit({
       params: row,
     });
-    await getEmployeeList();
+    await getList();
     createMessage.success('操作成功');
   };
 
@@ -188,8 +180,8 @@
     let res = await batchAuditEmployee({
       params: ids,
     });
-    await employeeTableRef.value.computeData(res);
-    await getEmployeeList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
 
   /**
@@ -200,7 +192,7 @@
     await unAudit({
       params: row,
     });
-    await getEmployeeList();
+    await getList();
     createMessage.success('操作成功');
   };
 
@@ -214,8 +206,8 @@
     let res = await batchUnAuditEmployee({
       params: ids,
     });
-    await employeeTableRef.value.computeData(res);
-    await getEmployeeList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
 
   /**
@@ -226,8 +218,8 @@
       return item.id;
     });
     let res = await batchDeleteEmployee({ params: ids });
-    await employeeTableRef.value.computeData(res);
-    await getEmployeeList();
+    await tableRef.value.computeData(res);
+    await getList();
   };
   /**
    * 表格删除事件
@@ -235,7 +227,7 @@
    */
   const deleteRowTableEvent = async (row) => {
     await deleteEmployee({ params: row.id });
-    await getEmployeeList();
+    await getList();
   };
 
   /**
@@ -245,7 +237,7 @@
     treeRef.value.setSelectedKeys([]);
     searchRef.value.formState.wlNo = null;
     searchRef.value.formState.wlName = null;
-    getEmployeeList();
+    getList();
   };
 
   /**
@@ -260,7 +252,7 @@
             fileName: '人员列表',
           },
           pageIndex: 1,
-          pageRows: pages.pageSize,
+          pageRows: tableRef.value.pages.pageSize,
         })
           .then((res) => {
             const data = { title: '人员列表信息.xls', data: res };
@@ -305,7 +297,7 @@
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
     console.log(selectedKeys, data);
-    getEmployeeList();
+    getList();
   };
 
   /**
@@ -400,13 +392,13 @@
    */
   onMounted(() => {
     refreshTree();
-    getEmployeeList();
+    getList();
   });
   /**
    * 被keep-alive 缓存的组件激活时调用
    */
   onActivated(() => {
-    getEmployeeList();
+    getList();
   });
 </script>
 
