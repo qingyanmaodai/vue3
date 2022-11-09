@@ -15,6 +15,7 @@ import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
 import { SupplierGroupEntity } from '/@/api/supplierGroup';
+import { CustomerEntity } from '/@/api/customer';
 
 export interface produceOrderEntity extends PublicModel {
   id: string | undefined;
@@ -22,7 +23,11 @@ export interface produceOrderEntity extends PublicModel {
   bsDate?: string | Moment;
   empId?: string;
   empName?: string;
-  supplierName?: string;
+  supId?: string;
+  supName?: string;
+  cusId?: string;
+  cusName?: string;
+  customer?: CustomerEntity;
   bdEmployee?: EmployeeEntity;
   bdSupplier?: SupplierGroupEntity;
   way?: string;
@@ -112,10 +117,7 @@ export function add(json: RequestData<produceOrderEntity>, mode: ErrorMessageMod
 /**
  * 编辑信息
  */
-export function update(
-  json: RequestData<produceOrderEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function update(json: RequestData<produceOrderEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<produceOrderEntity>(
     {
       url: Url.UPDATE_PRODUCE_ORDER,

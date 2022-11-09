@@ -986,8 +986,8 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'dlDate1',
-    title: '计划开始日期',
+    field: 'planTime',
+    title: '计划生产日期',
     editRender: {
       name: '$input',
       props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
@@ -996,7 +996,7 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'dlDate',
+    field: 'planFinTime',
     title: '计划完成日期',
     editRender: {
       name: '$input',
