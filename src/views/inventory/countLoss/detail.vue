@@ -217,7 +217,6 @@
   import { ControlSet, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { getMatTableById } from '/@/api/matTable';
-  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -236,6 +235,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
+  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -271,7 +271,7 @@
       { required: true, message: '请输入比帐存数量小的盘点数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) > Number(cellValue)) {
+          if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
             return new Error('盘点数量应该小于帐存数量');
           }
         },
@@ -439,13 +439,7 @@
   const back = () => {
     router.go(-1);
   };
-  let stockDis = ref<string>(''); //仓库维度
-  //获取仓库维度
-  const getStockDisData = async () => {
-    const arr: any = await getStockDis({});
-    stockDis.value = arr;
-  };
-  getStockDisData();
+
   //获取初始值
   const getListById = async () => {
     if (useRoute().query.row) {

@@ -23,6 +23,7 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { isArray } from '/@/utils/is';
 import { h } from 'vue';
+import { getStockDis } from '/@/api/system';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -119,11 +120,13 @@ export const useUserStore = defineStore({
       params: LoginParams & {
         goHome?: boolean;
         mode?: ErrorMessageMode;
-      },
+      },s
     ): Promise<GetUserInfoModel | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
+        const stockDis: any = await getStockDis({});
+        localStorage.setItem('stockDis', stockDis);
         const { token, userInfo, sysAllDictItems, pdaUser, departs, tenantList } = data;
         userInfo.userId = userInfo.id;
         userInfo.realName = userInfo.realname;

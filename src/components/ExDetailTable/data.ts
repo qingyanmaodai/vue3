@@ -847,7 +847,7 @@ export const warPurInputOfDetailColumns = [
   {
     field: 'num',
     title: '应收数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    className: 'disableProp',
     width: 150,
     sortable: true,
   },

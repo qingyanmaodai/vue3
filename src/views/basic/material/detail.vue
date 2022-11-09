@@ -558,7 +558,6 @@
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getStockDis } from '/@/api/system';
   const { createMessage } = useMessage();
   const AModal = Modal;
   const AForm = Form;
@@ -577,6 +576,7 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
+  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   const formData: MatEntity = { id: undefined, number: '', name: '', attr: 'A' };
   //初始化
@@ -584,13 +584,6 @@
     data: formData,
   });
   const formState = toRef(formStateInit, 'data');
-  let stockDis = ref<string>(''); //仓库维度
-  //获取仓库维度
-  const getStockDisData = async () => {
-    const arr: any = await getStockDis({});
-    stockDis.value = arr;
-  };
-  getStockDisData();
   let groupSelectId = router.currentRoute.value.query.groupId?.toString();
   //物料分组重新赋值
   const groupEvent = async () => {
