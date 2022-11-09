@@ -2,6 +2,9 @@ import {
   invCountGainColumns,
   invCountLossColumns,
   invCountSheetColumns,
+  warPurInputColumns,
+  warPurOrdersColumns,
+  warPurReturnColumns,
 } from '/@/components/ExTable/data';
 import { PageEnum } from '/@/enums/pageEnum';
 import { Url } from '/@/api/apiLink';
@@ -25,5 +28,23 @@ export const getUpDownSearchList = [
     listUrl: Url.GET_PAGE_INV_COUNT_LIST,
     detailUrl: PageEnum.INV_COUNT_SHEET_DETAIL,
     TableCols: invCountSheetColumns,
+  },
+  {
+    type: 'BsPurchaseOrder', //采购订单
+    listUrl: Url.GET_PAGE_PURCHASE_ORDER_LIST,
+    detailUrl: PageEnum.WAR_PUR_ORDERS_DETAIL,
+    TableCols: warPurOrdersColumns,
+  },
+  {
+    type: 'BsPurchaseInStock', //采购入库
+    listUrl: Url.GET_PAGE_PURCHASE_INSTOCK_LIST,
+    detailUrl: PageEnum.WAR_PUR_INPUT_DETAIL,
+    TableCols: warPurInputColumns,
+  },
+  {
+    type: 'BsPurchaseReturn', //采购退货
+    listUrl: Url.GET_PAGE_PURCHASE_RETURN_LIST,
+    detailUrl: PageEnum.WAR_PUR_RETURN_DETAIL,
+    TableCols: warPurReturnColumns,
   },
 ];

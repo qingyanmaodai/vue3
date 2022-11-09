@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsPurchaseOrder"
+        tableName="BsProMo"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -13,11 +13,12 @@
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
-        :columns="warPurOrdersColumns"
+        :columns="warProOrderColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
-        tableName="BsPurchaseOrder"
+        :totalData="totalData"
+        tableName="BsProMo"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -39,10 +40,10 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="warehouse-purchase-orders-index">
+<script setup lang="ts" name="warehouse-produce-order-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onActivated, onMounted, ref } from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import {
     audit,
     auditBatch,
@@ -57,10 +58,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warPurchase/orders';
+  } from '/@/api/warProduce/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warPurOrdersColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warProOrderColumns } from '/@/components/ExTable/data';
   import { SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -70,19 +71,26 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PURCHASE_ORDER');
+  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
+  let totalData = ref<number>(0);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
   import { VXETable } from 'vxe-table';
   //查询组件
   const searchRef: any = ref<String | null>(null);
+  //分页信息
+  const pages = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0,
+  });
   let getParams: SearchParams[] = [];
   //表格查询
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -91,14 +99,14 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsPurchaseOrder.update_time'],
+        descList: ['BsProMo.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    totalData.value = res.total;
+    pages.currentPage = currPage;
+    pages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -107,14 +115,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '采购订单-上查';
+    modalTitle.value = '生产订单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '采购订单-下查';
+    modalTitle.value = '生产订单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -129,7 +137,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_PUR_ORDERS_DETAIL,
+      path: PageEnum.WAR_PRO_ORDER_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -138,7 +146,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_PUR_ORDERS_DETAIL,
+      path: PageEnum.WAR_PRO_ORDER_DETAIL,
       query: {
         row: row.id,
       },
@@ -203,7 +211,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '采购订单导入模板.xls', data: res };
+            const data = { title: '生产订单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -219,13 +227,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '采购订单',
+            fileName: '生产订单',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '采购订单.xls', data: res };
+            const data = { title: '生产订单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -236,7 +244,6 @@
   };
   //下推
   const pushDownEvent = async (selectRecords, pushDownParam) => {
-    console.log(pushDownParam.tarBillType);
     let res = await pushDown(
       {
         params: selectRecords,
