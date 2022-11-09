@@ -30,7 +30,7 @@
             :columns="customerColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"
-            ref="customerTableRef"
+            ref="tableRef"
             @addTableEvent="addTableEvent"
             @editTableEvent="editTableEvent"
             @deleteRowEvent="deleteRowTableEvent"
@@ -92,13 +92,11 @@
   /* data */
   const paneSize = ref(16); //面板尺寸
   const customerSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
-  const customerTableRef: any = ref<String | null>(null); //表格组件引用ref
+  const tableRef: any = ref<String | null>(null); //表格组件引用ref
   let tableData = ref<object[]>([]); //表格数据
   const customerGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
-  //表格事件
-  const tableRef: any = ref<String | null>(null);
 
   /* method */
 
@@ -133,7 +131,7 @@
     });
     tableRef.value.pages.total = res.total;
     tableRef.value.pages.currentPage = currPage;
-    tableRef.value.ages.pageSize = pageSize;
+    tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
     customerSearchRef.value.moreSearchClose();
   };
@@ -186,7 +184,7 @@
     let res = await batchAuditCustomer({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
+    await tableRef.value.computeData(res);
     await getList();
   };
 
@@ -212,7 +210,7 @@
     let res = await batchUnAuditCustomer({
       params: ids,
     });
-    await customerTableRef.value.computeData(res);
+    await tableRef.value.computeData(res);
     await getList();
   };
 
@@ -224,7 +222,7 @@
       return item.id;
     });
     let res = await batchDeleteCustomer({ params: ids });
-    await customerTableRef.value.computeData(res);
+    await tableRef.value.computeData(res);
     await getList();
   };
   /**
