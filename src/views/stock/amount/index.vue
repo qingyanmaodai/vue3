@@ -18,7 +18,6 @@
         :isShowExport="false"
         :isShowImport="false"
         tableName="BdInventory"
-        :pages="pages"
         :columns="StockAmountColumns"
         :gridOptions="GridOptions"
         :tableData="tableData"

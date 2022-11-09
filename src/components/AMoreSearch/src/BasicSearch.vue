@@ -406,7 +406,7 @@
   const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    getList(1, tableRef.value.pages.pageSize,tableUrl);
+    getList(1, 10,tableUrl);
   };
   const filterParams = ref<SearchParams[]>([]);
   /**
