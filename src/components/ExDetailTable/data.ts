@@ -972,16 +972,6 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'dlDate',
-    title: '计划完成日期',
-    editRender: {
-      name: '$input',
-      props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
-    },
-    width: 150,
-    sortable: true,
-  },
-  {
     field: 'num',
     title: '生产数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
@@ -992,6 +982,26 @@ export const warProOrderOfDetailColumns = [
     field: 'num1',
     title: '完成数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'dlDate1',
+    title: '计划开始日期',
+    editRender: {
+      name: '$input',
+      props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'dlDate',
+    title: '计划完成日期',
+    editRender: {
+      name: '$input',
+      props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
+    },
     width: 150,
     sortable: true,
   },

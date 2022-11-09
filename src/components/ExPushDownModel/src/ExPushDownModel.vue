@@ -8,7 +8,7 @@
         <vxe-radio
           class="contentNode"
           v-for="(item, index) in formState"
-          :name="index"
+          :name="index + ''"
           :key="index"
           :label="index"
           :content="item.name"

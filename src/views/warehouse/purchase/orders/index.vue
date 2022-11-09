@@ -31,6 +31,7 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @getList="getList"
+        @pushDownEvent="pushDownEvent"
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
@@ -56,6 +57,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
+    pushDown,
   } from '/@/api/warPurchase/orders';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -77,6 +79,7 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { VXETable } from 'vxe-table';
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //分页信息
@@ -239,7 +242,28 @@
       });
     };
   };
-
+  //下推
+  const pushDownEvent = async (selectRecords, pushDownParam) => {
+    console.log(pushDownParam.tarBillType);
+    let res = await pushDown(
+      {
+        params: selectRecords,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      await VXETable.modal.message({
+        content: '无法下推到该下游单据/已有下游单据',
+        status: 'error',
+      });
+    }
+  };
   //获取高级查询字段数据
   const moreSearchData = ref();
   getSearchOption({ params: '' }).then((res) => {
