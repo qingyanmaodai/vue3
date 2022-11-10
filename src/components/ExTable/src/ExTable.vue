@@ -300,12 +300,12 @@
     (e: 'addTableEvent'): void;
     (e: 'editTableEvent', row: any): void;
     (e: 'deleteRowEvent', row: object): void;
-    (e: 'delBatchEvent', row: any): void;
+    (e: 'delBatchEvent', selectRecords: any): void;
     (e: 'exportTable'): void;
     (e: 'importModelEvent'): void;
     (e: 'getList', currPage?: number, pageSize?: number, url?: string): void; //刷新表格
     (e: 'auditRowEvent', row: any): void;
-    (e: 'auditBatchEvent', row: any): void;
+    (e: 'auditBatchEvent', selectRecords: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
@@ -358,8 +358,7 @@
   };
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
+    let selectRecords = await getListData();
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
@@ -422,6 +421,34 @@
       resultModal.value = true;
     }
   };
+  //获取勾选的列表值
+  const getListData = () => {
+    const $grid: any = xGrid.value;
+    let selectRecords = $grid.getCheckboxRecords();
+    preSelectRecords = selectRecords.length;
+    return selectRecords;
+  };
+  let preSelectRecords = 1; //保存选中的数组长度
+  //dtData封装
+  const getDtData = async () => {
+    let selectRecords = await getListData();
+    let selectRecords1 = cloneDeep(selectRecords);
+    let selectRecords2 = cloneDeep(selectRecords);
+    // 根据单号去重
+    selectRecords1 = uniqBy(selectRecords1, 'number');
+    // 赋值dtData
+    for (const item of selectRecords1) {
+      item.dtData = [];
+      for (const item2 of selectRecords2) {
+        if (item2.number === item.number) {
+          item2.id = item2.detailId;
+          item2.bsStatus = 'A';
+          item.dtData.push(item2);
+        }
+      }
+    }
+    return selectRecords1;
+  };
   //新增
   const addTableEvent = () => {
     emit('addTableEvent');
@@ -434,36 +461,30 @@
   const deleteRowEvent = async (row: any) => {
     //删除确认窗口
     const type = await VXETable.modal.confirm('您确定要删除该数据?(【已审核】状态的数据不可删除)');
-    const $grid = xGrid.value;
-    if ($grid) {
-      if (type === 'confirm') {
-        if (row.bsStatus == 'A') {
-          try {
-            emit('deleteRowEvent', row);
-          } catch (e) {
-            console.log('删除单条数据失败', e);
-          }
-        } else {
-          createMessage.error('已审核的数据不可删除');
+    if (type === 'confirm') {
+      if (row.bsStatus == 'A') {
+        try {
+          emit('deleteRowEvent', row);
+        } catch (e) {
+          console.log('删除单条数据失败', e);
         }
+      } else {
+        createMessage.error('已审核的数据不可删除');
       }
     }
   };
   //批量删除
   const delTable = async () => {
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
-    let okRow: any[] = [];
-    if (selectRecords.length > 0) {
+    let selectRecords = await getListData();
+    if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
         content:
-          '您确定要删除所选的 ' + selectRecords.length + ' 条 数据?(【已审核】状态的数据不可删除)',
+          '您确定要删除所选的 ' + preSelectRecords + ' 条 数据?(【已审核】状态的数据不可删除)',
       });
       if (type === 'confirm') {
-        okRow.push(...selectRecords);
-        emit('delBatchEvent', okRow);
+        emit('delBatchEvent', selectRecords);
       }
     } else {
       createMessage.warning('请至少勾选一条数据。');
@@ -475,14 +496,11 @@
     const type = await VXETable.modal.confirm(
       '您确定要审核该数据吗?(【已审核】状态的数据不可审核)',
     );
-    const $grid = xGrid.value;
-    if ($grid) {
-      if (type === 'confirm') {
-        try {
-          emit('auditRowEvent', row);
-        } catch (e) {
-          console.log('审核单条数据失败', e);
-        }
+    if (type === 'confirm') {
+      try {
+        emit('auditRowEvent', row);
+      } catch (e) {
+        console.log('审核单条数据失败', e);
       }
     }
   };
@@ -502,22 +520,17 @@
       }
     }
   };
-
   //批量审核
   const auditTable = async () => {
-    let okRow: any[] = [];
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
-    if (selectRecords.length > 0) {
+    let selectRecords = await getListData();
+    if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
-        content:
-          '您确定要审核所选 ' + selectRecords.length + ' 条 数据?(【已审核】状态的数据不可审核)',
+        content: '您确定要审核所选 ' + preSelectRecords + ' 条 数据?(【已审核】状态的数据不可审核)',
       });
       if (type === 'confirm') {
-        okRow.push(...selectRecords);
-        emit('auditBatchEvent', okRow);
+        emit('auditBatchEvent', selectRecords);
       }
     } else {
       createMessage.warning('请至少勾选一条数据。');
@@ -525,19 +538,16 @@
   };
   //批量反审核
   const unAuditTable = async () => {
-    let okRow: any[] = [];
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
-    if (selectRecords.length > 0) {
+    let selectRecords = await getListData();
+    if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
         status: 'info',
         content:
-          '您确定要反审核所选 ' + selectRecords.length + ' 条 数据?(【创建】状态的数据不可反审核)',
+          '您确定要反审核所选 ' + preSelectRecords + ' 条 数据?(【创建】状态的数据不可反审核)',
       });
       if (type === 'confirm') {
-        okRow.push(...selectRecords);
-        emit('unAuditBatchEvent', okRow);
+        emit('unAuditBatchEvent', selectRecords);
       }
     } else {
       createMessage.warning('请至少勾选一条数据。');
@@ -557,27 +567,7 @@
       };
     }
   };
-  //dtData封装
-  const getDtData = async () => {
-    const $grid: any = xGrid.value;
-    let selectRecords = $grid.getCheckboxRecords();
-    let selectRecords1 = cloneDeep(selectRecords);
-    let selectRecords2 = cloneDeep(selectRecords);
-    // 根据单号去重
-    selectRecords1 = uniqBy(selectRecords1, 'number');
-    // 赋值dtData
-    for (const item of selectRecords1) {
-      item.dtData = [];
-      for (const item2 of selectRecords2) {
-        if (item2.number === item.number) {
-          item2.id = item2.detailId;
-          item2.bsStatus = 'A';
-          item.dtData.push(item2);
-        }
-      }
-    }
-    return selectRecords1;
-  };
+
   //下推功能
   const pushDownSelect = async (pushDownParam) => {
     let selectRecords = await getDtData();
@@ -585,8 +575,7 @@
   };
   //下推弹框
   const pushDownEvent = async () => {
-    const $grid: any = xGrid.value;
-    const selectRecords = $grid.getCheckboxRecords();
+    let selectRecords = await getListData();
     if (selectRecords.length > 0) {
       ExPushDownModelRef.value.show();
     } else {
