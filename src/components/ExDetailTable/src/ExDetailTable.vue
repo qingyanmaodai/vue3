@@ -261,12 +261,11 @@
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.bdStock):
+      case column.field == 'bdStockCompartment.name' && (row.stockDis == 'A' || !row.stockId):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'bdStockLocation.name' &&
-        (row.stockDis !== 'C' || !row.bdStockCompartment):
+      case column.field == 'bdStockLocation.name' && (row.stockDis !== 'C' || !row.compartmentId):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

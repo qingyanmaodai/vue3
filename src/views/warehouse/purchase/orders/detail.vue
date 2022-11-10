@@ -507,7 +507,7 @@
   };
   //计算数量
   const getCountAmount = (row) => {
-    if (row.num && row.prices !== null) {
+    if (row.num && row.prices) {
       row.totalPrices = row.num * row.prices;
     } else {
       row.totalPrices = '';
