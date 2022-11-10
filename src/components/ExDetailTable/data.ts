@@ -592,22 +592,21 @@ export const warPurOrdersOfDetailColumns = [
   {
     field: 'pushNum',
     title: '已下推数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
+    className: 'disableProp',
     sortable: true,
   },
   {
     field: 'doneNum',
     title: '已入库数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
+    className: 'disableProp',
     sortable: true,
   },
   {
     field: 'totalPrices',
     title: '金额',
     className: 'disableProp',
-    // editRender: { name: '$input', props: { type: 'float', min: 0 } },
     slots: { default: 'totalPrices' },
     width: 150,
     sortable: true,
@@ -956,7 +955,6 @@ export const warProOrderOfDetailColumns = [
     field: 'bdMaterial.baseUnitName',
     title: '基本单位',
     className: 'disableProp',
-    // editRender: { name: '$input' },
     width: 150,
     sortable: true,
   },
@@ -964,7 +962,6 @@ export const warProOrderOfDetailColumns = [
     field: 'bdMaterial.weightUnitName',
     title: '重量单位',
     className: 'disableProp',
-    // editRender: { name: '$input' },
     width: 150,
     sortable: true,
   },
@@ -976,15 +973,22 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'num1',
-    title: '完成数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    field: 'doneNum',
+    title: '已入库数量',
     width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    width: 150,
+    className: 'disableProp',
     sortable: true,
   },
   {
     field: 'planTime',
-    title: '计划生产日期',
+    title: '计划开工日期',
     editRender: {
       name: '$input',
       props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
@@ -994,64 +998,10 @@ export const warProOrderOfDetailColumns = [
   },
   {
     field: 'planFinTime',
-    title: '计划完成日期',
+    title: '计划完工日期',
     editRender: {
       name: '$input',
       props: { clearable: true, valueFormat: 'yyyy-MM-dd HH:mm:ss', type: 'date' },
-    },
-    width: 150,
-    sortable: true,
-  },
-  {
-    field: 'bdStock.name',
-    title: '仓库',
-    params: {
-      list: 'GET_PAGE_STOCK_LIST',
-      select: 'GET_STOCK_DTO',
-      param: {
-        stockId: 'bdStock',
-        compartmentId: 'bdStockCompartment',
-        locationId: 'bdStockLocation',
-      },
-    },
-    editRender: { name: '$input' },
-    slots: {
-      edit: 'model1',
-    },
-    width: 150,
-    sortable: true,
-  },
-  {
-    field: 'bdStockCompartment.name',
-    title: '分仓',
-    params: {
-      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
-      select: 'GET_SUB_STOCK_DTO',
-      param: {
-        compartmentId: 'bdStockCompartment',
-        locationId: 'bdStockLocation',
-      },
-    },
-    editRender: { name: '$input' },
-    slots: {
-      edit: 'model1',
-    },
-    width: 150,
-    sortable: true,
-  },
-  {
-    field: 'bdStockLocation.name',
-    title: '仓位',
-    params: {
-      list: 'GET_PAGE_STOCK_LOCATION_LIST',
-      select: 'GET_LOCATION_DTO',
-      param: {
-        locationId: 'bdStockLocation',
-      },
-    },
-    editRender: { name: '$input' },
-    slots: {
-      edit: 'model1',
     },
     width: 150,
     sortable: true,

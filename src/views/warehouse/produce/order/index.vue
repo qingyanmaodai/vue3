@@ -17,7 +17,6 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
-        :totalData="totalData"
         tableName="BsProMo"
         ref="tableRef"
         @addTableEvent="addTableEvent"
@@ -75,7 +74,6 @@
   //表格事件
   const tableRef: any = ref<String | null>(null);
   let tableData = ref<object[]>([]);
-  let totalData = ref<number>(0);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';

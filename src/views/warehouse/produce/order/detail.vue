@@ -55,11 +55,11 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="客户：" ref="empId" name="empId" class="item">
+                    <a-form-item label="计划员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择计划员'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
@@ -98,19 +98,6 @@
                     </a-form-item>
                   </Col>
                 </Row>
-                <!--                <Row>-->
-                <!--                  <Col :span="8">-->
-                <!--                    <a-form-item label="备注：" ref="mark" name="mark" class="item">-->
-                <!--                      <a-textArea-->
-                <!--                        v-model:value="formState.mark"-->
-                <!--                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加备注'"-->
-                <!--                        :rows="3"-->
-                <!--                        class="textArea"-->
-                <!--                        :disabled="formState.bsStatus === 'B'"-->
-                <!--                      />-->
-                <!--                    </a-form-item>-->
-                <!--                  </Col>-->
-                <!--                </Row>-->
               </a-form>
             </TabPane>
             <TabPane key="2" tab="其他信息">
@@ -267,7 +254,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    countNum: [{ required: true, message: '请输入采购数量' }],
+    num: [{ required: true, message: '请输入生成数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];

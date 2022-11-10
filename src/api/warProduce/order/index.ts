@@ -14,8 +14,6 @@ import { StockCompartmentEntity } from '/@/api/stockCompartment';
 import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
-import { SupplierGroupEntity } from '/@/api/supplierGroup';
-import { CustomerEntity } from '/@/api/customer';
 
 export interface produceOrderEntity extends PublicModel {
   id: string | undefined;
@@ -23,13 +21,7 @@ export interface produceOrderEntity extends PublicModel {
   bsDate?: string | Moment;
   empId?: string;
   empName?: string;
-  supId?: string;
-  supName?: string;
-  cusId?: string;
-  cusName?: string;
-  customer?: CustomerEntity;
   bdEmployee?: EmployeeEntity;
-  bdSupplier?: SupplierGroupEntity;
   way?: string;
   dtData?: proOrderDetailEntity[];
   dtLk?: InvCountEntity;
@@ -39,12 +31,9 @@ export interface produceOrderEntity extends PublicModel {
   srcId?: string;
   srcType?: string;
   optStockNum?: string;
-  compartmentId?: string;
-  locationId?: string;
   lot?: string;
   matId?: string;
   parentId?: string;
-  stockId?: string;
   tenantId?: string;
 }
 
