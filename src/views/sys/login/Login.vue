@@ -76,6 +76,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { router } from '/@/router';
   import { PageEnum } from '/@/enums/pageEnum';
+  import { getStockDis } from "/@/api/system";
   defineProps({
     sessionTimeout: {
       type: Boolean,
@@ -109,11 +110,13 @@
     tenantOptions.value = options;
     visibleTenantModal.value = true;
   };
-  const okChangeTenant = () => {
+  const okChangeTenant = async () => {
     visibleTenantModal.value = false;
     userStore.setTenant(tenant.value);
     const uInfo = userStore.getUserInfo;
-    router.replace(uInfo?.homePath || PageEnum.BASE_HOME);
+    const stockDis: any = await getStockDis({});
+    localStorage.setItem('stockDis', stockDis);
+    await router.replace(uInfo?.homePath || PageEnum.BASE_HOME);
   };
 </script>
 <style lang="less">

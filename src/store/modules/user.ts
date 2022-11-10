@@ -120,13 +120,11 @@ export const useUserStore = defineStore({
       params: LoginParams & {
         goHome?: boolean;
         mode?: ErrorMessageMode;
-      },s
+      },
     ): Promise<GetUserInfoModel | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
-        const stockDis: any = await getStockDis({});
-        localStorage.setItem('stockDis', stockDis);
         const { token, userInfo, sysAllDictItems, pdaUser, departs, tenantList } = data;
         userInfo.userId = userInfo.id;
         userInfo.realName = userInfo.realname;

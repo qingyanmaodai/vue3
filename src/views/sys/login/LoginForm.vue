@@ -127,6 +127,7 @@
   import { ResultEnum } from '/@/enums/httpEnum';
   import { PageEnum } from '/@/enums/pageEnum';
   import { router } from '/@/router';
+  import { getStockDis } from "/@/api/system";
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
@@ -192,6 +193,8 @@
           const uInfo = userStore.getUserInfo;
           userStore.setTenant(userInfo.tenantList[0].id);
           await router.replace(uInfo?.homePath || PageEnum.BASE_HOME);
+          const stockDis: any = await getStockDis({});
+          localStorage.setItem('stockDis', stockDis);
           notification.success({
             message: t('sys.login.loginSuccessTitle'),
             description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
