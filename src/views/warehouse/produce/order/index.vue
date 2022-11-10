@@ -252,7 +252,7 @@
       });
     } else {
       await VXETable.modal.message({
-        content: '无法下推到该下游单据/已有下游单据',
+        message: '无法下推到该下游单据/已有下游单据',
         status: 'error',
       });
     }

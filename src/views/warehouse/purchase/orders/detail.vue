@@ -482,28 +482,28 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({ params: dataId });
+      const res: any = await getOneById({params: dataId});
       formState.value = res;
-      if (formState.value.dtData) {
-        formState.value.dtData.map((r) => {
-          r.bsStatus = formState.value.bsStatus;
-          r['stockDis'] = stockDis.value;
-          if (r.bdStockCompartment && r.bdStockCompartment.name) {
-            r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-            r.bdStockCompartment.name =
-              stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
-          }
-          if (r.bdStockLocation && r.bdStockLocation.name) {
-            r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-            r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
-          }
-        });
-      }
-      detailTableData.value = cloneDeep(formState.value.dtData);
+
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
-      detailTableData.value = cloneDeep(formState.value.dtData);
     }
+    if (formState.value.dtData) {
+      formState.value.dtData.map((r) => {
+        r.bsStatus = formState.value.bsStatus;
+        r['stockDis'] = stockDis.value;
+        if (r.bdStockCompartment && r.bdStockCompartment.name) {
+          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
+          r.bdStockCompartment.name =
+            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+        }
+        if (r.bdStockLocation && r.bdStockLocation.name) {
+          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
+          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+        }
+      });
+    }
+    detailTableData.value = cloneDeep(formState.value.dtData);
   };
   //计算数量
   const getCountAmount = (row) => {
