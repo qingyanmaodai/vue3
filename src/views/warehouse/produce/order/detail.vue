@@ -183,7 +183,7 @@
     TabPane,
     Tabs,
   } from 'ant-design-vue';
-  import { Splitpanes } from 'splitpanes';
+  import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
