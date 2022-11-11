@@ -235,7 +235,6 @@
   };
   //下推
   const pushDownEvent = async (selectRecords, pushDownParam) => {
-    console.log(pushDownParam.tarBillType);
     let res = await pushDown(
       {
         params: selectRecords,

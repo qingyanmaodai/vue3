@@ -27,6 +27,7 @@
         @auditBatchEvent="auditBatchEvent"
         @unAuditRowEvent="unAuditRowEvent"
         @unAuditBatchEvent="unAuditBatchEvent"
+        @pushDownEvent="pushDownEvent"
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @getList="getList"
@@ -55,6 +56,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
+    pushDown,
   } from '/@/api/warPurchase/input';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -191,6 +193,24 @@
     });
     await tableRef.value.computeData(res);
     await getList();
+  };
+  //下推
+  const pushDownEvent = async (selectRecords, pushDownParam) => {
+    let res = await pushDown(
+      {
+        params: selectRecords,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      createMessage.error('无法下推到该下游单据/已有下游单据');
+    }
   };
   //下载模板
   const importModelEvent = async () => {
