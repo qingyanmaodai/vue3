@@ -78,7 +78,6 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
-  import { VXETable } from 'vxe-table';
   import { getInvList } from '/@/api/realTimeInv';
   //查询组件
   const searchRef: any = ref<String | null>(null);
@@ -201,10 +200,7 @@
         params: { pushDownParam: JSON.stringify(res) },
       });
     } else {
-      await VXETable.modal.message({
-        message: '无法下推到该下游单据/已有下游单据',
-        status: 'error',
-      });
+      createMessage.error('无法下推到该下游单据/已有下游单据');
     }
   };
   //删除表格单条数据

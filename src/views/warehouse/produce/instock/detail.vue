@@ -389,10 +389,7 @@
         const validAllErrMapData = await detailTableRef.value.getValidAllData();
         if (tableFullData) {
           if (validAllErrMapData) {
-            await VXETable.modal.message({
-              status: 'error',
-              message: '明细表数据校检不通过，请检查!',
-            });
+            createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
           if (
@@ -407,10 +404,7 @@
                 ).length > 1,
             )
           ) {
-            await VXETable.modal.message({
-              status: 'error',
-              message: '明细表存在相同数据，请检查!',
-            });
+            createMessage.error('明细表存在相同数据，请检查!');
             return;
           }
           formState.value.dtData = cloneDeep(tableFullData);
@@ -436,10 +430,7 @@
           const validAllErrMapData = await detailTableRef.value.getValidAllData();
           if (tableFullData) {
             if (validAllErrMapData) {
-              await VXETable.modal.message({
-                status: 'error',
-                message: '明细表数据校检不通过，请检查!',
-              });
+              createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
             if (
@@ -454,10 +445,7 @@
                   ).length > 1,
               )
             ) {
-              await VXETable.modal.message({
-                status: 'error',
-                message: '明细表存在相同数据，请检查!',
-              });
+              createMessage.error('明细表存在相同数据，请检查!');
               return;
             }
             formState.value.dtData = cloneDeep(tableFullData);

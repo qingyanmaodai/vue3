@@ -69,7 +69,6 @@
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
-  import { VXETable } from 'vxe-table';
   const { createMessage } = useMessage();
   const GridOptions = gridOptions;
   import { getInvList } from '/@/api/realTimeInv';
@@ -254,10 +253,7 @@
         params: { pushDownParam: JSON.stringify(res) },
       });
     } else {
-      await VXETable.modal.message({
-        message: '无法下推到该下游单据/已有下游单据',
-        status: 'error',
-      });
+      createMessage.error('无法下推到该下游单据/已有下游单据');
     }
   };
   //下载模板

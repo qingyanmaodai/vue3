@@ -368,10 +368,7 @@
         const validAllErrMapData = await detailTableRef.value.getValidAllData();
         if (tableFullData) {
           if (validAllErrMapData) {
-            await VXETable.modal.message({
-              status: 'error',
-              message: '明细表数据校检不通过，请检查!',
-            });
+            createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
@@ -402,7 +399,7 @@
           const validAllErrMapData = await detailTableRef.value.getValidAllData();
           if (tableFullData) {
             if (validAllErrMapData) {
-              await VXETable.modal.message({ status: 'error', message: '数据校检不通过，请检查!' });
+              createMessage.error('数据校检不通过，请检查!');
               return;
             }
             formState.value.bdExamineDetailList = cloneDeep(tableFullData);
