@@ -152,14 +152,12 @@
     DatePicker,
     Space,
     InputSearch,
-    Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { computed, reactive, ref, toRef, watch } from 'vue';
-  import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
+  import { computed, reactive, ref, toRef } from 'vue';
   import { ExTable } from '/@/components/ExTable';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
-  import { config, configEntity } from '/@/utils/publicParamConfig';
+  import { config } from '/@/utils/publicParamConfig';
   import { getPublicList } from '/@/api/public';
   import { cloneDeep } from 'lodash-es';
   import { BasicSearch, MoreSearch } from '/@/components/AMoreSearch';
@@ -260,21 +258,11 @@
   const controlOfBasic = ref<ControlSet[]>([]);
   //基础信息查询组件ref
   const childBasicSearchRef: any = ref(null);
-  const xGrid = ref<VxeGridInstance>();
   // 高级查询打开
   const childMoreSearchEvent = async () => {
     await childMoreSearchRef.value.show();
     tableNameOfBasic.value = cloneDeep(props.tableName);
     controlOfBasic.value = cloneDeep(props.control);
-  };
-
-  //格式化数据
-  const formatData = (data: string | number, source: configEntity[]) => {
-    let res;
-    if (source && source.length > 0) {
-      res = source.find((item) => item.value === data);
-    }
-    return res ? res.label : '';
   };
 
   //基本信息弹框中的基础信息表格双击事件
@@ -420,11 +408,7 @@
   let pageSize = computed<number>(() => {
     return tableRef.value.pages.pageSize;
   });
-  // watch(()=> {
-  //   tableRef.value.pages.pageSize
-  // },(newV,oldV)=>{
-  //   console.log(newV,oldV);
-  // })
+
   defineExpose({
     show,
     close,
