@@ -411,6 +411,7 @@
         //保存：新增+更新
         let data = await add({ params: formState.value });
         formState.value = data;
+        detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
