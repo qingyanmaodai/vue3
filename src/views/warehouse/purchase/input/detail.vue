@@ -275,7 +275,16 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    realNum: [{ required: true, message: '请输入实收数量' }],
+    realNum: [
+      { required: true, message: '请输入实收数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.num) < Number(cellValue)) {
+            return new Error('实收数量不能超过应收数量');
+          }
+        },
+      },
+    ],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
@@ -479,9 +488,8 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({params: dataId});
+      const res: any = await getOneById({ params: dataId });
       formState.value = res;
-
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }
