@@ -155,7 +155,7 @@
     Tag,
     TreeSelect,
   } from 'ant-design-vue';
-  import { reactive, ref, toRef } from 'vue';
+  import { computed, reactive, ref, toRef, watch } from 'vue';
   import { VxeGridEvents, VxeGridInstance, VxePagerEvents } from 'vxe-table';
   import { ExTable } from '/@/components/ExTable';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
@@ -340,14 +340,14 @@
   };
   //查询按钮
   const searchEvent = async () => {
-    await getList(1, tableRef.value.pages.pageSize,listUrl.value);
+    await getList(1, pageSize, listUrl.value);
   };
   //重置
   const resetSearch = async () => {
     defaultParam.value = cloneDeep(defaultP);
   };
 
-  const getList = async ( currPage = 1, pageSize = tableRef.value.pages.pageSize, url) => {
+  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize, url) => {
     getParams = [];
     const data = defaultParam.value;
     if (filterParams.value && filterParams.value.length > 0) {
@@ -406,7 +406,7 @@
   const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    getList(1, 10,tableUrl);
+    getList(1, 10, tableUrl);
   };
   const filterParams = ref<SearchParams[]>([]);
   /**
@@ -416,6 +416,15 @@
   const setFilter = (params: SearchParams[]) => {
     filterParams.value = params;
   };
+
+  let pageSize = computed<number>(() => {
+    return tableRef.value.pages.pageSize;
+  });
+  // watch(()=> {
+  //   tableRef.value.pages.pageSize
+  // },(newV,oldV)=>{
+  //   console.log(newV,oldV);
+  // })
   defineExpose({
     show,
     close,
