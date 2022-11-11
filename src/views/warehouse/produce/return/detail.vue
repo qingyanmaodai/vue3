@@ -55,7 +55,7 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="计划员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="退料员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
@@ -138,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warProOrderOfDetailColumns"
+            :columns="warProReturnOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -168,7 +168,7 @@
 <script lang="ts" setup name="warehouse-produce-order-detail">
   import {
     detailOfExaGridOptions,
-    warProOrderOfDetailColumns,
+    warProReturnOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {

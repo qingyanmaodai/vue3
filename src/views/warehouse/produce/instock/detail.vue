@@ -378,8 +378,7 @@
     formState.value[currDataParam[0]] = row.id;
     formState.value[currDataParam[1]] = row.name;
   };
-  //接受参数
-  let dataId = useRoute().query.row?.toString() || '';
+
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -495,9 +494,8 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({params: dataId});
+      const res: any = await getOneById({ params: dataId });
       formState.value = res;
-
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }
