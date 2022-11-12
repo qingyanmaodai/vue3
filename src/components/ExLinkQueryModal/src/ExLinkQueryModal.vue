@@ -35,6 +35,7 @@
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
+          v-model:tablePages="tablePages"
           :tableName="props.tableName"
           :columns="tableColumns"
           :gridOptions="notToolInGridOptions"
@@ -51,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { ref, reactive } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
@@ -61,20 +62,22 @@
   import { getUpDownSearchList } from '/@/enums/routeEnum';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
-  import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
+  import {SearchDataType, SearchLink, SearchMatchType, tableParams} from '/@/api/apiLink';
   import { cloneDeep } from 'lodash-es';
   let height = '90%';
   const ASplitPanes = Splitpanes;
+  const AMenuItem = MenuItem;
+  const AMenu = Menu;
+  const ASubMenu = SubMenu;
   const paneSize = ref<number>(12);
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currKey = ref<any>({});
+  //表格数据
   const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   const tableColumns: any = ref<VxeGridPropTypes.Columns[]>([]);
-  let tableData = ref<object[]>([]);
-  const AMenuItem = MenuItem;
-  const AMenu = Menu;
-  const ASubMenu = SubMenu;
   const selectedKeys = ref<any[]>([]);
   interface linkQueryMenuData {
     source: string;
@@ -114,7 +117,7 @@
     getList();
   };
   //点击关联查询,区分上下查
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
       filter = getUpDownSearchList.filter(
@@ -159,9 +162,7 @@
       listUrl,
     );
     tableShow.value = true;
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
   };
   const go = useGo();

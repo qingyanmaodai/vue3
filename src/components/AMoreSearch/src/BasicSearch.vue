@@ -176,13 +176,15 @@
     SearchLink,
     SearchMatchType,
     SearchParams,
-    TableColum,
+    TableColum, tableParams,
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { TreeItem } from '/@/components/Tree';
-  //表格事件
-  const tableRef: any = ref<String | null>(null);
+  //表格数据
+  const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   type Emits = {
     (event: 'basicClickEvent', data: object): void; //表格双击事件
     (event: 'onSearch', data: object): void; //基本信息的的选择框点击事件
@@ -245,7 +247,6 @@
     param: cloneDeep(defaultP),
   });
   const isShow = ref<boolean>(false);
-  const tableData = ref<any[]>([]);
   const defaultParam = toRef(formDataInit, 'param');
   const basicControl = ref<ControlSet[]>();
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]);
@@ -347,7 +348,7 @@
     defaultParam.value = cloneDeep(defaultP);
   };
 
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize, url) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize, url) => {
     getParams = [];
     const data = defaultParam.value;
     if (filterParams.value && filterParams.value.length > 0) {
@@ -391,9 +392,7 @@
       },
       url,
     );
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
   };
 

@@ -41,7 +41,7 @@
 <script setup lang="ts" name="warehouse-purchase-return-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onActivated, onMounted, ref } from 'vue';
+  import { onActivated, onMounted, reactive, ref} from 'vue';
   import {
     audit,
     auditBatch,
@@ -59,7 +59,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warPurReturnColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -69,9 +69,10 @@
   const installPaneSize = ref<number>(16);
   //导入上传文件api
   let importConfig = ref<string>('IMPORT_PURCHASE_RETURN');
-  //表格事件
-  const tableRef: any = ref<String | null>(null);
-  let tableData = ref<object[]>([]);
+  //表格数据
+  const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -79,7 +80,7 @@
   const searchRef: any = ref<String | null>(null);
   let getParams: SearchParams[] = [];
   //表格查询
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -93,9 +94,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };

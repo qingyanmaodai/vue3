@@ -745,3 +745,10 @@ export interface InvCountEntity {
   tarType?: string;
   tenantId?: string;
 }
+//搜索表格的初始值
+export const tableParams = {
+  //配置对应的查询参数
+  total: 0,
+  currentPage: 1,
+  pageSize: 10, //currentPage第几页,pageSize是一页几个,total总数
+};

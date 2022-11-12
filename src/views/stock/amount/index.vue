@@ -34,26 +34,20 @@
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import {SearchParams, tableParams} from '/@/api/apiLink';
   import { getInvList } from '/@/api/realTimeInv';
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //表格事件
-  const tableRef: any = ref<String | null>(null);
   //表格数据
-  let tableData = ref<object[]>([]);
+  const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   //查询组件
   const stockAmountSearchRef: any = ref<String | null>(null);
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
   let getParams: SearchParams[] = [];
   //表格查询
-  const getList = async (currPage = 1, pageSize = pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     getParams = [];
     if (
       stockAmountSearchRef.value.getSearchParams() &&
@@ -70,9 +64,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
   };
 
