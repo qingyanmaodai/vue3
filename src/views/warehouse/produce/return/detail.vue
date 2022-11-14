@@ -87,6 +87,20 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
+                    <a-form-item label="退料原因：" ref="reason" name="reason" class="item">
+                      <Select
+                        allowClear
+                        v-model:value="formState.reason"
+                        class="select"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
+                        :options="config.RETURN_REASON"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
@@ -182,6 +196,7 @@
     DatePicker,
     TabPane,
     Tabs,
+    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
