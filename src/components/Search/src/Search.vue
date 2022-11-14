@@ -42,6 +42,7 @@
     SearchMatchType,
     SearchParams,
     ControlSet,
+    FormState,
   } from '/@/api/apiLink';
 
   const AButton = Button;
@@ -68,21 +69,10 @@
       return [];
     },
   });
-  interface FormState {
-    wlNo: string;
-    wlName: string;
-    tableName: string;
-    searchNo: string;
-    searchName: string;
-  }
 
-  const formState: UnwrapRef<FormState> = reactive({
+  let formState: UnwrapRef<FormState> = reactive({
     wlNo: '',
     wlName: '',
-    wlMatID: '',
-    wlStockId: '',
-    wlCompartmentId: '',
-    wlLocationId: '',
     tableName: props.tableName,
     searchNo: props.searchNo,
     searchName: props.searchName,
@@ -96,7 +86,7 @@
     let searchParams: SearchParams[] = [];
     if (formState.wlNo) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'number',
         column: 'number',
         link: SearchLink.AND,
@@ -109,7 +99,7 @@
     }
     if (formState.wlName) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'name',
         column: 'name',
         link: SearchLink.AND,
@@ -137,6 +127,11 @@
   const moreSearchClose = () => {
     moreSearchRef.value.close();
   };
+  //设置输入框的值
+  const setFormState = (data: FormState) => {
+    formState.wlNo = data.wlNo;
+    formState.wlName = data.wlName;
+  };
   //重置
   const resetEvent = () => {
     emit('resetEvent');
@@ -144,7 +139,7 @@
       moreSearchRef.value.resetEvent();
     }
   };
-  defineExpose({ moreSearchClose, formState, getSearchParams });
+  defineExpose({ moreSearchClose, setFormState, getSearchParams });
 </script>
 
 <style scoped lang="less">

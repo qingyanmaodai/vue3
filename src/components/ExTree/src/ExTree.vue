@@ -104,7 +104,13 @@
   import { Modal, Button, Card, Col, Row, Form, FormItem, Input } from 'ant-design-vue';
   import { basicProps } from '/@/components/Tree/src/props';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { SearchDataType, SearchLink, SearchMatchType, SearchParams } from '/@/api/apiLink';
+  import {
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    GroupFormData,
+  } from '/@/api/apiLink';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { OptGroupHook } from '/@/api/utilHook';
 
@@ -130,13 +136,7 @@
     tableName: prop.tableName,
   });
   //树信息
-  interface GroupFormData {
-    id?: string;
-    name?: string;
-    number?: string;
-    parent?: any;
-  }
-  const groupFormData: UnwrapRef<GroupFormData> = reactive({
+  let groupFormData: UnwrapRef<GroupFormData> = reactive({
     id: '0',
     name: '',
     number: '',
@@ -246,6 +246,32 @@
     visibleGroupModal.value = true;
     emits('addSubEvent', node);
   };
+  //获取上一级分组
+  const getParentData = (
+    key: string | number,
+    list: TreeItem[],
+    res: TreeItem,
+    parent?: TreeItem,
+  ): TreeItem => {
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      if (item.key === key) {
+        if (parent) {
+          return parent;
+        } else {
+          return { name: '' };
+        }
+      }
+      if (item.children && item.children.length > 0) {
+        res = getParentData(key, item.children, res, item);
+        if (res.key) {
+          return res;
+        }
+      }
+    }
+    return res;
+  };
+
   //删除分组
   const deleteEvent = () => {
     const key = getOneSelectedKey();
@@ -287,12 +313,26 @@
   const cancelDeleteGroup = () => {
     visibleDeleteGroupModal.value = false;
   };
+  //获取分组
+  const getFormData = () => {
+    return groupFormData;
+  };
+  //设置分组
+  const setFormData = (data: GroupFormData) => {
+    groupFormData.id = data.id;
+    groupFormData.number = data.number;
+    groupFormData.name = data.name ? data.name : '';
+    const node = findNode(groupFormData.name);
+    groupFormData.parent = data.parent;
+  };
   defineExpose({
     getSearchParams,
     setSelectedKeys,
     getSelectedKeys,
     resetGroupFormData,
-    groupFormData,
+    getFormData,
+    setFormData,
+    getParentData,
   });
 </script>
 

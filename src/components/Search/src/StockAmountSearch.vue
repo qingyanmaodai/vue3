@@ -102,6 +102,7 @@
     ControlSet,
     Url,
     TableColum,
+    StockFormState,
   } from '/@/api/apiLink';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
@@ -130,19 +131,8 @@
       return [];
     },
   });
-  interface FormState {
-    matName: string;
-    stockName: string;
-    compartmentName: string;
-    locationName: string;
-    matId: string;
-    stockId: string;
-    compartmentId: string;
-    locationId: string;
-    tableName: string;
-  }
 
-  const formState: UnwrapRef<FormState> = reactive({
+  const formState: UnwrapRef<StockFormState> = reactive({
     matName: '',
     stockName: '',
     compartmentName: '',
@@ -197,52 +187,52 @@
     let searchParams: SearchParams[] = [];
     if (formState.matName) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'matId',
         column: 'mat_id',
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
-        val: formState.matId,
+        val: formState.matId ? formState.matId : '',
         startWith: '',
         endWith: '',
       });
     }
     if (formState.stockName) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'stockId',
         column: 'stock_id',
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
-        val: formState.stockId,
+        val: formState.stockId ? formState.stockId : '',
         startWith: '',
         endWith: '',
       });
     }
     if (formState.compartmentName) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'compartmentId',
         column: 'compartment_id',
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
-        val: formState.compartmentId,
+        val: formState.compartmentId ? formState.compartmentId : '',
         startWith: '',
         endWith: '',
       });
     }
     if (formState.locationName) {
       searchParams.push({
-        table: formState.tableName,
+        table: formState.tableName ? formState.tableName : '',
         name: 'locationId',
         column: 'location_id',
         link: SearchLink.AND,
         rule: SearchMatchType.LIKE,
         type: SearchDataType.string,
-        val: formState.locationId,
+        val: formState.locationId ? formState.locationId : '',
         startWith: '',
         endWith: '',
       });
@@ -264,6 +254,17 @@
   const moreSearchClose = () => {
     moreSearchRef.value.close();
   };
+  //设置输入框的值
+  const setFormState = (data: StockFormState) => {
+    formState.matName = data.matName;
+    formState.matId = data.matId;
+    formState.stockName = data.stockName;
+    formState.stockId = data.stockId;
+    formState.compartmentName = data.compartmentName;
+    formState.compartmentId = data.compartmentId;
+    formState.locationName = data.locationName;
+    formState.locationId = data.locationId;
+  };
   //重置
   const resetEvent = () => {
     emit('resetEvent');
@@ -271,7 +272,7 @@
       moreSearchRef.value.resetEvent();
     }
   };
-  defineExpose({ moreSearchClose, formState, getSearchParams });
+  defineExpose({ moreSearchClose, setFormState, getSearchParams });
 </script>
 
 <style scoped lang="less">

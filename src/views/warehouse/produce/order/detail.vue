@@ -48,7 +48,7 @@
                         autocomplete="off"
                         :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
                         name="bsStatus"
-                        :disabled="true"
+                        disabled
                       />
                     </a-form-item>
                   </Col>
@@ -425,6 +425,7 @@
               return e;
             });
           }
+          detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
       })
@@ -463,9 +464,8 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({params: dataId});
+      const res: any = await getOneById({ params: dataId });
       formState.value = res;
-
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }
@@ -560,7 +560,6 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
-    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
     obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
   };

@@ -6,7 +6,7 @@
           :toolbar="true"
           :search="true"
           :tree-data="treeData"
-          ref="supplierGroupTreeRef"
+          ref="treeRef"
           title="供应商分组"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
@@ -19,7 +19,7 @@
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
             :control="moreSearchData"
-            ref="supplierSearchRef"
+            ref="searchRef"
             tableName="BdSupplier"
             searchNo="编码"
             searchName="供应商"
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts" name="basic-supplier-index">
-import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -88,16 +88,16 @@ import {onActivated, onMounted, reactive, ref} from 'vue';
     getSupplierGroupTree,
     SupplierGroupEntity,
   } from '/@/api/supplierGroup';
-import {SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
-  const supplierSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
+  const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
   const tablePages = reactive(tableParams);
-  const supplierGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
+  const treeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
 
@@ -110,17 +110,11 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
    */
   const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     ParamsData = [];
-    if (
-      supplierGroupTreeRef.value.getSearchParams() &&
-      supplierGroupTreeRef.value.getSearchParams().length > 0
-    ) {
-      ParamsData = ParamsData.concat(supplierGroupTreeRef.value.getSearchParams());
+    if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(treeRef.value.getSearchParams());
     }
-    if (
-      supplierSearchRef.value.getSearchParams() &&
-      supplierSearchRef.value.getSearchParams().length > 0
-    ) {
-      ParamsData = ParamsData.concat(supplierSearchRef.value.getSearchParams());
+    if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(searchRef.value.getSearchParams());
     }
 
     //表格查询
@@ -134,14 +128,14 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
     });
     tablePages.total = res.total;
     tableData.value = res.records;
-    supplierSearchRef.value.moreSearchClose();
+    searchRef.value.moreSearchClose();
   };
 
   /**
    * 表格新增数据
    */
   const addTableEvent = () => {
-    let groupId = supplierGroupTreeRef.value.getSelectedKeys();
+    let groupId = treeRef.value.getSelectedKeys();
     routerGo({
       path: PageEnum.SUPPLIER_DETAIL, //供应商详情页
       //需要带到详情页的参数
@@ -239,10 +233,13 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
    * 刷新表格数据
    */
   const resetTable = () => {
-    supplierGroupTreeRef.value.setSelectedKeys([]);
-    supplierSearchRef.value.formState.wlNo = null;
-    supplierSearchRef.value.formState.wlName = null;
-    getList();
+    treeRef.value.setSelectedKeys([]);
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
+    getList(1);
   };
 
   /**
@@ -311,12 +308,12 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
    * 新增供应商分组
    */
   const addGroupEvent = () => {
-    supplierGroupTreeRef.value.resetGroupFormData();
+    treeRef.value.resetGroupFormData();
     OptGroupHook.submitGroup = async () => {
       await addSupplierGroup({
         params: {
-          number: supplierGroupTreeRef.value.groupFormData.number,
-          name: supplierGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -329,18 +326,26 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
    */
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneSupplierGroup({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
-      supplierGroupTreeRef.value.groupFormData.number = result.number;
-      supplierGroupTreeRef.value.groupFormData.name = result.name;
-      supplierGroupTreeRef.value.groupFormData.id = result.id;
-      supplierGroupTreeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      const treeFormData: GroupFormData = {
+        number: result.number,
+        name: result.name,
+        id: result.id,
+        parent: { id: parentData.id, name: parentData.name },
+      };
+      treeRef.value.setFormData(treeFormData);
     }
     OptGroupHook.submitGroup = async () => {
       await editSupplierGroup({
         params: {
           id: node.key?.toString() || '0',
-          number: supplierGroupTreeRef.value.groupFormData.number,
-          name: supplierGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -352,14 +357,14 @@ import {SearchParams, tableParams} from '/@/api/apiLink';
    * @param node
    */
   const addGroupSubEvent = (node: TreeItem) => {
-    supplierGroupTreeRef.value.resetGroupFormData();
-    supplierGroupTreeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.resetGroupFormData();
+    treeRef.value.getFormData().parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addSupplierGroup({
         params: {
           parentId: node.key?.toString() || '0',
-          number: supplierGroupTreeRef.value.groupFormData.number,
-          name: supplierGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();

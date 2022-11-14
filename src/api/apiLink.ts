@@ -745,6 +745,33 @@ export interface InvCountEntity {
   tarType?: string;
   tenantId?: string;
 }
+//ExTree组件的接口类型
+export interface GroupFormData {
+  id?: string;
+  name?: string;
+  number?: string;
+  parent?: any;
+}
+//Search组件输入框的接口类型
+export interface FormState {
+  wlNo?: string;
+  wlName?: string;
+  tableName?: string;
+  searchNo?: string;
+  searchName?: string;
+}
+//StockAmountSearch组件输入框的接口类型
+export interface StockFormState {
+  matName?: string;
+  stockName?: string;
+  compartmentName?: string;
+  locationName?: string;
+  matId?: string;
+  stockId?: string;
+  compartmentId?: string;
+  locationId?: string;
+  tableName?: string;
+}
 //搜索表格的初始值
 export const tableParams = {
   //配置对应的查询参数

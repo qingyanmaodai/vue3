@@ -37,7 +37,7 @@
                   </Col>
                   <Col :span="8">
                     <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
-                      <Input class="input" v-model:value="formState.srcBill" disabled />
+                      <Input class="input" v-model:value="formState.srcField" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -48,19 +48,19 @@
                         autocomplete="off"
                         :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
                         name="bsStatus"
-                        :disabled="true"
+                        disabled
                       />
                     </a-form-item>
                   </Col>
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="负责人：" ref="empId" name="empId" class="item">
+                    <a-form-item label="退料员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择负责人'"
-                        label="负责人"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择计划员'"
+                        label="客户"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -75,18 +75,6 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="盘点方式：" ref="way" name="way" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.way"
-                        class="select"
-                        :options="config.INVENTORY_WAY"
-                        :disabled="formState.bsStatus === 'B'"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         :showToday="false"
@@ -94,6 +82,18 @@
                         valueFormat="YYYY-MM-DD HH:mm:ss"
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="退料原因：" ref="reason" name="reason" class="item">
+                      <Select
+                        allowClear
+                        v-model:value="formState.reason"
+                        class="select"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
+                        :options="config.RETURN_REASON"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -152,18 +152,19 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="invCountLossOfDetailColumns"
+            :columns="warProReturnOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
-            :detailTableData="detailTableData"
             @setDefaultTableData="setDefaultTableData"
             @getCountAmount="getCountAmount"
+            :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
-            :isShowFilterButton="false"
+            @filterModalSearchEvent="filterModalSearchEvent"
+            filterTableName="BdMaterial"
           />
         </pane>
       </a-splitpanes>
@@ -178,10 +179,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="inventory-countLoss-detail">
+<script lang="ts" setup name="warehouse-produce-order-detail">
   import {
     detailOfExaGridOptions,
-    invCountLossOfDetailColumns,
+    warProReturnOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -205,8 +206,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, InvCountLossEntity, getOneById } from '/@/api/invCountLoss';
-  import { getInventoryList } from '/@/api/realTimeInv';
+  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -214,9 +214,10 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { ControlSet, TableColum, Url } from '/@/api/apiLink';
+  import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getMatTableById } from '/@/api/matTable';
+  import { getMatTable, getMatTableById } from '/@/api/matTable';
+
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const ADatePicker = DatePicker;
@@ -230,6 +231,7 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
+
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
@@ -242,7 +244,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: InvCountLossEntity = {
+  const formData: produceOrderEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -267,22 +269,61 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    countNum: [
-      { required: true, message: '请输入比帐存数量小的盘点数量' },
-      {
-        validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.stockNum) < Number(cellValue)) {
-            return new Error('盘点数量应该小于帐存数量');
-          }
-        },
-      },
-    ],
+    num: [{ required: true, message: '请输入生成数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];
   formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
   formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
-
+  //筛选条件弹框组件
+  //筛选条件查询
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+    let getParams: SearchParams[] = [];
+    if (
+      detailTableRef.value.filterModalParams() &&
+      detailTableRef.value.filterModalParams().length > 0
+    ) {
+      getParams = getParams.concat(detailTableRef.value.filterModalParams());
+    }
+    const res: any = await getMatTable({
+      params: getParams,
+      orderByBean: {
+        descList: ['BdMaterial.update_time'],
+      },
+      pageIndex: currPage,
+      pageRows: pageSize,
+    });
+    let bdMaterial = res.records.map((item) => {
+      return Object.assign(
+        {},
+        {
+          id: item.id,
+          name: item.name,
+          number: item.number,
+          model: item.model,
+          baseUnitName: item.baseUnit.name,
+          weightUnitName: item.weightUnit.name,
+          baseUnitId: item.baseUnit.id,
+          weightUnitId: item.weightUnit.id,
+        },
+      );
+    });
+    res.records.forEach((item, index) => {
+      item['stockDis'] = stockDis.value;
+      item.bdMaterial = bdMaterial[index];
+      item.bsStatus = 'A';
+      item.matId = item.id;
+      item.compartmentId =
+        stockDis.value !== 'A' && item.bdStockCompartment ? item.compartmentId : null;
+      item.bdStockCompartment.name =
+        stockDis.value !== 'A' && item.bdStockCompartment ? item.bdStockCompartment.name : null;
+      item.locationId = stockDis.value === 'C' && item.bdStockLocation ? item.locationId : null;
+      item.bdStockLocation.name =
+        stockDis.value === 'C' && item.bdStockLocation ? item.bdStockLocation.name : null;
+    });
+    let data = cloneDeep(res.records);
+    detailTableData.value = data;
+  };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
@@ -290,11 +331,11 @@
     });
   };
 
-  // 负责人弹框选放大镜事件
+  // 供应商、负责人输入框弹框选放大镜事件
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
-   * 负责人弹窗
-   * @param dtoUrlConfig  获取负责人查询链接属性
+   * 供应商、负责人弹窗
+   * @param dtoUrlConfig  获取供应商、负责人查询链接属性
    * @param tableName  指向的表名根据DTO链接可以查询到
    * @param tableUrl  表格列表数据链接
    * @param dataParam 当前选中的数据包
@@ -349,15 +390,13 @@
         }
         //保存：新增+更新
         let data = await add({ params: formState.value });
-        formState.value = Object.assign({}, formState.value, data);
+        formState.value = data;
         detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
-        if(error.errorFields) {
-          createMessage.error('数据校检不通过，请检查!');
-        }
       });
   };
   //审核
@@ -404,10 +443,8 @@
         }
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
+        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
-        if(error.errorFields) {
-          createMessage.error('数据校检不通过，请检查!');
-        }
       });
   };
   //反审核
@@ -419,7 +456,7 @@
         formState.value.dtData = cloneDeep(tableFullData);
       }
       const data = await unAudit({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
+      formState.value = data;
       if (data.bsStatus === 'A' && tableFullData) {
         tableFullData.map((e) => {
           e.bsStatus = 'A';
@@ -460,21 +497,18 @@
     }
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-
   //计算数量
   const getCountAmount = (row) => {
-    if (row.countNum && row.stockNum !== null) {
-      row.loss = row.stockNum - row.countNum;
+    if (row.num && row.prices !== null) {
+      row.totalPrices = row.num * row.prices;
     } else {
-      row.loss = '';
+      row.totalPrices = '';
     }
     return row;
   };
-
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
-      data.stockNum = '';
       data.countNum = '';
       for (const key in column.params.param) {
         data[key] = '';
@@ -533,18 +567,12 @@
         data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
-    let stockNumData = await getInventoryList({ params: data });
-    if (stockNumData) {
-      data.stockNum = cloneDeep(stockNumData);
-    } else {
-      data.stockNum = 0;
-    }
     await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
-    obj.stockDis = cloneDeep(stockDis.value);
     obj.seq = obj.sort;
+    obj.stockDis = cloneDeep(stockDis.value);
   };
   onMounted(() => {
     getListById();
