@@ -17,6 +17,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :tablePages="tablePages"
         tableName="BsPurchaseInStock"
         ref="tableRef"
         @addTableEvent="addTableEvent"
@@ -42,7 +43,7 @@
 <script setup lang="ts" name="warehouse-purchase-instock-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import {
     audit,
     auditBatch,

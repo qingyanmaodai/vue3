@@ -17,6 +17,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :tablePages="tablePages"
         tableName="BsPurchaseReturn"
         ref="tableRef"
         @addTableEvent="addTableEvent"

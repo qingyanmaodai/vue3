@@ -345,8 +345,6 @@
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
   const tablePagerChange: VxePagerEvents.PageChange = ({ currentPage, pageSize }) => {
-    // currentP.value = currentPage;
-    // pageS.value = pageSize;
     emit('getList', currentPage, pageSize, props.urlConfig);
   };
   //上传文件
