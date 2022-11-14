@@ -163,7 +163,7 @@
   //新增下级分组
   const addGroupSubEvent = (node: TreeItem) => {
     treeRef.value.resetGroupFormData();
-    treeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.getFormData().parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addExaGroup({
         params: {

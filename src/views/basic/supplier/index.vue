@@ -88,7 +88,7 @@
     getSupplierGroupTree,
     SupplierGroupEntity,
   } from '/@/api/supplierGroup';
-  import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
+  import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
@@ -312,8 +312,8 @@
     OptGroupHook.submitGroup = async () => {
       await addSupplierGroup({
         params: {
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -326,18 +326,26 @@
    */
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneSupplierGroup({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
-      treeRef.value.groupFormData.number = result.number;
-      treeRef.value.groupFormData.name = result.name;
-      treeRef.value.groupFormData.id = result.id;
-      treeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      const treeFormData: GroupFormData = {
+        number: result.number,
+        name: result.name,
+        id: result.id,
+        parent: { id: parentData.id, name: parentData.name },
+      };
+      treeRef.value.setFormData(treeFormData);
     }
     OptGroupHook.submitGroup = async () => {
       await editSupplierGroup({
         params: {
           id: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -350,13 +358,13 @@
    */
   const addGroupSubEvent = (node: TreeItem) => {
     treeRef.value.resetGroupFormData();
-    treeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.getFormData().parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addSupplierGroup({
         params: {
           parentId: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
