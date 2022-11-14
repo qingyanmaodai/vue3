@@ -49,14 +49,10 @@
   });
   //保存事件
   const onSubmit = async () => {
-    updateSystemList({ params: formState.value })
-      .then(() => {
-        createMessage.success('操作成功');
-        localStorage.setItem('stockDis', formState.value[1].val);
-      })
-      .catch(() => {
-        createMessage.error('操作失败');
-      });
+    updateSystemList({ params: formState.value }).then(() => {
+      createMessage.success('操作成功');
+      localStorage.setItem('stockDis', formState.value[1].val);
+    });
   };
 </script>
 

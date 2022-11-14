@@ -218,8 +218,10 @@
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
-        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
+        if(error.errorFields) {
+          createMessage.error('数据校检不通过，请检查!');
+        }
       });
   };
   const onAudit = async () => {
@@ -234,8 +236,10 @@
         }
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
-        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
+        if(error.errorFields) {
+          createMessage.error('数据校检不通过，请检查!');
+        }
       });
   };
   const onUnAudit = async () => {
