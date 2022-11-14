@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts" name="basic-customer-index">
-  import { onActivated, onMounted, ref } from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -87,14 +87,15 @@
     getCustomerGroupTree,
     CustomerGroupEntity,
   } from '/@/api/customerGroup';
-  import { GroupFormData, SearchParams } from '/@/api/apiLink';
+  import { GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
 
-  /* data */
   const paneSize = ref(16); //面板尺寸
   const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
+  const treeRef: any = ref<String | null>(null); //树组件引用ref
+  //表格数据
   const tableRef: any = ref<String | null>(null); //表格组件引用ref
   let tableData = ref<object[]>([]); //表格数据
-  const treeRef: any = ref<String | null>(null); //树组件引用ref
+  const tablePages = reactive(tableParams);
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
 
@@ -105,7 +106,7 @@
    * @param currPage
    * @param pageSize
    */
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     ParamsData = [];
     if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
       ParamsData = ParamsData.concat(treeRef.value.getSearchParams());
@@ -123,9 +124,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };

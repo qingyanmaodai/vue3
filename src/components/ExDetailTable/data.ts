@@ -724,8 +724,8 @@ export const warPurReturnOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '实退数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    title: '可退数量',
+    className: 'disableProp',
     width: 150,
     sortable: true,
   },
@@ -874,6 +874,20 @@ export const warPurInputOfDetailColumns = [
     title: '实收数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
+    sortable: true,
+  },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已入库数量',
+    width: 150,
+    className: 'disableProp',
     sortable: true,
   },
   {

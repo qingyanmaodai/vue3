@@ -288,7 +288,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    num: [{ required: true, message: '请输入实退数量' }],
+    realNum: [{ required: true, message: '请输入实退数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];

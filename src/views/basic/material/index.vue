@@ -54,7 +54,7 @@
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import { onActivated, onMounted, ref } from 'vue';
+  import {onActivated, onMounted, reactive, ref} from 'vue';
   import {
     addMatGroup,
     deleteMatGroup,
@@ -80,7 +80,7 @@
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
-  import { SearchParams, GroupFormData, FormState } from '/@/api/apiLink';
+  import { SearchParams, GroupFormData, FormState, tableParams } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -92,10 +92,10 @@
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //表格事件
-  const tableRef: any = ref<String | null>(null);
   //表格数据
-  let tableData = ref<object[]>([]);
+  const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
@@ -192,7 +192,7 @@
     moreSearchData.value = res;
   });
   //表格查询
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     getParams = [];
     if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(treeRef.value.getSearchParams());
@@ -209,9 +209,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };

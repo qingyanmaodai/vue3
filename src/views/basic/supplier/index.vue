@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts" name="basic-supplier-index">
-  import { onActivated, onMounted, ref } from 'vue';
+import {onActivated, onMounted, reactive, ref} from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -87,13 +87,15 @@
     getSupplierGroupTree,
     SupplierGroupEntity,
   } from '/@/api/supplierGroup';
-  import { SearchParams } from '/@/api/apiLink';
+import {SearchParams, tableParams} from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
   const supplierSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
-  const tableRef: any = ref<String | null>(null); //表格组件引用ref
-  let tableData = ref<object[]>([]); //表格数据
+  //表格数据
+  const tableRef = ref<any>('');
+  const tableData = ref<object[]>([]);
+  const tablePages = reactive(tableParams);
   const supplierGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
@@ -105,7 +107,7 @@
    * @param currPage
    * @param pageSize
    */
-  const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     ParamsData = [];
     if (
       supplierGroupTreeRef.value.getSearchParams() &&
@@ -129,9 +131,7 @@
       pageIndex: currPage,
       pageRows: pageSize,
     });
-    tableRef.value.pages.total = res.total;
-    tableRef.value.pages.currentPage = currPage;
-    tableRef.value.pages.pageSize = pageSize;
+    tablePages.total = res.total;
     tableData.value = res.records;
     supplierSearchRef.value.moreSearchClose();
   };

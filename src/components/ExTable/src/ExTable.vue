@@ -133,9 +133,9 @@
   <div>
     <Pager
       background
-      v-model:current-page="pages.currentPage"
-      v-model:page-size="pages.pageSize"
-      :total="pages.total"
+      v-model:current-page="tablePage.currentPage"
+      v-model:page-size="tablePage.pageSize"
+      :total="tablePage.total"
       :layouts="[
         'PrevJump',
         'PrevPage',
@@ -233,7 +233,7 @@
     VxePagerEvents,
     VxeGridEvents,
   } from 'vxe-table';
-  import { reactive, ref } from 'vue';
+  import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
@@ -248,6 +248,9 @@
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
+
+  // const currentP = ref<number>(1);
+  // const pageS = ref<number>(10);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -276,7 +279,13 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
+    tablePages?: TableType;
   }
+  type TableType = {
+    total: number;
+    currentPage: number;
+    pageSize: number;
+  };
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
     show: true,
@@ -289,6 +298,13 @@
     isShowExport: true,
     isShowImport: true,
     height: '83%',
+    tablePages: () => {
+      return {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10,
+      };
+    },
     columns: () => {
       return [];
     },
@@ -313,6 +329,9 @@
     (e: 'upSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
   };
+  const tablePage = computed(() => {
+    return props.tablePages;
+  });
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
     emit('basicClickEvent', row.row);
@@ -325,15 +344,9 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-  //分页信息
-  const pages = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0,
-  });
-  const tablePagerChange: VxePagerEvents.PageChange = async ({ currentPage, pageSize }) => {
-    pages.currentPage = currentPage;
-    pages.pageSize = pageSize;
+  const tablePagerChange: VxePagerEvents.PageChange = ({ currentPage, pageSize }) => {
+    // currentP.value = currentPage;
+    // pageS.value = pageSize;
     emit('getList', currentPage, pageSize, props.urlConfig);
   };
   //上传文件
@@ -379,13 +392,6 @@
     } else {
       createMessage.warning('没有相关关联单据');
     }
-  };
-  //隐藏行
-  const hideColumn = (arr) => {
-    const $grid: any = xGrid.value;
-    arr.map((e) => {
-      $grid.hideColumn(e);
-    });
   };
   /**
    * 格式化数据
@@ -677,9 +683,7 @@
     delTable,
     init,
     computeData,
-    hideColumn,
     isUpDownSearch,
-    pages,
   });
 </script>
 
