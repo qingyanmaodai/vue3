@@ -629,7 +629,7 @@ export const warProReturnColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '退料日期', width: 120, sortable: true },
   { field: 'reason', title: '退料原因', width: 120, sortable: true },
-  { field: 'num', title: '申请数量', width: 120, sortable: true },
+  { field: 'num', title: '退料数量', width: 120, sortable: true },
   { field: 'doneNum', title: '已入库数量', width: 120, sortable: true },
   { field: 'pushNum', title: '已下推数量', width: 120, sortable: true },
   { field: 'supName', title: '创建人', width: 120, sortable: true },
