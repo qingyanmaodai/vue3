@@ -434,9 +434,8 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({params: dataId});
+      const res: any = await getOneById({ params: dataId });
       formState.value = res;
-
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }

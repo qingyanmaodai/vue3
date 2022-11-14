@@ -139,7 +139,6 @@
       moreSearchRef.value.resetEvent();
     }
   };
-  //
   defineExpose({ moreSearchClose, setFormState, getSearchParams });
 </script>
 

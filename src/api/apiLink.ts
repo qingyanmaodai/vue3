@@ -748,6 +748,18 @@ export interface FormState {
   searchNo?: string;
   searchName?: string;
 }
+//StockAmountSearch组件输入框的接口类型
+export interface StockFormState {
+  matName?: string;
+  stockName?: string;
+  compartmentName?: string;
+  locationName?: string;
+  matId?: string;
+  stockId?: string;
+  compartmentId?: string;
+  locationId?: string;
+  tableName?: string;
+}
 //搜索表格的初始值
 export const tableParams = {
   //配置对应的查询参数

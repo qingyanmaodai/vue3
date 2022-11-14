@@ -34,7 +34,7 @@
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
-  import {SearchParams, tableParams} from '/@/api/apiLink';
+  import { SearchParams, StockFormState, tableParams } from '/@/api/apiLink';
   import { getInvList } from '/@/api/realTimeInv';
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -70,10 +70,17 @@
 
   //重置
   const resetTable = () => {
-    stockAmountSearchRef.value.formState.matName = null;
-    stockAmountSearchRef.value.formState.stockName = null;
-    stockAmountSearchRef.value.formState.compartmentName = null;
-    stockAmountSearchRef.value.formState.locationName = null;
+    const searchFormState: StockFormState = {
+      matName: '',
+      stockName: '',
+      compartmentName: '',
+      locationName: '',
+      matId: '',
+      stockId: '',
+      compartmentId: '',
+      locationId: '',
+    };
+    stockAmountSearchRef.value.setFormState(searchFormState);
     getList(1);
   };
 
