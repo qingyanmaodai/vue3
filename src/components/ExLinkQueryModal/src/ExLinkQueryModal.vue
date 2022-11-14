@@ -35,11 +35,11 @@
         <ExTable
           :isShowImport="false"
           :isShowExport="false"
-          v-model:tablePages="tablePages"
           :tableName="props.tableName"
           :columns="tableColumns"
           :gridOptions="notToolInGridOptions"
           :tableData="tableData"
+          :tablePages="tablePages"
           :height="height"
           ref="tableRef"
           @editTableEvent="editTableEvent"

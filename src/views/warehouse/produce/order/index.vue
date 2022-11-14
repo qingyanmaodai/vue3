@@ -17,6 +17,7 @@
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
+        :tablePages="tablePages"
         tableName="BsProMo"
         ref="tableRef"
         @addTableEvent="addTableEvent"

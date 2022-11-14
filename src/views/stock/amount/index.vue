@@ -21,6 +21,7 @@
         :columns="StockAmountColumns"
         :gridOptions="GridOptions"
         :tableData="tableData"
+        :tablePages="tablePages"
         ref="tableRef"
         @getList="getList"
       />

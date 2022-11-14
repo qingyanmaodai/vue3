@@ -118,6 +118,7 @@
         :columns="props.tableCols"
         :gridOptions="notToolInGridOptions"
         :tableData="tableData"
+        :tablePages="tablePages"
         ref="tableRef"
         height="90%"
         :urlConfig="listUrl"
