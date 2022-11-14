@@ -199,7 +199,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             :detailTableData="detailTableData"
             @setDefaultTableData="setDefaultTableData"
-            @getJudgeClickData="getJudgeClickData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
           />
@@ -252,7 +251,6 @@
   import { cloneDeep } from 'lodash-es';
   import { getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
-  import { getInventoryList } from '/@/api/realTimeInv';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
   const DetailOfExaGridOptions = detailOfExaGridOptions;
@@ -371,6 +369,14 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
+          if (
+            tableFullData.some(
+              (e) => tableFullData.filter((e1) => e1.exaProjectId === e.exaProjectId).length > 1,
+            )
+          ) {
+            createMessage.error('明细表存在相同数据，请检查!');
+            return;
+          }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
         let data;
@@ -380,6 +386,7 @@
         } else {
           data = await update({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
+          detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
         }
         createMessage.success('操作成功');
       })
@@ -402,6 +409,14 @@
               createMessage.error('数据校检不通过，请检查!');
               return;
             }
+            if (
+              tableFullData.some(
+                (e) => tableFullData.filter((e1) => e1.exaProjectId === e.exaProjectId).length > 1,
+              )
+            ) {
+              createMessage.error('明细表存在相同数据，请检查!');
+              return;
+            }
             formState.value.bdExamineDetailList = cloneDeep(tableFullData);
           }
           const data = await audit({ params: formState.value });
@@ -412,6 +427,7 @@
               return e;
             });
           }
+          detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
           createMessage.success('操作成功');
         }
       })
@@ -457,19 +473,12 @@
     }
   };
 
-  //明细表获取判断双击赋值事件的值
-  const getJudgeClickData = (arr, row, callback) => {
-    let judgeClickIndex = arr.fullData.findIndex((e) => e.bdExamineProject.id === row.id);
-    callback(judgeClickIndex);
-  };
   //明细表双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
+    console.log('3333333', row.id);
     switch (column) {
       case 'bdExamineProject':
         data.exaProjectId = row.id;
-        // data.bdExamineProject.id = row.id;
-        // data.bdExamineProject.number = row.number;
-        // data.bdExamineProject.name = row.name;
         data.bdExamineProject = row;
         break;
     }
@@ -485,7 +494,6 @@
   const setDefaultTableData = (obj) => {
     obj.isOpen = 1;
     obj.isRequire = 1;
-    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
   };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {

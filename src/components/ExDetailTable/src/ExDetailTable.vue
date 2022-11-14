@@ -170,7 +170,6 @@
     (event: 'filterModalSearchEvent'): void; ///筛选条件查询
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
-  const rowSortData = ref<number>(1); //表格顺序
   let validAllErrMapData = ref<string>(''); //表格校验数据
   const nowColumFileName: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
@@ -245,15 +244,6 @@
     basicSearchRef.value.close();
   };
 
-  // 格式化数据
-  // const formatData = (data: string | number, source: configEntity[]) => {
-  //   let res;
-  //   if (source && source.length > 0) {
-  //     res = source.find((item) => item.value === data);
-  //   }
-  //   return res ? res.label : '';
-  // };
-
   //修改表格样式
   const cellStyle: VxeTablePropTypes.CellStyle = ({ row, column }) => {
     switch (true) {
@@ -279,9 +269,9 @@
   //新增行
   const insertRowEvent = () => {
     const $grid: any = xGrid.value;
-    let obj = {};
+    let obj = { sort: 0 };
     let arr = $grid.getTableData();
-    rowSortData.value = Number(arr.fullData.length) + 1;
+    obj.sort = Number(arr.fullData.length) + 1;
     emit('setDefaultTableData', obj);
     const record = obj;
     $grid.insertAt(record, -1);
@@ -318,8 +308,6 @@
   };
   defineExpose({
     getValidAllData,
-    tableFullData,
-    rowSortData,
     getDetailData,
     filterModalParams,
   });

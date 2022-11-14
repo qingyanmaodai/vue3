@@ -308,8 +308,8 @@
     OptGroupHook.submitGroup = async () => {
       await addDept({
         params: {
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -323,17 +323,20 @@
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneDept({ params: node.key?.toString() || '0' });
     if (result) {
-      treeRef.value.groupFormData.number = result.number;
-      treeRef.value.groupFormData.name = result.name;
-      treeRef.value.groupFormData.id = result.id;
-      treeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      const treeFormData: GroupFormData = {
+        number: result.number,
+        name: result.name,
+        id: result.id,
+        parent: { id: result.id, name: result.name },
+      };
+      treeRef.value.setFormData(treeFormData);
     }
     OptGroupHook.submitGroup = async () => {
       await editDept({
         params: {
           id: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -351,8 +354,8 @@
       await addDept({
         params: {
           parentId: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();

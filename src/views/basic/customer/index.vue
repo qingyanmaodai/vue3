@@ -6,7 +6,7 @@
           :toolbar="true"
           :search="true"
           :tree-data="treeData"
-          ref="customerGroupTreeRef"
+          ref="treeRef"
           title="客户分组"
           @editEvent="editGroupEvent"
           @addEvent="addGroupEvent"
@@ -19,7 +19,7 @@
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
             :control="moreSearchData"
-            ref="customerSearchRef"
+            ref="searchRef"
             tableName="BdCustomer"
             searchNo="编码"
             searchName="客户"
@@ -87,14 +87,14 @@
     getCustomerGroupTree,
     CustomerGroupEntity,
   } from '/@/api/customerGroup';
-  import { SearchParams } from '/@/api/apiLink';
+  import { GroupFormData, SearchParams } from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
-  const customerSearchRef: any = ref<String | null>(null); //表格查询组件引用ref
+  const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
   const tableRef: any = ref<String | null>(null); //表格组件引用ref
   let tableData = ref<object[]>([]); //表格数据
-  const customerGroupTreeRef: any = ref<String | null>(null); //树组件引用ref
+  const treeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据
 
@@ -107,17 +107,11 @@
    */
   const getList = async (currPage = 1, pageSize = tableRef.value.pages.pageSize) => {
     ParamsData = [];
-    if (
-      customerGroupTreeRef.value.getSearchParams() &&
-      customerGroupTreeRef.value.getSearchParams().length > 0
-    ) {
-      ParamsData = ParamsData.concat(customerGroupTreeRef.value.getSearchParams());
+    if (treeRef.value.getSearchParams() && treeRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(treeRef.value.getSearchParams());
     }
-    if (
-      customerSearchRef.value.getSearchParams() &&
-      customerSearchRef.value.getSearchParams().length > 0
-    ) {
-      ParamsData = ParamsData.concat(customerSearchRef.value.getSearchParams());
+    if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
+      ParamsData = ParamsData.concat(searchRef.value.getSearchParams());
     }
 
     //表格查询
@@ -133,14 +127,14 @@
     tableRef.value.pages.currentPage = currPage;
     tableRef.value.pages.pageSize = pageSize;
     tableData.value = res.records;
-    customerSearchRef.value.moreSearchClose();
+    searchRef.value.moreSearchClose();
   };
 
   /**
    * 表格新增数据
    */
   const addTableEvent = () => {
-    let groupId = customerGroupTreeRef.value.getSelectedKeys();
+    let groupId = treeRef.value.getSelectedKeys();
     routerGo({
       path: PageEnum.CUSTOMER_DETAIL, //客户详情页
       //需要带到详情页的参数
@@ -238,9 +232,9 @@
    * 刷新表格数据
    */
   const resetTable = () => {
-    customerGroupTreeRef.value.setSelectedKeys([]);
-    customerSearchRef.value.formState.wlNo = null;
-    customerSearchRef.value.formState.wlName = null;
+    treeRef.value.setSelectedKeys([]);
+    searchRef.value.formState.wlNo = null;
+    searchRef.value.formState.wlName = null;
     getList();
   };
 
@@ -311,12 +305,12 @@
    * 新增客户分组
    */
   const addGroupEvent = () => {
-    customerGroupTreeRef.value.resetGroupFormData();
+    treeRef.value.resetGroupFormData();
     OptGroupHook.submitGroup = async () => {
       await addCustomerGroup({
         params: {
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -330,17 +324,20 @@
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneCustomerGroup({ params: node.key?.toString() || '0' });
     if (result) {
-      customerGroupTreeRef.value.groupFormData.number = result.number;
-      customerGroupTreeRef.value.groupFormData.name = result.name;
-      customerGroupTreeRef.value.groupFormData.id = result.id;
-      customerGroupTreeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      const treeFormData: GroupFormData = {
+        number: result.number,
+        name: result.name,
+        id: result.id,
+        parent: { id: result.id, name: result.name },
+      };
+      treeRef.value.setFormData(treeFormData);
     }
     OptGroupHook.submitGroup = async () => {
       await editCustomerGroup({
         params: {
           id: node.key?.toString() || '0',
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -352,14 +349,14 @@
    * @param node
    */
   const addGroupSubEvent = (node: TreeItem) => {
-    customerGroupTreeRef.value.resetGroupFormData();
-    customerGroupTreeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.resetGroupFormData();
+    treeRef.value.getFormData().parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addCustomerGroup({
         params: {
           parentId: node.key?.toString() || '0',
-          number: customerGroupTreeRef.value.groupFormData.number,
-          name: customerGroupTreeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();

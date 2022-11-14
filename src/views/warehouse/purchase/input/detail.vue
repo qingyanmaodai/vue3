@@ -453,6 +453,7 @@
               return e;
             });
           }
+          detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
       })
@@ -576,7 +577,6 @@
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
-    obj.sort = cloneDeep(detailTableRef.value.rowSortData);
     obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
   };

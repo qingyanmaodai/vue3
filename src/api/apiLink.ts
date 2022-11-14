@@ -733,15 +733,18 @@ export interface ControlSet {
   requestUrl: string;
   tableAsName: string;
 }
-export interface InvCountEntity {
+//ExTree组件的接口类型
+export interface GroupFormData {
   id?: string;
-  srcBillId?: string;
-  srcId?: string;
-  srcBill?: string;
-  srcSort?: string;
-  srcType?: string;
-  tarBillId?: string;
-  tarId?: string;
-  tarType?: string;
-  tenantId?: string;
+  name?: string;
+  number?: string;
+  parent?: any;
+}
+//Search组件输入框的接口类型
+export interface FormState {
+  wlNo?: string;
+  wlName?: string;
+  tableName?: string;
+  searchNo?: string;
+  searchName?: string;
 }

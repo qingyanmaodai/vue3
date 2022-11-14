@@ -80,7 +80,7 @@
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, matColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { SearchParams, GroupFormData, FormState } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -100,7 +100,6 @@
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
   const treeRef: any = ref<String | null>(null);
-
   //分组数据
   let treeData = ref<TreeItem[]>([]);
   //导入上传文件api
@@ -124,8 +123,8 @@
     OptGroupHook.submitGroup = async () => {
       await addMatGroup({
         params: {
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -134,18 +133,26 @@
   //编辑分组
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneMatGroup({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
-      treeRef.value.groupFormData.number = result.number;
-      treeRef.value.groupFormData.name = result.name;
-      treeRef.value.groupFormData.id = result.id;
-      treeRef.value.groupFormData.parent = { id: result.id, name: result.name };
+      const treeFormData: GroupFormData = {
+        number: result.number,
+        name: result.name,
+        id: result.id,
+        parent: { id: parentData.id, name: parentData.name },
+      };
+      treeRef.value.setFormData(treeFormData);
     }
     OptGroupHook.submitGroup = async () => {
       await editMatGroup({
         params: {
           id: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -154,13 +161,13 @@
   //新增下级分组
   const addGroupSubEvent = (node: TreeItem) => {
     treeRef.value.resetGroupFormData();
-    treeRef.value.groupFormData.parent = { id: node.key, name: node.title };
+    treeRef.value.getFormData().parent = { id: node.key, name: node.title };
     OptGroupHook.submitGroup = async () => {
       await addMatGroup({
         params: {
           parentId: node.key?.toString() || '0',
-          number: treeRef.value.groupFormData.number,
-          name: treeRef.value.groupFormData.name,
+          number: treeRef.value.getFormData().number,
+          name: treeRef.value.getFormData().name,
         },
       });
       await refreshTree();
@@ -212,8 +219,13 @@
   //重置
   const resetTable = () => {
     treeRef.value.setSelectedKeys([]);
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
+    // searchRef.value.formState.wlNo = null;
+    // searchRef.value.formState.wlName = null;
     getList(1);
   };
   //添加
