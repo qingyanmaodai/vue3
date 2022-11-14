@@ -54,7 +54,7 @@
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import {
     addExaGroup,
     deleteExaGroup,
@@ -80,7 +80,7 @@
   import { TreeItem } from '/@/components/Tree';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, exaProjectColumns } from '/@/components/ExTable/data';
-  import {SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptGroupHook, OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
@@ -134,12 +134,17 @@
   //编辑分组
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneExaGroup({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
       const treeFormData: GroupFormData = {
         number: result.number,
         name: result.name,
         id: result.id,
-        parent: { id: result.id, name: result.name },
+        parent: { id: parentData.id, name: parentData.name },
       };
       treeRef.value.setFormData(treeFormData);
     }
@@ -213,8 +218,11 @@
   //重置
   const resetTable = () => {
     treeRef.value.setSelectedKeys([]);
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
     getList(1);
   };
   //添加

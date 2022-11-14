@@ -61,7 +61,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warProReturnColumns } from '/@/components/ExTable/data';
-  import { SearchParams } from '/@/api/apiLink';
+  import { FormState, SearchParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -119,8 +119,11 @@
   };
   //重置
   const resetTable = () => {
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
     getList(1);
   };
 

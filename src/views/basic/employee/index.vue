@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts" name="basic-employee-index">
-import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import { PageEnum } from '/@/enums/pageEnum'; //页面路由
   import { useGo } from '/@/hooks/web/usePage'; //页面跳转
   const routerGo = useGo();
@@ -87,7 +87,7 @@ import {onActivated, onMounted, reactive, ref} from 'vue';
     getDeptTree,
     DepartmentEntity,
   } from '/@/api/department';
-  import { SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
 
   /* data */
   const paneSize = ref(16); //面板尺寸
@@ -235,9 +235,12 @@ import {onActivated, onMounted, reactive, ref} from 'vue';
    */
   const resetTable = () => {
     treeRef.value.setSelectedKeys([]);
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
-    getList();
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
+    getList(1);
   };
 
   /**
@@ -322,12 +325,17 @@ import {onActivated, onMounted, reactive, ref} from 'vue';
    */
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneDept({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
       const treeFormData: GroupFormData = {
         number: result.number,
         name: result.name,
         id: result.id,
-        parent: { id: result.id, name: result.name },
+        parent: { id: parentData.id, name: parentData.name },
       };
       treeRef.value.setFormData(treeFormData);
     }

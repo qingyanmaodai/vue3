@@ -64,6 +64,7 @@
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, invCountSheetColumns } from '/@/components/ExTable/data';
   import {
+    FormState,
     SearchDataType,
     SearchLink,
     SearchMatchType,
@@ -128,8 +129,11 @@
   };
   //重置
   const resetTable = () => {
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
     getList(1);
   };
 

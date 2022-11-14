@@ -87,7 +87,7 @@
     getCustomerGroupTree,
     CustomerGroupEntity,
   } from '/@/api/customerGroup';
-  import { GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
+  import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
 
   const paneSize = ref(16); //面板尺寸
   const searchRef: any = ref<String | null>(null); //表格查询组件引用ref
@@ -232,9 +232,12 @@
    */
   const resetTable = () => {
     treeRef.value.setSelectedKeys([]);
-    searchRef.value.formState.wlNo = null;
-    searchRef.value.formState.wlName = null;
-    getList();
+    const searchFormState: FormState = {
+      wlNo: '',
+      wlName: '',
+    };
+    searchRef.value.setFormState(searchFormState);
+    getList(1);
   };
 
   /**
@@ -322,12 +325,17 @@
    */
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneCustomerGroup({ params: node.key?.toString() || '0' });
+    const parentData = await treeRef.value.getParentData(
+      node.key?.toString() || '0',
+      treeData.value || [],
+      {},
+    );
     if (result) {
       const treeFormData: GroupFormData = {
         number: result.number,
         name: result.name,
         id: result.id,
-        parent: { id: result.id, name: result.name },
+        parent: { id: parentData.id, name: parentData.name },
       };
       treeRef.value.setFormData(treeFormData);
     }

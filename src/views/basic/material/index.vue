@@ -54,7 +54,7 @@
   import { ExTree } from '/@/components/ExTree';
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import {
     addMatGroup,
     deleteMatGroup,
@@ -222,8 +222,6 @@
       wlName: '',
     };
     searchRef.value.setFormState(searchFormState);
-    // searchRef.value.formState.wlNo = null;
-    // searchRef.value.formState.wlName = null;
     getList(1);
   };
   //添加
