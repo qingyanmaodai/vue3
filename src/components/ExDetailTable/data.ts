@@ -315,7 +315,7 @@ export const invCountSheetOfDetailColumns = [
   {
     field: 'countNum',
     title: '盘点数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -585,7 +585,7 @@ export const warPurOrdersOfDetailColumns = [
   {
     field: 'num',
     title: '采购数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -732,7 +732,7 @@ export const warPurReturnOfDetailColumns = [
   {
     field: 'realNum',
     title: '实退数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -872,7 +872,7 @@ export const warPurInputOfDetailColumns = [
   {
     field: 'realNum',
     title: '实收数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -1003,7 +1003,7 @@ export const warProOrderOfDetailColumns = [
   {
     field: 'num',
     title: '生产数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -1100,7 +1100,7 @@ export const warProReturnOfDetailColumns = [
   {
     field: 'num',
     title: '退料数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
