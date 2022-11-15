@@ -1099,7 +1099,7 @@ export const warProReturnOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '申请数量',
+    title: '退料数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
