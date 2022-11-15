@@ -386,21 +386,6 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
-          if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
-          ) {
-            createMessage.error('明细表存在相同数据，请检查!');
-            return;
-          }
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
@@ -411,7 +396,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -430,21 +415,6 @@
               createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
-            if (
-              tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
-                      e1.matId === e.matId,
-                  ).length > 1,
-              )
-            ) {
-              createMessage.error('明细表存在相同数据，请检查!');
-              return;
-            }
             formState.value.dtData = cloneDeep(tableFullData);
           }
           const data = await audit({ params: formState.value });
@@ -461,7 +431,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
