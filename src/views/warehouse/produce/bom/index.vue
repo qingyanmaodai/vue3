@@ -13,7 +13,7 @@
       <ExTable
         :isShowImport="false"
         :isShowExport="false"
-        :columns="warProReturnColumns"
+        :columns="warProBomColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
@@ -40,7 +40,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="warehouse-produce-return-index">
+<script setup lang="ts" name="warehouse-produce-bom-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -61,7 +61,7 @@
   } from '/@/api/warProduce/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warProReturnColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warProBomColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -98,8 +98,6 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
-    tablePages.currentPage = currPage;
-    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -108,14 +106,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '生产退料单-上查';
+    modalTitle.value = '生产订单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '生产退料单-下查';
+    modalTitle.value = '生产订单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -133,7 +131,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_PRO_RETURN_DETAIL,
+      path: PageEnum.WAR_PRO_BOM_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -142,7 +140,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_PRO_RETURN_DETAIL,
+      path: PageEnum.WAR_PRO_BOM_DETAIL,
       query: {
         row: row.id,
       },
@@ -207,7 +205,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '生产退料单导入模板.xls', data: res };
+            const data = { title: '生产订单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -223,13 +221,13 @@
         exportExcel({
           params: {
             list: getParams,
-            fileName: '生产退料单',
+            fileName: '生产订单',
           },
           pageIndex: 1,
-          pageRows: tablePages.pageSize,
+          pageRows: tableRef.value.pages.pageSize,
         })
           .then((res) => {
-            const data = { title: '生产退料单.xls', data: res };
+            const data = { title: '生产订单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

@@ -246,32 +246,6 @@
     visibleGroupModal.value = true;
     emits('addSubEvent', node);
   };
-  //获取上一级分组
-  const getParentData = (
-    key: string | number,
-    list: TreeItem[],
-    res: TreeItem,
-    parent?: TreeItem,
-  ): TreeItem => {
-    for (let i = 0; i < list.length; i++) {
-      const item = list[i];
-      if (item.key === key) {
-        if (parent) {
-          return parent;
-        } else {
-          return { name: '' };
-        }
-      }
-      if (item.children && item.children.length > 0) {
-        res = getParentData(key, item.children, res, item);
-        if (res.key) {
-          return res;
-        }
-      }
-    }
-    return res;
-  };
-
   //删除分组
   const deleteEvent = () => {
     const key = getOneSelectedKey();
@@ -294,7 +268,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -322,7 +296,6 @@
     groupFormData.id = data.id;
     groupFormData.number = data.number;
     groupFormData.name = data.name ? data.name : '';
-    const node = findNode(groupFormData.name);
     groupFormData.parent = data.parent;
   };
   defineExpose({
@@ -332,7 +305,7 @@
     resetGroupFormData,
     getFormData,
     setFormData,
-    getParentData,
+    findNode,
   });
 </script>
 

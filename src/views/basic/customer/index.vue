@@ -328,11 +328,7 @@
    */
   const editGroupEvent = async (node: TreeItem) => {
     const result = await queryOneCustomerGroup({ params: node.key?.toString() || '0' });
-    const parentData = await treeRef.value.getParentData(
-      node.key?.toString() || '0',
-      treeData.value || [],
-      {},
-    );
+    const parentData = await treeRef.value.findNode(result.parentId?.toString() || '0');
     if (result) {
       const treeFormData: GroupFormData = {
         number: result.number,
