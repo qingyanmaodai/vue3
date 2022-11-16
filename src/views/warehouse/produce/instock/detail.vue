@@ -36,8 +36,8 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcField" name="srcField" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -547,7 +547,7 @@
       case 'bdStockLocation':
         data.bdStockLocation = {};
         data.locationId = row.id ? row.id : null;
-        data.bdStockLocation.name = row.name ? row.name : null;
+        data.bdStockLocation.name = row? row.name : null;
         break;
     }
   };

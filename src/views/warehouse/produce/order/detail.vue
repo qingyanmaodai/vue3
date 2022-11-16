@@ -37,7 +37,7 @@
                   </Col>
                   <Col :span="8">
                     <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
-                      <Input class="input" v-model:value="formState.srcField" disabled />
+                      <Input class="input" v-model:value="formState.srcBill" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
