@@ -296,7 +296,6 @@
     groupFormData.id = data.id;
     groupFormData.number = data.number;
     groupFormData.name = data.name ? data.name : '';
-    const node = findNode(groupFormData.name);
     groupFormData.parent = data.parent;
   };
   defineExpose({
