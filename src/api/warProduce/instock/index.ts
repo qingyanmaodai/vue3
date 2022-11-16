@@ -16,7 +16,7 @@ import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
 import { SupplierEntity } from '/@/api/supplier';
 
-export interface purchaseInstockEntity extends PublicModel {
+export interface produceInstockEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
@@ -28,7 +28,7 @@ export interface purchaseInstockEntity extends PublicModel {
   bdEmployee?: EmployeeEntity;
   bdSupplier?: SupplierEntity;
   way?: string;
-  dtData?: purInstockDetailEntity[];
+  dtData?: proInstockDetailEntity[];
   dtLk?: InvCountEntity;
   srcField?: string;
   srcBill?: string;
@@ -45,7 +45,7 @@ export interface purchaseInstockEntity extends PublicModel {
   tenantId?: string;
 }
 
-export interface purInstockDetailEntity extends PublicModel {
+export interface proInstockDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
@@ -72,7 +72,7 @@ export interface purInstockDetailEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_PURCHASE_INSTOCK_LIST,
+      url: Url.GET_PAGE_PRODUCE_INSTOCK_LIST,
       data: json,
     },
     {
@@ -87,7 +87,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_PURCHASE_INSTOCK_DTO,
+      url: Url.GET_PRODUCE_INSTOCK_DTO,
       data: json,
     },
     {
@@ -99,10 +99,10 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加信息
  */
-export function add(json: RequestData<purchaseInstockEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<purchaseInstockEntity>(
+export function add(json: RequestData<produceInstockEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<produceInstockEntity>(
     {
-      url: Url.ADD_WITH_DETAIL_PURCHASE_INSTOCK,
+      url: Url.ADD_WITH_DETAIL_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -115,12 +115,12 @@ export function add(json: RequestData<purchaseInstockEntity>, mode: ErrorMessage
  * 编辑信息
  */
 export function update(
-  json: RequestData<purchaseInstockEntity>,
+  json: RequestData<produceInstockEntity>,
   mode: ErrorMessageMode = 'message',
 ) {
-  return defHttp.post<purchaseInstockEntity>(
+  return defHttp.post<produceInstockEntity>(
     {
-      url: Url.UPDATE_PURCHASE_INSTOCK,
+      url: Url.UPDATE_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -133,9 +133,9 @@ export function update(
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<purchaseInstockEntity>(
+  return defHttp.post<produceInstockEntity>(
     {
-      url: Url.AUDIT_PURCHASE_INSTOCK,
+      url: Url.AUDIT_PRODUCE_ORDER_INSTOCK,
       data: json,
     },
     {
@@ -150,7 +150,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_PURCHASE_INSTOCK,
+      url: Url.BATCH_AUDIT_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -163,7 +163,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
  * 下推配置查询
  */
 export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<purchaseInstockEntity>(
+  return defHttp.post<produceInstockEntity>(
     {
       url: Url.GET_PUSHDOWN_LIST,
       data: json,
@@ -184,7 +184,7 @@ export function pushDown(
 ) {
   return defHttp.post<any>(
     {
-      url: Url.PUSHDOWN_PURCHASE_INSTOCK + PushDownTableName,
+      url: Url.PUSHDOWN_PRODUCE_INSTOCK + PushDownTableName,
       data: json,
     },
     {
@@ -199,7 +199,7 @@ export function pushDown(
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ONE_PURCHASE_INSTOCK,
+      url: Url.GET_ONE_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -214,7 +214,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_WITH_DETAIL_PURCHASE_INSTOCK,
+      url: Url.DELETE_WITH_DETAIL_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -229,7 +229,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_WITH_DETAIL_PURCHASE_INSTOCK,
+      url: Url.BATCH_DELETE_WITH_DETAIL_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -242,9 +242,9 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<purchaseInstockEntity>(
+  return defHttp.post<produceInstockEntity>(
     {
-      url: Url.UN_AUDIT_PURCHASE_INSTOCK,
+      url: Url.UN_AUDIT_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -259,7 +259,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_PURCHASE_INSTOCK,
+      url: Url.UN_BATCH_AUDIT_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -274,7 +274,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_PURCHASE_INSTOCK,
+      url: Url.EXPORT_PRODUCE_INSTOCK,
       data: json,
       responseType: 'blob',
     },
@@ -290,7 +290,7 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_PURCHASE_INSTOCK,
+      url: Url.IMPORT_MODEL_PRODUCE_INSTOCK,
       data: json,
       responseType: 'blob',
     },
@@ -307,7 +307,7 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DOWN_SEARCH_PURCHASE_INSTOCK,
+      url: Url.DOWN_SEARCH_PRODUCE_INSTOCK,
       data: json,
     },
     {
@@ -322,7 +322,7 @@ export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UP_SEARCH_PURCHASE_INSTOCK,
+      url: Url.UP_SEARCH_PRODUCE_INSTOCK,
       data: json,
     },
     {

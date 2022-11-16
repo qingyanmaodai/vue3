@@ -75,18 +75,6 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="单据类型：" ref="reason" name="reason" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.reason"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择单据类型'"
-                        :options="config.NUMBER_REASON"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         :showToday="false"
@@ -95,28 +83,6 @@
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
                         :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col :span="8">
-                    <a-form-item label="供应商：" ref="supId" name="supId" class="item">
-                      <ExInput
-                        autocomplete="off"
-                        class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
-                        label="供应商"
-                        :show="formState.bsStatus !== 'B'"
-                        :value="formState.supName"
-                        :disabled="formState.bsStatus === 'B'"
-                        @search="
-                          onSearch('GET_SUPPLIER_DTO', 'BdSupplier', Url.SUPPLIER_GET_DATA, [
-                            'supId',
-                            'supName',
-                          ])
-                        "
-                        @clear="onClear(['supId', 'supName'])"
                       />
                     </a-form-item>
                   </Col>
@@ -172,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warPurInputOfDetailColumns"
+            :columns="warProInstockOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -198,10 +164,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-purchase-return-detail">
+<script lang="ts" setup name="warehouse-produce-instock-detail">
   import {
     detailOfExaGridOptions,
-    warPurInputOfDetailColumns,
+    warProInstockOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -225,7 +191,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, purchaseInstockEntity } from '/@/api/warPurchase/input';
+  import { add, audit, unAudit, getOneById, produceInstockEntity } from '/@/api/warProduce/instock';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -263,7 +229,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: purchaseInstockEntity = {
+  const formData: produceInstockEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -416,7 +382,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -466,7 +432,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -564,6 +530,7 @@
           stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
+        data.bdStock = {};
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
         data.compartmentId = null;

@@ -179,7 +179,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-produce-order-detail">
+<script lang="ts" setup name="warehouse-produce-return-detail">
   import {
     detailOfExaGridOptions,
     warProReturnOfDetailColumns,
@@ -547,6 +547,7 @@
           stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdStock':
+        data.bdStock = {};
         data.stockId = row.id ? row.id : null;
         data.bdStock.name = row.name ? row.name : null;
         data.compartmentId = null;

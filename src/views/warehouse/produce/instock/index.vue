@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsProductInStock"
+        tableName="BsProMoInStock"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -18,7 +18,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsProductInStock"
+        tableName="BsProMoInStock"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -39,7 +39,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="warehouse-product-instock-index">
+<script setup lang="ts" name="warehouse-produce-instock-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -56,7 +56,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
-  } from '/@/api/warPurchase/input';
+  } from '/@/api/warProduce/instock';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warProInstockColumns } from '/@/components/ExTable/data';
@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCT_INSTOCK');
+  let importConfig = ref<string>('IMPORT_PRODUCE_INSTOCK');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -90,7 +90,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsProductInStock.update_time'],
+        descList: ['BsProMoInStock.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -124,7 +124,7 @@
       wlName: '',
     };
     searchRef.value.setFormState(searchFormState);
-    getList(1);
+    getList();
   };
 
   //添加
@@ -140,7 +140,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_PUR_INPUT_DETAIL,
+      path: PageEnum.WAR_PRO_INSTOCK_DETAIL,
       query: {
         row: row.id,
       },
@@ -205,7 +205,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '采购入库单导入模板.xls', data: res };
+            const data = { title: '生产入库单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
