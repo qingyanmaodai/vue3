@@ -129,6 +129,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -256,7 +258,7 @@
             fileName: '人员列表',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '人员列表信息.xls', data: res };

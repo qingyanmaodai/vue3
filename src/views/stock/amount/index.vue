@@ -66,6 +66,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
   };
 

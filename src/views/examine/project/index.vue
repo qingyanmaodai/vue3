@@ -212,6 +212,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -325,7 +327,7 @@
             fileName: '检验项目',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '检验项目.xls', data: res };

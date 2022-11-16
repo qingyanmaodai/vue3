@@ -76,7 +76,7 @@
     moreSearchData.value = res;
   });
   //表格查询
-  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSizee) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -91,6 +91,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -200,7 +202,7 @@
             fileName: '仓位列表',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '仓位列表信息.xls', data: res };

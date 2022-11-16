@@ -81,7 +81,7 @@
   const searchRef: any = ref<String | null>(null);
   let getParams: SearchParams[] = [];
   //表格查询
-  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSizee) => {
+  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     getParams = [];
     if (searchRef.value.getSearchParams() && searchRef.value.getSearchParams().length > 0) {
       getParams = getParams.concat(searchRef.value.getSearchParams());
@@ -96,6 +96,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -222,7 +224,7 @@
             fileName: '生产入库单',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '生产入库单.xls', data: res };

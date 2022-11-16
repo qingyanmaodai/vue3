@@ -96,6 +96,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -208,7 +210,7 @@
             fileName: '抽检规则',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '抽检规则.xls', data: res };

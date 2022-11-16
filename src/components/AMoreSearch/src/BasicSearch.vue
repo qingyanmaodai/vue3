@@ -330,7 +330,7 @@
   };
   //查询按钮
   const searchEvent = async () => {
-    await getList(1, pageSize, listUrl.value);
+    await getList(1, tablePages.pageSize, listUrl.value);
   };
   //重置
   const resetSearch = async () => {
@@ -382,6 +382,8 @@
       url,
     );
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
   };
 
@@ -404,10 +406,6 @@
   const setFilter = (params: SearchParams[]) => {
     filterParams.value = params;
   };
-
-  let pageSize = computed<number>(() => {
-    return tableRef.value.pages.pageSize;
-  });
 
   defineExpose({
     show,

@@ -36,10 +36,10 @@
 <script setup lang="ts" name="basic-stockCompartment-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, stockCompartmentColumns } from '/@/components/ExTable/data';
-  import {FormState, SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';
@@ -92,6 +92,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -200,7 +202,7 @@
             fileName: '分仓列表',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '分仓列表信息.xls', data: res };

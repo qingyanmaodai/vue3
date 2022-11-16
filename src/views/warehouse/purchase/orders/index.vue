@@ -43,7 +43,7 @@
 <script setup lang="ts" name="warehouse-purchase-orders-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
-  import {onActivated, onMounted, reactive, ref} from 'vue';
+  import { onActivated, onMounted, reactive, ref } from 'vue';
   import {
     audit,
     auditBatch,
@@ -62,7 +62,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warPurOrdersColumns } from '/@/components/ExTable/data';
-  import {FormState, SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -98,6 +98,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -224,7 +226,7 @@
             fileName: '采购订单',
           },
           pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '采购订单.xls', data: res };
