@@ -62,7 +62,7 @@
   import { getUpDownSearchList } from '/@/enums/routeEnum';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
-  import { SearchDataType, SearchLink, SearchMatchType, tableParams} from '/@/api/apiLink';
+  import { SearchDataType, SearchLink, SearchMatchType, tableParams } from '/@/api/apiLink';
   import { cloneDeep } from 'lodash-es';
   let height = '90%';
   const ASplitPanes = Splitpanes;
