@@ -62,7 +62,7 @@
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warPurInputColumns } from '/@/components/ExTable/data';
-  import {FormState, SearchParams, tableParams} from '/@/api/apiLink';
+  import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
 

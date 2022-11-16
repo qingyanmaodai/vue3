@@ -370,6 +370,7 @@
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
     let selectRecords = await getListData();
+
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
@@ -479,7 +480,7 @@
   };
   //批量删除
   const delTable = async () => {
-    let selectRecords = await getListData();
+    let selectRecords = await getDtData();
     if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
