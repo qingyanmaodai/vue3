@@ -254,7 +254,7 @@
             list: [],
             fileName: '客户列表',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

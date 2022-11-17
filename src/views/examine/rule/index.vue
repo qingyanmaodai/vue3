@@ -209,7 +209,7 @@
             list: getParams,
             fileName: '抽检规则',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

@@ -223,7 +223,7 @@
             list: getParams,
             fileName: '采购退货',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

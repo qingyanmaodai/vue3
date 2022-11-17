@@ -225,7 +225,7 @@
             list: getParams,
             fileName: '采购订单',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

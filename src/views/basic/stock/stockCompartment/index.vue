@@ -201,7 +201,7 @@
             list: getParams,
             fileName: '分仓列表',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

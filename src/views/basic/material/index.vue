@@ -324,7 +324,7 @@
             list: getParams,
             fileName: '物料列表',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

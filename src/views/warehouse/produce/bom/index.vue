@@ -98,6 +98,8 @@
       pageRows: pageSize,
     });
     tablePages.total = res.total;
+    tablePages.currentPage = currPage;
+    tablePages.pageSize = pageSize;
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
@@ -223,8 +225,8 @@
             list: getParams,
             fileName: '生产订单',
           },
-          pageIndex: 1,
-          pageRows: tableRef.value.pages.pageSize,
+          pageIndex: tablePages.currentPage,
+          pageRows: tablePages.pageSize,
         })
           .then((res) => {
             const data = { title: '生产订单.xls', data: res };

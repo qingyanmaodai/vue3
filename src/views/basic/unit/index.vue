@@ -201,7 +201,7 @@
             list: getParams,
             fileName: '计量单位列表',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

@@ -291,7 +291,7 @@
             list: getParams,
             fileName: '盘亏单',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

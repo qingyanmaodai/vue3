@@ -243,7 +243,7 @@
             list: getParams,
             fileName: '采购入库单',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {

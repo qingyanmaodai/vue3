@@ -322,7 +322,7 @@
             list: getParams,
             fileName: '检验项目',
           },
-          pageIndex: 1,
+          pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {
