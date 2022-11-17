@@ -65,6 +65,23 @@
             </a-menu>
           </template>
         </a-dropdown>
+        <a-dropdown style="margin-right: 5px" v-if="props.isRelatedShow">
+          <a-button type="primary">
+            业务操作
+            <a-down-outlined />
+          </a-button>
+          <template #overlay>
+            <a-menu >
+              <a-menu-item
+                v-for="item in config.ORDER_QUERY"
+                :key="item.value"
+                @click="OrderSelect(item)"
+              >
+                {{ item.label }}
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
         <span style="float: right; padding-right: 10px">
           <AButton
             type="default"
@@ -369,6 +386,22 @@
   };
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
+    let selectRecords = await getListData();
+    if (selectRecords.length > 0) {
+      switch (item.value) {
+        case 'A':
+          emit('upSearchEvent', selectRecords);
+          break;
+        case 'B':
+          emit('downSearchEvent', selectRecords);
+          break;
+      }
+    } else {
+      createMessage.warning('请至少勾选一条数据。');
+    }
+  };
+  //业务操作
+  const OrderSelect = async (item) => {
     let selectRecords = await getListData();
     if (selectRecords.length > 0) {
       switch (item.value) {

@@ -261,6 +261,17 @@ export const config = {
       label: '下查',
     },
   ],
+  //业务操作
+  ORDER_QUERY: [
+    {
+      value: 'A',
+      label: '生产用料清单',
+    },
+    {
+      value: 'B',
+      label: '查询用料清单',
+    },
+  ],
   //退货原因
   RETURN_REASON: [
     {

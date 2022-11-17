@@ -12,8 +12,6 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :isShowImport="false"
-        :isShowExport="false"
         tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
