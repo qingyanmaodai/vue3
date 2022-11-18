@@ -262,7 +262,7 @@
   formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
-  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
     let getParams: SearchParams[] = [];
     if (
       detailTableRef.value.filterModalParams() &&
@@ -563,6 +563,7 @@
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
+    obj.proMoStatus = 'A';
   };
   onMounted(() => {
     getListById();

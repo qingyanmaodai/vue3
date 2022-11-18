@@ -61,6 +61,24 @@ export const config = {
     },
   ],
   //  数据业务状态
+  PRODUCT_STATUS: [
+    {
+      value: 'A',
+      label: '未进行',
+      color: 'grey',
+    },
+    {
+      value: 'B',
+      label: '进行中',
+      color: 'blue',
+    },
+    {
+      value: 'C',
+      label: '已完成',
+      color: 'green',
+    },
+  ],
+  //  数据业务状态
   BS_STATUS: {
     A: '创建',
     B: '已审核',

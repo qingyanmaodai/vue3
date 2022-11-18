@@ -321,7 +321,7 @@
       return new Promise((resolve, reject) => {
         exportTableList({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '物料列表',
           },
           pageIndex: tablePages.currentPage,

@@ -218,7 +218,7 @@
       return new Promise((resolve, reject) => {
         exportExcel({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '生产入库单',
           },
           pageIndex: tablePages.currentPage,

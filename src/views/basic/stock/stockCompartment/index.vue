@@ -198,7 +198,7 @@
       return new Promise((resolve, reject) => {
         exportStockCompartmentList({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '分仓列表',
           },
           pageIndex: tablePages.currentPage,

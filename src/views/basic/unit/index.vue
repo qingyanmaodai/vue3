@@ -198,7 +198,7 @@
       return new Promise((resolve, reject) => {
         exportUnitList({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '计量单位列表',
           },
           pageIndex: tablePages.currentPage,

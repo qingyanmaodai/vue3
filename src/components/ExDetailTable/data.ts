@@ -1022,6 +1022,14 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
+    field: 'proMoStatus',
+    title: '生产状态',
+    width: 120,
+    sortable: true,
+    className: 'disableProp',
+    slots: { default: 'proMoStatus' },
+  },
+  {
     field: 'planTime',
     title: '计划开工日期',
     editRender: {
@@ -1044,7 +1052,7 @@ export const warProOrderOfDetailColumns = [
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
-//采购入库单详情明细
+//生产入库单详情明细
 export const warProInstockOfDetailColumns = [
   { type: 'checkbox', width: 50 },
   { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
@@ -1371,6 +1379,20 @@ export const warProBomOfDetailColumns = [
   {
     field: 'num',
     title: '应发数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'receive_num',
+    title: '已领数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'reissue_num',
+    title: '未领数量',
     className: 'disableProp',
     width: 150,
     sortable: true,
