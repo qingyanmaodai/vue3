@@ -48,8 +48,8 @@
           v-show="props.isPushDown"
           >下推</AButton
         >
-        <a-dropdown style="margin-right: 5px" v-if="props.isRelatedShow">
-          <a-button type="primary">
+        <a-dropdown v-if="props.isRelatedShow">
+          <a-button type="primary" style="margin-right: 5px">
             关联查询
             <a-down-outlined />
           </a-button>
@@ -59,6 +59,23 @@
                 v-for="item in config.LINK_QUERY"
                 :key="item.value"
                 @click="linkQuerySelect(item)"
+              >
+                {{ item.label }}
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+        <a-dropdown v-if="props.isRelatedShow">
+          <a-button type="primary" style="margin-right: 5px">
+            业务操作
+            <a-down-outlined />
+          </a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item
+                v-for="item in config.ORDER_QUERY"
+                :key="item.value"
+                @click="OrderSelect(item)"
               >
                 {{ item.label }}
               </a-menu-item>
@@ -245,6 +262,9 @@
   import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
+  import { PageEnum } from '/@/enums/pageEnum';
+  const go = useGo();
+  import { useGo } from '/@/hooks/web/usePage';
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -381,6 +401,24 @@
       }
     } else {
       createMessage.warning('请至少勾选一条数据。');
+    }
+  };
+  //业务操作
+  const OrderSelect = async (item) => {
+    let selectRecords = await getListData();
+    if (selectRecords.length === 1) {
+      switch (item.value) {
+        case 'A':
+          go({
+            path: PageEnum.WAR_PRO_BOM_DETAIL,
+          });
+          break;
+        case 'B':
+          emit('downSearchEvent', selectRecords);
+          break;
+      }
+    } else {
+      createMessage.warning('只能勾选一条数据');
     }
   };
   //判断是否上下查
@@ -576,6 +614,7 @@
   const pushDownSelect = async (pushDownParam) => {
     let selectRecords = await getDtData();
     emit('pushDownEvent', selectRecords, pushDownParam);
+    ExPushDownModelRef.value.close();
   };
   //下推弹框
   const pushDownEvent = async () => {

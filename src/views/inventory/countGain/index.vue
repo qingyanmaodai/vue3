@@ -12,8 +12,6 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :isShowImport="false"
-        :isShowExport="false"
         tableName="BsInventoryCountGainModel"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
@@ -284,7 +282,7 @@
       return new Promise((resolve, reject) => {
         exportExcel({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '盘盈单',
           },
           pageIndex: tablePages.currentPage,

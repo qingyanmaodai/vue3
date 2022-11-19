@@ -11,8 +11,6 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :isShowImport="false"
-        :isShowExport="false"
         :columns="warPurReturnColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
@@ -220,7 +218,7 @@
       return new Promise((resolve, reject) => {
         exportExcel({
           params: {
-            list: getParams,
+            list: tableData.value,
             fileName: '采购退货',
           },
           pageIndex: tablePages.currentPage,

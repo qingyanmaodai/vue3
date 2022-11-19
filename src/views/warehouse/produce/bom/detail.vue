@@ -191,7 +191,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
+  import { add, audit, unAudit, getOneById, produceBomEntity } from '/@/api/warProduce/bom';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -229,7 +229,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: produceOrderEntity = {
+  const formData: produceBomEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -240,12 +240,12 @@
   const formStateInit = reactive({
     data: formData,
   });
-  const requiredLocation: any = computed(() => {
-    return stockDis.value === 'C';
-  });
-  const requiredCompartment: any = computed(() => {
-    return stockDis.value !== 'A';
-  });
+  // const requiredLocation: any = computed(() => {
+  //   return stockDis.value === 'C';
+  // });
+  // const requiredCompartment: any = computed(() => {
+  //   return stockDis.value !== 'A';
+  // });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
@@ -262,7 +262,7 @@
   // formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
-  const filterModalSearchEvent = async (currPage = 1, pageSize = 10) => {
+  const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
     let getParams: SearchParams[] = [];
     if (
       detailTableRef.value.filterModalParams() &&

@@ -61,6 +61,24 @@ export const config = {
     },
   ],
   //  数据业务状态
+  PRODUCT_STATUS: [
+    {
+      value: 'A',
+      label: '未进行',
+      color: 'grey',
+    },
+    {
+      value: 'B',
+      label: '进行中',
+      color: 'blue',
+    },
+    {
+      value: 'C',
+      label: '已完成',
+      color: 'green',
+    },
+  ],
+  //  数据业务状态
   BS_STATUS: {
     A: '创建',
     B: '已审核',
@@ -259,6 +277,17 @@ export const config = {
     {
       value: 'B',
       label: '下查',
+    },
+  ],
+  //业务操作
+  ORDER_QUERY: [
+    {
+      value: 'A',
+      label: '生产用料清单',
+    },
+    {
+      value: 'B',
+      label: '查询用料清单',
     },
   ],
   //退货原因

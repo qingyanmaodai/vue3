@@ -1022,6 +1022,14 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
+    field: 'proMoStatus',
+    title: '生产状态',
+    width: 120,
+    sortable: true,
+    className: 'disableProp',
+    slots: { default: 'proMoStatus' },
+  },
+  {
     field: 'planTime',
     title: '计划开工日期',
     editRender: {
@@ -1371,6 +1379,20 @@ export const warProBomOfDetailColumns = [
   {
     field: 'num',
     title: '应发数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'receive_num',
+    title: '已领数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'reissue_num',
+    title: '未领数量',
     className: 'disableProp',
     width: 150,
     sortable: true,

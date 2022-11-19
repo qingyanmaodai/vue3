@@ -4,21 +4,19 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsProMo"
+        tableName="BsProMoOrder"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
-        :isShowImport="false"
-        :isShowExport="false"
         :columns="warProBomColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsProMo"
+        tableName="BsProMoOrder"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -58,7 +56,7 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warProduce/order';
+  } from '/@/api/warProduce/bom';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warProBomColumns } from '/@/components/ExTable/data';
@@ -71,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
+  let importConfig = ref<string>('IMPORT_PRODUCE_BOM');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -92,7 +90,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsProMo.update_time'],
+        descList: ['BsProMoOrder.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -108,14 +106,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '生产订单-上查';
+    modalTitle.value = '用料清单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '生产订单-下查';
+    modalTitle.value = '用料清单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -207,7 +205,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '生产订单导入模板.xls', data: res };
+            const data = { title: '用料清单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -222,14 +220,14 @@
       return new Promise((resolve, reject) => {
         exportExcel({
           params: {
-            list: getParams,
-            fileName: '生产订单',
+            list: tableData.value,
+            fileName: '用料清单',
           },
           pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {
-            const data = { title: '生产订单.xls', data: res };
+            const data = { title: '用料清单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
