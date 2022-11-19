@@ -60,7 +60,7 @@ export const config = {
       label: '已审核',
     },
   ],
-  //  数据业务状态
+  //  生产业务状态
   PRODUCT_STATUS: [
     {
       value: 'A',
@@ -78,6 +78,12 @@ export const config = {
       color: 'green',
     },
   ],
+  //  生产业务状态
+  PRODUCE_STATUS: {
+    A: '未进行',
+    B: '进行中',
+    c: '已完成',
+  },
   //  数据业务状态
   BS_STATUS: {
     A: '创建',

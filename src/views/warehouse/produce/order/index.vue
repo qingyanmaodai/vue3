@@ -11,6 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isOrderShow="true"
         :columns="warProOrderColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
@@ -30,6 +31,8 @@
         @importModelEvent="importModelEvent"
         @getList="getList"
         @pushDownEvent="pushDownEvent"
+        @createOrderEvent="createOrderEvent"
+        @queryOrderEvent="queryOrderEvent"
         :modalTitle="modalTitle"
         @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
@@ -56,6 +59,8 @@
     unAuditBatch,
     upSearch,
     pushDown,
+    createOrder,
+    queryOrder,
   } from '/@/api/warProduce/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -253,6 +258,31 @@
     } else {
       createMessage.error('无法下推到该下游单据/已有下游单据');
     }
+  };
+  //生成用料清单
+  const createOrderEvent = async (row) => {
+    let res = await createOrder({
+      params: row,
+    });
+    if (res) {
+      createMessage.success('操作成功');
+      go({
+        name: 'warehouse-produce-bom-detail',
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      createMessage.error('操作失败');
+    }
+  };
+  //查询用料清单
+  const queryOrderEvent = async (id) => {
+    let res = await queryOrder({
+      params: id,
+    });
+    go({
+      name: 'warehouse-produce-bom-detail',
+      params: { pushDownParam: JSON.stringify(res) },
+    });
   };
   //获取高级查询字段数据
   const moreSearchData = ref();

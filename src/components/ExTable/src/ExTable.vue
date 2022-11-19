@@ -65,7 +65,7 @@
             </a-menu>
           </template>
         </a-dropdown>
-        <a-dropdown v-if="props.isRelatedShow">
+        <a-dropdown v-if="props.isOrderShow">
           <a-button type="primary" style="margin-right: 5px">
             业务操作
             <a-down-outlined />
@@ -262,15 +262,9 @@
   import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-  import { PageEnum } from '/@/enums/pageEnum';
-  const go = useGo();
-  import { useGo } from '/@/hooks/web/usePage';
   //基础信息查询组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
-
-  // const currentP = ref<number>(1);
-  // const pageS = ref<number>(10);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -296,6 +290,7 @@
     isShowExport?: boolean;
     isShowImport?: boolean;
     importConfig?: string;
+    isOrderShow?: boolean;
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
@@ -317,6 +312,7 @@
     isPushDown: true,
     isShowExport: true,
     isShowImport: true,
+    isOrderShow: false,
     height: '83%',
     tablePages: () => {
       return {
@@ -345,6 +341,8 @@
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
+    (e: 'createOrderEvent', selectRecords: any): void;
+    (e: 'queryOrderEvent', id: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
@@ -409,12 +407,10 @@
     if (selectRecords.length === 1) {
       switch (item.value) {
         case 'A':
-          go({
-            path: PageEnum.WAR_PRO_BOM_DETAIL,
-          });
+          emit('createOrderEvent', selectRecords);
           break;
         case 'B':
-          emit('downSearchEvent', selectRecords);
+          emit('queryOrderEvent', selectRecords[0].id);
           break;
       }
     } else {

@@ -321,3 +321,34 @@ export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'messa
     },
   );
 }
+
+/**
+ * 生成用料清单
+ */
+export function createOrder(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.CREATE_OREDER_PRODUCE_ORDER,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
+ * 查询用料清单
+ */
+export function queryOrder(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<Result>(
+    {
+      url: Url.QUERY_ORDER_PRODUCE_ORDER,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
