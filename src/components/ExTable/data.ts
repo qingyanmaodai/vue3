@@ -716,6 +716,7 @@ export const warProPicksColumns = [
 /*预用来源*/
 export const preUseColumns = [
   { type: 'seq', title: '行号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
   { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
   { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
   { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
@@ -724,6 +725,7 @@ export const preUseColumns = [
 /*库存明细*/
 export const stoSourceColumns = [
   { type: 'seq', title: '行号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
   { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
   { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
   { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1

@@ -22,6 +22,7 @@
       height="90%"
       :urlConfig="listUrl"
       @getList="getList"
+      @editTableEvent="editTableEvent"
     />
   </vxe-modal>
 </template>
@@ -31,6 +32,8 @@
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchParams, tableParams } from '/@/api/apiLink';
+  import { sourceDwtail } from '/@/enums/routeEnum';
+  import { useGo } from '/@/hooks/web/usePage';
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -83,6 +86,21 @@
     tableData.value = res.records;
   };
 
+  //跳转到相对应的详情页
+  const go = useGo();
+  const editTableEvent = (row) => {
+    let filter;
+    if (tableData.value.length > 0) {
+      filter = sourceDwtail.filter((arr) => arr.billType === row.billType);
+    }
+    let detailUrl = filter[0].detailUrl;
+    go({
+      path: detailUrl,
+      query: {
+        row: row.id,
+      },
+    });
+  };
   const show = () => {
     isShow.value = true;
   };

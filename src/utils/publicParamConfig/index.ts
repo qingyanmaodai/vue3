@@ -370,6 +370,10 @@ export const config = {
       label: '盘亏单',
     },
     {
+      value: 'BsInventoryCount',
+      label: '盘点单',
+    },
+    {
       value: 'BsProMoInStock',
       label: '生产入库',
     },
@@ -384,6 +388,10 @@ export const config = {
     {
       value: 'BsPurchaseInStock',
       label: '采购入库',
+    },
+    {
+      value: 'BsPurchaseOrder',
+      label: '采购订单',
     },
   ],
 };

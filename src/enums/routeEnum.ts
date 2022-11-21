@@ -48,3 +48,37 @@ export const getUpDownSearchList = [
     TableCols: warPurReturnColumns,
   },
 ];
+export const sourceDwtail = [
+  {
+    billType: 'BsInventoryCountGain', //盘盈
+    detailUrl: PageEnum.INV_COUNT_GAIN_DETAIL,
+  },
+  {
+    billType: 'BsInventoryCountLoss', //盘亏
+    detailUrl: PageEnum.INV_COUNT_LOSS_DETAIL,
+  },
+  {
+    billType: 'BsInventoryCount', //盘点
+    detailUrl: PageEnum.INV_COUNT_SHEET_DETAIL,
+  },
+  {
+    billType: 'BsPurchaseOrder', //采购订单
+    detailUrl: PageEnum.WAR_PUR_ORDERS_DETAIL,
+  },
+  {
+    billType: 'BsPurchaseInStock', //采购入库
+    detailUrl: PageEnum.WAR_PUR_INPUT_DETAIL,
+  },
+  {
+    billType: 'BsPurchaseReturn', //采购退货
+    detailUrl: PageEnum.WAR_PUR_RETURN_DETAIL,
+  },
+  {
+    billType: 'BsProMoInStock', //生产入库
+    detailUrl: PageEnum.WAR_PRO_INSTOCK_DETAIL,
+  },
+  {
+    billType: 'BsProMoReturn', //生产出库
+    detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,
+  },
+];
