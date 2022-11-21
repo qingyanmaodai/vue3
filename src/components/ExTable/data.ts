@@ -335,6 +335,13 @@ export const StockAmountColumns = [
   { field: 'bdMaterial.updateTime', title: '更新日期', sortable: true, width: 160 },
   { field: 'stockNum', title: '库存数量', sortable: true, width: 120 },
   { field: 'preUse', title: '即时库存', sortable: true, width: 120 },
+  {
+    field: 'operate',
+    title: '操作',
+    width: 160,
+    slots: { default: 'operateOfStock' },
+    fixed: 'right',
+  },
 ];
 //检验规则
 export const exaRuleColumns = [
@@ -705,4 +712,20 @@ export const warProPicksColumns = [
     slots: { default: 'status' },
   },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+/*预用来源*/
+export const preUseColumns = [
+  { type: 'seq', title: '行号', width: 50 },
+  { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
+  { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
+  { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
+  { field: 'createTime', title: '业务日期' },
+];
+/*库存明细*/
+export const stoSourceColumns = [
+  { type: 'seq', title: '行号', width: 50 },
+  { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
+  { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
+  { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
+  { field: 'createTime', title: '业务日期' },
 ];

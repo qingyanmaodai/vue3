@@ -348,4 +348,42 @@ export const config = {
       label: '现购入库单',
     },
   ],
+  //业务操作
+  TAG: [
+    {
+      value: 1,
+      label: '入库',
+    },
+    {
+      value: -1,
+      label: '出库',
+    },
+  ],
+  //单据类型
+  BILL_TYPE: [
+    {
+      value: 'BsInventoryCountGain',
+      label: '盘盈单',
+    },
+    {
+      value: 'BsInventoryCountLoss',
+      label: '盘亏单',
+    },
+    {
+      value: 'BsProMoInStock',
+      label: '生产入库',
+    },
+    {
+      value: 'BsProMoReturn',
+      label: '生产出库',
+    },
+    {
+      value: 'BsPurchaseReturn',
+      label: '采购出库',
+    },
+    {
+      value: 'BsPurchaseInStock',
+      label: '采购入库',
+    },
+  ],
 };

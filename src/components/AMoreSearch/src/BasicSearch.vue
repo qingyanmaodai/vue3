@@ -175,7 +175,8 @@
     SearchLink,
     SearchMatchType,
     SearchParams,
-    TableColum, tableParams,
+    TableColum,
+    tableParams,
     Url,
   } from '/@/api/apiLink';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
@@ -337,7 +338,11 @@
     defaultParam.value = cloneDeep(defaultP);
   };
 
-  const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize, url) => {
+  const getList = async (
+    currPage = tablePages.currentPage,
+    pageSize = tablePages.pageSize,
+    url,
+  ) => {
     getParams = [];
     const data = defaultParam.value;
     if (filterParams.value && filterParams.value.length > 0) {
