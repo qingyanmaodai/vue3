@@ -24,6 +24,9 @@
         :tablePages="tablePages"
         ref="tableRef"
         @getList="getList"
+        @getParamsData="getParamsData"
+        :preUseUrl="Url.GET_INV_PRE_USE_SOURCE_DETAIL"
+        :stockUrl="Url.GET_INV_SOURCE_DETAIL"
       />
     </div>
   </div>
@@ -35,7 +38,15 @@
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
-  import { SearchParams, StockFormState, tableParams } from '/@/api/apiLink';
+  import {
+    SearchDataType,
+    SearchLink,
+    SearchMatchType,
+    SearchParams,
+    StockFormState,
+    tableParams,
+    Url,
+  } from '/@/api/apiLink';
   import { getInvList } from '/@/api/realTimeInv';
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
@@ -87,6 +98,32 @@
     getList(1);
   };
 
+  const getParamsData = (row): SearchParams[] => {
+    let getParams: SearchParams[] = [];
+    getParams.push({
+      column: 'mat_id',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'matId',
+      startWith: '',
+      table: '',
+      val: row.matId,
+    });
+    getParams.push({
+      column: 'stock_id',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'stockId',
+      startWith: '',
+      table: '',
+      val: row.stockId,
+    });
+    return getParams;
+  };
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     getList();

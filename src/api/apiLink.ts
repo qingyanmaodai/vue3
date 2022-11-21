@@ -216,6 +216,10 @@ export enum Url {
   GET_INV_BY_MAT_STOCK_LIST = '/stock/bd-inventory/get-inv-by-mat-stock', //物料号与仓位获取库存信息
   GET_INV_LIST = '/stock/bd-inventory/list', //分页查询
   GET_INV_REDUCE_STOCK = '/stock/bd-inventory/reduce-stock', //减少库存
+  GET_INV_SOURCE_DETAIL = '/stock/bd-inventory/get-inv-detail-page', //来源明细
+
+  //库存预用
+  GET_INV_PRE_USE_SOURCE_DETAIL = '/stock/bd-inventory-pre-use/get-inv-pre-use-page', //预用来源
 
   // 盘盈单
   AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/audit', //审核

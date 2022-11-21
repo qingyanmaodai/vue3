@@ -136,6 +136,12 @@
       >{{ formatData(row.attr, config['MATERIAL_ATTR'])['label'] }}
     </template>
     <template #bsDate="{ row }">{{ formatDate(row.bsDate) }} </template>
+    <template #billType="{ row }"
+      ><Tag>{{ formatData(row.billType, config['BILL_TYPE']) }}</Tag></template
+    >
+    <template #tag="{ row }"
+      ><Tag>{{ formatData(row.tag, config['TAG']) }}</Tag></template
+    >
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton
@@ -152,6 +158,10 @@
       <AButton type="link" class="link" danger @click="deleteRowEvent(row)" v-show="row.bsStatus"
         >删除</AButton
       >
+    </template>
+    <template #operateOfStock="{ row }">
+      <AButton type="link" class="link" @click="checkPreUseEvent(row)">预用来源</AButton>
+      <AButton type="link" class="link" @click="checkStockEvent(row)">明细</AButton>
     </template>
   </vxe-grid>
   <div>
@@ -246,6 +256,12 @@
     :modalTitle="props.modalTitle"
     :linkQueryMenuData="props.linkQueryMenuData"
   />
+  <ExTableModal
+    ref="exTableModalRef"
+    :tableParamsData="tableParamsData"
+    :tableModalColumns="tableModalColumns"
+    :tableModalTitle="tableModalTitle"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -260,18 +276,27 @@
   import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
-  import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
+  import {
+    resultByBatchColumns,
+    resultGridOptions,
+    preUseColumns,
+    stoSourceColumns,
+  } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
+  import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-  //基础信息查询组件ref
+
+  import { SearchParams } from '/@/api/apiLink';
+  //组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
+  const exTableModalRef: any = ref(null);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -301,6 +326,8 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
+    preUseUrl?: string;
+    stockUrl?: string;
     tablePages?: TableType;
   }
   type TableType = {
@@ -310,6 +337,8 @@
   };
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
+    preUseUrl: '',
+    stockUrl: '',
     show: true,
     isAddShow: true,
     isAuditShow: true,
@@ -353,6 +382,8 @@
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
+    (e: 'checkStockEvent', row: any): void;
+    (e: 'getParamsData', row: any): [];
   };
   const tablePage = computed(() => {
     return props.tablePages;
@@ -369,6 +400,10 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
+  const tableParamsData = ref<SearchParams[]>([]);
+  const tableModalColumns = ref<object[]>([]);
+  const tableModalTitle = ref<string>('');
+
   const tablePagerChange: VxePagerEvents.PageChange = ({ currentPage, pageSize }) => {
     emit('getList', currentPage, pageSize, props.urlConfig);
   };
@@ -467,7 +502,7 @@
     }
   };
   //获取勾选的列表值
-  const getListData = () => {
+  const getListData = async () => {
     const $grid: any = xGrid.value;
     let selectRecords = $grid.getCheckboxRecords();
     preSelectRecords = selectRecords.length;
@@ -493,6 +528,20 @@
       }
     }
     return selectRecords1;
+  };
+  //查看预用来源
+  const checkPreUseEvent = (row: any) => {
+    tableParamsData.value = emit('getParamsData', row);
+    tableModalColumns.value = preUseColumns;
+    tableModalTitle.value = '预用来源';
+    exTableModalRef.value.init(props.preUseUrl);
+  };
+  //查看库存明细来源
+  const checkStockEvent = (row: any) => {
+    tableParamsData.value = emit('getParamsData', row);
+    tableModalColumns.value = stoSourceColumns;
+    tableModalTitle.value = '明细来源';
+    exTableModalRef.value.init(props.stockUrl);
   };
   //新增
   const addTableEvent = () => {
