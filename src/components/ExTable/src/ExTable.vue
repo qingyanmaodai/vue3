@@ -137,10 +137,10 @@
     </template>
     <template #bsDate="{ row }">{{ formatDate(row.bsDate) }} </template>
     <template #billType="{ row }"
-      ><Tag>{{ formatData(row.billType, config['BILL_TYPE']) }}</Tag></template
+      ><Tag>{{ formatData(row.billType, config['BILL_TYPE'])['label'] }}</Tag></template
     >
     <template #tag="{ row }"
-      ><Tag>{{ formatData(row.tag, config['TAG']) }}</Tag></template
+      ><Tag>{{ formatData(row.tag, config['TAG'])['label'] }}</Tag></template
     >
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
@@ -383,7 +383,7 @@
     (e: 'upSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
     (e: 'checkStockEvent', row: any): void;
-    (e: 'getParamsData', row: any): [];
+    (e: 'getParamsData', row: any): any;
   };
   const tablePage = computed(() => {
     return props.tablePages;
