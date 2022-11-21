@@ -97,7 +97,7 @@
     go({
       path: detailUrl,
       query: {
-        row: row.id,
+        row: row.billId,
       },
     });
   };

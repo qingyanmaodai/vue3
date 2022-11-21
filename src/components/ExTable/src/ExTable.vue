@@ -287,7 +287,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
-  import { SearchParams, Url } from '/@/api/apiLink';
+  import { SearchParams } from '/@/api/apiLink';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
