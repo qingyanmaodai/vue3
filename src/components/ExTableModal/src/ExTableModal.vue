@@ -110,7 +110,7 @@
   const init = (tableUrl: string) => {
     isShow.value = true;
     listUrl.value = tableUrl;
-    getList(1, 10, tableUrl);
+    getList(tablePages.currentPage, tablePages.pageSize, tableUrl);
   };
 
   defineExpose({

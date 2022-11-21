@@ -25,6 +25,7 @@
         ref="tableRef"
         @getList="getList"
         @getParamsData="getParamsData"
+        :getModalParams="getModalParams"
         :preUseUrl="Url.GET_INV_PRE_USE_SOURCE_DETAIL"
         :stockUrl="Url.GET_INV_SOURCE_DETAIL"
       />
@@ -97,8 +98,8 @@
     stockAmountSearchRef.value.setFormState(searchFormState);
     getList(1);
   };
-
-  const getParamsData = (row): SearchParams[] => {
+  let getModalParams = ref<SearchParams[]>([]);
+  const getParamsData = (row) => {
     let getParams: SearchParams[] = [];
     getParams.push({
       column: 'mat_id',
@@ -122,8 +123,9 @@
       table: '',
       val: row.stockId,
     });
-    return getParams;
+    getModalParams.value = cloneDeep(getParams);
   };
+
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     getList();
