@@ -36,8 +36,17 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="来源单号：" ref="srcBill" name="srcBill" class="item">
-                      <Input class="input" v-model:value="formState.srcBill" disabled />
+                    <a-form-item
+                      label="产品编号："
+                      ref="proMoNumber"
+                      name="proMoNumber"
+                      class="item"
+                    >
+                      <Input
+                        class="input"
+                        v-model:value="formState.proMoNumber"
+                        disabled
+                      />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -55,23 +64,22 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="计划员：" ref="empId" name="empId" class="item">
-                      <ExInput
-                        autocomplete="off"
+                    <a-form-item
+                      label="生产状态："
+                      ref="proMoStatus"
+                      name="proMoStatus"
+                      class="item"
+                    >
+                      <Input
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择计划员'"
-                        label="客户"
-                        :show="formState.bsStatus !== 'B'"
-                        :value="formState.empName"
-                        :disabled="formState.bsStatus === 'B'"
-                        @search="
-                          onSearch('GET_EMPLOYEE_DTO', 'bdEmployee', Url.EMPLOYEE_GET_DATA, [
-                            'empId',
-                            'empName',
-                          ])
-                        "
-                        @clear="onClear(['empId', 'empName'])"
+                        :value="config.PRODUCE_STATUS[formState.proMoStatus] || '未进行'"
+                        disabled
                       />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="生产数量：" ref="proMoNum" name="proMoNum" class="item">
+                      <Input class="input" v-model:value="formState.proMoNum" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -86,6 +94,8 @@
                       />
                     </a-form-item>
                   </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -140,7 +150,7 @@
           <ExDetailTable
             :columns="warProBomOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
@@ -233,6 +243,7 @@
     id: undefined,
     number: '',
     way: 'A',
+    moId: undefined,
     bsDate: moment(getCurrentData(), 'YYYY-MM-DD'),
   };
 
@@ -248,18 +259,11 @@
   // });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  // const stock = 'bdStock.name';
-  // const compartment = 'bdStockCompartment.name';
-  // const location = 'bdStockLocation.name';
-
-  const formRules = reactive({
+  const formRules = reactive({});
+  const formDataRules = reactive({
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
     num: [{ required: true, message: '请输入生成数量' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
-  // formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  // formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
-  // formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
@@ -562,6 +566,7 @@
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
+    obj.moId = formState.value.moId;
   };
   onMounted(() => {
     getListById();

@@ -36,6 +36,7 @@ export interface produceBomEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
+  moId?: number;
 }
 
 export interface proBomDetailEntity extends PublicModel {
@@ -125,7 +126,7 @@ export function update(json: RequestData<produceBomEntity>, mode: ErrorMessageMo
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<produceBomEntity>(
     {
-      url: Url.AUDIT_PRODUCE_BOM,
+      url: Url.AUDIT_PRODUCE_ORDER_BOM,
       data: json,
     },
     {

@@ -65,7 +65,7 @@
             </a-menu>
           </template>
         </a-dropdown>
-        <a-dropdown v-if="props.isRelatedShow">
+        <a-dropdown v-if="props.isOrderShow">
           <a-button type="primary" style="margin-right: 5px">
             业务操作
             <a-down-outlined />
@@ -284,9 +284,7 @@
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-  import { PageEnum } from '/@/enums/pageEnum';
-  const go = useGo();
-  import { useGo } from '/@/hooks/web/usePage';
+
   import { SearchParams } from '/@/api/apiLink';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
@@ -317,6 +315,7 @@
     isShowExport?: boolean;
     isShowImport?: boolean;
     importConfig?: string;
+    isOrderShow?: boolean;
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
@@ -342,6 +341,7 @@
     isPushDown: true,
     isShowExport: true,
     isShowImport: true,
+    isOrderShow: false,
     height: '83%',
     tablePages: () => {
       return {
@@ -370,6 +370,8 @@
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
+    (e: 'createOrderEvent', selectRecords: any): void;
+    (e: 'queryOrderEvent', id: any): void;
     (e: 'downSearchEvent', row: any): void;
     (e: 'upSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
@@ -440,12 +442,10 @@
     if (selectRecords.length === 1) {
       switch (item.value) {
         case 'A':
-          go({
-            path: PageEnum.WAR_PRO_BOM_DETAIL,
-          });
+          emit('createOrderEvent', selectRecords);
           break;
         case 'B':
-          emit('downSearchEvent', selectRecords);
+          emit('queryOrderEvent', selectRecords[0].id);
           break;
       }
     } else {
@@ -495,7 +495,7 @@
     }
   };
   //获取勾选的列表值
-  const getListData = () => {
+  const getListData = async () => {
     const $grid: any = xGrid.value;
     let selectRecords = $grid.getCheckboxRecords();
     preSelectRecords = selectRecords.length;

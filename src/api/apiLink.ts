@@ -382,6 +382,8 @@ export enum Url {
   PUSHDOWN_PRODUCE_ORDER = '/wms/bs-pro-mo/push/', //下推
   DOWN_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/down-search', //下查
   UP_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/up-search', //上查
+  CREATE_OREDER_PRODUCE_ORDER = '/wms/bs-pro-mo/create-order', //生成用料清单
+  QUERY_ORDER_PRODUCE_ORDER = '/wms/bs-pro-mo/query-order', //生成用料清单
 
   // 生产入库
   AUDIT_PRODUCE_ORDER_INSTOCK = '/wms/bs-pro-mo-in-stock/audit', //审核
