@@ -103,31 +103,38 @@
       <a style="color: #0960bd" @click="editTableEvent(row)">{{ row.number }}</a>
     </template>
     <template #SupplierLevel="{ row }">
-      <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE']) }}</Tag>
+      <Tag v-if="row.level">{{ formatData(row.level, config['SUPPLIER_GRADE'])['label'] }}</Tag>
     </template>
     <template #status="{ row }">
-      <Tag :color="row.bsStatus === 'B' ? 'processing' : 'default'" v-if="row.bsStatus">{{
-        formatData(row.bsStatus, config['DATA_STATUS'])
+      <Tag :color="formatData(row.bsStatus, config['DATA_STATUS'])['color']" v-if="row.bsStatus">{{
+        formatData(row.bsStatus, config['DATA_STATUS'])['label']
       }}</Tag>
     </template>
     <template #bsType="{ row }">
-      <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE']) }}</Tag>
+      <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE'])['label'] }}</Tag>
     </template>
     <template #open="{ row }">
       <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
-        formatData(row.isOpen, config['ENABLE_STATUS'])
+        formatData(row.isOpen, config['ENABLE_STATUS'])['label']
       }}</Tag>
     </template>
     <template #sex="{ row }">
-      <Tag>{{ formatData(row.sex, config['GENDER']) }}</Tag>
+      <Tag>{{ formatData(row.sex, config['GENDER'])['label'] }}</Tag>
     </template>
     <template #job="{ row }">
-      <Tag>{{ formatData(row.job, config['JOB']) }}</Tag>
+      <Tag>{{ formatData(row.job, config['JOB'])['label'] }}</Tag>
     </template>
     <template #way="{ row }">
-      <Tag>{{ formatData(row.way, config['INVENTORY_WAY']) }}</Tag>
+      <Tag>{{ formatData(row.way, config['INVENTORY_WAY'])['label'] }}</Tag>
     </template>
-    <template #attr="{ row }">{{ formatData(row.attr, config['MATERIAL_ATTR']) }} </template>
+    <template #proMoStatus="{ row }">
+      <Tag :color="formatData(row.proMoStatus, config['PRODUCT_STATUS'])['color']">{{
+        formatData(row.proMoStatus, config['PRODUCT_STATUS'])['label']
+      }}</Tag>
+    </template>
+    <template #attr="{ row }"
+      >{{ formatData(row.attr, config['MATERIAL_ATTR'])['label'] }}
+    </template>
     <template #bsDate="{ row }">{{ formatDate(row.bsDate) }} </template>
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
@@ -435,7 +442,7 @@
     if (source && source.length > 0) {
       res = source.find((item) => item.value === data);
     }
-    return res ? res.label : '';
+    return res ? res : '';
   };
   const formatDate = (value: any) => {
     if (value) {

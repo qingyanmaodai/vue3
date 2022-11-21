@@ -78,7 +78,7 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="生产数量：" ref="proMoNum" name="proMoNum" class="item">
+                    <a-form-item label="产品订单数量：" ref="proMoNum" name="proMoNum" class="item">
                       <Input class="input" v-model:value="formState.proMoNum" disabled />
                     </a-form-item>
                   </Col>
@@ -232,7 +232,6 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -251,18 +250,12 @@
   const formStateInit = reactive({
     data: formData,
   });
-  // const requiredLocation: any = computed(() => {
-  //   return stockDis.value === 'C';
-  // });
-  // const requiredCompartment: any = computed(() => {
-  //   return stockDis.value !== 'A';
-  // });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({});
   const formDataRules = reactive({
     'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
-    num: [{ required: true, message: '请输入生成数量' }],
+    num: [{ required: true, message: '请输入数量' }],
   });
   //筛选条件弹框组件
   //筛选条件查询
@@ -298,17 +291,9 @@
       );
     });
     res.records.forEach((item, index) => {
-      item['stockDis'] = stockDis.value;
       item.bdMaterial = bdMaterial[index];
       item.bsStatus = 'A';
       item.matId = item.id;
-      item.compartmentId =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.compartmentId : null;
-      item.bdStockCompartment.name =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.bdStockCompartment.name : null;
-      item.locationId = stockDis.value === 'C' && item.bdStockLocation ? item.locationId : null;
-      item.bdStockLocation.name =
-        stockDis.value === 'C' && item.bdStockLocation ? item.bdStockLocation.name : null;
     });
     let data = cloneDeep(res.records);
     detailTableData.value = data;
@@ -365,9 +350,6 @@
               (e) =>
                 tableFullData.filter(
                   (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
                     e1.matId === e.matId,
                 ).length > 1,
             )
@@ -409,9 +391,6 @@
                 (e) =>
                   tableFullData.filter(
                     (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
                       e1.matId === e.matId,
                   ).length > 1,
               )
@@ -476,16 +455,6 @@
     if (formState.value.dtData) {
       formState.value.dtData.map((r) => {
         r.bsStatus = formState.value.bsStatus;
-        r['stockDis'] = stockDis.value;
-        if (r.bdStockCompartment && r.bdStockCompartment.name) {
-          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-          r.bdStockCompartment.name =
-            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
-        }
-        if (r.bdStockLocation && r.bdStockLocation.name) {
-          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
-        }
       });
     }
     detailTableData.value = cloneDeep(formState.value.dtData);
@@ -526,38 +495,6 @@
         data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
-        data.bdStock = {};
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
-        data.stockId = res.bdStock ? res.bdStock.id : null;
-        data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
-        data.bdStockCompartment.name =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
-        data.bdStockLocation.name =
-          stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
-        break;
-      case 'bdStock':
-        data.stockId = row.id ? row.id : null;
-        data.bdStock.name = row.name ? row.name : null;
-        data.compartmentId = null;
-        data.locationId = null;
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
-        break;
-      case 'bdStockCompartment':
-        data.bdStockCompartment = {};
-        data.compartmentId = row.id ? row.id : null;
-        data.bdStockCompartment.name = row.name ? row.name : null;
-        data.locationId = null;
-        data.bdStockLocation = {};
-        break;
-      case 'bdStockLocation':
-        data.bdStockLocation = {};
-        data.locationId = row.id ? row.id : null;
-        data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
     await getCountAmount(data);
@@ -565,7 +502,6 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
-    obj.stockDis = cloneDeep(stockDis.value);
     obj.moId = formState.value.moId;
   };
   onMounted(() => {

@@ -60,7 +60,7 @@
     </template>
     <template #proMoStatus="{ row }">
       <Tag :color="formatData(row.proMoStatus, config['PRODUCT_STATUS']).color">{{
-        formatData(row.proMoStatus, config['PRODUCT_STATUS']).label
+        formatData(row.proMoStatus, config['PRODUCT_STATUS'])['label']
       }}</Tag>
     </template>
     <template #date="{ row }">

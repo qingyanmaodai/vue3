@@ -11,7 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :columns="warProInstockColumns"
+        :columns="warProInStockColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
@@ -57,7 +57,7 @@
   } from '/@/api/warProduce/instock';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warProInstockColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warProInStockColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';

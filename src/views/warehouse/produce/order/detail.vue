@@ -140,7 +140,7 @@
           <ExDetailTable
             :columns="warProOrderOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
@@ -222,7 +222,6 @@
   const basicControl = ref<ControlSet[]>(); //下拉框
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
-  let stockDis = ref<any>(localStorage.getItem('stockDis')); //仓库维度
 
   //获取当前时间
   const getCurrentData = () => {
@@ -240,26 +239,26 @@
   const formStateInit = reactive({
     data: formData,
   });
-  const requiredLocation: any = computed(() => {
-    return stockDis.value === 'C';
-  });
-  const requiredCompartment: any = computed(() => {
-    return stockDis.value !== 'A';
-  });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const material = 'bdMaterial.number';
   const stock = 'bdStock.name';
   const compartment = 'bdStockCompartment.name';
   const location = 'bdStockLocation.name';
-
-  const formRules = reactive({
-    num: [{ required: true, message: '请输入生成数量' }],
+  const formRules = reactive({});
+  const formDataRules = reactive({
+    num: [{ required: true, message: '请输入生产数量' }],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
+    planFinTime: [
+      {
+        validator({ cellValue, row }) {
+          if (Date.parse(cellValue) && Date.parse(cellValue) < Date.parse(row.planTime)) {
+            return new Error('开工日期不能超过完工日期');
+          }
+        },
+      },
+    ],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
-  formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
-  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
@@ -294,17 +293,9 @@
       );
     });
     res.records.forEach((item, index) => {
-      item['stockDis'] = stockDis.value;
       item.bdMaterial = bdMaterial[index];
       item.bsStatus = 'A';
       item.matId = item.id;
-      item.compartmentId =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.compartmentId : null;
-      item.bdStockCompartment.name =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.bdStockCompartment.name : null;
-      item.locationId = stockDis.value === 'C' && item.bdStockLocation ? item.locationId : null;
-      item.bdStockLocation.name =
-        stockDis.value === 'C' && item.bdStockLocation ? item.bdStockLocation.name : null;
     });
     let data = cloneDeep(res.records);
     detailTableData.value = data;
@@ -381,7 +372,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -431,7 +422,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -472,16 +463,6 @@
     if (formState.value.dtData) {
       formState.value.dtData.map((r) => {
         r.bsStatus = formState.value.bsStatus;
-        r['stockDis'] = stockDis.value;
-        if (r.bdStockCompartment && r.bdStockCompartment.name) {
-          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-          r.bdStockCompartment.name =
-            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
-        }
-        if (r.bdStockLocation && r.bdStockLocation.name) {
-          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
-        }
       });
     }
     detailTableData.value = cloneDeep(formState.value.dtData);
@@ -522,39 +503,6 @@
         data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
-        data.bdStock = {};
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
-        data.stockId = res.bdStock ? res.bdStock.id : null;
-        data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
-        data.bdStockCompartment.name =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
-        data.bdStockLocation.name =
-          stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
-        break;
-      case 'bdStock':
-        data.bdStock = {};
-        data.stockId = row.id ? row.id : null;
-        data.bdStock.name = row.name ? row.name : null;
-        data.compartmentId = null;
-        data.locationId = null;
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
-        break;
-      case 'bdStockCompartment':
-        data.bdStockCompartment = {};
-        data.compartmentId = row.id ? row.id : null;
-        data.bdStockCompartment.name = row.name ? row.name : null;
-        data.locationId = null;
-        data.bdStockLocation = {};
-        break;
-      case 'bdStockLocation':
-        data.bdStockLocation = {};
-        data.locationId = row.id ? row.id : null;
-        data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
     await getCountAmount(data);
@@ -562,7 +510,6 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
-    obj.stockDis = cloneDeep(stockDis.value);
     obj.proMoStatus = 'A';
   };
   onMounted(() => {

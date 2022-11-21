@@ -138,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warProInstockOfDetailColumns"
+            :columns="warProInStockOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -167,7 +167,7 @@
 <script lang="ts" setup name="warehouse-produce-instock-detail">
   import {
     detailOfExaGridOptions,
-    warProInstockOfDetailColumns,
+    warProInStockOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -247,18 +247,13 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
-
   const formRules = reactive({
     realNum: [{ required: true, message: '请输入实收数量' }],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
+    'bdStock.name': [{ required: true, message: '请选择仓库' }],
+    'bdStockCompartment.name': [{ required: requiredCompartment, message: '请选择分仓' }],
+    'bdStockLocation.name': [{ required: requiredLocation, message: '请选择仓位' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
-  formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
-  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
@@ -547,7 +542,7 @@
       case 'bdStockLocation':
         data.bdStockLocation = {};
         data.locationId = row.id ? row.id : null;
-        data.bdStockLocation.name = row? row.name : null;
+        data.bdStockLocation.name = row ? row.name : null;
         break;
     }
   };
