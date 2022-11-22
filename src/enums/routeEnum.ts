@@ -81,4 +81,8 @@ export const sourceDwtail = [
     billType: 'BsProMoReturn', //生产出库
     detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,
   },
+  {
+    billType: 'BsProMoOrder', //生产订单----存疑
+    detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
+  },
 ];

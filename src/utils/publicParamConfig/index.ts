@@ -389,6 +389,11 @@ export const config = {
       value: 'BsProMoReturn',
       label: '生产出库',
     },
+    //生产工单---存疑
+    {
+      value: 'BsProMoOrder',
+      label: '生产工单',
+    },
     {
       value: 'BsPurchaseReturn',
       label: '采购出库',
