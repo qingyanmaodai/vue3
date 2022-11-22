@@ -258,9 +258,9 @@
   />
   <ExTableModal
     ref="exTableModalRef"
-    :tableParamsData="tableParamsData"
     :tableModalColumns="tableModalColumns"
     :tableModalTitle="tableModalTitle"
+    :tableParamsData="props.getModalParams"
   />
 </template>
 
@@ -328,6 +328,7 @@
     urlConfig?: string;
     preUseUrl?: string;
     stockUrl?: string;
+    getModalParams?: SearchParams[];
     tablePages?: TableType;
   }
   type TableType = {
@@ -361,6 +362,9 @@
       return [];
     },
     tableData: () => {
+      return [];
+    },
+    getModalParams: () => {
       return [];
     },
   });
@@ -400,7 +404,6 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-  const tableParamsData = ref<SearchParams[]>([]);
   const tableModalColumns = ref<object[]>([]);
   const tableModalTitle = ref<string>('');
 
@@ -531,14 +534,15 @@
   };
   //查看预用来源
   const checkPreUseEvent = (row: any) => {
-    tableParamsData.value = emit('getParamsData', row);
+    emit('getParamsData', row);
     tableModalColumns.value = preUseColumns;
     tableModalTitle.value = '预用来源';
     exTableModalRef.value.init(props.preUseUrl);
   };
+
   //查看库存明细来源
-  const checkStockEvent = (row: any) => {
-    tableParamsData.value = emit('getParamsData', row);
+  const checkStockEvent = async (row: any) => {
+    await emit('getParamsData', row);
     tableModalColumns.value = stoSourceColumns;
     tableModalTitle.value = '明细来源';
     exTableModalRef.value.init(props.stockUrl);
