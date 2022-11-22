@@ -20,6 +20,7 @@
       :tablePages="tablePages"
       ref="tableRef"
       height="90%"
+      v-if="tableShow"
       :urlConfig="listUrl"
       @getList="getList"
       @editTableEvent="editTableEvent"
@@ -59,10 +60,11 @@
 
   const isShow = ref<boolean>(false);
   const listUrl = ref<string>();
-
+  const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   //关闭
   const handleClose = () => {
     isShow.value = false;
+    tableShow.value = false;
   };
 
   const getList = async (
@@ -104,14 +106,17 @@
   };
   const show = () => {
     isShow.value = true;
+    tableShow.value = true;
   };
   const close = () => {
     isShow.value = false;
+    tableShow.value = false;
   };
-  const init = (tableUrl: string) => {
-    isShow.value = true;
+  const init = async (tableUrl: string) => {
+    await getList(tablePages.currentPage, tablePages.pageSize, tableUrl);
     listUrl.value = tableUrl;
-    getList(tablePages.currentPage, tablePages.pageSize, tableUrl);
+    isShow.value = true;
+    tableShow.value = true;
   };
 
   defineExpose({
