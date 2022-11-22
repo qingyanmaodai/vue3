@@ -34,10 +34,11 @@
   import { SearchParams, tableParams } from '/@/api/apiLink';
   import { sourceDwtail } from '/@/enums/routeEnum';
   import { useGo } from '/@/hooks/web/usePage';
+  import { cloneDeep } from 'lodash-es';
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
   // type Emits = {};
   // const emit = defineEmits<Emits>();
 

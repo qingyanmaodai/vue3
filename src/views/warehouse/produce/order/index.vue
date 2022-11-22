@@ -78,7 +78,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
   const go = useGo();
   import { useGo } from '/@/hooks/web/usePage';
   import { PageEnum } from '/@/enums/pageEnum';

@@ -59,6 +59,7 @@
   import { Pane, Splitpanes } from 'splitpanes'; //分割容器
   const ASplitPanes = Splitpanes;
   const APane = Pane;
+  import { cloneDeep } from 'lodash-es';
   import { ExTree } from '/@/components/ExTree'; //树组件
   import { ExTable } from '/@/components/ExTable'; //表格组件
   import { Search } from '/@/components/Search'; //查询组件
@@ -96,7 +97,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
   const treeRef: any = ref<String | null>(null); //树组件引用ref
   let ParamsData: SearchParams[] = []; //查询参数数据
   const treeData = ref<TreeItem>([]); //树组件数据

@@ -184,7 +184,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
   type Emits = {
     (event: 'basicClickEvent', data: object): void; //表格双击事件
     (event: 'onSearch', data: object): void; //基本信息的的选择框点击事件

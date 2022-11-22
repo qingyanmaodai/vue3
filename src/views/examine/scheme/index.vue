@@ -70,7 +70,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
 
   //查询组件
   const searchRef: any = ref<String | null>(null);

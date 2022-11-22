@@ -87,7 +87,6 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   const { createMessage } = useMessage();
   import { useGo } from '/@/hooks/web/usePage';
-
   const go = useGo();
   const ASplitPanes = Splitpanes;
   const GridOptions = gridOptions;
@@ -96,7 +95,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(tableParams);
+  const tablePages = reactive(cloneDeep(tableParams));
   //查询组件
   const searchRef: any = ref<String | null>(null);
   //物料分组组件
