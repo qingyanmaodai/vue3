@@ -260,7 +260,7 @@
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
     :tableModalTitle="tableModalTitle"
-    :tableParamsData="props.getModalParams"
+    :tableParamsData="tableParamsData"
   />
 </template>
 
@@ -391,6 +391,9 @@
   };
   const tablePage = computed(() => {
     return props.tablePages;
+  });
+  const tableParamsData = computed(() => {
+    return props.getModalParams;
   });
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
@@ -533,8 +536,8 @@
     return selectRecords1;
   };
   //查看预用来源
-  const checkPreUseEvent = (row: any) => {
-    emit('getParamsData', row);
+  const checkPreUseEvent = async (row: any) => {
+    await emit('getParamsData', row);
     tableModalColumns.value = preUseColumns;
     tableModalTitle.value = '预用来源';
     exTableModalRef.value.init(props.preUseUrl);
