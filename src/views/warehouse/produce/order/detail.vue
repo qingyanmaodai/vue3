@@ -352,9 +352,6 @@
               (e) =>
                 tableFullData.filter(
                   (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
                     e1.matId === e.matId,
                 ).length > 1,
             )
@@ -396,9 +393,6 @@
                 (e) =>
                   tableFullData.filter(
                     (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
                       e1.matId === e.matId,
                   ).length > 1,
               )
