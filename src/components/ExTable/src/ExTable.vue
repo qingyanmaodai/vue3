@@ -293,7 +293,7 @@
   import XEUtils from 'xe-utils';
 
   import { SearchParams } from '/@/api/apiLink';
-  import { checkDetail, filterType } from '/@/enums/routeEnum';
+  import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -540,12 +540,12 @@
       case 'PreUse':
         tableModalColumns.value = preUseColumns;
         tableModalTitle.value = '预用来源';
-        listUrl = filterType(checkDetail, props.tableName)[0].preUseUrl;
+        listUrl = filterType(checkDetailUrl, props.tableName)[0].preUseUrl;
         break;
       case 'Stock':
         tableModalColumns.value = stoSourceColumns;
         tableModalTitle.value = '明细来源';
-        listUrl = filterType(checkDetail, props.tableName)[0].stockUrl;
+        listUrl = filterType(checkDetailUrl, props.tableName)[0].stockUrl;
         break;
     }
     exTableModalRef.value.init(listUrl);
