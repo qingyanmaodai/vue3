@@ -24,7 +24,7 @@
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { getPushDownList } from '/@/api/invCountSheet';
+  import { getPushDownList } from '/@/api/public';
   const visible = ref<boolean>(false); //弹框可见性，默认为关闭
   const formState = ref<any>([]); //可下推的列表
   let currentIndex = ref<any>(-1);

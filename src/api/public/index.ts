@@ -23,6 +23,21 @@ export function importData(
 }
 
 /**
+ * 下推配置查询
+ */
+export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<any>(
+    {
+      url: Url.GET_PUSHDOWN_LIST,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+/**
  * 公共请求
  */
 export function getPublicList(
