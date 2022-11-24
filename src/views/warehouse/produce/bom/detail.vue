@@ -443,6 +443,8 @@
       formState.value = res;
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+    } else if (useRoute().params.createOrderParam) {
+      formState.value = JSON.parse(useRoute().params.createOrderParam as string); //查询用料清单
     }
     if (formState.value.dtData) {
       formState.value.dtData.map((r) => {

@@ -291,7 +291,7 @@ export const config = {
   ORDER_QUERY: [
     {
       value: 'A',
-      label: '生产用料清单',
+      label: '生成用料清单',
     },
     {
       value: 'B',

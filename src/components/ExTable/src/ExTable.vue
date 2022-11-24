@@ -576,7 +576,7 @@
   };
   //批量删除
   const delTable = async () => {
-    let selectRecords = await getDtData();
+    let selectRecords = await getListData();
     if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',
