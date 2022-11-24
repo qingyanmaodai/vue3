@@ -1,6 +1,6 @@
 export interface configEntity {
-  label: string;
-  value: string | number;
+  label?: string;
+  value?: string | number;
 }
 export const config = {
   //基本信息表格数据
