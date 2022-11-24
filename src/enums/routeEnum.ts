@@ -48,7 +48,7 @@ export const getUpDownSearchList = [
     TableCols: warPurReturnColumns,
   },
 ];
-export const sourceDwtail = [
+export const sourceDetail = [
   {
     billType: 'BsInventoryCountGain', //盘盈
     detailUrl: PageEnum.INV_COUNT_GAIN_DETAIL,
