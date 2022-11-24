@@ -161,21 +161,6 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
   );
 }
 /**
- * 下推配置查询
- */
-export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<purchaseReturnEntity>(
-    {
-      url: Url.GET_PUSHDOWN_LIST,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
  * 下推
  */
 export function pushDown(

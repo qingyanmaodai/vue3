@@ -31,7 +31,7 @@
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchParams, tableParams } from '/@/api/apiLink';
-  import { filterType, sourceDetail } from '/@/enums/routeEnum';
+  import { filterType, publicUrlList } from '/@/enums/routeEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { cloneDeep } from 'lodash-es';
   //表格数据
@@ -92,7 +92,7 @@
   const editTableEvent = (row) => {
     let filter;
     if (tableData.value.length > 0) {
-      filter = filterType(sourceDetail, row.billType);
+      filter = filterType(publicUrlList, row.billType);
     }
     let detailUrl = filter[0].detailUrl;
     go({

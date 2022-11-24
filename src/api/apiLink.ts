@@ -216,7 +216,7 @@ export enum Url {
   GET_INV_BY_MAT_STOCK_LIST = '/stock/bd-inventory/get-inv-by-mat-stock', //物料号与仓位获取库存信息
   GET_INV_LIST = '/stock/bd-inventory/list', //分页查询
   GET_INV_REDUCE_STOCK = '/stock/bd-inventory/reduce-stock', //减少库存
-  GET_INV_SOURCE_DETAIL = '/stock/bd-inventory/get-inv-detail-page', //来源明细
+  GET_INV_SOURCE_DETAIL = '/stock/bd-inventory-detail/list', //来源明细
 
   //库存预用
   GET_INV_PRE_USE_SOURCE_DETAIL = '/stock/bd-inventory-pre-use/get-inv-pre-use-page', //预用来源
@@ -428,6 +428,28 @@ export enum Url {
   PUSHDOWN_PRODUCE_BOM = '/wms/bs-pro-mo-order/push/', //下推
   DOWN_SEARCH_PRODUCE_BOM = '/wms/bs-pro-mo-order/down-search', //下查
   UP_SEARCH_PRODUCE_BOM = '/wms/bs-pro-mo-order/up-search', //上查
+
+  // 生产领料
+  AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/audit', //审核
+  BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-un-audit', //批量反审核
+  DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete', //删除
+  BATCH_DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_PICK_LIST = '/wms/bs-pro-mo-pick/list', //分页查询--获取列表
+  GET_PRODUCE_PICK_DTO = '/wms/bs-pro-mo-pick/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/query-one', //查询单条
+  IMPORT_PRODUCE_PICK = 'http://192.168.200.136:9999/wms/bs-pro-mo-pick/import-list', //导入
+  IMPORT_MODEL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/import-model', //导入模板下载
+  EXPORT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/export-list', //导出
+  ADD_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save', //添加
+  ADD_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/update', //编辑
+  PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
+  DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
+  UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsProMo"
+        tableName="BsProMoPick"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -16,7 +16,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsProMo"
+        tableName="BsProMoPick"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -56,7 +56,7 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warProduce/order';
+  } from '/@/api/warProduce/picks';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warProPicksColumns } from '/@/components/ExTable/data';
@@ -90,7 +90,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsProMo.update_time'],
+        descList: ['BsProMoPick.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
