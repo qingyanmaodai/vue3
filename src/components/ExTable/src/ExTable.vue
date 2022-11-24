@@ -160,8 +160,8 @@
       >
     </template>
     <template #operateOfStock="{ row }">
-      <AButton type="link" class="link" @click="checkPreUseEvent(row)">预用来源</AButton>
-      <AButton type="link" class="link" @click="checkStockEvent(row)">明细</AButton>
+      <AButton type="link" class="link" @click="checkEvent(row, 'PreUse')">预用来源</AButton>
+      <AButton type="link" class="link" @click="checkEvent(row, 'Stock')">明细</AButton>
     </template>
   </vxe-grid>
   <div>
@@ -293,6 +293,7 @@
   import XEUtils from 'xe-utils';
 
   import { SearchParams } from '/@/api/apiLink';
+  import { checkDetail, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -326,8 +327,6 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
-    preUseUrl?: string;
-    stockUrl?: string;
     getModalParams?: SearchParams[];
     tablePages?: TableType;
   }
@@ -338,8 +337,6 @@
   };
   const props = withDefaults(defineProps<ProType>(), {
     tableName: '',
-    preUseUrl: '',
-    stockUrl: '',
     show: true,
     isAddShow: true,
     isAuditShow: true,
@@ -536,19 +533,22 @@
     return selectRecords1;
   };
   //查看预用来源
-  const checkPreUseEvent = async (row: any) => {
+  const checkEvent = async (row: any, type: string) => {
     await emit('getParamsData', row);
-    tableModalColumns.value = preUseColumns;
-    tableModalTitle.value = '预用来源';
-    exTableModalRef.value.init(props.preUseUrl);
-  };
-
-  //查看库存明细来源
-  const checkStockEvent = async (row: any) => {
-    await emit('getParamsData', row);
-    tableModalColumns.value = stoSourceColumns;
-    tableModalTitle.value = '明细来源';
-    exTableModalRef.value.init(props.stockUrl);
+    let listUrl;
+    switch (type) {
+      case 'PreUse':
+        tableModalColumns.value = preUseColumns;
+        tableModalTitle.value = '预用来源';
+        listUrl = filterType(checkDetail, props.tableName)[0].preUseUrl;
+        break;
+      case 'Stock':
+        tableModalColumns.value = stoSourceColumns;
+        tableModalTitle.value = '明细来源';
+        listUrl = filterType(checkDetail, props.tableName)[0].stockUrl;
+        break;
+    }
+    exTableModalRef.value.init(listUrl);
   };
   //新增
   const addTableEvent = () => {

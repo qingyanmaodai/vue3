@@ -9,25 +9,15 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :isAddShow="false"
-        :isAuditShow="false"
-        :isUnAuditShow="false"
-        :isDeleteShow="false"
-        :isRelatedShow="false"
-        :isPushDown="false"
-        :isShowExport="false"
-        :isShowImport="false"
         tableName="BdInventory"
         :columns="StockAmountColumns"
-        :gridOptions="GridOptions"
+        :gridOptions="NotToolInGridOptions"
         :tableData="tableData"
         :tablePages="tablePages"
         ref="tableRef"
         @getList="getList"
         @getParamsData="getParamsData"
         :getModalParams="getModalParams"
-        :preUseUrl="Url.GET_INV_PRE_USE_SOURCE_DETAIL"
-        :stockUrl="Url.GET_INV_SOURCE_DETAIL"
       />
     </div>
   </div>
@@ -38,7 +28,7 @@
   import { StockAmountSearch } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, StockAmountColumns } from '/@/components/ExTable/data';
+  import { notToolInGridOptions, StockAmountColumns } from '/@/components/ExTable/data';
   import {
     SearchDataType,
     SearchLink,
@@ -46,10 +36,9 @@
     SearchParams,
     StockFormState,
     tableParams,
-    Url,
   } from '/@/api/apiLink';
   import { getInvList } from '/@/api/realTimeInv';
-  const GridOptions = gridOptions;
+  const NotToolInGridOptions = notToolInGridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //表格数据
