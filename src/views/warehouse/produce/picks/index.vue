@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
+  let importConfig = ref<string>('IMPORT_PRODUCE_PICK');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
