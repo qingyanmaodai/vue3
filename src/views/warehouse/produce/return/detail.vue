@@ -526,7 +526,6 @@
         data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
-    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {

@@ -1370,7 +1370,7 @@ export const warProBomOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'receiveNum',
+    field: 'doneNum',
     title: '已领数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
