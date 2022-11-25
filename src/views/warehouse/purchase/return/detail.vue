@@ -393,7 +393,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -422,7 +422,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -450,9 +450,8 @@
   const getListById = async () => {
     if (useRoute().query.row) {
       let dataId = useRoute().query.row?.toString() || '';
-      const res: any = await getOneById({params: dataId});
+      const res: any = await getOneById({ params: dataId });
       formState.value = res;
-
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }

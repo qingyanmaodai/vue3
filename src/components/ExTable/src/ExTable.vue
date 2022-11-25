@@ -274,7 +274,7 @@
   } from 'vxe-table';
   import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
-  import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
+  import { DownOutlined } from '@ant-design/icons-vue';
   import {
     resultByBatchColumns,
     resultGridOptions,
@@ -290,8 +290,6 @@
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-
-  import { SearchParams } from '/@/api/apiLink';
   import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);

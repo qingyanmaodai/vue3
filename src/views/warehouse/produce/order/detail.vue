@@ -170,7 +170,7 @@
     detailOfExaGridOptions,
     warProOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -241,10 +241,6 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
   const formRules = reactive({});
   const formDataRules = reactive({
     num: [{ required: true, message: '请输入生产数量' }],
@@ -348,13 +344,7 @@
             return;
           }
           if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
+            tableFullData.some((e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1)
           ) {
             createMessage.error('明细表存在相同数据，请检查!');
             return;
@@ -390,11 +380,7 @@
             }
             if (
               tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.matId === e.matId,
-                  ).length > 1,
+                (e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1,
               )
             ) {
               createMessage.error('明细表存在相同数据，请检查!');

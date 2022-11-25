@@ -192,7 +192,7 @@
     detailOfExaGridOptions,
     warPurOrdersOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
