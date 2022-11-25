@@ -17,7 +17,6 @@
         ref="tableRef"
         @getList="getList"
         @getParamsData="getParamsData"
-        :getModalParams="getModalParams"
       />
     </div>
   </div>
@@ -26,7 +25,7 @@
 <script setup lang="ts">
   import { ExTable } from '/@/components/ExTable';
   import { StockAmountSearch } from '/@/components/Search';
-  import { onActivated, onMounted, reactive, ref } from 'vue';
+  import { onActivated, onMounted, reactive, ref, provide } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { notToolInGridOptions, StockAmountColumns } from '/@/components/ExTable/data';
   import {
@@ -88,6 +87,7 @@
     getList(1);
   };
   let getModalParams = ref<SearchParams[]>([]);
+  provide('getModalParams', getModalParams);
   const getParamsData = (row) => {
     let getParams: SearchParams[] = [];
     getParams.push({

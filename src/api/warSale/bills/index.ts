@@ -15,7 +15,7 @@ import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
 
-export interface produceBomEntity extends PublicModel {
+export interface saleBillsEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
@@ -24,7 +24,7 @@ export interface produceBomEntity extends PublicModel {
   reason?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
-  dtData?: proBomDetailEntity[];
+  dtData?: saleBillsDetailEntity[];
   dtLk?: InvCountEntity;
   srcField?: string;
   srcBill?: string;
@@ -36,14 +36,9 @@ export interface produceBomEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
-  moId?: number;
-  proMoNumber?: string;
-  matNumber?: string;
-  proMoNum?: string;
-  moSeq?: number;
 }
 
-export interface proBomDetailEntity extends PublicModel {
+export interface saleBillsDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
@@ -70,7 +65,7 @@ export interface proBomDetailEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_PRODUCE_BOM_LIST,
+      url: Url.GET_PAGE_SALE_BILLS_LIST,
       data: json,
     },
     {
@@ -85,7 +80,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_PRODUCE_BOM_DTO,
+      url: Url.GET_SALE_BILLS_DTO,
       data: json,
     },
     {
@@ -97,10 +92,10 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加信息
  */
-export function add(json: RequestData<produceBomEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<produceBomEntity>(
+export function add(json: RequestData<saleBillsEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<saleBillsEntity>(
     {
-      url: Url.ADD_WITH_DETAIL_PRODUCE_BOM,
+      url: Url.ADD_WITH_DETAIL_SALE_BILLS,
       data: json,
     },
     {
@@ -112,10 +107,10 @@ export function add(json: RequestData<produceBomEntity>, mode: ErrorMessageMode 
 /**
  * 编辑信息
  */
-export function update(json: RequestData<produceBomEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<produceBomEntity>(
+export function update(json: RequestData<saleBillsEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<saleBillsEntity>(
     {
-      url: Url.UPDATE_PRODUCE_BOM,
+      url: Url.UPDATE_SALE_BILLS,
       data: json,
     },
     {
@@ -128,9 +123,9 @@ export function update(json: RequestData<produceBomEntity>, mode: ErrorMessageMo
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<produceBomEntity>(
+  return defHttp.post<saleBillsEntity>(
     {
-      url: Url.AUDIT_PRODUCE_ORDER_BOM,
+      url: Url.AUDIT_SALE_BILLS,
       data: json,
     },
     {
@@ -145,7 +140,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_PRODUCE_BOM,
+      url: Url.BATCH_AUDIT_SALE_BILLS,
       data: json,
     },
     {
@@ -164,7 +159,7 @@ export function pushDown(
 ) {
   return defHttp.post<any>(
     {
-      url: Url.PUSHDOWN_PRODUCE_BOM + PushDownTableName,
+      url: Url.PUSHDOWN_SALE_BILLS + PushDownTableName,
       data: json,
     },
     {
@@ -179,7 +174,7 @@ export function pushDown(
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ONE_PRODUCE_BOM,
+      url: Url.GET_ONE_SALE_BILLS,
       data: json,
     },
     {
@@ -194,7 +189,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_WITH_DETAIL_PRODUCE_BOM,
+      url: Url.DELETE_WITH_DETAIL_SALE_BILLS,
       data: json,
     },
     {
@@ -209,7 +204,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_WITH_DETAIL_PRODUCE_BOM,
+      url: Url.BATCH_DELETE_WITH_DETAIL_SALE_BILLS,
       data: json,
     },
     {
@@ -222,9 +217,9 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<produceBomEntity>(
+  return defHttp.post<saleBillsEntity>(
     {
-      url: Url.UN_AUDIT_PRODUCE_BOM,
+      url: Url.UN_AUDIT_SALE_BILLS,
       data: json,
     },
     {
@@ -239,7 +234,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_PRODUCE_BOM,
+      url: Url.UN_BATCH_AUDIT_SALE_BILLS,
       data: json,
     },
     {
@@ -254,7 +249,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_PRODUCE_BOM,
+      url: Url.EXPORT_SALE_BILLS,
       data: json,
       responseType: 'blob',
     },
@@ -270,7 +265,7 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_PRODUCE_BOM,
+      url: Url.IMPORT_MODEL_SALE_BILLS,
       data: json,
       responseType: 'blob',
     },
@@ -287,7 +282,7 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DOWN_SEARCH_PRODUCE_BOM,
+      url: Url.DOWN_SEARCH_SALE_BILLS,
       data: json,
     },
     {
@@ -302,7 +297,7 @@ export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UP_SEARCH_PRODUCE_BOM,
+      url: Url.UP_SEARCH_SALE_BILLS,
       data: json,
     },
     {

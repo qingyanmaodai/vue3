@@ -260,7 +260,6 @@
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
     :tableModalTitle="tableModalTitle"
-    :tableParamsData="tableParamsData"
   />
 </template>
 
@@ -275,7 +274,7 @@
   } from 'vxe-table';
   import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
-  import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
+  import { DownOutlined } from '@ant-design/icons-vue';
   import {
     resultByBatchColumns,
     resultGridOptions,
@@ -291,8 +290,6 @@
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-
-  import { SearchParams } from '/@/api/apiLink';
   import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
@@ -327,7 +324,6 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
-    getModalParams?: SearchParams[];
     tablePages?: TableType;
   }
   type TableType = {
@@ -361,9 +357,6 @@
     tableData: () => {
       return [];
     },
-    getModalParams: () => {
-      return [];
-    },
   });
   type Emits = {
     (e: 'addTableEvent'): void;
@@ -388,9 +381,6 @@
   };
   const tablePage = computed(() => {
     return props.tablePages;
-  });
-  const tableParamsData = computed(() => {
-    return props.getModalParams;
   });
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
@@ -576,7 +566,7 @@
   };
   //批量删除
   const delTable = async () => {
-    let selectRecords = await getDtData();
+    let selectRecords = await getListData();
     if (preSelectRecords > 0) {
       const type = await VXETable.modal.confirm({
         title: '警告',

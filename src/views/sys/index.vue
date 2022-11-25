@@ -7,7 +7,7 @@
     </LayoutHeader>
     <div class="content">
       <Form class="form" :label-col="{ span: 8 }" :model="formState">
-        <FormItem label="仓库维度：" ref="number" name="number" class="formItem">
+        <FormItem :label="formState[1].name" ref="number" name="number" class="formItem">
           <div>
             <Select
               class="select"
@@ -17,7 +17,7 @@
             />
           </div>
         </FormItem>
-        <FormItem label="是否开启负库存：" class="formItem">
+        <FormItem :label="formState[0].name" class="formItem">
           <Switch
             checkedChildren="开"
             unCheckedChildren="关"
@@ -41,7 +41,6 @@
   import { getSystemList, updateSystemList } from '/@/api/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   const formState = ref<any>([{}, {}]);
-
   onMounted(() => {
     getSystemList({}).then((res) => {
       formState.value = res;

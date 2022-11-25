@@ -745,8 +745,7 @@ export const warProBomColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  // { field: 'number', title: '生产订单编号', width: 250, sortable: true },
-  { field: 'proMoNumber', title: '产品编码', width: 250, sortable: true },
+  { field: 'proMoNumber', title: '生产订单编号', width: 250, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -820,4 +819,42 @@ export const stoSourceColumns = [
   { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
   { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
   { field: 'createTime', title: '业务日期' },
+];
+//销售订单
+export const warSaleBillsColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'empName', title: '客户', width: 120, sortable: true },
+  { field: 'empName1', title: '客户分组', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
+  { field: 'num', title: '生产数量', width: 120, sortable: true },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    width: 120,
+    formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已发货数量',
+    width: 120,
+    formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+    sortable: true,
+  },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];

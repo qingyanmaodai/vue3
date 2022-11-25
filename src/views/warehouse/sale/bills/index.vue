@@ -4,20 +4,19 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsProMo"
+        tableName="bsSaleBills"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
-        :isOrderShow="true"
-        :columns="warProOrderColumns"
+        :columns="warSaleBillsColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsProMo"
+        tableName="bsSaleBills"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -31,11 +30,9 @@
         @importModelEvent="importModelEvent"
         @getList="getList"
         @pushDownEvent="pushDownEvent"
-        @createOrderEvent="createOrderEvent"
-        @queryOrderEvent="queryOrderEvent"
         :modalTitle="modalTitle"
-        @downSearchEvent="downSearchEvent"
         @upSearchEvent="upSearchEvent"
+        @downSearchEvent="downSearchEvent"
         :linkQueryMenuData="linkQueryMenuData"
       />
     </div>
@@ -59,12 +56,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-    createOrder,
-    queryOrder,
-  } from '/@/api/warProduce/order';
+  } from '/@/api/warSale/bills';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warProOrderColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warSaleBillsColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -74,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
+  let importConfig = ref<string>('IMPORT_SALE_BILLS');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -111,14 +106,14 @@
   //上查
   const upSearchEvent = async (row) => {
     const res: any = await upSearch({ params: row });
-    modalTitle.value = '生产订单-上查';
+    modalTitle.value = '销售订单-上查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
   //下查
   const downSearchEvent = async (row) => {
     const res: any = await downSearch({ params: row });
-    modalTitle.value = '生产订单-下查';
+    modalTitle.value = '销售订单-下查';
     linkQueryMenuData.value = res;
     tableRef.value.isUpDownSearch(linkQueryMenuData.value);
   };
@@ -136,7 +131,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_PRO_ORDER_DETAIL,
+      path: PageEnum.WAR_SALE_BILLS_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -145,7 +140,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_PRO_ORDER_DETAIL,
+      path: PageEnum.WAR_SALE_BILLS_DETAIL,
       query: {
         row: row.id,
       },
@@ -210,7 +205,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '生产订单导入模板.xls', data: res };
+            const data = { title: '销售订单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -226,13 +221,13 @@
         exportExcel({
           params: {
             list: tableData.value,
-            fileName: '生产订单',
+            fileName: '销售订单',
           },
           pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {
-            const data = { title: '生产订单.xls', data: res };
+            const data = { title: '销售订单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -258,31 +253,6 @@
     } else {
       createMessage.error('无法下推到该下游单据/已有下游单据');
     }
-  };
-  //生成用料清单
-  const createOrderEvent = async (row) => {
-    let res = await createOrder({
-      params: row,
-    });
-    if (res) {
-      createMessage.success('操作成功');
-      go({
-        name: 'warehouse-produce-bom-detail',
-        params: { createOrderParam: JSON.stringify(res) },
-      });
-    } else {
-      createMessage.error('操作失败');
-    }
-  };
-  //查询用料清单
-  const queryOrderEvent = async (id) => {
-    let res = await queryOrder({
-      params: id,
-    });
-    go({
-      name: 'warehouse-produce-bom-detail',
-      params: { createOrderParam: JSON.stringify(res) },
-    });
   };
   //获取高级查询字段数据
   const moreSearchData = ref();

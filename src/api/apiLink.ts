@@ -383,7 +383,7 @@ export enum Url {
   DOWN_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/down-search', //下查
   UP_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/up-search', //上查
   CREATE_OREDER_PRODUCE_ORDER = '/wms/bs-pro-mo/create-order', //生成用料清单
-  QUERY_ORDER_PRODUCE_ORDER = '/wms/bs-pro-mo/query-order', //生成用料清单
+  QUERY_ORDER_PRODUCE_ORDER = '/wms/bs-pro-mo/query-order', //查询用料清单
 
   // 生产入库
   AUDIT_PRODUCE_ORDER_INSTOCK = '/wms/bs-pro-mo-in-stock/audit', //审核
@@ -450,6 +450,28 @@ export enum Url {
   PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
   DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
   UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
+
+  // 销售订单
+  AUDIT_SALE_BILLS = '/wms/bs_sale_bills/audit', //审核
+  BATCH_AUDIT_SALE_BILLS = '/wms/bs_sale_bills/batch-audit', //批量审核
+  UN_AUDIT_SALE_BILLS = '/wms/bs_sale_bills/un-audit', //反审核
+  UN_BATCH_AUDIT_SALE_BILLS = '/wms/bs_sale_bills/batch-un-audit', //批量反审核
+  DELETE_SALE_BILLS = '/wms/bs_sale_bills/delete', //删除
+  BATCH_DELETE_SALE_BILLS = '/wms/bs_sale_bills/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_SALE_BILLS = '/wms/bs_sale_bills/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_SALE_BILLS = '/wms/bs_sale_bills/delete-with-detail', //删除含详情信息
+  GET_PAGE_SALE_BILLS_LIST = '/wms/bs_sale_bills/list', //分页查询--获取列表
+  GET_SALE_BILLS_DTO = '/wms/bs_sale_bills/query-dto', //获取实体信息
+  GET_ONE_SALE_BILLS = '/wms/bs_sale_bills/query-one', //查询单条
+  IMPORT_SALE_BILLS = 'http://192.168.200.136:9999/wms/bs_sale_bills/import-list', //导入
+  IMPORT_MODEL_SALE_BILLS = '/wms/bs_sale_bills/import-model', //导入模板下载
+  EXPORT_SALE_BILLS = '/wms/bs_sale_bills/export-list', //导出
+  ADD_SALE_BILLS = '/wms/bs_sale_bills/save', //添加
+  ADD_WITH_DETAIL_SALE_BILLS = '/wms/bs_sale_bills/save-with-detail', //添加含详情信息
+  UPDATE_SALE_BILLS = '/wms/bs_sale_bills/update', //编辑
+  PUSHDOWN_SALE_BILLS = '/wms/bs_sale_bills/push/', //下推
+  DOWN_SEARCH_SALE_BILLS = '/wms/bs_sale_bills/down-search', //下查
+  UP_SEARCH_SALE_BILLS = '/wms/bs_sale_bills/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
