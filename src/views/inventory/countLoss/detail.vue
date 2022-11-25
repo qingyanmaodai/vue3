@@ -348,8 +348,8 @@
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
-        let data = await add({ params: formState.value });
-        formState.value = Object.assign({}, formState.value, data);
+        formState.value = await add({ params: formState.value });
+        await setDataStatus();
         detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
@@ -391,14 +391,8 @@
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
-          const data = await audit({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-          if (data.bsStatus === 'B' && tableFullData) {
-            tableFullData.map((e) => {
-              e.bsStatus = 'B';
-              return e;
-            });
-          }
+          formState.value = await audit({ params: formState.value });
+          await setDataStatus();
           detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
@@ -418,14 +412,9 @@
       if (tableFullData) {
         formState.value.dtData = cloneDeep(tableFullData);
       }
-      const data = await unAudit({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
-      if (data.bsStatus === 'A' && tableFullData) {
-        tableFullData.map((e) => {
-          e.bsStatus = 'A';
-          return e;
-        });
-      }
+      formState.value = await unAudit({ params: formState.value });
+      await setDataStatus();
+      detailTableData.value = cloneDeep(formState.value.dtData);
       createMessage.success('操作成功');
     }
   };
@@ -443,21 +432,7 @@
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }
-    if (formState.value.dtData) {
-      formState.value.dtData.map((r) => {
-        r.bsStatus = formState.value.bsStatus;
-        r['stockDis'] = stockDis.value;
-        if (r.bdStockCompartment && r.bdStockCompartment.name) {
-          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-          r.bdStockCompartment.name =
-            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
-        }
-        if (r.bdStockLocation && r.bdStockLocation.name) {
-          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
-        }
-      });
-    }
+    await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
 
@@ -546,6 +521,24 @@
   const setDefaultTableData = (obj) => {
     obj.stockDis = cloneDeep(stockDis.value);
     obj.seq = obj.sort;
+  };
+  //dtData状态赋值
+  const setDataStatus = () => {
+    if (formState.value.dtData) {
+      formState.value.dtData.map((r) => {
+        r.bsStatus = formState.value.bsStatus;
+        r['stockDis'] = stockDis.value;
+        if (r.bdStockCompartment && r.bdStockCompartment.name) {
+          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
+          r.bdStockCompartment.name =
+            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+        }
+        if (r.bdStockLocation && r.bdStockLocation.name) {
+          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
+          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+        }
+      });
+    }
   };
   onMounted(() => {
     getListById();

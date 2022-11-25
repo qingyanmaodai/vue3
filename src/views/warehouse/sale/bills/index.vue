@@ -56,7 +56,7 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warProduce/order';
+  } from '/@/api/warSale/bills';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, warSaleBillsColumns } from '/@/components/ExTable/data';
@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
+  let importConfig = ref<string>('IMPORT_SALE_BILLS');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);

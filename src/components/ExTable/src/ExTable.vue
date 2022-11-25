@@ -260,7 +260,6 @@
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
     :tableModalTitle="tableModalTitle"
-    :tableParamsData="tableParamsData"
   />
 </template>
 
@@ -327,7 +326,6 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
-    getModalParams?: SearchParams[];
     tablePages?: TableType;
   }
   type TableType = {
@@ -361,9 +359,6 @@
     tableData: () => {
       return [];
     },
-    getModalParams: () => {
-      return [];
-    },
   });
   type Emits = {
     (e: 'addTableEvent'): void;
@@ -388,9 +383,6 @@
   };
   const tablePage = computed(() => {
     return props.tablePages;
-  });
-  const tableParamsData = computed(() => {
-    return props.getModalParams;
   });
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
