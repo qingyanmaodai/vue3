@@ -1459,6 +1459,7 @@ export const warProPicksOfDetailColumns = [
     field: 'needNum',
     title: '待领数量',
     width: 150,
+    slots: { default: 'needNum' },
     className: 'disableProp',
     sortable: true,
   },

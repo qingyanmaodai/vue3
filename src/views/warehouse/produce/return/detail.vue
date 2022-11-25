@@ -159,7 +159,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
-            @getCountAmount="getCountAmount"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -497,15 +496,7 @@
     }
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-  //计算数量
-  const getCountAmount = (row) => {
-    if (row.num && row.prices !== null) {
-      row.totalPrices = row.num * row.prices;
-    } else {
-      row.totalPrices = '';
-    }
-    return row;
-  };
+
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {

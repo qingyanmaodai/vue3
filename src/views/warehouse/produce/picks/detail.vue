@@ -381,7 +381,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -431,7 +431,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -488,10 +488,10 @@
   };
   //计算数量
   const getCountAmount = (row) => {
-    if (row.num && row.prices !== null) {
-      row.totalPrices = row.num * row.prices;
+    if (row.num && row.realNum !== null) {
+      row.needNum = row.num - row.realNum;
     } else {
-      row.totalPrices = '';
+      row.needNum = '';
     }
     return row;
   };
