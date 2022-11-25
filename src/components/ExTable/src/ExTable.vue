@@ -274,7 +274,7 @@
   } from 'vxe-table';
   import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
-  import { DownOutlined } from '@ant-design/icons-vue';
+  import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
   import {
     resultByBatchColumns,
     resultGridOptions,
