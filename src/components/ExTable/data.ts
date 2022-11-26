@@ -752,7 +752,7 @@ export const warProBomColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'num', title: '数量', width: 120, sortable: true },
-  { field: 'receiveNum', title: '已领数量', width: 120, sortable: true },
+  { field: 'doneNum', title: '已领数量', width: 120, sortable: true },
   { field: 'reissueNum', title: '未领数量', width: 120, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {

@@ -145,7 +145,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
-            @getCountAmount="getCountAmount"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -170,7 +169,7 @@
     detailOfExaGridOptions,
     warProOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -241,10 +240,6 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
   const formRules = reactive({});
   const formDataRules = reactive({
     num: [{ required: true, message: '请输入生产数量' }],
@@ -348,13 +343,7 @@
             return;
           }
           if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
+            tableFullData.some((e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1)
           ) {
             createMessage.error('明细表存在相同数据，请检查!');
             return;
@@ -390,11 +379,7 @@
             }
             if (
               tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.matId === e.matId,
-                  ).length > 1,
+                (e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1,
               )
             ) {
               createMessage.error('明细表存在相同数据，请检查!');
@@ -446,15 +431,7 @@
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-  //计算数量
-  const getCountAmount = (row) => {
-    if (row.num && row.prices !== null) {
-      row.totalPrices = row.num * row.prices;
-    } else {
-      row.totalPrices = '';
-    }
-    return row;
-  };
+
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
@@ -484,7 +461,6 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         break;
     }
-    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {

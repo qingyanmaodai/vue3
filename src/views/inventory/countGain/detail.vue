@@ -377,7 +377,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -421,7 +421,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
