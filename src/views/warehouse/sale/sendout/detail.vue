@@ -160,7 +160,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warSaleBillsOfDetailColumns"
+            :columns="warSaleSendOutOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -190,9 +190,9 @@
 <script lang="ts" setup name="warehouse-sale-bills-detail">
   import {
     detailOfExaGridOptions,
-    warSaleBillsOfDetailColumns,
+    warSaleSendOutOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -213,7 +213,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, saleBillsEntity } from '/@/api/warSale/bills';
+  import { add, audit, unAudit, getOneById, saleSendOutEntity } from '/@/api/warSale/sendout';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -251,7 +251,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: saleBillsEntity = {
+  const formData: saleSendOutEntity = {
     id: undefined,
     number: '',
     way: 'A',

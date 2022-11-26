@@ -52,5 +52,7 @@ export enum PageEnum {
   //生产领料单详情页
   WAR_PRO_PICKS_DETAIL = '/warehouse/produce/picks/detail',
   //销售订单详情页
-  WAR_SALE_BILLS_DETAIL = '/warehouse/sale/bills/detail',
+  WAR_SALE_ORDER_DETAIL = '/warehouse/sale/order/detail',
+  //销售发货详情页
+  WAR_SALE_SENDOUT_DETAIL = '/warehouse/sale/sendout/detail',
 }

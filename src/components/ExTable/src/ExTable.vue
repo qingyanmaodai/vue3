@@ -290,8 +290,6 @@
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-
-  import { SearchParams } from '/@/api/apiLink';
   import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
