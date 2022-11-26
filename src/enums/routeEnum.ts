@@ -8,7 +8,9 @@ import {
 } from '/@/components/ExTable/data';
 import { PageEnum } from '/@/enums/pageEnum';
 import { Url } from '/@/api/apiLink';
-
+export const filterType = (arr, current: string) => {
+  return arr.filter((e) => e.type === current);
+};
 //上查下查公共配置
 export const getUpDownSearchList = [
   {
@@ -50,39 +52,46 @@ export const getUpDownSearchList = [
 ];
 export const sourceDetail = [
   {
-    billType: 'BsInventoryCountGain', //盘盈
+    type: 'BsInventoryCountGain', //盘盈
     detailUrl: PageEnum.INV_COUNT_GAIN_DETAIL,
   },
   {
-    billType: 'BsInventoryCountLoss', //盘亏
+    type: 'BsInventoryCountLoss', //盘亏
     detailUrl: PageEnum.INV_COUNT_LOSS_DETAIL,
   },
   {
-    billType: 'BsInventoryCount', //盘点
+    type: 'BsInventoryCount', //盘点
     detailUrl: PageEnum.INV_COUNT_SHEET_DETAIL,
   },
   {
-    billType: 'BsPurchaseOrder', //采购订单
+    type: 'BsPurchaseOrder', //采购订单
     detailUrl: PageEnum.WAR_PUR_ORDERS_DETAIL,
   },
   {
-    billType: 'BsPurchaseInStock', //采购入库
+    type: 'BsPurchaseInStock', //采购入库
     detailUrl: PageEnum.WAR_PUR_INPUT_DETAIL,
   },
   {
-    billType: 'BsPurchaseReturn', //采购退货
+    type: 'BsPurchaseReturn', //采购退货
     detailUrl: PageEnum.WAR_PUR_RETURN_DETAIL,
   },
   {
-    billType: 'BsProMoInStock', //生产入库
+    type: 'BsProMoInStock', //生产入库
     detailUrl: PageEnum.WAR_PRO_INSTOCK_DETAIL,
   },
   {
-    billType: 'BsProMoReturn', //生产出库
+    type: 'BsProMoReturn', //生产出库
     detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,
   },
   {
-    billType: 'BsProMoOrder', //生产订单----存疑
+    type: 'BsProMoOrder', //生产订单----存疑
     detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
+  },
+];
+export const checkDetail = [
+  {
+    type: 'BdInventory', //库存数量
+    preUseUrl: Url.GET_INV_PRE_USE_SOURCE_DETAIL,
+    stockUrl: Url.GET_INV_SOURCE_DETAIL,
   },
 ];

@@ -4,11 +4,11 @@ import { Url, PublicModel } from '/@/api/apiLink';
 
 export interface SystemEntity extends PublicModel {
   id: number;
-  info: object;
+  info: null;
   name: string;
   number: string;
   tenantId: number;
-  val?: string;
+  val: string;
 }
 /**
  * 查询系统参数

@@ -37,16 +37,12 @@
                   </Col>
                   <Col :span="8">
                     <a-form-item
-                      label="产品编号："
+                      label="生产订单编号："
                       ref="proMoNumber"
                       name="proMoNumber"
                       class="item"
                     >
-                      <Input
-                        class="input"
-                        v-model:value="formState.proMoNumber"
-                        disabled
-                      />
+                      <Input class="input" v-model:value="formState.proMoNumber" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -65,16 +61,12 @@
                 <Row>
                   <Col :span="8">
                     <a-form-item
-                      label="生产状态："
+                      label="产品编号："
                       ref="proMoStatus"
                       name="proMoStatus"
                       class="item"
                     >
-                      <Input
-                        class="input"
-                        :value="config.PRODUCE_STATUS[formState.proMoStatus] || '未进行'"
-                        disabled
-                      />
+                      <Input class="input" v-model:value="formState.matNumber" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -82,6 +74,18 @@
                       <Input class="input" v-model:value="formState.proMoNum" disabled />
                     </a-form-item>
                   </Col>
+                  <Col :span="8">
+                    <a-form-item
+                      label="生产工单行号："
+                      ref="proMoStatus"
+                      name="proMoStatus"
+                      class="item"
+                    >
+                      <Input class="input" v-model:value="formState.moSeq" disabled />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
@@ -94,8 +98,6 @@
                       />
                     </a-form-item>
                   </Col>
-                </Row>
-                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -346,13 +348,7 @@
             return;
           }
           if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
+            tableFullData.some((e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1)
           ) {
             createMessage.error('明细表存在相同数据，请检查!');
             return;
@@ -388,11 +384,7 @@
             }
             if (
               tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.matId === e.matId,
-                  ).length > 1,
+                (e) => tableFullData.filter((e1) => e1.matId === e.matId).length > 1,
               )
             ) {
               createMessage.error('明细表存在相同数据，请检查!');
@@ -451,6 +443,8 @@
       formState.value = res;
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+    } else if (useRoute().params.createOrderParam) {
+      formState.value = JSON.parse(useRoute().params.createOrderParam as string); //查询用料清单
     }
     if (formState.value.dtData) {
       formState.value.dtData.map((r) => {

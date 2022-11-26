@@ -33,14 +33,12 @@
       </pane>
       <pane :size="100 - paneSize" style="background-color: #fff">
         <ExTable
-          :isShowImport="false"
-          :isShowExport="false"
           :tableName="props.tableName"
           :columns="tableColumns"
           :gridOptions="notToolInGridOptions"
           :tableData="tableData"
           :tablePages="tablePages"
-          :height="height"
+          height="90%"
           ref="tableRef"
           @editTableEvent="editTableEvent"
           v-if="tableShow"
@@ -59,12 +57,11 @@
   import { ExTable } from '/@/components/ExTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
-  import { getUpDownSearchList } from '/@/enums/routeEnum';
+  import { filterType, getUpDownSearchList } from '/@/enums/routeEnum';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchDataType, SearchLink, SearchMatchType, tableParams } from '/@/api/apiLink';
   import { cloneDeep } from 'lodash-es';
-  let height = '90%';
   const ASplitPanes = Splitpanes;
   const AMenuItem = MenuItem;
   const AMenu = Menu;
@@ -120,13 +117,9 @@
   const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
-      filter = getUpDownSearchList.filter(
-        (arr) => arr.type === props.linkQueryMenuData[currKey.value].tarBillType,
-      );
+      filter = filterType(getUpDownSearchList, props.linkQueryMenuData[currKey.value].tarBillType);
     } else {
-      filter = getUpDownSearchList.filter(
-        (arr) => arr.type === props.linkQueryMenuData[currKey.value].srcBillType,
-      );
+      filter = filterType(getUpDownSearchList, props.linkQueryMenuData[currKey.value].srcBillType);
     }
     let listUrl = filter[0].listUrl;
     //删除筛选出来的操作那一列

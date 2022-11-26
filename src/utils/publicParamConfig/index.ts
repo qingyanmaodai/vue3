@@ -1,6 +1,6 @@
 export interface configEntity {
-  label: string;
-  value: string | number;
+  label?: string;
+  value?: string | number;
 }
 export const config = {
   //基本信息表格数据
@@ -291,7 +291,7 @@ export const config = {
   ORDER_QUERY: [
     {
       value: 'A',
-      label: '生产用料清单',
+      label: '生成用料清单',
     },
     {
       value: 'B',
