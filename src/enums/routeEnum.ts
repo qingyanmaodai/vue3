@@ -2,6 +2,9 @@ import {
   invCountGainColumns,
   invCountLossColumns,
   invCountSheetColumns,
+  warProInStockColumns,
+  warProOrderColumns,
+  warProReturnColumns,
   warPurInputColumns,
   warPurOrdersColumns,
   warPurReturnColumns,
@@ -12,7 +15,7 @@ export const filterType = (arr, current: string) => {
   return arr.filter((e) => e.type === current);
 };
 //上查下查公共配置
-export const getUpDownSearchList = [
+export const publicUrlList = [
   {
     type: 'BsInventoryCountGain', //盘盈
     listUrl: Url.GET_PAGE_INV_COUNT_GAIN_LIST,
@@ -49,46 +52,27 @@ export const getUpDownSearchList = [
     detailUrl: PageEnum.WAR_PUR_RETURN_DETAIL,
     TableCols: warPurReturnColumns,
   },
-];
-export const sourceDetail = [
-  {
-    type: 'BsInventoryCountGain', //盘盈
-    detailUrl: PageEnum.INV_COUNT_GAIN_DETAIL,
-  },
-  {
-    type: 'BsInventoryCountLoss', //盘亏
-    detailUrl: PageEnum.INV_COUNT_LOSS_DETAIL,
-  },
-  {
-    type: 'BsInventoryCount', //盘点
-    detailUrl: PageEnum.INV_COUNT_SHEET_DETAIL,
-  },
-  {
-    type: 'BsPurchaseOrder', //采购订单
-    detailUrl: PageEnum.WAR_PUR_ORDERS_DETAIL,
-  },
-  {
-    type: 'BsPurchaseInStock', //采购入库
-    detailUrl: PageEnum.WAR_PUR_INPUT_DETAIL,
-  },
-  {
-    type: 'BsPurchaseReturn', //采购退货
-    detailUrl: PageEnum.WAR_PUR_RETURN_DETAIL,
-  },
   {
     type: 'BsProMoInStock', //生产入库
+    listUrl: Url.GET_PAGE_PRODUCE_INSTOCK_LIST,
     detailUrl: PageEnum.WAR_PRO_INSTOCK_DETAIL,
+    TableCols: warProInStockColumns,
   },
   {
-    type: 'BsProMoReturn', //生产出库
+    type: 'BsProMoReturn', //生产退料
+    // listUrl: Url.GET_PAGE_PRODUCE_RETURN_LIST,
     detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,
+    TableCols: warProReturnColumns,
   },
   {
-    type: 'BsProMoOrder', //生产订单----存疑
+    type: 'BsProMoOrder', //生产订单
+    listUrl: Url.GET_PAGE_PRODUCE_ORDER_LIST,
     detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
+    TableCols: warProOrderColumns,
   },
 ];
-export const checkDetail = [
+
+export const checkDetailUrl = [
   {
     type: 'BdInventory', //库存数量
     preUseUrl: Url.GET_INV_PRE_USE_SOURCE_DETAIL,

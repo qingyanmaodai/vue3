@@ -383,7 +383,7 @@ export enum Url {
   DOWN_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/down-search', //下查
   UP_SEARCH_PRODUCE_ORDER = '/wms/bs-pro-mo/up-search', //上查
   CREATE_OREDER_PRODUCE_ORDER = '/wms/bs-pro-mo/create-order', //生成用料清单
-  QUERY_ORDER_PRODUCE_ORDER = '/wms/bs-pro-mo/query-order', //生成用料清单
+  QUERY_ORDER_PRODUCE_ORDER = '/wms/bs-pro-mo/query-order', //查询用料清单
 
   // 生产入库
   AUDIT_PRODUCE_ORDER_INSTOCK = '/wms/bs-pro-mo-in-stock/audit', //审核
@@ -428,6 +428,72 @@ export enum Url {
   PUSHDOWN_PRODUCE_BOM = '/wms/bs-pro-mo-order/push/', //下推
   DOWN_SEARCH_PRODUCE_BOM = '/wms/bs-pro-mo-order/down-search', //下查
   UP_SEARCH_PRODUCE_BOM = '/wms/bs-pro-mo-order/up-search', //上查
+
+  // 生产领料
+  AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/audit', //审核
+  BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-un-audit', //批量反审核
+  DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete', //删除
+  BATCH_DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_PICK_LIST = '/wms/bs-pro-mo-pick/list', //分页查询--获取列表
+  GET_PRODUCE_PICK_DTO = '/wms/bs-pro-mo-pick/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/query-one', //查询单条
+  IMPORT_PRODUCE_PICK = 'http://192.168.200.136:9999/wms/bs-pro-mo-pick/import-list', //导入
+  IMPORT_MODEL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/import-model', //导入模板下载
+  EXPORT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/export-list', //导出
+  ADD_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save', //添加
+  ADD_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/update', //编辑
+  PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
+  DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
+  UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
+
+  // 销售订单
+  AUDIT_SALE_ORDER = '/wms/saleOrder/audit', //审核
+  BATCH_AUDIT_SALE_ORDER = '/wms/saleOrder/batch-audit', //批量审核
+  UN_AUDIT_SALE_ORDER = '/wms/saleOrder/un-audit', //反审核
+  UN_BATCH_AUDIT_SALE_ORDER = '/wms/saleOrder/batch-un-audit', //批量反审核
+  DELETE_SALE_ORDER = '/wms/saleOrder/delete', //删除
+  BATCH_DELETE_SALE_ORDER = '/wms/saleOrder/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/delete-with-detail', //删除含详情信息
+  GET_PAGE_SALE_ORDER_LIST = '/wms/saleOrder/list', //分页查询--获取列表
+  GET_SALE_ORDER_DTO = '/wms/saleOrder/query-dto', //获取实体信息
+  GET_ONE_SALE_ORDER = '/wms/saleOrder/query-one', //查询单条
+  IMPORT_SALE_ORDER = 'http://192.168.200.136:9999/wms/saleOrder/import-list', //导入
+  IMPORT_MODEL_SALE_ORDER = '/wms/saleOrder/import-model', //导入模板下载
+  EXPORT_SALE_ORDER = '/wms/saleOrder/export-list', //导出
+  ADD_SALE_ORDER = '/wms/saleOrder/save', //添加
+  ADD_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/save-with-detail', //添加含详情信息
+  UPDATE_SALE_ORDER = '/wms/saleOrder/update', //编辑
+  PUSHDOWN_SALE_ORDER = '/wms/saleOrder/push/', //下推
+  DOWN_SEARCH_SALE_ORDER = '/wms/saleOrder/down-search', //下查
+  UP_SEARCH_SALE_ORDER = '/wms/saleOrder/up-search', //上查
+
+  // 销售发货
+  AUDIT_SALE_SENDOUT = '/wms/saleSendOut/audit', //审核
+  BATCH_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/batch-audit', //批量审核
+  UN_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/un-audit', //反审核
+  UN_BATCH_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/batch-un-audit', //批量反审核
+  DELETE_SALE_SENDOUT = '/wms/saleSendOut/delete', //删除
+  BATCH_DELETE_SALE_SENDOUT = '/wms/saleSendOut/batch-delete', //批量删除
+  BATCH_DELETE_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/delete-with-detail', //删除含详情信息
+  GET_PAGE_SALE_SENDOUT_LIST = '/wms/saleSendOut/list', //分页查询--获取列表
+  GET_SALE_SENDOUT_DTO = '/wms/saleSendOut/query-dto', //获取实体信息
+  GET_ONE_SALE_SENDOUT = '/wms/saleSendOut/query-one', //查询单条
+  IMPORT_SALE_SENDOUT = 'http://192.168.200.136:9999/wms/saleSendOut/import-list', //导入
+  IMPORT_MODEL_SALE_SENDOUT = '/wms/saleSendOut/import-model', //导入模板下载
+  EXPORT_SALE_SENDOUT = '/wms/saleSendOut/export-list', //导出
+  ADD_SALE_SENDOUT = '/wms/saleSendOut/save', //添加
+  ADD_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/save-with-detail', //添加含详情信息
+  UPDATE_SALE_SENDOUT = '/wms/saleSendOut/update', //编辑
+  PUSHDOWN_SALE_SENDOUT = '/wms/saleSendOut/push/', //下推
+  DOWN_SEARCH_SALE_SENDOUT = '/wms/saleSendOut/down-search', //下查
+  UP_SEARCH_SALE_SENDOUT = '/wms/saleSendOut/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

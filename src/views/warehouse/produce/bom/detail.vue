@@ -167,14 +167,6 @@
         </pane>
       </a-splitpanes>
     </div>
-    <BasicSearch
-      @basicClickEvent="basicClickEvent"
-      :gridOptions="basicGridOptions"
-      ref="basicSearchRef"
-      :control="basicControl"
-      :tableCols="basicTableCols"
-      :tableName="basicTableName"
-    />
   </div>
 </template>
 <script lang="ts" setup name="warehouse-produce-bom-detail">
@@ -182,7 +174,7 @@
     detailOfExaGridOptions,
     warProBomOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -197,9 +189,6 @@
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
-  import { BasicSearch } from '/@/components/AMoreSearch';
-  import { basicGridOptions } from '/@/components/AMoreSearch/data';
-  import { ExInput } from '/@/components/ExInput';
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -209,10 +198,8 @@
   import { VXETable } from 'vxe-table';
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { cloneDeep } from 'lodash-es';
-  import { getPublicList } from '/@/api/public';
   import moment from 'moment';
-  import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
-  import { VxeGridPropTypes } from 'vxe-table/types/all';
+  import { SearchParams } from '/@/api/apiLink';
   import { getMatTable, getMatTableById } from '/@/api/matTable';
 
   const { createMessage } = useMessage();
@@ -228,12 +215,6 @@
   const activeKey = ref<string>('1');
   const detailTableRef: any = ref<String | null>(null);
   const detailTableData: any = ref<object[]>([]); //表格数据
-
-  //基础信息查询组件ref
-  const basicSearchRef: any = ref<any>(undefined);
-  const basicControl = ref<ControlSet[]>(); //下拉框
-  const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
-  let basicTableName = ref<string>(''); //需要查询的表名
 
   //获取当前时间
   const getCurrentData = () => {
@@ -294,47 +275,13 @@
     });
     res.records.forEach((item, index) => {
       item.bdMaterial = bdMaterial[index];
-      item.bsStatus = 'A';
       item.matId = item.id;
     });
-    let data = cloneDeep(res.records);
-    detailTableData.value = data;
-  };
-  //点击清空图标清空事件
-  const onClear = (key: string[]) => {
-    key.forEach((e) => {
-      formState.value[e] = null;
-    });
+    formState.value.dtData = cloneDeep(res.records);
+    await setDataStatus();
+    detailTableData.value = cloneDeep(formState.value.dtData);
   };
 
-  // 供应商、负责人输入框弹框选放大镜事件
-  let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
-  /**
-   * 供应商、负责人弹窗
-   * @param dtoUrlConfig  获取供应商、负责人查询链接属性
-   * @param tableName  指向的表名根据DTO链接可以查询到
-   * @param tableUrl  表格列表数据链接
-   * @param dataParam 当前选中的数据包
-   */
-  const onSearch: any = async (
-    dtoUrlConfig: string,
-    tableName: string,
-    tableUrl: string,
-    dataParam: string[],
-  ) => {
-    currDataParam = dataParam;
-    const res = await getPublicList({ params: [] }, Url[dtoUrlConfig]);
-    basicControl.value = res;
-    basicTableCols.value = TableColum[dtoUrlConfig];
-    basicTableName.value = tableName;
-    basicSearchRef.value.init(tableUrl);
-  };
-  //双击单元格选择事件——获取双击所选的值并赋值到对应字段
-  const basicClickEvent = async (row) => {
-    basicSearchRef.value.close();
-    formState.value[currDataParam[0]] = row.id;
-    formState.value[currDataParam[1]] = row.name;
-  };
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -356,8 +303,8 @@
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
-        let data = await add({ params: formState.value });
-        formState.value = data;
+        formState.value = await add({ params: formState.value });
+        await setDataStatus();
         detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
@@ -392,14 +339,8 @@
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
-          const data = await audit({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-          if (data.bsStatus === 'B' && tableFullData) {
-            tableFullData.map((e) => {
-              e.bsStatus = 'B';
-              return e;
-            });
-          }
+          formState.value = await audit({ params: formState.value });
+          await setDataStatus();
           detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
@@ -419,14 +360,9 @@
       if (tableFullData) {
         formState.value.dtData = cloneDeep(tableFullData);
       }
-      const data = await unAudit({ params: formState.value });
-      formState.value = data;
-      if (data.bsStatus === 'A' && tableFullData) {
-        tableFullData.map((e) => {
-          e.bsStatus = 'A';
-          return e;
-        });
-      }
+      formState.value = await unAudit({ params: formState.value });
+      await setDataStatus();
+      detailTableData.value = cloneDeep(formState.value.dtData);
       createMessage.success('操作成功');
     }
   };
@@ -446,11 +382,7 @@
     } else if (useRoute().params.createOrderParam) {
       formState.value = JSON.parse(useRoute().params.createOrderParam as string); //查询用料清单
     }
-    if (formState.value.dtData) {
-      formState.value.dtData.map((r) => {
-        r.bsStatus = formState.value.bsStatus;
-      });
-    }
+    await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
   //计算数量
@@ -497,6 +429,14 @@
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
     obj.moId = formState.value.moId;
+  };
+  //dtData状态赋值
+  const setDataStatus = () => {
+    if (formState.value.dtData) {
+      formState.value.dtData.map((r) => {
+        r.bsStatus = formState.value.bsStatus;
+      });
+    }
   };
   onMounted(() => {
     getListById();

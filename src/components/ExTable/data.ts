@@ -752,7 +752,7 @@ export const warProBomColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'num', title: '数量', width: 120, sortable: true },
-  { field: 'receiveNum', title: '已领数量', width: 120, sortable: true },
+  { field: 'doneNum', title: '已领数量', width: 120, sortable: true },
   { field: 'reissueNum', title: '未领数量', width: 120, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {
@@ -784,9 +784,11 @@ export const warProPicksColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '领料日期', width: 160, sortable: true },
   { field: 'num', title: '申请数量', width: 120, sortable: true },
-  { field: 'realNum', title: '实发数量', width: 120, sortable: true },
+  { field: 'realNum', title: '已领数量', width: 120, sortable: true },
+  { field: 'needNum', title: '待领数量', width: 120, sortable: true },
   { field: 'pushNum', title: '已下推数量', width: 120, sortable: true },
-  { field: 'doneNum', title: '已退货数量', width: 120, sortable: true },
+  // { field: 'doneNum', title: '已入库数量', width: 120, sortable: true },
+  { field: 'returnNum', title: '已退货数量', width: 120, sortable: true },
   { field: 'stockName', title: '仓库', width: 120, sortable: true },
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },
@@ -819,19 +821,19 @@ export const stoSourceColumns = [
   { field: 'createTime', title: '业务日期' },
 ];
 //销售订单
-export const warSaleBillsColumns = [
+export const warSaleOrderColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
   { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
-  { field: 'empName', title: '客户', width: 120, sortable: true },
-  { field: 'empName1', title: '客户分组', width: 120, sortable: true },
+  { field: 'empName', title: '销售员', width: 120, sortable: true },
+  { field: 'cusName', title: '客户', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
-  { field: 'num', title: '生产数量', width: 120, sortable: true },
+  { field: 'num', title: '销售数量', width: 120, sortable: true },
   {
     field: 'pushNum',
     title: '已下推数量',
@@ -842,6 +844,46 @@ export const warSaleBillsColumns = [
   {
     field: 'doneNum',
     title: '已发货数量',
+    width: 120,
+    formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+    sortable: true,
+  },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
+//销售发货单
+export const warSaleSendOutColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'empName', title: '销售员', width: 120, sortable: true },
+  { field: 'cusName', title: '客户', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
+  { field: 'num', title: '应发数量', width: 120, sortable: true },
+  { field: 'realNum', title: '实发数量', width: 120, sortable: true },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    width: 120,
+    formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已处理数量',
     width: 120,
     formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
     sortable: true,

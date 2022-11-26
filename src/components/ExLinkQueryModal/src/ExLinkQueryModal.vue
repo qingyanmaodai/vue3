@@ -57,7 +57,7 @@
   import { ExTable } from '/@/components/ExTable';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   import { useGo } from '/@/hooks/web/usePage';
-  import { filterType, getUpDownSearchList } from '/@/enums/routeEnum';
+  import { filterType, publicUrlList } from '/@/enums/routeEnum';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchDataType, SearchLink, SearchMatchType, tableParams } from '/@/api/apiLink';
@@ -117,9 +117,9 @@
   const getList = async (currPage = tablePages.currentPage, pageSize = tablePages.pageSize) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
-      filter = filterType(getUpDownSearchList, props.linkQueryMenuData[currKey.value].tarBillType);
+      filter = filterType(publicUrlList, props.linkQueryMenuData[currKey.value].tarBillType);
     } else {
-      filter = filterType(getUpDownSearchList, props.linkQueryMenuData[currKey.value].srcBillType);
+      filter = filterType(publicUrlList, props.linkQueryMenuData[currKey.value].srcBillType);
     }
     let listUrl = filter[0].listUrl;
     //删除筛选出来的操作那一列
@@ -165,11 +165,11 @@
   const editTableEvent = (row) => {
     let filter;
     if (props.linkQueryMenuData[currKey.value].tarBillIds.length > 0) {
-      filter = getUpDownSearchList.filter(
+      filter = publicUrlList.filter(
         (e) => e.type === props.linkQueryMenuData[currKey.value].tarBillType,
       );
     } else {
-      filter = getUpDownSearchList.filter(
+      filter = publicUrlList.filter(
         (e) => e.type === props.linkQueryMenuData[currKey.value].srcBillType,
       );
     }

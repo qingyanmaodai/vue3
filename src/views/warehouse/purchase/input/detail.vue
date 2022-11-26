@@ -324,20 +324,12 @@
       );
     });
     res.records.forEach((item, index) => {
-      item['stockDis'] = stockDis.value;
       item.bdMaterial = bdMaterial[index];
-      item.bsStatus = 'A';
       item.matId = item.id;
-      item.compartmentId =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.compartmentId : null;
-      item.bdStockCompartment.name =
-        stockDis.value !== 'A' && item.bdStockCompartment ? item.bdStockCompartment.name : null;
-      item.locationId = stockDis.value === 'C' && item.bdStockLocation ? item.locationId : null;
-      item.bdStockLocation.name =
-        stockDis.value === 'C' && item.bdStockLocation ? item.bdStockLocation.name : null;
     });
-    let data = cloneDeep(res.records);
-    detailTableData.value = data;
+    formState.value.dtData = cloneDeep(res.records);
+    await setDataStatus();
+    detailTableData.value = cloneDeep(formState.value.dtData);
   };
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
@@ -389,8 +381,8 @@
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
-        let data = await add({ params: formState.value });
-        formState.value = data;
+        formState.value = await add({ params: formState.value });
+        await setDataStatus();
         detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
@@ -417,14 +409,8 @@
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
-          const data = await audit({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-          if (data.bsStatus === 'B' && tableFullData) {
-            tableFullData.map((e) => {
-              e.bsStatus = 'B';
-              return e;
-            });
-          }
+          formState.value = await audit({ params: formState.value });
+          await setDataStatus();
           detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
@@ -444,14 +430,9 @@
       if (tableFullData) {
         formState.value.dtData = cloneDeep(tableFullData);
       }
-      const data = await unAudit({ params: formState.value });
-      formState.value = data;
-      if (data.bsStatus === 'A' && tableFullData) {
-        tableFullData.map((e) => {
-          e.bsStatus = 'A';
-          return e;
-        });
-      }
+      formState.value = await unAudit({ params: formState.value });
+      await setDataStatus();
+      detailTableData.value = cloneDeep(formState.value.dtData);
       createMessage.success('操作成功');
     }
   };
@@ -469,21 +450,7 @@
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
     }
-    if (formState.value.dtData) {
-      formState.value.dtData.map((r) => {
-        r.bsStatus = formState.value.bsStatus;
-        r['stockDis'] = stockDis.value;
-        if (r.bdStockCompartment && r.bdStockCompartment.name) {
-          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-          r.bdStockCompartment.name =
-            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
-        }
-        if (r.bdStockLocation && r.bdStockLocation.name) {
-          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
-        }
-      });
-    }
+    await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
 
@@ -554,6 +521,24 @@
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
     obj.stockDis = cloneDeep(stockDis.value);
+  };
+  //dtData状态赋值
+  const setDataStatus = () => {
+    if (formState.value.dtData) {
+      formState.value.dtData.map((r) => {
+        r.bsStatus = formState.value.bsStatus;
+        r['stockDis'] = stockDis.value;
+        if (r.bdStockCompartment && r.bdStockCompartment.name) {
+          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
+          r.bdStockCompartment.name =
+            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+        }
+        if (r.bdStockLocation && r.bdStockLocation.name) {
+          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
+          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+        }
+      });
+    }
   };
   onMounted(() => {
     getListById();

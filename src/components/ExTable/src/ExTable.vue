@@ -260,7 +260,6 @@
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
     :tableModalTitle="tableModalTitle"
-    :tableParamsData="tableParamsData"
   />
 </template>
 
@@ -291,9 +290,7 @@
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-
-  import { SearchParams } from '/@/api/apiLink';
-  import { checkDetail, filterType } from '/@/enums/routeEnum';
+  import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
   const exLinkQueryModelRef: any = ref(null);
@@ -327,7 +324,6 @@
     modalTitle?: string;
     linkQueryMenuData?: any;
     urlConfig?: string;
-    getModalParams?: SearchParams[];
     tablePages?: TableType;
   }
   type TableType = {
@@ -361,9 +357,6 @@
     tableData: () => {
       return [];
     },
-    getModalParams: () => {
-      return [];
-    },
   });
   type Emits = {
     (e: 'addTableEvent'): void;
@@ -388,9 +381,6 @@
   };
   const tablePage = computed(() => {
     return props.tablePages;
-  });
-  const tableParamsData = computed(() => {
-    return props.getModalParams;
   });
   const emit = defineEmits<Emits>();
   const cellClickEvent: VxeGridEvents.CellClick = (row) => {
@@ -540,12 +530,12 @@
       case 'PreUse':
         tableModalColumns.value = preUseColumns;
         tableModalTitle.value = '预用来源';
-        listUrl = filterType(checkDetail, props.tableName)[0].preUseUrl;
+        listUrl = filterType(checkDetailUrl, props.tableName)[0].preUseUrl;
         break;
       case 'Stock':
         tableModalColumns.value = stoSourceColumns;
         tableModalTitle.value = '明细来源';
-        listUrl = filterType(checkDetail, props.tableName)[0].stockUrl;
+        listUrl = filterType(checkDetailUrl, props.tableName)[0].stockUrl;
         break;
     }
     exTableModalRef.value.init(listUrl);

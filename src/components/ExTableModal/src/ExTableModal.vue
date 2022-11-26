@@ -26,12 +26,12 @@
   </vxe-modal>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, inject } from 'vue';
   import { ExTable } from '/@/components/ExTable';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
-  import { SearchParams, tableParams } from '/@/api/apiLink';
-  import { filterType, sourceDetail } from '/@/enums/routeEnum';
+  import { tableParams } from '/@/api/apiLink';
+  import { filterType, publicUrlList } from '/@/enums/routeEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { cloneDeep } from 'lodash-es';
   //表格数据
@@ -40,16 +40,12 @@
   const tablePages = reactive(cloneDeep(tableParams));
   // type Emits = {};
   // const emit = defineEmits<Emits>();
-
+  let getModalParams = ref<any>(inject('getModalParams', null));
   interface ProType {
     tableModalColumns?: object[];
-    tableParamsData?: SearchParams[];
     tableModalTitle?: string;
   }
   const props = withDefaults(defineProps<ProType>(), {
-    tableParamsData: () => {
-      return [];
-    },
     tableModalColumns: () => {
       return [];
     },
@@ -72,7 +68,7 @@
   ) => {
     const res: any = await getPublicList(
       {
-        params: props.tableParamsData,
+        params: getModalParams.value,
         orderByBean: {
           descList: ['create_time'],
         },
@@ -92,7 +88,7 @@
   const editTableEvent = (row) => {
     let filter;
     if (tableData.value.length > 0) {
-      filter = filterType(sourceDetail, row.billType);
+      filter = filterType(publicUrlList, row.billType);
     }
     let detailUrl = filter[0].detailUrl;
     go({

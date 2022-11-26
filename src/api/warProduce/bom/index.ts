@@ -37,6 +37,10 @@ export interface produceBomEntity extends PublicModel {
   parentId?: string;
   tenantId?: string;
   moId?: number;
+  proMoNumber?: string;
+  matNumber?: string;
+  proMoNum?: string;
+  moSeq?: number;
 }
 
 export interface proBomDetailEntity extends PublicModel {
@@ -142,21 +146,6 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
   return defHttp.post<Result>(
     {
       url: Url.BATCH_AUDIT_PRODUCE_BOM,
-      data: json,
-    },
-    {
-      errorMessageMode: mode,
-      isTransformResponse: true,
-    },
-  );
-}
-/**
- * 下推配置查询
- */
-export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<produceBomEntity>(
-    {
-      url: Url.GET_PUSHDOWN_LIST,
       data: json,
     },
     {

@@ -48,19 +48,19 @@
                         autocomplete="off"
                         :value="config.BS_STATUS[formState.bsStatus] || '暂存'"
                         name="bsStatus"
-                        disabled
+                        :disabled="true"
                       />
                     </a-form-item>
                   </Col>
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="退料员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="销售员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择计划员'"
-                        label="客户"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择采购员'"
+                        label="销售员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -75,6 +75,26 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
+                    <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
+                      <ExInput
+                        autocomplete="off"
+                        class="input"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
+                        label="客户"
+                        :show="formState.bsStatus !== 'B'"
+                        :value="formState.supplierName"
+                        :disabled="formState.bsStatus === 'B'"
+                        @search="
+                          onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
+                            'cusId',
+                            'cusName',
+                          ])
+                        "
+                        @clear="onClear(['cusId', 'cusName'])"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         :showToday="false"
@@ -82,18 +102,6 @@
                         valueFormat="YYYY-MM-DD HH:mm:ss"
                         format="YYYY-MM-DD"
                         v-model:value="formState.bsDate"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="退料原因：" ref="reason" name="reason" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.reason"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
-                        :options="config.RETURN_REASON"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -152,13 +160,14 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warProReturnOfDetailColumns"
+            :columns="warSaleOrderOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
+            @getCountAmount="getCountAmount"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -178,12 +187,12 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-produce-return-detail">
+<script lang="ts" setup name="warehouse-sale-order-detail">
   import {
     detailOfExaGridOptions,
-    warProReturnOfDetailColumns,
+    warSaleOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { computed, onMounted, reactive, ref, toRef } from 'vue';
+  import { onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -195,7 +204,6 @@
     DatePicker,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -205,7 +213,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
+  import { add, audit, unAudit, getOneById, saleOrderEntity } from '/@/api/warSale/order';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -243,7 +251,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: produceOrderEntity = {
+  const formData: saleOrderEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -254,26 +262,16 @@
   const formStateInit = reactive({
     data: formData,
   });
-  const requiredLocation: any = computed(() => {
-    return stockDis.value === 'C';
-  });
-  const requiredCompartment: any = computed(() => {
-    return stockDis.value !== 'A';
-  });
+
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
-
-  const formRules = reactive({
-    num: [{ required: true, message: '请输入生成数量' }],
+  const formRules = reactive({});
+  const formDataRules = reactive({
+    num: [{ required: true, message: '请输入销售数量' }],
+    price: [{ required: true, message: '请输入单价' }],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
-  formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
-  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
+
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
@@ -386,8 +384,10 @@
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
-        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
+        if (error.errorFields) {
+          createMessage.error('数据校检不通过，请检查!');
+        }
       });
   };
   //审核
@@ -428,8 +428,10 @@
         }
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
-        createMessage.error('数据校检不通过，请检查!');
         console.log(error);
+        if (error.errorFields) {
+          createMessage.error('数据校检不通过，请检查!');
+        }
       });
   };
   //反审核
@@ -463,7 +465,15 @@
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-
+  //计算数量
+  const getCountAmount = (row) => {
+    if (row.num && row.price) {
+      row.totalPrice = row.num * row.price;
+    } else {
+      row.totalPrice = '';
+    }
+    return row;
+  };
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
@@ -526,6 +536,7 @@
         data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
+    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {

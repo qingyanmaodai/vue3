@@ -4,19 +4,19 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="bsSaleBills"
+        tableName="bsSaleOrder"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
-        :columns="warSaleBillsColumns"
+        :columns="warSaleOrderColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="bsSaleBills"
+        tableName="bsSaleOrder"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -38,7 +38,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="warehouse-produce-order-index">
+<script setup lang="ts" name="warehouse-sale-order-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -56,10 +56,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warProduce/order';
+  } from '/@/api/warSale/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warSaleBillsColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warSaleOrderColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -69,7 +69,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
+  let importConfig = ref<string>('IMPORT_SALE_ORDER');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -90,7 +90,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsProMo.update_time'],
+        descList: ['bsSaleOrder.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -131,7 +131,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_SALE_BILLS_DETAIL,
+      path: PageEnum.WAR_SALE_ORDER_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -140,7 +140,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_SALE_BILLS_DETAIL,
+      path: PageEnum.WAR_SALE_ORDER_DETAIL,
       query: {
         row: row.id,
       },
@@ -261,7 +261,6 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

@@ -92,6 +92,9 @@
     <template #totalPrices="{ row }">
       <span>{{ row.totalPrices }}</span>
     </template>
+    <template #needNum="{ row }">
+      <span>{{ row.needNum }}</span>
+    </template>
     <template #isRequire="{ row }">
       <Switch
         :disabled="row.bsStatus === 'B'"
