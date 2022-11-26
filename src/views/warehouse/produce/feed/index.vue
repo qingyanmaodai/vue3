@@ -11,7 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
-        :columns="warProPicksColumns"
+        :columns="warProFeedColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
@@ -59,7 +59,7 @@
   } from '/@/api/warProduce/picks';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warProPicksColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warProFeedColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';

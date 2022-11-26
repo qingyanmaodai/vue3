@@ -138,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warProPicksOfDetailColumns"
+            :columns="warProFeedOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formRules"
             ref="detailTableRef"
@@ -168,7 +168,7 @@
 <script lang="ts" setup name="warehouse-produce-picks-detail">
   import {
     detailOfExaGridOptions,
-    warProPicksOfDetailColumns,
+    warProFeedOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {

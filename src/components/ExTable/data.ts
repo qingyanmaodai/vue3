@@ -802,6 +802,38 @@ export const warProPicksColumns = [
   },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+//生产补料单
+export const warProFeedColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'empName', title: '领料员', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '领料日期', width: 160, sortable: true },
+  { field: 'reason', title: '申请原因', width: 120, sortable: true },
+  { field: 'num', title: '申请数量', width: 120, sortable: true },
+  { field: 'realNum', title: '已领数量', width: 120, sortable: true },
+  { field: 'needNum', title: '待领数量', width: 120, sortable: true },
+  { field: 'pushNum', title: '已下推数量', width: 120, sortable: true },
+  // { field: 'doneNum', title: '已入库数量', width: 120, sortable: true },
+  { field: 'returnNum', title: '已退货数量', width: 120, sortable: true },
+  { field: 'stockName', title: '仓库', width: 120, sortable: true },
+  { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
+  { field: 'locationName', title: '仓位', width: 120, sortable: true },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
 /*预用来源*/
 export const preUseColumns = [
   { type: 'seq', title: '行号', width: 50 },
