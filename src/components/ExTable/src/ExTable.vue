@@ -250,12 +250,6 @@
     :tableName="props.tableName"
     @pushDownSelect="pushDownSelect"
   />
-  <ExLinkQueryModal
-    ref="exLinkQueryModelRef"
-    :tableName="props.tableName"
-    :modalTitle="props.modalTitle"
-    :linkQueryMenuData="props.linkQueryMenuData"
-  />
   <ExTableModal
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
@@ -286,7 +280,6 @@
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
-  import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
@@ -321,8 +314,6 @@
     isShowImport?: boolean;
     importConfig?: string;
     isOrderShow?: boolean;
-    modalTitle?: string;
-    linkQueryMenuData?: any;
     urlConfig?: string;
     tablePages?: TableType;
   }
@@ -373,8 +364,7 @@
     (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
     (e: 'createOrderEvent', selectRecords: any): void;
     (e: 'queryOrderEvent', id: any): void;
-    (e: 'downSearchEvent', row: any): void;
-    (e: 'upSearchEvent', row: any): void;
+    (e: 'updownSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
     (e: 'checkStockEvent', row: any): void;
     (e: 'getParamsData', row: any): any;
@@ -426,10 +416,10 @@
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
-          emit('upSearchEvent', selectRecords);
+          emit('updownSearchEvent', selectRecords, 'A');
           break;
         case 'B':
-          emit('downSearchEvent', selectRecords);
+          emit('updownSearchEvent', selectRecords, 'B');
           break;
       }
     } else {
@@ -450,14 +440,6 @@
       }
     } else {
       createMessage.warning('只能勾选一条数据');
-    }
-  };
-  //判断是否上下查
-  const isUpDownSearch = (res) => {
-    if (res.length > 0) {
-      exLinkQueryModelRef.value.show();
-    } else {
-      createMessage.warning('没有相关关联单据');
     }
   };
   /**
@@ -769,7 +751,6 @@
     delTable,
     init,
     computeData,
-    isUpDownSearch,
   });
 </script>
 
