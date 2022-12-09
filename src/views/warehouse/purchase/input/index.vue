@@ -30,12 +30,15 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @getList="getList"
-        :modalTitle="modalTitle"
-        @downSearchEvent="downSearchEvent"
-        @upSearchEvent="upSearchEvent"
-        :linkQueryMenuData="linkQueryMenuData"
+        @updownSearchEvent="updownSearchEvent"
       />
     </div>
+    <ExLinkQueryModal
+      ref="exLinkQueryModelRef"
+      tableName="BsPurchaseInStock"
+      :modalTitle="modalTitle"
+      :linkQueryMenuData="linkQueryMenuData"
+    />
   </div>
 </template>
 <script setup lang="ts" name="warehouse-purchase-instock-index">
@@ -101,21 +104,31 @@
     tableData.value = res.records;
     searchRef.value.moreSearchClose();
   };
+  import { ExLinkQueryModal } from '/@/components/ExLinkQueryModal';
+  const exLinkQueryModelRef: any = ref(null);
   const linkQueryMenuData: any = ref<any>([]);
   const modalTitle: any = ref<any>('');
   //上查
-  const upSearchEvent = async (row) => {
-    const res: any = await upSearch({ params: row });
-    modalTitle.value = '采购入库单-上查';
-    linkQueryMenuData.value = res;
-    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
-  };
-  //下查
-  const downSearchEvent = async (row) => {
-    const res: any = await downSearch({ params: row });
-    modalTitle.value = '采购入库单-下查';
-    linkQueryMenuData.value = res;
-    tableRef.value.isUpDownSearch(linkQueryMenuData.value);
+  const updownSearchEvent = async (row: any, status: string) => {
+    let res;
+    switch (status) {
+      case 'A':
+        res = await upSearch({ params: row });
+        modalTitle.value = '采购入库单-上查';
+        linkQueryMenuData.value = res;
+        break;
+      case 'B':
+        res = await downSearch({ params: row });
+        modalTitle.value = '采购入库单-下查';
+        linkQueryMenuData.value = res;
+        break;
+    }
+    //判断上查还是下查
+    if (res && res.length > 0) {
+      exLinkQueryModelRef.value.show();
+    } else {
+      createMessage.warning('没有相关关联单据');
+    }
   };
   //重置
   const resetTable = () => {
