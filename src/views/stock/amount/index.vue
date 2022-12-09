@@ -25,7 +25,7 @@
 <script setup lang="ts" name="stock-amount-index">
   import { ExTable } from '/@/components/ExTable';
   import { StockAmountSearch } from '/@/components/Search';
-  import { onMounted, reactive, ref, provide } from 'vue';
+  import {onMounted, reactive, ref, provide, onActivated} from 'vue';
   import { cloneDeep } from 'lodash-es';
   import { notToolInGridOptions, StockAmountColumns } from '/@/components/ExTable/data';
   import {
@@ -117,6 +117,10 @@
 
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
+    getList();
+  });
+  //被keep-alive 缓存的组件激活时调用
+  onActivated(() => {
     getList();
   });
 </script>

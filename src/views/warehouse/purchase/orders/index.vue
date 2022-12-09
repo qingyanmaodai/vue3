@@ -278,7 +278,7 @@
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {
-
+    getList();
   });
 </script>
 

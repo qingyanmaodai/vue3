@@ -286,7 +286,6 @@
   import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
-  const exLinkQueryModelRef: any = ref(null);
   const exTableModalRef: any = ref(null);
 
   const { createMessage } = useMessage();
@@ -364,7 +363,7 @@
     (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
     (e: 'createOrderEvent', selectRecords: any): void;
     (e: 'queryOrderEvent', id: any): void;
-    (e: 'updownSearchEvent', row: any): void;
+    (e: 'updownSearchEvent', row: any, choice: string): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
     (e: 'checkStockEvent', row: any): void;
     (e: 'getParamsData', row: any): any;
