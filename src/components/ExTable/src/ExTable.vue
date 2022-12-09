@@ -250,11 +250,6 @@
     :tableName="props.tableName"
     @pushDownSelect="pushDownSelect"
   />
-  <ExTableModal
-    ref="exTableModalRef"
-    :tableModalColumns="tableModalColumns"
-    :tableModalTitle="tableModalTitle"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -269,25 +264,16 @@
   import { computed, reactive, ref } from 'vue';
   import { Tag, Button, Upload, message, Dropdown, MenuItem, Menu } from 'ant-design-vue';
   import { UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
-  import {
-    resultByBatchColumns,
-    resultGridOptions,
-    preUseColumns,
-    stoSourceColumns,
-  } from '/@/components/ExTable/data';
+  import { resultByBatchColumns, resultGridOptions } from '/@/components/ExTable/data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import { ExPushDownModel } from '/@/components/ExPushDownModel';
-  import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
-  import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
   const ExPushDownModelRef: any = ref(null);
-  const exLinkQueryModelRef: any = ref(null);
-  const exTableModalRef: any = ref(null);
 
   const { createMessage } = useMessage();
   const AButton = Button;
@@ -366,8 +352,7 @@
     (e: 'queryOrderEvent', id: any): void;
     (e: 'updownSearchEvent', row: any): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
-    (e: 'checkStockEvent', row: any): void;
-    (e: 'getParamsData', row: any): any;
+    (e: 'checkDetailEvent', row: any, type: string): any;
   };
   const tablePage = computed(() => {
     return props.tablePages;
@@ -384,8 +369,6 @@
   const resultModal = ref(false); //审核结果弹框
   let resY = ref(0); //审核成功
   let resF = ref(0); //审核失败
-  const tableModalColumns = ref<object[]>([]);
-  const tableModalTitle = ref<string>('');
 
   const tablePagerChange: VxePagerEvents.PageChange = ({ currentPage, pageSize }) => {
     emit('getList', currentPage, pageSize, props.urlConfig);
@@ -505,22 +488,8 @@
     return selectRecords1;
   };
   //查看预用来源
-  const checkEvent = async (row: any, type: string) => {
-    await emit('getParamsData', row);
-    let listUrl;
-    switch (type) {
-      case 'PreUse':
-        tableModalColumns.value = preUseColumns;
-        tableModalTitle.value = '预用来源';
-        listUrl = filterType(checkDetailUrl, props.tableName)[0].preUseUrl;
-        break;
-      case 'Stock':
-        tableModalColumns.value = stoSourceColumns;
-        tableModalTitle.value = '明细来源';
-        listUrl = filterType(checkDetailUrl, props.tableName)[0].stockUrl;
-        break;
-    }
-    exTableModalRef.value.init(listUrl);
+  const checkEvent = (row: any, type: string) => {
+    emit('checkDetailEvent', row, type);
   };
   //新增
   const addTableEvent = () => {

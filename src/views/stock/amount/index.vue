@@ -16,18 +16,29 @@
         :tablePages="tablePages"
         ref="tableRef"
         @getList="getList"
-        @getParamsData="getParamsData"
+        @checkDetailEvent="checkDetailEvent"
       />
     </div>
   </div>
+  <ExTableModal
+    ref="exTableModalRef"
+    :tableModalColumns="tableModalColumns"
+    :tableModalTitle="tableModalTitle"
+  />
 </template>
 
 <script setup lang="ts" name="stock-amount-index">
   import { ExTable } from '/@/components/ExTable';
   import { StockAmountSearch } from '/@/components/Search';
-  import { onMounted, reactive, ref, provide } from 'vue';
+  import { ExTableModal } from '/@/components/ExTableModal';
+  import { onMounted, reactive, ref, provide, onActivated } from 'vue';
   import { cloneDeep } from 'lodash-es';
-  import { notToolInGridOptions, StockAmountColumns } from '/@/components/ExTable/data';
+  import {
+    notToolInGridOptions,
+    preUseColumns,
+    StockAmountColumns,
+    stoSourceColumns,
+  } from '/@/components/ExTable/data';
   import {
     SearchDataType,
     SearchLink,
@@ -37,9 +48,15 @@
     tableParams,
   } from '/@/api/apiLink';
   import { getInvList } from '/@/api/realTimeInv';
+  import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   const NotToolInGridOptions = notToolInGridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
+  //查询明细
+  const tableModalColumns = ref<object[]>([]);
+  const tableModalTitle = ref<string>('');
+  const exTableModalRef: any = ref(null);
+
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -112,11 +129,54 @@
       table: '',
       val: row.stockId,
     });
+    getParams.push({
+      column: 'compartment_id',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'compartmentId',
+      startWith: '',
+      table: '',
+      val: row.compartmentId,
+    });
+    getParams.push({
+      column: 'location_id',
+      endWith: '',
+      link: SearchLink.AND,
+      rule: SearchMatchType.LIKE,
+      type: SearchDataType.string,
+      name: 'locationId',
+      startWith: '',
+      table: '',
+      val: row.locationId,
+    });
     getModalParams.value = cloneDeep(getParams);
   };
-
+  //查看明细来源
+  const checkDetailEvent = async (row: any, type: string) => {
+    getParamsData(row);
+    let listUrl;
+    switch (type) {
+      case 'PreUse':
+        tableModalColumns.value = preUseColumns;
+        tableModalTitle.value = '预用来源';
+        listUrl = filterType(checkDetailUrl, 'BdInventory')[0].preUseUrl;
+        break;
+      case 'Stock':
+        tableModalColumns.value = stoSourceColumns;
+        tableModalTitle.value = '明细来源';
+        listUrl = filterType(checkDetailUrl, 'BdInventory')[0].stockUrl;
+        break;
+    }
+    exTableModalRef.value.init(listUrl);
+  };
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
+    getList();
+  });
+  //被keep-alive 缓存的组件激活时调用
+  onActivated(() => {
     getList();
   });
 </script>

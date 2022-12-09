@@ -274,11 +274,10 @@
   });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {
-
+    getList();
   });
 </script>
 

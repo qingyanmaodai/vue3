@@ -386,6 +386,10 @@ export const config = {
       label: '生产入库',
     },
     {
+      value: 'BsProMoPick',
+      label: '生产领料',
+    },
+    {
       value: 'BsProMoReturn',
       label: '生产出库',
     },
@@ -393,6 +397,11 @@ export const config = {
     {
       value: 'BsProMoOrder',
       label: '生产工单',
+    },
+    //待确定
+    {
+      value: 'BsProMoReturn',
+      label: '生产退料',
     },
     {
       value: 'BsPurchaseReturn',

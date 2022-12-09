@@ -3,7 +3,7 @@ import {
   invCountLossColumns,
   invCountSheetColumns,
   warProInStockColumns,
-  warProOrderColumns,
+  warProOrderColumns, warProPicksColumns,
   warProReturnColumns,
   warPurInputColumns,
   warPurOrdersColumns,
@@ -14,7 +14,7 @@ import { Url } from '/@/api/apiLink';
 export const filterType = (arr, current: string) => {
   return arr.filter((e) => e.type === current);
 };
-//上查下查公共配置
+//公共配置
 export const publicUrlList = [
   {
     type: 'BsInventoryCountGain', //盘盈
@@ -57,6 +57,12 @@ export const publicUrlList = [
     listUrl: Url.GET_PAGE_PRODUCE_INSTOCK_LIST,
     detailUrl: PageEnum.WAR_PRO_INSTOCK_DETAIL,
     TableCols: warProInStockColumns,
+  },
+  {
+    type: 'BsProMoPick', //生产领料
+    listUrl: Url.GET_PAGE_PRODUCE_PICK_LIST,
+    detailUrl: PageEnum.WAR_PRO_PICKS_DETAIL,
+    TableCols: warProPicksColumns,
   },
   {
     type: 'BsProMoReturn', //生产退料
