@@ -33,6 +33,11 @@
         @updownSearchEvent="updownSearchEvent"
       />
     </div>
+    <ExPushDownModel
+      ref="ExPushDownModelRef"
+      tableName="BsInventoryCount"
+      @pushDownSelect="pushDownSelect"
+    />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
       tableName="BsInventoryCount"
@@ -169,10 +174,17 @@
       },
     });
   };
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  const ExPushDownModelRef: any = ref(null);
+  const selectDtData = ref<any>([]);
   //下推
-  const pushDownEvent = async (selectRecords, pushDownParam) => {
+  const pushDownEvent = async (row: any) => {
+    ExPushDownModelRef.value.show();
+    selectDtData.value = row;
+  };
+  const pushDownSelect = async (pushDownParam: any) => {
     let val: string[] = [];
-    selectRecords.map((item) => {
+    selectDtData.value.map((item) => {
       if (item.dtData && item.dtData.length > 0) {
         item.dtData.map((i) => {
           val.push(i.matId);
@@ -197,7 +209,7 @@
       ],
     });
     // 遍历数组赋值stockNum
-    selectRecords.map((item) => {
+    selectDtData.value.map((item) => {
       if (item.dtData && item.dtData.length > 0) {
         item.dtData.map((i) => {
           let filterNum = setStockNum.records.filter(
@@ -213,7 +225,7 @@
     });
     let res = await pushDown(
       {
-        params: selectRecords,
+        params: selectDtData.value,
       },
       pushDownParam.tarBillType,
     );

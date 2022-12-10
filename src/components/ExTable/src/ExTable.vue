@@ -245,11 +245,6 @@
     <br />
     <p style="color: red; text-align: center">提示：仅允许导入‘xls' 或 'xlsx' 格式文件</p>
   </vxe-modal>
-  <ExPushDownModel
-    ref="ExPushDownModelRef"
-    :tableName="props.tableName"
-    @pushDownSelect="pushDownSelect"
-  />
   <ExTableModal
     ref="exTableModalRef"
     :tableModalColumns="tableModalColumns"
@@ -279,13 +274,11 @@
   import { OptTableHook } from '/@/api/utilHook';
   import { importData } from '/@/api/public';
   import { config, configEntity } from '/@/utils/publicParamConfig';
-  import { ExPushDownModel } from '/@/components/ExPushDownModel';
   import { ExTableModal } from '/@/components/ExTableModal';
   import { cloneDeep, uniqBy } from 'lodash-es';
   import XEUtils from 'xe-utils';
   import { checkDetailUrl, filterType } from '/@/enums/routeEnum';
   //组件ref
-  const ExPushDownModelRef: any = ref(null);
   const exTableModalRef: any = ref(null);
 
   const { createMessage } = useMessage();
@@ -360,7 +353,7 @@
     (e: 'auditBatchEvent', selectRecords: any): void;
     (e: 'unAuditRowEvent', row: any): void;
     (e: 'unAuditBatchEvent', row: any): void;
-    (e: 'pushDownEvent', selectRecords: any, tableName: any): void;
+    (e: 'pushDownEvent', selectRecords: any): void;
     (e: 'createOrderEvent', selectRecords: any): void;
     (e: 'queryOrderEvent', id: any): void;
     (e: 'updownSearchEvent', row: any, choice: string): void;
@@ -639,23 +632,16 @@
       };
     }
   };
-
-  //下推功能
-  const pushDownSelect = async (pushDownParam) => {
-    let selectRecords = await getDtData();
-    emit('pushDownEvent', selectRecords, pushDownParam);
-    ExPushDownModelRef.value.close();
-  };
   //下推弹框
   const pushDownEvent = async () => {
     let selectRecords = await getListData();
     if (selectRecords.length > 0) {
-      ExPushDownModelRef.value.show();
+      let selectDtData = await getDtData();
+      emit('pushDownEvent', selectDtData);
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }
   };
-
   //上传文件前的判断
   const beforeUpload = (file, UpFileList) => {
     //控制上传文件的类型 arr是上传类型的白名单

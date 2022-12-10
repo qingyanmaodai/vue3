@@ -29,9 +29,15 @@
         @exportTable="exportTable"
         @importModelEvent="importModelEvent"
         @getList="getList"
+        @pushDownEvent="pushDownEvent"
         @updownSearchEvent="updownSearchEvent"
       />
     </div>
+    <ExPushDownModel
+      ref="ExPushDownModelRef"
+      tableName="BsProMoInStock"
+      @pushDownSelect="pushDownSelect"
+    />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
       tableName="BsProMoInStock"
@@ -57,6 +63,7 @@
     unAudit,
     unAuditBatch,
     upSearch,
+    pushDown,
   } from '/@/api/warProduce/instock';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
@@ -247,7 +254,31 @@
       });
     };
   };
-
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  const ExPushDownModelRef: any = ref(null);
+  const selectDtData = ref<any>([]);
+  //下推
+  const pushDownEvent = async (row: any) => {
+    ExPushDownModelRef.value.show();
+    selectDtData.value = row;
+  };
+  const pushDownSelect = async (pushDownParam: any) => {
+    let res = await pushDown(
+      {
+        params: selectDtData,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      createMessage.error('无法下推到该下游单据/已有下游单据');
+    }
+  };
   //获取高级查询字段数据
   const moreSearchData = ref();
   getSearchOption({ params: '' }).then((res) => {

@@ -33,6 +33,11 @@
         @updownSearchEvent="updownSearchEvent"
       />
     </div>
+    <ExPushDownModel
+      ref="ExPushDownModelRef"
+      tableName="BsProMo"
+      @pushDownSelect="pushDownSelect"
+    />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
       tableName="BsProMo"
@@ -249,11 +254,18 @@
       });
     };
   };
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  const ExPushDownModelRef: any = ref(null);
+  const selectDtData = ref<any>([]);
   //下推
-  const pushDownEvent = async (selectRecords, pushDownParam) => {
+  const pushDownEvent = async (row: any) => {
+    ExPushDownModelRef.value.show();
+    selectDtData.value = row;
+  };
+  const pushDownSelect = async (pushDownParam: any) => {
     let res = await pushDown(
       {
-        params: selectRecords,
+        params: selectDtData,
       },
       pushDownParam.tarBillType,
     );

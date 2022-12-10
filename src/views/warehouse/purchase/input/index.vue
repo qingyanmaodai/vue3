@@ -33,6 +33,11 @@
         @updownSearchEvent="updownSearchEvent"
       />
     </div>
+    <ExPushDownModel
+      ref="ExPushDownModelRef"
+      tableName="BsPurchaseInStock"
+      @pushDownSelect="pushDownSelect"
+    />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
       tableName="BsPurchaseInStock"
@@ -210,24 +215,6 @@
     await tableRef.value.computeData(res);
     await getList();
   };
-  //下推
-  const pushDownEvent = async (selectRecords, pushDownParam) => {
-    let res = await pushDown(
-      {
-        params: selectRecords,
-      },
-      pushDownParam.tarBillType,
-    );
-    if (res) {
-      createMessage.success('下推成功');
-      go({
-        name: pushDownParam.routeTo,
-        params: { pushDownParam: JSON.stringify(res) },
-      });
-    } else {
-      createMessage.error('无法下推到该下游单据/已有下游单据');
-    }
-  };
   //下载模板
   const importModelEvent = async () => {
     OptTableHook.importModel = (): Promise<any> => {
@@ -267,7 +254,31 @@
       });
     };
   };
-
+  import { ExPushDownModel } from '/@/components/ExPushDownModel';
+  const ExPushDownModelRef: any = ref(null);
+  const selectDtData = ref<any>([]);
+  //下推
+  const pushDownEvent = async (row: any) => {
+    ExPushDownModelRef.value.show();
+    selectDtData.value = row;
+  };
+  const pushDownSelect = async (pushDownParam: any) => {
+    let res = await pushDown(
+      {
+        params: selectDtData,
+      },
+      pushDownParam.tarBillType,
+    );
+    if (res) {
+      createMessage.success('下推成功');
+      go({
+        name: pushDownParam.routeTo,
+        params: { pushDownParam: JSON.stringify(res) },
+      });
+    } else {
+      createMessage.error('无法下推到该下游单据/已有下游单据');
+    }
+  };
   //获取高级查询字段数据
   const moreSearchData = ref();
   getSearchOption({ params: '' }).then((res) => {

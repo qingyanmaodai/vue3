@@ -25,9 +25,11 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { getPushDownList } from '/@/api/public';
+  import { useMessage } from '/@/hooks/web/useMessage';
   const visible = ref<boolean>(false); //弹框可见性，默认为关闭
   const formState = ref<any>([]); //可下推的列表
   let currentIndex = ref<any>(-1);
+  const { createMessage } = useMessage();
   type Emits = {
     (e: 'pushDownSelect', pushDownParam: object): void;
   };
@@ -37,12 +39,16 @@
   });
 
   const show = async () => {
-    visible.value = true;
     formState.value = await getPushDownList({
       params: {
         srcBillType: props.tableName,
       },
     });
+    if (formState.value && formState.value.length > 0) {
+      visible.value = true;
+    } else {
+      createMessage.warning('该单据类型不能下推');
+    }
   };
   const close = () => {
     visible.value = false;
