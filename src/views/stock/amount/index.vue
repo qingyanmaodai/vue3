@@ -23,6 +23,7 @@
       ref="exTableModalRef"
       :tableModalColumns="tableModalColumns"
       :tableModalTitle="tableModalTitle"
+      :tableModalParams="tableModalParams"
     />
   </div>
 </template>
@@ -103,8 +104,7 @@
     stockAmountSearchRef.value.setFormState(searchFormState);
     getList(1);
   };
-  let getModalParams = ref<SearchParams[]>([]);
-  provide('getModalParams', getModalParams);
+  let tableModalParams = ref<SearchParams[]>([]);
   const getParamsData = (row) => {
     let getParams: SearchParams[] = [];
     getParams.push({
@@ -151,7 +151,7 @@
       table: '',
       val: row.locationId,
     });
-    getModalParams.value = cloneDeep(getParams);
+    tableModalParams.value = cloneDeep(getParams);
   };
   //查看明细来源
   const checkDetailEvent = async (row: any, type: string) => {

@@ -26,7 +26,7 @@
   </vxe-modal>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, inject } from 'vue';
+  import { reactive, ref } from 'vue';
   import { ExTable } from '/@/components/ExTable';
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
@@ -40,16 +40,19 @@
   const tablePages = reactive(cloneDeep(tableParams));
   // type Emits = {};
   // const emit = defineEmits<Emits>();
-  let getModalParams = ref<any>(inject('getModalParams', null));
   interface ProType {
     tableModalColumns?: object[];
     tableModalTitle?: string;
+    tableModalParams?: object[];
   }
   const props = withDefaults(defineProps<ProType>(), {
     tableModalColumns: () => {
       return [];
     },
     tableModalTitle: '',
+    tableModalParams: () => {
+      return [];
+    },
   });
 
   const isShow = ref<boolean>(false);
@@ -68,7 +71,7 @@
   ) => {
     const res: any = await getPublicList(
       {
-        params: getModalParams.value,
+        params: props.tableModalParams,
         orderByBean: {
           descList: ['create_time'],
         },
