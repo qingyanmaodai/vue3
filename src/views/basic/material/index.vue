@@ -27,6 +27,8 @@
             @resetEvent="resetTable"
           />
           <ExTable
+            :isPushDown="false"
+            :isRelatedShow="false"
             :columns="matColumns"
             :gridOptions="GridOptions"
             :importConfig="importConfig"

@@ -11,6 +11,8 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isPushDown="false"
+        :isRelatedShow="false"
         :isShowImport="false"
         :isShowExport="false"
         :columns="exaSchemeColumns"

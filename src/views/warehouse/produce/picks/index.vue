@@ -11,6 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isShowImport="false"
         :columns="warProPicksColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"

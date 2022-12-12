@@ -1755,10 +1755,10 @@ export const warSaleOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'totalPrice',
+    field: 'totalPrices',
     title: '总额',
     className: 'disableProp',
-    slots: { default: 'totalPrice' },
+    slots: { default: 'totalPrices' },
     width: 150,
     sortable: true,
   },
@@ -1847,7 +1847,7 @@ export const warSaleSendOutOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'totalPrice',
+    field: 'totalPrices',
     title: '总额',
     className: 'disableProp',
     slots: { default: 'totalPrices' },
