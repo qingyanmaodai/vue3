@@ -355,7 +355,7 @@
     (e: 'unAuditBatchEvent', row: any): void;
     (e: 'pushDownEvent', selectRecords: any): void;
     (e: 'createOrderEvent', selectRecords: any): void;
-    (e: 'queryOrderEvent', id: any): void;
+    (e: 'queryOrderEvent', row: any): void;
     (e: 'updownSearchEvent', row: any, choice: string): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
     (e: 'checkStockEvent', row: any): void;
@@ -420,14 +420,14 @@
   };
   //业务操作
   const OrderSelect = async (item) => {
-    let selectRecords = await getListData();
+    let selectRecords = await getDtData();
     if (selectRecords.length === 1) {
       switch (item.value) {
         case 'A':
           emit('createOrderEvent', selectRecords);
           break;
         case 'B':
-          emit('queryOrderEvent', selectRecords[0].id);
+          emit('queryOrderEvent', selectRecords[0]);
           break;
       }
     } else {

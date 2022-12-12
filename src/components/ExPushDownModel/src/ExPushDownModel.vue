@@ -55,6 +55,7 @@
   };
   const Submit = () => {
     emit('pushDownSelect', formState.value[currentIndex.value]);
+    close();
   };
 
   defineExpose({

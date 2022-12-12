@@ -265,7 +265,7 @@
   const pushDownSelect = async (pushDownParam: any) => {
     let res = await pushDown(
       {
-        params: selectDtData,
+        params: selectDtData.value,
       },
       pushDownParam.tarBillType,
     );
