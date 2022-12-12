@@ -385,8 +385,8 @@ export const exaSchemeColumns = [
 export const invCountGainColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -418,8 +418,8 @@ export const invCountGainColumns = [
 export const invCountLossColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -451,7 +451,7 @@ export const invCountLossColumns = [
 export const invCountSheetColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -478,8 +478,8 @@ export const invCountSheetColumns = [
 export const warPurOrdersColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '采购员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -519,8 +519,8 @@ export const warPurOrdersColumns = [
 export const warPurReturnColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '负责人', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -561,8 +561,8 @@ export const warPurReturnColumns = [
 export const warPurInputColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '仓管员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -603,8 +603,8 @@ export const warPurInputColumns = [
 export const warProOrderColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -661,8 +661,8 @@ export const warProOrderColumns = [
 export const warProInStockColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '仓管员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -702,7 +702,7 @@ export const warProInStockColumns = [
 export const warProReturnColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
   { field: 'empName', title: '退料员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -744,8 +744,8 @@ export const warProReturnColumns = [
 export const warProBomColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'proMoNumber', title: '生产订单编号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'proMoNumber', title: '生产订单编号', width: 220, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
@@ -775,8 +775,8 @@ export const warProBomColumns = [
 export const warProPicksColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '领料员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -806,8 +806,8 @@ export const warProPicksColumns = [
 export const warProFeedColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '领料员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
@@ -837,7 +837,7 @@ export const warProFeedColumns = [
 /*预用来源*/
 export const preUseColumns = [
   { type: 'seq', title: '行号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
   { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
   { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
   { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
@@ -846,7 +846,7 @@ export const preUseColumns = [
 /*库存明细*/
 export const stoSourceColumns = [
   { type: 'seq', title: '行号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
   { field: 'billType', title: '单据类型', slots: { default: 'billType' } },
   { field: 'tag', title: '业务操作', slots: { default: 'tag' } },
   { field: 'num', title: '操作数量' }, //出库数量 -1，入库数量 1
@@ -856,8 +856,8 @@ export const stoSourceColumns = [
 export const warSaleOrderColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '销售员', width: 120, sortable: true },
   { field: 'cusName', title: '客户', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
@@ -895,8 +895,8 @@ export const warSaleOrderColumns = [
 export const warSaleSendOutColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
-  { field: 'number', title: '单据编号', width: 250, slots: { default: 'number' }, sortable: true },
-  { field: 'srcBill', title: '来源单号', width: 250, sortable: true },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '销售员', width: 120, sortable: true },
   { field: 'cusName', title: '客户', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
