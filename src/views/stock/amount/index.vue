@@ -19,12 +19,12 @@
         @checkDetailEvent="checkDetailEvent"
       />
     </div>
+    <ExTableModal
+      ref="exTableModalRef"
+      :tableModalColumns="tableModalColumns"
+      :tableModalTitle="tableModalTitle"
+    />
   </div>
-  <ExTableModal
-    ref="exTableModalRef"
-    :tableModalColumns="tableModalColumns"
-    :tableModalTitle="tableModalTitle"
-  />
 </template>
 
 <script setup lang="ts" name="stock-amount-index">
