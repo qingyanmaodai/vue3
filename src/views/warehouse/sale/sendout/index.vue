@@ -4,19 +4,20 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="bsSaleOrder"
+        tableName="BsSaleOut"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
+        :isShowImport="false"
         :columns="warSaleSendOutColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="bsSaleOrder"
+        tableName="BsSaleOut"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -35,12 +36,12 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="bsSaleOrder"
+      tableName="BsSaleOut"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="bsSaleOrder"
+      tableName="BsSaleOut"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />
@@ -98,7 +99,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['bsSaleSendOut.update_time'],
+        descList: ['BsSaleOut.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,

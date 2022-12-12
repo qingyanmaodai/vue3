@@ -59,7 +59,7 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择采购员'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择销售员'"
                         label="销售员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
@@ -75,22 +75,22 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
+                    <a-form-item label="客户：" ref="customerId" name="customerId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.supplierName"
+                        :value="formState.customerName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
-                            'cusId',
-                            'cusName',
+                            'customerId',
+                            'customerName',
                           ])
                         "
-                        @clear="onClear(['cusId', 'cusName'])"
+                        @clear="onClear(['customerId', 'customerName'])"
                       />
                     </a-form-item>
                   </Col>
@@ -468,9 +468,9 @@
   //计算数量
   const getCountAmount = (row) => {
     if (row.num && row.price) {
-      row.totalPrice = row.num * row.price;
+      row.totalPrices = row.num * row.price;
     } else {
-      row.totalPrice = '';
+      row.totalPrices = '';
     }
     return row;
   };

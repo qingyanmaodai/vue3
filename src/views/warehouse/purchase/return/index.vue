@@ -11,6 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isShowImport="false"
         :columns="warPurReturnColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"

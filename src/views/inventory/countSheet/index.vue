@@ -11,6 +11,7 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isShowImport="false"
         :columns="invCountSheetColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"

@@ -27,6 +27,8 @@
             @resetEvent="resetTable"
           />
           <ExTable
+            :isPushDown="false"
+            :isRelatedShow="false"
             :columns="employeeColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"

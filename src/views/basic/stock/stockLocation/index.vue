@@ -11,6 +11,8 @@
         @resetEvent="resetTable"
       />
       <ExTable
+        :isPushDown="false"
+        :isRelatedShow="false"
         :columns="stockLocationColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"

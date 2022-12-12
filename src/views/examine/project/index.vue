@@ -27,6 +27,10 @@
             @resetEvent="resetTable"
           />
           <ExTable
+            :isPushDown="false"
+            :isRelatedShow="false"
+            :isShowImport="false"
+            :isShowExport="false"
             :columns="exaProjectColumns"
             :gridOptions="GridOptions"
             :importConfig="importConfig"
