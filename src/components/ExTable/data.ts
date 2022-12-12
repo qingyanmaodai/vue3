@@ -316,7 +316,7 @@ export const unitColumns = [
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
-//计量单位
+//库存数量
 export const StockAmountColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
@@ -335,7 +335,8 @@ export const StockAmountColumns = [
   { field: 'bdMaterial.createTime', title: '创建日期', sortable: true, width: 160 },
   { field: 'bdMaterial.updateTime', title: '更新日期', sortable: true, width: 160 },
   { field: 'stockNum', title: '库存数量', sortable: true, width: 120 },
-  { field: 'preUse', title: '即时库存', sortable: true, width: 120 },
+  { field: 'preUse', title: '预用数量', sortable: true, width: 120 },
+  { field: 'num', title: '可用数量', sortable: true, width: 120 },
   {
     field: 'operate',
     title: '操作',
