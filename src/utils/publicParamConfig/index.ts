@@ -321,6 +321,17 @@ export const config = {
       label: '其他',
     },
   ],
+  //补料原因
+  FEED_REASON: [
+    {
+      value: 'A',
+      label: '少领',
+    },
+    {
+      value: 'B',
+      label: '报废',
+    },
+  ],
   //单据类型
   NUMBER_REASON: [
     {

@@ -1451,7 +1451,7 @@ export const warProPicksOfDetailColumns = [
   {
     field: 'realNum',
     title: '已领数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },
@@ -1595,10 +1595,10 @@ export const warProFeedOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'reason',
-    title: '申请原因',
-    className: 'disableProp',
+    field: 'returnNum',
+    title: '报废数量',
     width: 150,
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     sortable: true,
   },
   {
@@ -1619,13 +1619,6 @@ export const warProFeedOfDetailColumns = [
   {
     field: 'pushNum',
     title: '已下推数量',
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
-  {
-    field: 'returnNum',
-    title: '已退货数量',
     width: 150,
     className: 'disableProp',
     sortable: true,

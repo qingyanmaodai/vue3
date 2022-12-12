@@ -420,25 +420,25 @@ export enum Url {
   PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
   DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
   UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
-  
+
   // 生产补料
-  AUDIT_PRODUCE_FEED = '/wms/BsProMoReissue/audit', //审核
-  BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
-  UN_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/un-audit', //反审核
-  UN_BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/batch-un-audit', //批量反审核
-  BATCH_DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/delete-with-detail-batch', //批量删除含详情信息
-  DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/delete-with-detail', //删除含详情信息
-  GET_PAGE_PRODUCE_FEED_LIST = '/wms/bs-pro-mo-pick/list', //分页查询--获取列表
-  GET_PRODUCE_FEED_DTO = '/wms/bs-pro-mo-pick/query-dto', //获取实体信息
-  GET_ONE_PRODUCE_FEED = '/wms/bs-pro-mo-pick/query-one', //查询单条
-  IMPORT_PRODUCE_FEED = 'http://192.168.200.136:9999/wms/bs-pro-mo-pick/import-list', //导入
-  IMPORT_MODEL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/import-model', //导入模板下载
-  EXPORT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/export-list', //导出
-  ADD_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/save-with-detail', //添加含详情信息
-  UPDATE_PRODUCE_FEED = '/wms/bs-pro-mo-pick/update', //编辑
-  PUSHDOWN_PRODUCE_FEED = '/wms/bs-pro-mo-pick/push/', //下推
-  DOWN_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-pick/down-search', //下查
-  UP_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-pick/up-search', //上查
+  AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/audit', //审核
+  BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_FEED_LIST = '/wms/bs-pro-mo-reissue/list', //分页查询--获取列表
+  GET_PRODUCE_FEED_DTO = '/wms/bs-pro-mo-reissue/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/query-one', //查询单条
+  IMPORT_PRODUCE_FEED = 'http://192.168.200.136:9999/wms/bs-pro-mo-reissue/import-list', //导入
+  IMPORT_MODEL_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/import-model', //导入模板下载
+  EXPORT_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/export-list', //导出
+  ADD_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/update', //编辑
+  PUSHDOWN_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/push/', //下推
+  DOWN_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/down-search', //下查
+  UP_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/up-search', //上查
 
   // 销售订单
   AUDIT_SALE_ORDER = '/wms/saleOrder/audit', //审核
