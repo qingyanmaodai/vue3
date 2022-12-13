@@ -194,6 +194,7 @@
     LayoutHeader,
     Row,
     DatePicker,
+    Select,
     TabPane,
     Tabs,
   } from 'ant-design-vue';
@@ -268,7 +269,7 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    // num: [{ required: true, message: '请输入申请数量' }],
+    num: [{ required: true, message: '请输入申请数量' }],
     realNum: [{ required: true, message: '请输入已领数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];

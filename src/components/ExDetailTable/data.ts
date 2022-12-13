@@ -1590,12 +1590,12 @@ export const warProFeedOfDetailColumns = [
   {
     field: 'num',
     title: '申请数量',
-    className: 'disableProp',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },
   {
-    field: 'returnNum',
+    field: 'scrapNum',
     title: '报废数量',
     width: 150,
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
