@@ -18,8 +18,6 @@
       <a-pane :size="100 - paneSize">
         <div style="background-color: #fff; height: 100%; padding: 0 6px">
           <Search
-            :isPushDown="false"
-            :isRelatedShow="false"
             :control="moreSearchData"
             ref="searchRef"
             tableName="BdSupplier"
@@ -29,6 +27,8 @@
             @resetEvent="resetTable"
           />
           <ExTable
+            :isPushDown="false"
+            :isRelatedShow="false"
             :columns="supplierColumns"
             :gridOptions="GridOptions"
             :tableData="tableData"

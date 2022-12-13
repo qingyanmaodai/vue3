@@ -23,6 +23,7 @@
       ref="exTableModalRef"
       :tableModalColumns="tableModalColumns"
       :tableModalTitle="tableModalTitle"
+      :tableModalParams="tableModalParams"
     />
   </div>
 </template>
@@ -31,7 +32,7 @@
   import { ExTable } from '/@/components/ExTable';
   import { StockAmountSearch } from '/@/components/Search';
   import { ExTableModal } from '/@/components/ExTableModal';
-  import { onMounted, reactive, ref, provide, onActivated } from 'vue';
+  import { onMounted, reactive, ref, onActivated } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import {
     notToolInGridOptions,
@@ -103,8 +104,7 @@
     stockAmountSearchRef.value.setFormState(searchFormState);
     getList(1);
   };
-  let getModalParams = ref<SearchParams[]>([]);
-  provide('getModalParams', getModalParams);
+  let tableModalParams = ref<SearchParams[]>([]);
   const getParamsData = (row) => {
     let getParams: SearchParams[] = [];
     getParams.push({
@@ -157,11 +157,11 @@
         val: row.locationId,
       });
     }
-    getModalParams.value = cloneDeep(getParams);
+    tableModalParams.value = cloneDeep(getParams);
   };
   //查看明细来源
   const checkDetailEvent = async (row: any, type: string) => {
-    getParamsData(row);
+    await getParamsData(row);
     let listUrl;
     switch (type) {
       case 'PreUse':
