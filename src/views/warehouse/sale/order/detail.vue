@@ -75,19 +75,19 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="客户：" ref="customerId" name="customerId" class="item">
+                    <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.customerName"
+                        :value="formState.cusName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
-                            'customerId',
-                            'customerName',
+                            'cusId',
+                            'cusName',
                           ])
                         "
                         @clear="onClear(['customerId', 'customerName'])"
@@ -468,9 +468,9 @@
   //计算数量
   const getCountAmount = (row) => {
     if (row.num && row.price) {
-      row.totalPrices = row.num * row.price;
+      row.totalPrice = row.num * row.price;
     } else {
-      row.totalPrices = '';
+      row.totalPrice = '';
     }
     return row;
   };

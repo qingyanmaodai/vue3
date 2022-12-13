@@ -388,9 +388,9 @@
   //计算数量
   const getCountAmount = (row) => {
     if (row.num && row.prices !== null) {
-      row.totalPrices = row.num * row.prices;
+      row.totalPrice = row.num * row.prices;
     } else {
-      row.totalPrices = '';
+      row.totalPrice = '';
     }
     return row;
   };

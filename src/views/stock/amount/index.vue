@@ -32,7 +32,7 @@
   import { ExTable } from '/@/components/ExTable';
   import { StockAmountSearch } from '/@/components/Search';
   import { ExTableModal } from '/@/components/ExTableModal';
-  import { onMounted, reactive, ref, provide, onActivated } from 'vue';
+  import { onMounted, reactive, ref, onActivated } from 'vue';
   import { cloneDeep } from 'lodash-es';
   import {
     notToolInGridOptions,
@@ -155,7 +155,7 @@
   };
   //查看明细来源
   const checkDetailEvent = async (row: any, type: string) => {
-    getParamsData(row);
+    await getParamsData(row);
     let listUrl;
     switch (type) {
       case 'PreUse':

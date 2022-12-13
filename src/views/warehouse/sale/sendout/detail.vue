@@ -55,12 +55,12 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="销售员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="仓管员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择采购员'"
-                        label="销售员"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓管员'"
+                        label="仓管员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -187,7 +187,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-sale-bills-detail">
+<script lang="ts" setup name="warehouse-sale-sendout-detail">
   import {
     detailOfExaGridOptions,
     warSaleSendOutOfDetailColumns,
@@ -468,9 +468,9 @@
   //计算数量
   const getCountAmount = (row) => {
     if (row.num && row.prices) {
-      row.totalPrices = row.num * row.prices;
+      row.totalPrice = row.num * row.prices;
     } else {
-      row.totalPrices = '';
+      row.totalPrice = '';
     }
     return row;
   };

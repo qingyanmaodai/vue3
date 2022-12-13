@@ -226,8 +226,6 @@ export enum Url {
   BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-audit', //批量审核
   UN_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/un-audit', //反审核
   UN_BATCH_AUDIT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-un-audit', //批量反审核
-  DELETE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete', //删除
-  BATCH_DELETE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/delete-with-detail', //删除含详情信息
   GET_PAGE_INV_COUNT_GAIN_LIST = '/wms/bd-inventory-count-gain/list', //分页查询--获取列表
@@ -236,7 +234,6 @@ export enum Url {
   IMPORT_INV_COUNT_GAIN = 'http://192.168.200.136:9999/wms/bd-inventory-count-gain/import-list', //导入
   IMPORT_MODEL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/import-model', //导入模板下载
   EXPORT_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/export-list', //导出
-  ADD_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/update', //编辑
   PUSHDOWN_INV_COUNT_GAIN = '/wms/bd-inventory-count-gain/push/', //下推
@@ -248,8 +245,6 @@ export enum Url {
   BATCH_AUDIT_INV_COUNT = '/wms/bd-inventory-count/batch-audit', //批量审核
   UN_AUDIT_INV_COUNT = '/wms/bd-inventory-count/un-audit', //反审核
   UN_BATCH_AUDIT_INV_COUNT = '/wms/bd-inventory-count/batch-un-audit', //批量反审核
-  DELETE_INV_COUNT = '/wms/bd-inventory-count/delete', //删除
-  BATCH_DELETE_INV_COUNT = '/wms/bd-inventory-count/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/delete-with-detail', //删除含详情信息
   GET_PAGE_INV_COUNT_LIST = '/wms/bd-inventory-count/list', //分页查询--获取列表
@@ -258,7 +253,6 @@ export enum Url {
   IMPORT_INV_COUNT = 'http://192.168.200.136:9999/wms/bd-inventory-count/import-list', //导入
   IMPORT_MODEL_INV_COUNT = '/wms/bd-inventory-count/import-model', //导入模板下载
   EXPORT_INV_COUNT = '/wms/bd-inventory-count/export-list', //导出
-  ADD_INV_COUNT = '/wms/bd-inventory-count/save', //添加
   ADD_WITH_DETAIL_INV_COUNT = '/wms/bd-inventory-count/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT = '/wms/bd-inventory-count/update', //编辑
   PUSHDOWN_INV_COUNT = '/wms/bd-inventory-count/push/', //下推
@@ -272,8 +266,6 @@ export enum Url {
   BATCH_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-audit', //批量审核
   UN_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/un-audit', //反审核
   UN_BATCH_AUDIT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-un-audit', //批量反审核
-  // DELETE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete', //删除
-  // BATCH_DELETE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/delete-with-detail', //删除含详情信息
   GET_PAGE_INV_COUNT_LOSS_LIST = '/wms/bd-inventory-count-loss/list', //分页查询--获取列表
@@ -282,7 +274,6 @@ export enum Url {
   IMPORT_INV_COUNT_LOSS = 'http://192.168.200.136:9999/wms/bd-inventory-count-loss/import-list', //导入
   IMPORT_MODEL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/import-model', //导入模板下载
   EXPORT_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/export-list', //导出
-  // ADD_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save', //添加
   ADD_WITH_DETAIL_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/save-with-detail', //添加含详情信息
   UPDATE_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/update', //编辑
   PUSHDOWN_INV_COUNT_LOSS = '/wms/bd-inventory-count-loss/push/', //下推
@@ -300,8 +291,6 @@ export enum Url {
   BATCH_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/batch-audit', //批量审核
   UN_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/un-audit', //反审核
   UN_BATCH_AUDIT_PURCHASE_ORDER = '/wms/purchaseOrder/batch-un-audit', //批量反审核
-  DELETE_PURCHASE_ORDER = '/wms/purchaseOrder/delete', //删除
-  BATCH_DELETE_PURCHASE_ORDER = '/wms/purchaseOrder/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/delete-with-detail', //删除含详情信息
   GET_PAGE_PURCHASE_ORDER_LIST = '/wms/purchaseOrder/list', //分页查询--获取列表
@@ -310,7 +299,6 @@ export enum Url {
   IMPORT_PURCHASE_ORDER = 'http://192.168.200.136:9999/wms/purchaseOrder/import-list', //导入
   IMPORT_MODEL_PURCHASE_ORDER = '/wms/purchaseOrder/import-model', //导入模板下载
   EXPORT_PURCHASE_ORDER = '/wms/purchaseOrder/export-list', //导出
-  ADD_PURCHASE_ORDER = '/wms/purchaseOrder/save', //添加
   ADD_WITH_DETAIL_PURCHASE_ORDER = '/wms/purchaseOrder/save-with-detail', //添加含详情信息
   UPDATE_PURCHASE_ORDER = '/wms/purchaseOrder/update', //编辑
   PUSHDOWN_PURCHASE_ORDER = '/wms/purchaseOrder/push/', //下推
@@ -322,8 +310,6 @@ export enum Url {
   BATCH_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-audit', //批量审核
   UN_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/un-audit', //反审核
   UN_BATCH_AUDIT_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-un-audit', //批量反审核
-  DELETE_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete', //删除
-  BATCH_DELETE_PURCHASE_INSTOCK = '/wms/purchaseInStock/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/delete-with-detail', //删除含详情信息
   GET_PAGE_PURCHASE_INSTOCK_LIST = '/wms/purchaseInStock/list', //分页查询--获取列表
@@ -332,7 +318,6 @@ export enum Url {
   IMPORT_PURCHASE_INSTOCK = 'http://192.168.200.136:9999/wms/purchaseInStock/import-list', //导入
   IMPORT_MODEL_PURCHASE_INSTOCK = '/wms/purchaseInStock/import-model', //导入模板下载
   EXPORT_PURCHASE_INSTOCK = '/wms/purchaseInStock/export-list', //导出
-  ADD_PURCHASE_INSTOCK = '/wms/purchaseInStock/save', //添加
   ADD_WITH_DETAIL_PURCHASE_INSTOCK = '/wms/purchaseInStock/save-with-detail', //添加含详情信息
   UPDATE_PURCHASE_INSTOCK = '/wms/purchaseInStock/update', //编辑
   PUSHDOWN_PURCHASE_INSTOCK = '/wms/purchaseInStock/push/', //下推
@@ -344,8 +329,6 @@ export enum Url {
   BATCH_AUDIT_PURCHASE_RETURN = '/wms/purchaseReturn/batch-audit', //批量审核
   UN_AUDIT_PURCHASE_RETURN = '/wms/purchaseReturn/un-audit', //反审核
   UN_BATCH_AUDIT_PURCHASE_RETURN = '/wms/purchaseReturn/batch-un-audit', //批量反审核
-  DELETE_PURCHASE_RETURN = '/wms/purchaseReturn/delete', //删除
-  BATCH_DELETE_PURCHASE_RETURN = '/wms/purchaseReturn/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PURCHASE_RETURN = '/wms/purchaseReturn/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PURCHASE_RETURN = '/wms/purchaseReturn/delete-with-detail', //删除含详情信息
   GET_PAGE_PURCHASE_RETURN_LIST = '/wms/purchaseReturn/list', //分页查询--获取列表
@@ -354,7 +337,6 @@ export enum Url {
   IMPORT_PURCHASE_RETURN = 'http://192.168.200.136:9999/wms/purchaseReturn/import-list', //导入
   IMPORT_MODEL_PURCHASE_RETURN = '/wms/purchaseReturn/import-model', //导入模板下载
   EXPORT_PURCHASE_RETURN = '/wms/purchaseReturn/export-list', //导出
-  ADD_PURCHASE_RETURN = '/wms/purchaseReturn/save', //添加
   ADD_WITH_DETAIL_PURCHASE_RETURN = '/wms/purchaseReturn/save-with-detail', //添加含详情信息
   UPDATE_PURCHASE_RETURN = '/wms/purchaseReturn/update', //编辑
   PUSHDOWN_PURCHASE_RETURN = '/wms/purchaseReturn/push/', //下推
@@ -366,8 +348,6 @@ export enum Url {
   BATCH_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-audit', //批量审核
   UN_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/un-audit', //反审核
   UN_BATCH_AUDIT_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-un-audit', //批量反审核
-  DELETE_PRODUCE_ORDER = '/wms/bs-pro-mo/delete', //删除
-  BATCH_DELETE_PRODUCE_ORDER = '/wms/bs-pro-mo/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/delete-with-detail', //删除含详情信息
   GET_PAGE_PRODUCE_ORDER_LIST = '/wms/bs-pro-mo/list', //分页查询--获取列表
@@ -376,7 +356,6 @@ export enum Url {
   IMPORT_PRODUCE_ORDER = 'http://192.168.200.136:9999/wms/bs-pro-mo/import-list', //导入
   IMPORT_MODEL_PRODUCE_ORDER = '/wms/bs-pro-mo/import-model', //导入模板下载
   EXPORT_PRODUCE_ORDER = '/wms/bs-pro-mo/export-list', //导出
-  ADD_PRODUCE_ORDER = '/wms/bs-pro-mo/save', //添加
   ADD_WITH_DETAIL_PRODUCE_ORDER = '/wms/bs-pro-mo/save-with-detail', //添加含详情信息
   UPDATE_PRODUCE_ORDER = '/wms/bs-pro-mo/update', //编辑
   PUSHDOWN_PRODUCE_ORDER = '/wms/bs-pro-mo/push/', //下推
@@ -390,8 +369,6 @@ export enum Url {
   BATCH_AUDIT_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/batch-audit', //批量审核
   UN_AUDIT_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/un-audit', //反审核
   UN_BATCH_AUDIT_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/batch-un-audit', //批量反审核
-  DELETE_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/delete', //删除
-  BATCH_DELETE_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/delete-with-detail', //删除含详情信息
   GET_PAGE_PRODUCE_INSTOCK_LIST = '/wms/bs-pro-mo-in-stock/list', //分页查询--获取列表
@@ -400,7 +377,6 @@ export enum Url {
   IMPORT_PRODUCE_INSTOCK = 'http://192.168.200.136:9999/wms/bs-pro-mo-in-stock/import-list', //导入
   IMPORT_MODEL_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/import-model', //导入模板下载
   EXPORT_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/export-list', //导出
-  ADD_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/save', //添加
   ADD_WITH_DETAIL_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/save-with-detail', //添加含详情信息
   UPDATE_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/update', //编辑
   PUSHDOWN_PRODUCE_INSTOCK = '/wms/bs-pro-mo-in-stock/push/', //下推
@@ -412,8 +388,6 @@ export enum Url {
   BATCH_AUDIT_PRODUCE_BOM = '/wms/bs-pro-mo-order/batch-audit', //批量审核
   UN_AUDIT_PRODUCE_BOM = '/wms/bs-pro-mo-order/un-audit', //反审核
   UN_BATCH_AUDIT_PRODUCE_BOM = '/wms/bs-pro-mo-order/batch-un-audit', //批量反审核
-  DELETE_PRODUCE_BOM = '/wms/bs-pro-mo-order/delete', //删除
-  BATCH_DELETE_PRODUCE_BOM = '/wms/bs-pro-mo-order/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PRODUCE_BOM = '/wms/bs-pro-mo-order/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PRODUCE_BOM = '/wms/bs-pro-mo-order/delete-with-detail', //删除含详情信息
   GET_PAGE_PRODUCE_BOM_LIST = '/wms/bs-pro-mo-order/list', //分页查询--获取列表
@@ -422,7 +396,6 @@ export enum Url {
   IMPORT_PRODUCE_BOM = 'http://192.168.200.136:9999/wms/bs-pro-mo-order/import-list', //导入
   IMPORT_MODEL_PRODUCE_BOM = '/wms/bs-pro-mo-order/import-model', //导入模板下载
   EXPORT_PRODUCE_BOM = '/wms/bs-pro-mo-order/export-list', //导出
-  ADD_PRODUCE_BOM = '/wms/bs-pro-mo-order/save', //添加
   ADD_WITH_DETAIL_PRODUCE_BOM = '/wms/bs-pro-mo-order/save-with-detail', //添加含详情信息
   UPDATE_PRODUCE_BOM = '/wms/bs-pro-mo-order/update', //编辑
   PUSHDOWN_PRODUCE_BOM = '/wms/bs-pro-mo-order/push/', //下推
@@ -434,8 +407,6 @@ export enum Url {
   BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
   UN_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/un-audit', //反审核
   UN_BATCH_AUDIT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-un-audit', //批量反审核
-  DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete', //删除
-  BATCH_DELETE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/delete-with-detail', //删除含详情信息
   GET_PAGE_PRODUCE_PICK_LIST = '/wms/bs-pro-mo-pick/list', //分页查询--获取列表
@@ -444,20 +415,36 @@ export enum Url {
   IMPORT_PRODUCE_PICK = 'http://192.168.200.136:9999/wms/bs-pro-mo-pick/import-list', //导入
   IMPORT_MODEL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/import-model', //导入模板下载
   EXPORT_PRODUCE_PICK = '/wms/bs-pro-mo-pick/export-list', //导出
-  ADD_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save', //添加
   ADD_WITH_DETAIL_PRODUCE_PICK = '/wms/bs-pro-mo-pick/save-with-detail', //添加含详情信息
   UPDATE_PRODUCE_PICK = '/wms/bs-pro-mo-pick/update', //编辑
   PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
   DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
   UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
+  
+  // 生产补料
+  AUDIT_PRODUCE_FEED = '/wms/BsProMoReissue/audit', //审核
+  BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_FEED_LIST = '/wms/bs-pro-mo-pick/list', //分页查询--获取列表
+  GET_PRODUCE_FEED_DTO = '/wms/bs-pro-mo-pick/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_FEED = '/wms/bs-pro-mo-pick/query-one', //查询单条
+  IMPORT_PRODUCE_FEED = 'http://192.168.200.136:9999/wms/bs-pro-mo-pick/import-list', //导入
+  IMPORT_MODEL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/import-model', //导入模板下载
+  EXPORT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/export-list', //导出
+  ADD_WITH_DETAIL_PRODUCE_FEED = '/wms/bs-pro-mo-pick/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_FEED = '/wms/bs-pro-mo-pick/update', //编辑
+  PUSHDOWN_PRODUCE_FEED = '/wms/bs-pro-mo-pick/push/', //下推
+  DOWN_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-pick/down-search', //下查
+  UP_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-pick/up-search', //上查
 
   // 销售订单
   AUDIT_SALE_ORDER = '/wms/saleOrder/audit', //审核
   BATCH_AUDIT_SALE_ORDER = '/wms/saleOrder/batch-audit', //批量审核
   UN_AUDIT_SALE_ORDER = '/wms/saleOrder/un-audit', //反审核
   UN_BATCH_AUDIT_SALE_ORDER = '/wms/saleOrder/batch-un-audit', //批量反审核
-  DELETE_SALE_ORDER = '/wms/saleOrder/delete', //删除
-  BATCH_DELETE_SALE_ORDER = '/wms/saleOrder/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/delete-with-detail', //删除含详情信息
   GET_PAGE_SALE_ORDER_LIST = '/wms/saleOrder/list', //分页查询--获取列表
@@ -466,7 +453,6 @@ export enum Url {
   IMPORT_SALE_ORDER = 'http://192.168.200.136:9999/wms/saleOrder/import-list', //导入
   IMPORT_MODEL_SALE_ORDER = '/wms/saleOrder/import-model', //导入模板下载
   EXPORT_SALE_ORDER = '/wms/saleOrder/export-list', //导出
-  ADD_SALE_ORDER = '/wms/saleOrder/save', //添加
   ADD_WITH_DETAIL_SALE_ORDER = '/wms/saleOrder/save-with-detail', //添加含详情信息
   UPDATE_SALE_ORDER = '/wms/saleOrder/update', //编辑
   PUSHDOWN_SALE_ORDER = '/wms/saleOrder/push/', //下推
@@ -478,8 +464,6 @@ export enum Url {
   BATCH_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/batch-audit', //批量审核
   UN_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/un-audit', //反审核
   UN_BATCH_AUDIT_SALE_SENDOUT = '/wms/saleSendOut/batch-un-audit', //批量反审核
-  DELETE_SALE_SENDOUT = '/wms/saleSendOut/delete', //删除
-  BATCH_DELETE_SALE_SENDOUT = '/wms/saleSendOut/batch-delete', //批量删除
   BATCH_DELETE_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/delete-with-detail-batch', //批量删除含详情信息
   DELETE_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/delete-with-detail', //删除含详情信息
   GET_PAGE_SALE_SENDOUT_LIST = '/wms/saleSendOut/list', //分页查询--获取列表
@@ -488,7 +472,6 @@ export enum Url {
   IMPORT_SALE_SENDOUT = 'http://192.168.200.136:9999/wms/saleSendOut/import-list', //导入
   IMPORT_MODEL_SALE_SENDOUT = '/wms/saleSendOut/import-model', //导入模板下载
   EXPORT_SALE_SENDOUT = '/wms/saleSendOut/export-list', //导出
-  ADD_SALE_SENDOUT = '/wms/saleSendOut/save', //添加
   ADD_WITH_DETAIL_SALE_SENDOUT = '/wms/saleSendOut/save-with-detail', //添加含详情信息
   UPDATE_SALE_SENDOUT = '/wms/saleSendOut/update', //编辑
   PUSHDOWN_SALE_SENDOUT = '/wms/saleSendOut/push/', //下推

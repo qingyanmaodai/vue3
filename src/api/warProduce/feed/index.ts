@@ -65,7 +65,7 @@ export interface proPicksDetailEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_PAGE_PRODUCE_PICK_LIST,
+      url: Url.GET_PAGE_PRODUCE_FEED_LIST,
       data: json,
     },
     {
@@ -80,7 +80,7 @@ export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessag
 export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<ControlSet[]>(
     {
-      url: Url.GET_PRODUCE_PICK_DTO,
+      url: Url.GET_PRODUCE_FEED_DTO,
       data: json,
     },
     {
@@ -95,7 +95,7 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 export function add(json: RequestData<producePicksEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<producePicksEntity>(
     {
-      url: Url.ADD_WITH_DETAIL_PRODUCE_PICK,
+      url: Url.ADD_WITH_DETAIL_PRODUCE_FEED,
       data: json,
     },
     {
@@ -110,7 +110,7 @@ export function add(json: RequestData<producePicksEntity>, mode: ErrorMessageMod
 export function update(json: RequestData<producePicksEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<producePicksEntity>(
     {
-      url: Url.UPDATE_PRODUCE_PICK,
+      url: Url.UPDATE_PRODUCE_FEED,
       data: json,
     },
     {
@@ -125,7 +125,7 @@ export function update(json: RequestData<producePicksEntity>, mode: ErrorMessage
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<producePicksEntity>(
     {
-      url: Url.AUDIT_PRODUCE_PICK,
+      url: Url.AUDIT_PRODUCE_FEED,
       data: json,
     },
     {
@@ -140,7 +140,7 @@ export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'messa
 export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_AUDIT_PRODUCE_PICK,
+      url: Url.BATCH_AUDIT_PRODUCE_FEED,
       data: json,
     },
     {
@@ -159,7 +159,7 @@ export function pushDown(
 ) {
   return defHttp.post<any>(
     {
-      url: Url.PUSHDOWN_PRODUCE_PICK + PushDownTableName,
+      url: Url.PUSHDOWN_PRODUCE_FEED + PushDownTableName,
       data: json,
     },
     {
@@ -174,7 +174,7 @@ export function pushDown(
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_ONE_PRODUCE_PICK,
+      url: Url.GET_ONE_PRODUCE_FEED,
       data: json,
     },
     {
@@ -189,7 +189,7 @@ export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = '
 export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DELETE_WITH_DETAIL_PRODUCE_PICK,
+      url: Url.DELETE_WITH_DETAIL_PRODUCE_FEED,
       data: json,
     },
     {
@@ -204,7 +204,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DELETE_WITH_DETAIL_PRODUCE_PICK,
+      url: Url.BATCH_DELETE_WITH_DETAIL_PRODUCE_FEED,
       data: json,
     },
     {
@@ -219,7 +219,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<producePicksEntity>(
     {
-      url: Url.UN_AUDIT_PRODUCE_PICK,
+      url: Url.UN_AUDIT_PRODUCE_FEED,
       data: json,
     },
     {
@@ -234,7 +234,7 @@ export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'mes
 export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UN_BATCH_AUDIT_PRODUCE_PICK,
+      url: Url.UN_BATCH_AUDIT_PRODUCE_FEED,
       data: json,
     },
     {
@@ -249,7 +249,7 @@ export function unAuditBatch(json: RequestData<Array<string>>, mode: ErrorMessag
 export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.EXPORT_PRODUCE_PICK,
+      url: Url.EXPORT_PRODUCE_FEED,
       data: json,
       responseType: 'blob',
     },
@@ -265,7 +265,7 @@ export function exportExcel(json: RequestData<any>, mode: ErrorMessageMode = 'me
 export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.IMPORT_MODEL_PRODUCE_PICK,
+      url: Url.IMPORT_MODEL_PRODUCE_FEED,
       data: json,
       responseType: 'blob',
     },
@@ -282,7 +282,7 @@ export function importFile(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.DOWN_SEARCH_PRODUCE_PICK,
+      url: Url.DOWN_SEARCH_PRODUCE_FEED,
       data: json,
     },
     {
@@ -297,7 +297,7 @@ export function downSearch(json: RequestData<any>, mode: ErrorMessageMode = 'mes
 export function upSearch(json: RequestData<any>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.UP_SEARCH_PRODUCE_PICK,
+      url: Url.UP_SEARCH_PRODUCE_FEED,
       data: json,
     },
     {
