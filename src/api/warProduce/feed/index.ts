@@ -21,7 +21,7 @@ export interface produceFeedEntity extends PublicModel {
   bsDate?: string | Moment;
   empId?: string;
   empName?: string;
-  reason?: string;
+  reissueCause?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
   dtData?: proFeedDetailEntity[];
