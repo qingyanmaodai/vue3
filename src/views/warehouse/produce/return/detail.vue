@@ -92,8 +92,8 @@
                         allowClear
                         v-model:value="formState.reason"
                         class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
-                        :options="config.RETURN_REASON"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退料原因'"
+                        :options="config.PRO_RETURN_REASON"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -205,7 +205,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
+  import { add, audit, unAudit, getOneById, produceReturnEntity } from '/@/api/warProduce/return';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -243,7 +243,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: produceOrderEntity = {
+  const formData: produceReturnEntity = {
     id: undefined,
     number: '',
     way: 'A',

@@ -321,6 +321,25 @@ export const config = {
       label: '其他',
     },
   ],
+  //退料原因
+  PRO_RETURN_REASON: [
+    {
+      value: 'A',
+      label: '良品退料',
+    },
+    {
+      value: 'B',
+      label: '来料不良退料',
+    },
+    {
+      value: 'C',
+      label: '作业不良退料',
+    },
+    {
+      value: 'D',
+      label: '其他',
+    },
+  ],
   //补料原因
   FEED_REASON: [
     {
@@ -399,6 +418,10 @@ export const config = {
     {
       value: 'BsProMoPick',
       label: '生产领料',
+    },
+    {
+      value: 'BsProMoReissue',
+      label: '生产补料',
     },
     {
       value: 'BsProMoReturn',

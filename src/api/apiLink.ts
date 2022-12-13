@@ -440,6 +440,25 @@ export enum Url {
   DOWN_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/down-search', //下查
   UP_SEARCH_PRODUCE_FEED = '/wms/bs-pro-mo-reissue/up-search', //上查
 
+  // 生产退料
+  AUDIT_PRODUCE_RETURN = '/wms/bs-pro-mo-return/audit', //审核
+  BATCH_AUDIT_PRODUCE_RETURN = '/wms/bs-pro-mo-return/batch-audit', //批量审核
+  UN_AUDIT_PRODUCE_RETURN = '/wms/bs-pro-mo-return/un-audit', //反审核
+  UN_BATCH_AUDIT_PRODUCE_RETURN = '/wms/bs-pro-mo-return/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_PRODUCE_RETURN = '/wms/bs-pro-mo-return/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_PRODUCE_RETURN = '/wms/bs-pro-mo-return/delete-with-detail', //删除含详情信息
+  GET_PAGE_PRODUCE_RETURN_LIST = '/wms/bs-pro-mo-return/list', //分页查询--获取列表
+  GET_PRODUCE_RETURN_DTO = '/wms/bs-pro-mo-return/query-dto', //获取实体信息
+  GET_ONE_PRODUCE_RETURN = '/wms/bs-pro-mo-return/query-one', //查询单条
+  IMPORT_PRODUCE_RETURN = 'http://192.168.200.136:9999/wms/bs-pro-mo-return/import-list', //导入
+  IMPORT_MODEL_PRODUCE_RETURN = '/wms/bs-pro-mo-return/import-model', //导入模板下载
+  EXPORT_PRODUCE_RETURN = '/wms/bs-pro-mo-return/export-list', //导出
+  ADD_WITH_DETAIL_PRODUCE_RETURN = '/wms/bs-pro-mo-return/save-with-detail', //添加含详情信息
+  UPDATE_PRODUCE_RETURN = '/wms/bs-pro-mo-return/update', //编辑
+  PUSHDOWN_PRODUCE_RETURN = '/wms/bs-pro-mo-return/push/', //下推
+  DOWN_SEARCH_PRODUCE_RETURN = '/wms/bs-pro-mo-return/down-search', //下查
+  UP_SEARCH_PRODUCE_RETURN = '/wms/bs-pro-mo-return/up-search', //上查
+
   // 销售订单
   AUDIT_SALE_ORDER = '/wms/saleOrder/audit', //审核
   BATCH_AUDIT_SALE_ORDER = '/wms/saleOrder/batch-audit', //批量审核

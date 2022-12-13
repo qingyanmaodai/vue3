@@ -1232,8 +1232,15 @@ export const warProReturnOfDetailColumns = [
     sortable: true,
   },
   {
+    field: 'num1',
+    title: '申请数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    width: 150,
+    sortable: true,
+  },
+  {
     field: 'num',
-    title: '退料数量',
+    title: '已退数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
