@@ -21,7 +21,7 @@ export interface produceReturnEntity extends PublicModel {
   bsDate?: string | Moment;
   empId?: string;
   empName?: string;
-  reissueCause?: string;
+  returnCause?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
   dtData?: proReturnDetailEntity[];

@@ -804,9 +804,10 @@ export const warProReturnColumns = [
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '退料日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
-  { field: 'reason', title: '退料原因', width: 120, sortable: true },
-  { field: 'num1', title: '申请数量', width: 120, sortable: true },
-  { field: 'num', title: '已退数量', width: 120, sortable: true },
+  { field: 'returnCause', title: '退料原因', width: 120, sortable: true },
+  { field: 'num', title: '可退数量', width: 120, sortable: true },
+  { field: 'realNum', title: '实退数量', width: 120, sortable: true },
+  // { field: 'needNum', title: '待退数量', width: 120, sortable: true },
   {
     field: 'pushNum',
     title: '已下推数量',
