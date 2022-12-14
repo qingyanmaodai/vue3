@@ -62,11 +62,11 @@
                   <Col :span="8">
                     <a-form-item
                       label="产品编号："
-                      ref="proMoStatus"
-                      name="proMoStatus"
+                      ref="moMatNumber"
+                      name="moMatNumber"
                       class="item"
                     >
-                      <Input class="input" v-model:value="formState.matNumber" disabled />
+                      <Input class="input" v-model:value="formState.moMatNumber" disabled />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
@@ -75,12 +75,7 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item
-                      label="生产工单行号："
-                      ref="proMoStatus"
-                      name="proMoStatus"
-                      class="item"
-                    >
+                    <a-form-item label="生产工单行号：" ref="moSeq" name="moSeq" class="item">
                       <Input class="input" v-model:value="formState.moSeq" disabled />
                     </a-form-item>
                   </Col>

@@ -22,6 +22,7 @@ export interface produceOrderEntity extends PublicModel {
   empId?: string;
   empName?: string;
   reason?: string;
+  proMoStatus?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
   dtData?: proOrderDetailEntity[];

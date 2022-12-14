@@ -38,7 +38,7 @@ export interface produceBomEntity extends PublicModel {
   tenantId?: string;
   moId?: number;
   proMoNumber?: string;
-  matNumber?: string;
+  moMatNumber?: string;
   proMoNum?: string;
   moSeq?: number;
 }

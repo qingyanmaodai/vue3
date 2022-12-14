@@ -63,6 +63,11 @@ export const config = {
     },
   ],
   //  生产业务状态
+  PRODUCT_STATUS1: {
+    A: '未进行',
+    B: '进行中',
+    C: '已完成',
+  },
   PRODUCT_STATUS: [
     {
       value: 'A',
