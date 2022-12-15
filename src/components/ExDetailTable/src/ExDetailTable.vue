@@ -84,8 +84,8 @@
     <template #loss="{ row }">
       <span>{{ row.loss }}</span>
     </template>
-    <template #totalPrices="{ row }">
-      <span>{{ row.totalPrices }}</span>
+    <template #totalPrice="{ row }">
+      <span>{{ row.totalPrice }}</span>
     </template>
     <template #needNum="{ row }">
       <span>{{ row.needNum }}</span>

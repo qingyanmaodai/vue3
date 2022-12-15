@@ -159,7 +159,7 @@
           <ExDetailTable
             :columns="warProReturnOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
@@ -268,18 +268,14 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-  const stock = 'bdStock.name';
-  const compartment = 'bdStockCompartment.name';
-  const location = 'bdStockLocation.name';
-
-  const formRules = reactive({
-    realNum: [{ required: true, message: '请输入实退数量' }],
+  const formRules = reactive({});
+  const formDataRules = reactive({
+    realNum: [{ required: true, message: '请输入应退数量' }],
+    'bdMaterial.number':[{ required: true, message: '请选择物料信息' }],
+    'bdStock.name':[{ required: true, message: '请选择仓库' }],
+    'bdStockCompartment.name':[{ required: requiredCompartment, message: '请选择分仓' }],
+    'bdStockLocation.name':[{ required: requiredLocation, message: '请选择仓位' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
-  formRules[stock] = [{ required: true, message: '请选择仓库' }];
-  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
-  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {

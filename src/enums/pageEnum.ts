@@ -57,4 +57,8 @@ export enum PageEnum {
   WAR_SALE_ORDER_DETAIL = '/warehouse/sale/order/detail',
   //销售发货详情页
   WAR_SALE_SENDOUT_DETAIL = '/warehouse/sale/sendout/detail',
+  //销售退货详情页
+  WAR_SALE_RETURN_DETAIL = '/warehouse/sale/return/detail',
+  //销售退货通知详情页
+  WAR_SALE_NOTICE_DETAIL = '/warehouse/sale/notice/detail',
 }
