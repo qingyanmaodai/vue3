@@ -55,11 +55,11 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="退料员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="仓管员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择计划员'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓管员'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
@@ -75,14 +75,22 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
-                      <a-date-picker
-                        :showToday="false"
-                        class="select"
-                        valueFormat="YYYY-MM-DD HH:mm:ss"
-                        format="YYYY-MM-DD"
-                        v-model:value="formState.bsDate"
+                    <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
+                      <ExInput
+                        autocomplete="off"
+                        class="input"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
+                        label="客户"
+                        :show="formState.bsStatus !== 'B'"
+                        :value="formState.cusName"
                         :disabled="formState.bsStatus === 'B'"
+                        @search="
+                          onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
+                            'cusId',
+                            'cusName',
+                          ])
+                        "
+                        @clear="onClear(['cusId', 'cusName'])"
                       />
                     </a-form-item>
                   </Col>
@@ -100,6 +108,18 @@
                   </Col>
                 </Row>
                 <Row>
+                  <Col :span="8">
+                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
+                      <a-date-picker
+                        :showToday="false"
+                        class="select"
+                        valueFormat="YYYY-MM-DD HH:mm:ss"
+                        format="YYYY-MM-DD"
+                        v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -152,9 +172,9 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warProReturnOfDetailColumns"
+            :columns="warSaleReturnOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formDataRules"
+            :editRules="formRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
@@ -181,7 +201,7 @@
 <script lang="ts" setup name="warehouse-produce-return-detail">
   import {
     detailOfExaGridOptions,
-    warProReturnOfDetailColumns,
+    warSaleReturnOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -262,15 +282,18 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const formRules = reactive({});
-  const formDataRules = reactive({
-    realNum: [{ required: true, message: '请输入应退数量' }],
-    'bdMaterial.number':[{ required: true, message: '请选择物料信息' }],
-    'bdStock.name':[{ required: true, message: '请选择仓库' }],
-    'bdStockCompartment.name':[{ required: requiredCompartment, message: '请选择分仓' }],
-    'bdStockLocation.name':[{ required: requiredLocation, message: '请选择仓位' }],
+  const material = 'bdMaterial.number';
+  const stock = 'bdStock.name';
+  const compartment = 'bdStockCompartment.name';
+  const location = 'bdStockLocation.name';
 
+  const formRules = reactive({
+    num: [{ required: true, message: '请输入生成数量' }],
   });
+  formRules[material] = [{ required: true, message: '请选择物料信息' }];
+  formRules[stock] = [{ required: true, message: '请选择仓库' }];
+  formRules[compartment] = [{ required: requiredCompartment, message: '请选择分仓' }];
+  formRules[location] = [{ required: requiredLocation, message: '请选择仓位' }];
   //筛选条件弹框组件
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
