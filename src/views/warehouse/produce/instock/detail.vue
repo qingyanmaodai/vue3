@@ -253,7 +253,7 @@
       {
         validator({ cellValue, row }) {
           if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
-            return new Error('实收数量不能超过应收数量');
+            return new Error('实收数量不能超过销售数量');
           }
         },
       },
