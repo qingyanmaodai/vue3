@@ -1779,7 +1779,7 @@ export const warSaleOrderOfDetailColumns = [
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
-//销售订单详情明细
+//销售发货单详情明细
 export const warSaleSendOutOfDetailColumns = [
   { type: 'checkbox', width: 50 },
   { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
@@ -1833,15 +1833,9 @@ export const warSaleSendOutOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'num',
-    title: '销售数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
-    width: 150,
-    sortable: true,
-  },
-  {
     field: 'price',
     title: '单价',
+    className: 'disableProp',
     editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
     sortable: true,
@@ -1851,6 +1845,20 @@ export const warSaleSendOutOfDetailColumns = [
     title: '总额',
     className: 'disableProp',
     slots: { default: 'totalPrice' },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'num',
+    title: '应发数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'realNum',
+    title: '实发数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
@@ -1866,6 +1874,60 @@ export const warSaleSendOutOfDetailColumns = [
     title: '已发货数量',
     width: 150,
     className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'bdStock.name',
+    title: '仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
+      param: {
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockCompartment.name',
+    title: '分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_STOCK_DTO',
+      param: {
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockLocation.name',
+    title: '仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
+      param: {
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
     sortable: true,
   },
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },

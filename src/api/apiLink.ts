@@ -420,7 +420,7 @@ export enum Url {
   PUSHDOWN_PRODUCE_PICK = '/wms/bs-pro-mo-pick/push/', //下推
   DOWN_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/down-search', //下查
   UP_SEARCH_PRODUCE_PICK = '/wms/bs-pro-mo-pick/up-search', //上查
-  
+
   // 生产补料
   AUDIT_PRODUCE_FEED = '/wms/BsProMoReissue/audit', //审核
   BATCH_AUDIT_PRODUCE_FEED = '/wms/bs-pro-mo-pick/batch-audit', //批量审核
@@ -477,6 +477,44 @@ export enum Url {
   PUSHDOWN_SALE_SENDOUT = '/wms/saleSendOut/push/', //下推
   DOWN_SEARCH_SALE_SENDOUT = '/wms/saleSendOut/down-search', //下查
   UP_SEARCH_SALE_SENDOUT = '/wms/saleSendOut/up-search', //上查
+
+  // 销售退货
+  AUDIT_SALE_RETURN = '/wms/saleReturn/audit', //审核
+  BATCH_AUDIT_SALE_RETURN = '/wms/saleReturn/batch-audit', //批量审核
+  UN_AUDIT_SALE_RETURN = '/wms/saleReturn/un-audit', //反审核
+  UN_BATCH_AUDIT_SALE_RETURN = '/wms/saleReturn/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_SALE_RETURN = '/wms/saleReturn/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_SALE_RETURN = '/wms/saleReturn/delete-with-detail', //删除含详情信息
+  GET_PAGE_SALE_RETURN_LIST = '/wms/saleReturn/list', //分页查询--获取列表
+  GET_SALE_RETURN_DTO = '/wms/saleReturn/query-dto', //获取实体信息
+  GET_ONE_SALE_RETURN = '/wms/saleReturn/query-one', //查询单条
+  IMPORT_SALE_RETURN = 'http://192.168.200.136:9999/wms/saleReturn/import-list', //导入
+  IMPORT_MODEL_SALE_RETURN = '/wms/saleReturn/import-model', //导入模板下载
+  EXPORT_SALE_RETURN = '/wms/saleReturn/export-list', //导出
+  ADD_WITH_DETAIL_SALE_RETURN = '/wms/saleReturn/save-with-detail', //添加含详情信息
+  UPDATE_SALE_RETURN = '/wms/saleReturn/update', //编辑
+  PUSHDOWN_SALE_RETURN = '/wms/saleReturn/push/', //下推
+  DOWN_SEARCH_SALE_RETURN = '/wms/saleReturn/down-search', //下查
+  UP_SEARCH_SALE_RETURN = '/wms/saleReturn/up-search', //上查
+
+  // 销售退货通知单
+  AUDIT_SALE_NOTICE = '/wms/saleNotice/audit', //审核
+  BATCH_AUDIT_SALE_NOTICE = '/wms/saleNotice/batch-audit', //批量审核
+  UN_AUDIT_SALE_NOTICE = '/wms/saleNotice/un-audit', //反审核
+  UN_BATCH_AUDIT_SALE_NOTICE = '/wms/saleNotice/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_SALE_NOTICE = '/wms/saleNotice/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_SALE_NOTICE = '/wms/saleNotice/delete-with-detail', //删除含详情信息
+  GET_PAGE_SALE_NOTICE_LIST = '/wms/saleNotice/list', //分页查询--获取列表
+  GET_SALE_NOTICE_DTO = '/wms/saleNotice/query-dto', //获取实体信息
+  GET_ONE_SALE_NOTICE = '/wms/saleNotice/query-one', //查询单条
+  IMPORT_SALE_NOTICE = 'http://192.168.200.136:9999/wms/saleNotice/import-list', //导入
+  IMPORT_MODEL_SALE_NOTICE = '/wms/saleNotice/import-model', //导入模板下载
+  EXPORT_SALE_NOTICE = '/wms/saleNotice/export-list', //导出
+  ADD_WITH_DETAIL_SALE_NOTICE = '/wms/saleNotice/save-with-detail', //添加含详情信息
+  UPDATE_SALE_NOTICE = '/wms/saleNotice/update', //编辑
+  PUSHDOWN_SALE_NOTICE = '/wms/saleNotice/push/', //下推
+  DOWN_SEARCH_SALE_NOTICE = '/wms/saleNotice/down-search', //下查
+  UP_SEARCH_SALE_NOTICE = '/wms/saleNotice/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

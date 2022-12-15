@@ -90,7 +90,7 @@
                             'cusName',
                           ])
                         "
-                        @clear="onClear(['customerId', 'customerName'])"
+                        @clear="onClear(['cusId', 'cusName'])"
                       />
                     </a-form-item>
                   </Col>

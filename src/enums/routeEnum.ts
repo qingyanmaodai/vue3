@@ -8,7 +8,7 @@ import {
   warProReturnColumns,
   warPurInputColumns,
   warPurOrdersColumns,
-  warPurReturnColumns,
+  warPurReturnColumns, warSaleOrderColumns, warSaleSendOutColumns,
 } from '/@/components/ExTable/data';
 import { PageEnum } from '/@/enums/pageEnum';
 import { Url } from '/@/api/apiLink';
@@ -76,6 +76,18 @@ export const publicUrlList = [
     listUrl: Url.GET_PAGE_PRODUCE_ORDER_LIST,
     detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
     TableCols: warProOrderColumns,
+  },
+  {
+    type: 'BsSaleOrder', //销售订单
+    listUrl: Url.GET_PAGE_SALE_ORDER_LIST,
+    detailUrl: PageEnum.WAR_SALE_ORDER_DETAIL,
+    TableCols: warSaleOrderColumns,
+  },
+  {
+    type: 'BsSaleOut', //销售发货
+    listUrl: Url.GET_PAGE_SALE_SENDOUT_LIST,
+    detailUrl: PageEnum.WAR_SALE_SENDOUT_DETAIL,
+    TableCols: warSaleSendOutColumns,
   },
 ];
 

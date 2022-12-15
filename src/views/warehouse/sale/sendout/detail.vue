@@ -82,7 +82,7 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择供应商'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.supplierName"
+                        :value="formState.cusName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
@@ -192,7 +192,7 @@
     detailOfExaGridOptions,
     warSaleSendOutOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -262,15 +262,30 @@
   const formStateInit = reactive({
     data: formData,
   });
-
+  const requiredLocation: any = computed(() => {
+    return stockDis.value === 'C';
+  });
+  const requiredCompartment: any = computed(() => {
+    return stockDis.value !== 'A';
+  });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-
   const formRules = reactive({
-    num: [{ required: true, message: '请输入采购数量' }],
+    realNum: [
+      { required: true, message: '请输入实发数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
+            return new Error('实发数量不能超过应发数量');
+          }
+        },
+      },
+    ],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
+    'bdStock.name': [{ required: true, message: '请选择仓库' }],
+    'bdStockCompartment.name': [{ required: requiredCompartment, message: '请选择分仓' }],
+    'bdStockLocation.name': [{ required: requiredLocation, message: '请选择仓位' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
 
   //筛选条件弹框组件
   //筛选条件查询
