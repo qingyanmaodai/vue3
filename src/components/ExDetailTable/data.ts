@@ -1464,6 +1464,13 @@ export const warProPicksOfDetailColumns = [
     sortable: true,
   },
   {
+    field: 'doneNum',
+    title: '已补数量',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
     field: 'needNum',
     title: '待领数量',
     width: 150,
