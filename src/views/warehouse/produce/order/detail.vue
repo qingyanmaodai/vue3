@@ -87,6 +87,25 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
+                    <a-form-item
+                      label="生产状态："
+                      ref="proMoStatus"
+                      name="proMoStatus"
+                      class="item"
+                    >
+                      <Input
+                        allowClear
+                        class="input"
+                        autocomplete="off"
+                        :value="config.PRODUCT_STATUS1[formState.proMoStatus]"
+                        name="proMoStatus"
+                        disabled
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
@@ -231,6 +250,7 @@
     id: undefined,
     number: '',
     way: 'A',
+    proMoStatus: 'A',
     bsDate: moment(getCurrentData(), 'YYYY-MM-DD'),
   };
 
@@ -238,7 +258,6 @@
   const formStateInit = reactive({
     data: formData,
   });
-  // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({});
   const formDataRules = reactive({
@@ -465,7 +484,6 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
-    obj.proMoStatus = 'A';
   };
   //dtData状态赋值
   const setDataStatus = () => {

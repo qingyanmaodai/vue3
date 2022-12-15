@@ -15,16 +15,16 @@ import { MatEntity } from '/@/api/matTable';
 import { Moment } from 'moment';
 import { EmployeeEntity } from '/@/api/employee';
 
-export interface producePicksEntity extends PublicModel {
+export interface produceFeedEntity extends PublicModel {
   id: string | undefined;
   number: string;
   bsDate?: string | Moment;
   empId?: string;
   empName?: string;
-  reason?: string;
+  reissueCause?: string;
   bdEmployee?: EmployeeEntity;
   way?: string;
-  dtData?: proPicksDetailEntity[];
+  dtData?: proFeedDetailEntity[];
   dtLk?: InvCountEntity;
   srcField?: string;
   srcBill?: string;
@@ -38,7 +38,7 @@ export interface producePicksEntity extends PublicModel {
   tenantId?: string;
 }
 
-export interface proPicksDetailEntity extends PublicModel {
+export interface proFeedDetailEntity extends PublicModel {
   id: string | undefined;
   number?: string;
   name?: string;
@@ -92,8 +92,8 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加信息
  */
-export function add(json: RequestData<producePicksEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<producePicksEntity>(
+export function add(json: RequestData<produceFeedEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<produceFeedEntity>(
     {
       url: Url.ADD_WITH_DETAIL_PRODUCE_FEED,
       data: json,
@@ -107,8 +107,8 @@ export function add(json: RequestData<producePicksEntity>, mode: ErrorMessageMod
 /**
  * 编辑信息
  */
-export function update(json: RequestData<producePicksEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<producePicksEntity>(
+export function update(json: RequestData<produceFeedEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<produceFeedEntity>(
     {
       url: Url.UPDATE_PRODUCE_FEED,
       data: json,
@@ -123,7 +123,7 @@ export function update(json: RequestData<producePicksEntity>, mode: ErrorMessage
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<producePicksEntity>(
+  return defHttp.post<produceFeedEntity>(
     {
       url: Url.AUDIT_PRODUCE_FEED,
       data: json,
@@ -217,7 +217,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<producePicksEntity>(
+  return defHttp.post<produceFeedEntity>(
     {
       url: Url.UN_AUDIT_PRODUCE_FEED,
       data: json,

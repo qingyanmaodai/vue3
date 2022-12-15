@@ -58,11 +58,6 @@
         @clear="onClear(row, column)"
       />
     </template>
-    <template #proMoStatus="{ row }">
-      <Tag :color="formatData(row.proMoStatus, config['PRODUCT_STATUS']).color">{{
-        formatData(row.proMoStatus, config['PRODUCT_STATUS'])['label']
-      }}</Tag>
-    </template>
     <template #date="{ row }">
       <DatePicker
         placeholder="请选择交货日期"
@@ -240,13 +235,13 @@
    * @param data
    * @param source
    */
-  const formatData = (data: string | number, source: configEntity[]) => {
-    let res;
-    if (source && source.length > 0) {
-      res = source.find((item) => item.value === data);
-    }
-    return res ? res : '';
-  };
+  // const formatData = (data: string | number, source: configEntity[]) => {
+  //   let res;
+  //   if (source && source.length > 0) {
+  //     res = source.find((item) => item.value === data);
+  //   }
+  //   return res ? res : '';
+  // };
   //截取基本属性
   const sliceBasicProp = (data: string) => {
     return data.split('.')[0];

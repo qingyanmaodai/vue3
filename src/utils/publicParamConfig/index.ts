@@ -63,6 +63,11 @@ export const config = {
     },
   ],
   //  生产业务状态
+  PRODUCT_STATUS1: {
+    A: '未进行',
+    B: '进行中',
+    C: '已完成',
+  },
   PRODUCT_STATUS: [
     {
       value: 'A',
@@ -321,6 +326,36 @@ export const config = {
       label: '其他',
     },
   ],
+  //退料原因
+  PRO_RETURN_REASON: [
+    {
+      value: 'A',
+      label: '良品退料',
+    },
+    {
+      value: 'B',
+      label: '来料不良退料',
+    },
+    {
+      value: 'C',
+      label: '作业不良退料',
+    },
+    {
+      value: 'D',
+      label: '其他',
+    },
+  ],
+  //补料原因
+  FEED_REASON: [
+    {
+      value: 'A',
+      label: '少领',
+    },
+    {
+      value: 'B',
+      label: '报废',
+    },
+  ],
   //单据类型
   NUMBER_REASON: [
     {
@@ -388,6 +423,10 @@ export const config = {
     {
       value: 'BsProMoPick',
       label: '生产领料',
+    },
+    {
+      value: 'BsProMoReissue',
+      label: '生产补料',
     },
     {
       value: 'BsProMoReturn',

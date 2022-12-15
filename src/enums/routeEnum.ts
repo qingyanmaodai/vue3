@@ -70,6 +70,12 @@ export const publicUrlList = [
     TableCols: warProPicksColumns,
   },
   {
+    type: 'BsProMoReissue', //生产补料
+    listUrl: Url.GET_PAGE_PRODUCE_FEED_LIST,
+    detailUrl: PageEnum.WAR_PRO_FEED_DETAIL,
+    TableCols: warProPicksColumns,
+  },
+  {
     type: 'BsProMoReturn', //生产退料
     // listUrl: Url.GET_PAGE_PRODUCE_RETURN_LIST,
     detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,

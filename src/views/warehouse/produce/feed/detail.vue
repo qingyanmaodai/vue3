@@ -55,11 +55,11 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="领料员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="补料员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择领料员'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择补料员'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
@@ -75,6 +75,25 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
+                    <a-form-item label="补料原因：" ref="reissueCause" name="reissueCause" class="item">
+                      <!--                      <Select-->
+                      <!--                        allowClear-->
+                      <!--                        v-model:value="formState.reissueCause"-->
+                      <!--                        class="select"-->
+                      <!--                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择补料原因'"-->
+                      <!--                        :options="config.FEED_REASON"-->
+                      <!--                        :disabled="formState.bsStatus === 'B'"-->
+                      <!--                      />-->
+                      <Input
+                        allowClear
+                        class="input"
+                        v-model:value="formState.reissueCause"
+                        placeholder="请输入补料原因"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
                     <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
                       <a-date-picker
                         :showToday="false"
@@ -86,6 +105,8 @@
                       />
                     </a-form-item>
                   </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -165,7 +186,7 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-produce-picks-detail">
+<script lang="ts" setup name="warehouse-produce-feed-detail">
   import {
     detailOfExaGridOptions,
     warProFeedOfDetailColumns,
@@ -180,6 +201,7 @@
     LayoutHeader,
     Row,
     DatePicker,
+    Select,
     TabPane,
     Tabs,
   } from 'ant-design-vue';
@@ -191,7 +213,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, producePicksEntity } from '/@/api/warProduce/picks';
+  import { add, audit, unAudit, getOneById, produceFeedEntity } from '/@/api/warProduce/feed';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -229,7 +251,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: producePicksEntity = {
+  const formData: produceFeedEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -255,6 +277,7 @@
 
   const formRules = reactive({
     num: [{ required: true, message: '请输入申请数量' }],
+    realNum: [{ required: true, message: '请输入已领数量' }],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];

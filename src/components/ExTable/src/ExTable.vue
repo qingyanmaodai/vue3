@@ -139,6 +139,11 @@
     <template #billType="{ row }"
       ><Tag>{{ formatData(row.billType, config['BILL_TYPE'])['label'] }}</Tag></template
     >
+    <template #returnCause="{ row }"
+      ><Tag v-if="row.returnCause">{{
+        formatData(row.returnCause, config['PRO_RETURN_REASON'])['label']
+      }}</Tag></template
+    >
     <template #tag="{ row }"
       ><Tag>{{ formatData(row.tag, config['TAG'])['label'] }}</Tag></template
     >

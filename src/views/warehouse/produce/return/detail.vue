@@ -87,13 +87,18 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="退料原因：" ref="reason" name="reason" class="item">
+                    <a-form-item
+                      label="退料原因："
+                      ref="returnCause"
+                      name="returnCause"
+                      class="item"
+                    >
                       <Select
                         allowClear
-                        v-model:value="formState.reason"
+                        v-model:value="formState.returnCause"
                         class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
-                        :options="config.RETURN_REASON"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退料原因'"
+                        :options="config.PRO_RETURN_REASON"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
@@ -159,6 +164,7 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
+            @getCountAmount="getCountAmount"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -205,7 +211,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, produceOrderEntity } from '/@/api/warProduce/order';
+  import { add, audit, unAudit, getOneById, produceReturnEntity } from '/@/api/warProduce/return';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -243,7 +249,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: produceOrderEntity = {
+  const formData: produceReturnEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -269,7 +275,6 @@
     'bdStock.name':[{ required: true, message: '请选择仓库' }],
     'bdStockCompartment.name':[{ required: requiredCompartment, message: '请选择分仓' }],
     'bdStockLocation.name':[{ required: requiredLocation, message: '请选择仓位' }],
-
   });
   //筛选条件弹框组件
   //筛选条件查询
@@ -460,7 +465,15 @@
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-
+  //计算数量
+  const getCountAmount = (row) => {
+    if (row.num && row.realNum !== null) {
+      row.needNum = row.num - row.realNum;
+    } else {
+      row.needNum = '';
+    }
+    return row;
+  };
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
@@ -524,6 +537,7 @@
         break;
     }
   };
+
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;

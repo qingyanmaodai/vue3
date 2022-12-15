@@ -118,39 +118,45 @@
       table: '',
       val: row.matId,
     });
-    getParams.push({
-      column: 'stock_id',
-      endWith: '',
-      link: SearchLink.AND,
-      rule: SearchMatchType.LIKE,
-      type: SearchDataType.string,
-      name: 'stockId',
-      startWith: '',
-      table: '',
-      val: row.stockId,
-    });
-    getParams.push({
-      column: 'compartment_id',
-      endWith: '',
-      link: SearchLink.AND,
-      rule: SearchMatchType.LIKE,
-      type: SearchDataType.string,
-      name: 'compartmentId',
-      startWith: '',
-      table: '',
-      val: row.compartmentId,
-    });
-    getParams.push({
-      column: 'location_id',
-      endWith: '',
-      link: SearchLink.AND,
-      rule: SearchMatchType.LIKE,
-      type: SearchDataType.string,
-      name: 'locationId',
-      startWith: '',
-      table: '',
-      val: row.locationId,
-    });
+    if (row.stockId) {
+      getParams.push({
+        column: 'stock_id',
+        endWith: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        name: 'stockId',
+        startWith: '',
+        table: '',
+        val: row.stockId,
+      });
+    }
+    if (row.compartmentId) {
+      getParams.push({
+        column: 'compartment_id',
+        endWith: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        name: 'compartmentId',
+        startWith: '',
+        table: '',
+        val: row.compartmentId,
+      });
+    }
+    if (row.locationId) {
+      getParams.push({
+        column: 'location_id',
+        endWith: '',
+        link: SearchLink.AND,
+        rule: SearchMatchType.LIKE,
+        type: SearchDataType.string,
+        name: 'locationId',
+        startWith: '',
+        table: '',
+        val: row.locationId,
+      });
+    }
     tableModalParams.value = cloneDeep(getParams);
   };
   //查看明细来源

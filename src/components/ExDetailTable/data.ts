@@ -1010,14 +1010,6 @@ export const warProOrderOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'proMoStatus',
-    title: '生产状态',
-    width: 120,
-    sortable: true,
-    className: 'disableProp',
-    slots: { default: 'proMoStatus' },
-  },
-  {
     field: 'planTime',
     title: '计划开工日期',
     editRender: {
@@ -1233,11 +1225,27 @@ export const warProReturnOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '退料数量',
+    title: '可退数量',
+    className: 'disableProp',
+    // editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'realNum',
+    title: '实退数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
+  // {
+  //   field: 'needNum',
+  //   title: '待退数量',
+  //   slots: { default: 'needNum' },
+  //   className: 'disableProp',
+  //   width: 150,
+  //   sortable: true,
+  // },
   {
     field: 'doneNum',
     title: '已入库数量',
@@ -1245,13 +1253,13 @@ export const warProReturnOfDetailColumns = [
     className: 'disableProp',
     sortable: true,
   },
-  {
-    field: 'pushNum',
-    title: '已下推数量',
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
+  // {
+  //   field: 'pushNum',
+  //   title: '已下推数量',
+  //   width: 150,
+  //   className: 'disableProp',
+  //   sortable: true,
+  // },
   {
     field: 'bdStock.name',
     title: '仓库',
@@ -1451,7 +1459,7 @@ export const warProPicksOfDetailColumns = [
   {
     field: 'realNum',
     title: '已领数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },
@@ -1590,15 +1598,15 @@ export const warProFeedOfDetailColumns = [
   {
     field: 'num',
     title: '申请数量',
-    className: 'disableProp',
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
   },
   {
-    field: 'reason',
-    title: '申请原因',
-    className: 'disableProp',
+    field: 'scrapNum',
+    title: '报废数量',
     width: 150,
+    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     sortable: true,
   },
   {
@@ -1619,13 +1627,6 @@ export const warProFeedOfDetailColumns = [
   {
     field: 'pushNum',
     title: '已下推数量',
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
-  {
-    field: 'returnNum',
-    title: '已退货数量',
     width: 150,
     className: 'disableProp',
     sortable: true,
