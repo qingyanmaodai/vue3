@@ -294,7 +294,7 @@
       {
         validator({ cellValue, row }) {
           if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
-            return new Error('实退数量不能超过应退数量');
+            return new Error('实退数量不能超过销售数量');
           }
         },
       },
