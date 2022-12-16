@@ -392,7 +392,7 @@
   };
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
-    let selectRecords = await getListData();
+    let selectRecords = await getDtData();
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
@@ -608,10 +608,9 @@
   };
   //下推弹框
   const pushDownEvent = async () => {
-    let selectRecords = await getListData();
+    let selectRecords = await getDtData();
     if (selectRecords.length > 0) {
-      let selectDtData = await getDtData();
-      emit('pushDownEvent', selectDtData);
+      emit('pushDownEvent', selectRecords);
     } else {
       createMessage.warning('请至少勾选一条数据。');
     }

@@ -177,7 +177,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warSaleReturnOfDetailColumns"
+            :columns="warSaleNoticeOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
@@ -203,10 +203,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-sale-return-detail">
+<script lang="ts" setup name="warehouse-sale-notice-detail">
   import {
     detailOfExaGridOptions,
-    warSaleReturnOfDetailColumns,
+    warSaleNoticeOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -230,7 +230,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, saleReturnEntity } from '/@/api/warSale/return';
+  import { add, audit, unAudit, getOneById, saleNoticeEntity } from '/@/api/warSale/notice';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -268,7 +268,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: saleReturnEntity = {
+  const formData: saleNoticeEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -294,7 +294,7 @@
       {
         validator({ cellValue, row }) {
           if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
-            return new Error('实退数量不能超过应退数量');
+            return new Error('实退数量不能超过销售数量');
           }
         },
       },
@@ -493,6 +493,7 @@
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
+
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {

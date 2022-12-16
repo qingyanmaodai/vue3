@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsSaleReturn"
+        tableName="BsSaleNotice"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -12,12 +12,12 @@
       />
       <ExTable
         :isShowImport="false"
-        :columns="warSaleReturnColumns"
+        :columns="warSaleNoticeColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsSaleReturn"
+        tableName="BsSaleNotice"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -36,18 +36,18 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="BsSaleReturn"
+      tableName="BsSaleNotice"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="BsSaleReturn"
+      tableName="BsSaleNotice"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />
   </div>
 </template>
-<script setup lang="ts" name="warehouse-sale-return-index">
+<script setup lang="ts" name="warehouse-sale-notice-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -65,10 +65,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warSale/return';
+  } from '/@/api/warSale/notice';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warSaleReturnColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warSaleNoticeColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -78,7 +78,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_SALE_RETURN');
+  let importConfig = ref<string>('IMPORT_SALE_NOTICE');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -99,7 +99,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsSaleReturn.update_time'],
+        descList: ['BsSaleNotice.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -120,12 +120,12 @@
     switch (status) {
       case 'A':
         res = await upSearch({ params: row });
-        modalTitle.value = '销售退货单-上查';
+        modalTitle.value = '退货通知单-上查';
         linkQueryMenuData.value = res;
         break;
       case 'B':
         res = await downSearch({ params: row });
-        modalTitle.value = '销售退货单-下查';
+        modalTitle.value = '退货通知单-下查';
         linkQueryMenuData.value = res;
         break;
     }
@@ -150,7 +150,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_SALE_RETURN_DETAIL,
+      path: PageEnum.WAR_SALE_NOTICE_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -159,7 +159,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_SALE_RETURN_DETAIL,
+      path: PageEnum.WAR_SALE_NOTICE_DETAIL,
       query: {
         row: row.id,
       },
@@ -224,7 +224,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '销售退货单导入模板.xls', data: res };
+            const data = { title: '退货通知单导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -240,13 +240,13 @@
         exportExcel({
           params: {
             list: tableData.value,
-            fileName: '销售退货单',
+            fileName: '退货通知单',
           },
           pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {
-            const data = { title: '销售退货单.xls', data: res };
+            const data = { title: '退货通知单.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

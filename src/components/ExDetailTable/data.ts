@@ -1872,14 +1872,28 @@ export const warSaleSendOutOfDetailColumns = [
   },
   {
     field: 'pushNum',
-    title: '已下推数量',
+    title: '已下推数量(销售出库)',
     width: 150,
     className: 'disableProp',
     sortable: true,
   },
   {
     field: 'doneNum',
-    title: '已发货数量',
+    title: '已退货数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'noticePushNum',
+    title: '已下推通知数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'noticeDoneNum',
+    title: '已通知数量',
     width: 150,
     className: 'disableProp',
     sortable: true,
@@ -1941,7 +1955,7 @@ export const warSaleSendOutOfDetailColumns = [
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
-//生产退料单详情明细
+//销售退货单详情明细
 export const warSaleReturnOfDetailColumns = [
   { type: 'checkbox', width: 50 },
   { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
@@ -1997,12 +2011,13 @@ export const warSaleReturnOfDetailColumns = [
   {
     field: 'num',
     title: '应退数量',
+    className: 'disableProp',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
   {
-    field: 'num',
+    field: 'realNum',
     title: '实退数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
@@ -2010,7 +2025,146 @@ export const warSaleReturnOfDetailColumns = [
   },
   {
     field: 'doneNum',
-    title: '已入库数量',
+    title: '已处理数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'pushNum',
+    title: '已下推数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'bdStock.name',
+    title: '仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
+      param: {
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockCompartment.name',
+    title: '分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_STOCK_DTO',
+      param: {
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdStockLocation.name',
+    title: '仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
+      param: {
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
+  { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
+];
+//退货通知单详情明细
+export const warSaleNoticeOfDetailColumns = [
+  { type: 'checkbox', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
+  {
+    field: 'bdMaterial.number',
+    title: '物料编码',
+    sortable: true,
+    width: 150,
+    params: {
+      tableName: 'bdMaterial', //物料信息表名
+      list: 'GET_MATERIAL_LIST', //物料信息表格数据
+      select: 'GET_MAT_DTO', //基本信息下拉框+表头
+      param: {
+        matId: 'bdMaterial',
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
+    field: 'bdMaterial.name',
+    title: '物料名称',
+    className: 'disableProp',
+    sortable: true,
+    width: 150,
+  },
+  {
+    field: 'bdMaterial.model',
+    title: '规格型号',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.baseUnitName',
+    title: '基本单位',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.weightUnitName',
+    title: '重量单位',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'num',
+    title: '销售数量',
+    className: 'disableProp',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'realNum',
+    title: '实收数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已退货数量',
     width: 150,
     className: 'disableProp',
     sortable: true,
