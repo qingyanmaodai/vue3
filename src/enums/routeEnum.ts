@@ -12,7 +12,7 @@ import {
   warSaleOrderColumns,
   warSaleSendOutColumns,
   warSaleReturnColumns,
-  warSaleNoticeColumns,
+  warSaleNoticeColumns, warProBomColumns,
 } from '/@/components/ExTable/data';
 import { PageEnum } from '/@/enums/pageEnum';
 import { Url } from '/@/api/apiLink';
@@ -64,6 +64,12 @@ export const publicUrlList = [
     TableCols: warProInStockColumns,
   },
   {
+    type: 'BsProMo', //生产工单
+    listUrl: Url.GET_PAGE_PRODUCE_ORDER_LIST,
+    detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
+    TableCols: warProOrderColumns,
+  },
+  {
     type: 'BsProMoPick', //生产领料
     listUrl: Url.GET_PAGE_PRODUCE_PICK_LIST,
     detailUrl: PageEnum.WAR_PRO_PICKS_DETAIL,
@@ -77,15 +83,15 @@ export const publicUrlList = [
   },
   {
     type: 'BsProMoReturn', //生产退料
-    // listUrl: Url.GET_PAGE_PRODUCE_RETURN_LIST,
+    listUrl: Url.GET_PAGE_PRODUCE_RETURN_LIST,
     detailUrl: PageEnum.WAR_PRO_RETURN_DETAIL,
     TableCols: warProReturnColumns,
   },
   {
-    type: 'BsProMoOrder', //生产订单
-    listUrl: Url.GET_PAGE_PRODUCE_ORDER_LIST,
-    detailUrl: PageEnum.WAR_PRO_ORDER_DETAIL,
-    TableCols: warProOrderColumns,
+    type: 'BsProMoOrder', //用料清单
+    listUrl: Url.GET_PAGE_PRODUCE_BOM_LIST,
+    detailUrl: PageEnum.WAR_PRO_BOM_DETAIL,
+    TableCols: warProBomColumns,
   },
   {
     type: 'BsSaleOrder', //销售订单
