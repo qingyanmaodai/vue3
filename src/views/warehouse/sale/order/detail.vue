@@ -82,7 +82,7 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.cusName"
+                        :value="formState.bdCustomer"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
@@ -167,7 +167,6 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
-            @getCountAmount="getCountAmount"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -465,15 +464,6 @@
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
   };
-  //计算数量
-  const getCountAmount = (row) => {
-    if (row.num && row.price) {
-      row.totalPrice = row.num * row.price;
-    } else {
-      row.totalPrice = '';
-    }
-    return row;
-  };
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
@@ -536,7 +526,6 @@
         data.bdStockLocation.name = row.name ? row.name : null;
         break;
     }
-    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
