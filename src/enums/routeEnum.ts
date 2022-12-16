@@ -12,7 +12,7 @@ import {
   warSaleOrderColumns,
   warSaleSendOutColumns,
   warSaleReturnColumns,
-  warSaleNoticeColumns, warProBomColumns,
+  warSaleNoticeColumns, warProBomColumns, warProFeedColumns,
 } from '/@/components/ExTable/data';
 import { PageEnum } from '/@/enums/pageEnum';
 import { Url } from '/@/api/apiLink';
@@ -79,7 +79,7 @@ export const publicUrlList = [
     type: 'BsProMoReissue', //生产补料
     listUrl: Url.GET_PAGE_PRODUCE_FEED_LIST,
     detailUrl: PageEnum.WAR_PRO_FEED_DETAIL,
-    TableCols: warProPicksColumns,
+    TableCols: warProFeedColumns,
   },
   {
     type: 'BsProMoReturn', //生产退料

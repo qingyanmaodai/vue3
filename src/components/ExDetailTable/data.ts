@@ -1386,25 +1386,17 @@ export const warProBomOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'reissueNum',
-    title: '未领数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 0 } },
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
-  {
-    field: 'doneNum',
-    title: '已补数量',
-    className: 'disableProp',
-    width: 150,
-    sortable: true,
-  },
-  {
     field: 'pushNum',
     title: '已推领料',
     width: 150,
     className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'reissueNum',
+    title: '已补数量',
+    className: 'disableProp',
+    width: 150,
     sortable: true,
   },
   {
