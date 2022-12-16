@@ -24,7 +24,7 @@
               <template #title>全部</template>
               <a-menu-item v-for="(item, index) in props.linkQueryMenuData" :key="index">
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
-                  item.tarIds.length > 0 ? item.tarIds.length : item.srcIds.length
+                  item.tarIds.length > 0 ? item.tarIds.length : item.uniSrcIds.length
                 }})</a-menu-item
               >
             </a-sub-menu>
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, computed } from 'vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import { MenuItem, Menu, SubMenu } from 'ant-design-vue';
   import 'splitpanes/dist/splitpanes.css';
@@ -61,7 +61,7 @@
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchDataType, SearchLink, SearchMatchType, tableParams } from '/@/api/apiLink';
-  import { cloneDeep } from 'lodash-es';
+  import { cloneDeep, uniqBy } from 'lodash-es';
   const ASplitPanes = Splitpanes;
   const AMenuItem = MenuItem;
   const AMenu = Menu;
@@ -70,6 +70,7 @@
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currKey = ref<any>({});
+  // let uniSrcIds = ref<any>([]);
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -103,7 +104,20 @@
       return [];
     },
   });
+
+  const uniIds = () => {
+    props.linkQueryMenuData.map((item) => ({
+      uniSrcIds: uniqBy(item.srcIds, 'srcIds'),
+    }));
+  };
+  // let uniSrcIds = computed(() => {
+  //   if (props.linkQueryMenuData[currKey.value].srcIds.length > 0) {
+  //     return uniqBy(props.linkQueryMenuData, 'srcIds');
+  //   }
+  // })
+
   const show = async () => {
+    uniIds();
     isShow.value = true;
   };
   const close = () => {

@@ -843,6 +843,7 @@ export const warProReturnColumns = [
   { type: 'checkbox', width: 50 },
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
   { field: 'empName', title: '退料员', width: 120, sortable: true },
   { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
   { field: 'matName', title: '物料名称', width: 120, sortable: true },
