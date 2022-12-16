@@ -392,7 +392,7 @@
   };
   /*约定 A是上查，B是下查*/
   const linkQuerySelect = async (item) => {
-    let selectRecords = await getDtData();
+    let selectRecords = await getListData();
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
