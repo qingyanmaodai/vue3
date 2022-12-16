@@ -24,7 +24,7 @@
               <template #title>全部</template>
               <a-menu-item v-for="(item, index) in props.linkQueryMenuData" :key="index">
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
-                  item.tarBillIds.length > 0 ? item.tarBillIds.length : item.srcBillIds.length
+                  item.tarIds.length > 0 ? item.tarIds.length : item.srcIds.length
                 }})</a-menu-item
               >
             </a-sub-menu>
@@ -83,8 +83,10 @@
     name: string;
     routeTo: string;
     srcBillIds: any[];
+    srcIds: any[];
     srcBillType: string;
     tarBillIds: any[];
+    tarIds: any[];
     tarBillLkType: string;
     tarBillType: string;
     tenantId: number;
@@ -142,9 +144,26 @@
             rule: SearchMatchType.IN,
             type: SearchDataType.string,
             val:
-              props.linkQueryMenuData[currKey.value].tarBillIds.length > 0
-                ? props.linkQueryMenuData[currKey.value].tarBillIds
-                : props.linkQueryMenuData[currKey.value].srcBillIds,
+              props.linkQueryMenuData[currKey.value].srcBillIds.length > 0
+                ? props.linkQueryMenuData[currKey.value].srcBillIds
+                : props.linkQueryMenuData[currKey.value].tarBillIds,
+            startWith: '',
+            endWith: '',
+          },
+          {
+            table:
+              (props.linkQueryMenuData[currKey.value].srcIds.length > 0
+                ? props.linkQueryMenuData[currKey.value].srcBillType
+                : props.linkQueryMenuData[currKey.value].tarBillType) + 'Detail',
+            name: 'id',
+            column: 'id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.IN,
+            type: SearchDataType.string,
+            val:
+              props.linkQueryMenuData[currKey.value].srcIds.length > 0
+                ? props.linkQueryMenuData[currKey.value].srcIds
+                : props.linkQueryMenuData[currKey.value].tarIds,
             startWith: '',
             endWith: '',
           },
