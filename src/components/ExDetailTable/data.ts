@@ -1750,14 +1750,7 @@ export const warSaleOrderOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '应收通知数量',
-    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
-    width: 150,
-    sortable: true,
-  },
-  {
-    field: 'realNum',
-    title: '实收通知数量',
+    title: '销售数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
@@ -2175,15 +2168,16 @@ export const warSaleNoticeOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '销售数量',
+    title: '应收通知数量',
     className: 'disableProp',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
   },
+
   {
     field: 'realNum',
-    title: '实收数量',
+    title: '实收通知数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,

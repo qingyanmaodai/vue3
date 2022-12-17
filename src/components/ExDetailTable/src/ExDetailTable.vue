@@ -85,10 +85,10 @@
       <span>{{ row.loss }}</span>
     </template>
     <template #numPrice="{ row }">
-      <span>{{ row.num * row.price }}</span>
+      <span>{{ (row.totalPrice = row.num * row.price) }}</span>
     </template>
     <template #realNumPrice="{ row }">
-      <span>{{ row.realNum * row.price }}</span>
+      <span>{{ (row.totalPrice = row.realNum * row.price) }}</span>
     </template>
     <template #needNum="{ row }">
       <span>{{ row.needNum }}</span>
