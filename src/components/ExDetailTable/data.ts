@@ -568,7 +568,7 @@ export const warPurOrdersOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'prices',
+    field: 'price',
     title: '单价',
     editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
