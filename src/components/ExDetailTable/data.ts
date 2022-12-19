@@ -1652,7 +1652,14 @@ export const warProFeedOfDetailColumns = [
   //   sortable: true,
   // },
   {
-    field: 'pushNum',
+    field: 'returnNum',
+    title: '已退数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'pushReturnNum',
     title: '已下推数量',
     width: 150,
     className: 'disableProp',

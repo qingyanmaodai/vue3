@@ -819,7 +819,14 @@ export const warProFeedColumns = [
   { field: 'scrapNum', title: '报废数量', width: 120, sortable: true },
   { field: 'realNum', title: '已领数量', width: 120, sortable: true },
   {
-    field: 'pushNum',
+    field: 'returnNum',
+    title: '已退数量',
+    width: 120,
+    sortable: true,
+    formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+  },
+  {
+    field: 'pushReturnNum',
     title: '已下推数量',
     width: 120,
     sortable: true,
