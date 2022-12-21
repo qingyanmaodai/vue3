@@ -150,7 +150,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_SALE_ORDER_DETAIL,
+      path: PageEnum.WAR_TRANSFER_ORDER_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -159,7 +159,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_SALE_ORDER_DETAIL,
+      path: PageEnum.WAR_TRANSFER_ORDER_DETAIL,
       query: {
         row: row.id,
       },
