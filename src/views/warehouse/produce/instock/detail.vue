@@ -250,13 +250,13 @@
   const formRules = reactive({
     realNum: [
       { required: true, message: '请输入实收数量' },
-      {
-        validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
-            return new Error('实收数量不能超过销售数量');
-          }
-        },
-      },
+      // {
+      //   validator({ cellValue, row }) {
+      //     if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
+      //       return new Error('实收数量不能超过应收数量');
+      //     }
+      //   },
+      // },
     ],
     'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
     'bdStock.name': [{ required: true, message: '请选择仓库' }],
