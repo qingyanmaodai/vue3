@@ -160,7 +160,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warSaleOrderOfDetailColumns"
+            :columns="warTransferOrderOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
@@ -186,10 +186,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-sale-order-detail">
+<script lang="ts" setup name="warehouse-transfer-order-detail">
   import {
     detailOfExaGridOptions,
-    warSaleOrderOfDetailColumns,
+    warTransferOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -212,7 +212,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, saleOrderEntity } from '/@/api/warSale/order';
+  import { add, audit, unAudit, getOneById, transferOrderEntity } from '/@/api/warTransfer/order';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -250,7 +250,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: saleOrderEntity = {
+  const formData: transferOrderEntity = {
     id: undefined,
     number: '',
     way: 'A',

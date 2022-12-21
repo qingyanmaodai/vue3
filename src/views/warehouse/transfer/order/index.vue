@@ -12,7 +12,7 @@
       />
       <ExTable
         :isShowImport="false"
-        :columns="warSaleOrderColumns"
+        :columns="warTransferOrderColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
@@ -47,7 +47,7 @@
     />
   </div>
 </template>
-<script setup lang="ts" name="warehouse-sale-order-index">
+<script setup lang="ts" name="warehouse-transfer-order-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -65,10 +65,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warSale/order';
+  } from '/@/api/warTransfer/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warSaleOrderColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warTransferOrderColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -78,7 +78,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_SALE_ORDER');
+  let importConfig = ref<string>('IMPORT_TRANSFER_ORDER');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
