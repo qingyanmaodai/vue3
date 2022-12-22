@@ -1192,7 +1192,7 @@ export const warOthersOutputColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '出库日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supId', title: '供应商', width: 120, sortable: true },
-  { field: 'num', title: '应出库数量', width: 120, sortable: true },
+  { field: 'num', title: '可出库数量', width: 120, sortable: true },
   { field: 'realNum', title: '实出库数量', width: 120, sortable: true },
   {
     field: 'pushNum',
