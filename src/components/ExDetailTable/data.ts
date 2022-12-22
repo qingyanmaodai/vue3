@@ -2371,13 +2371,13 @@ export const warOthersInputOfDetailColumns = [
     className: 'disableProp',
     sortable: true,
   },
-  // {
-  //   field: 'doneNum',
-  //   title: '已入库数量',
-  //   width: 150,
-  //   className: 'disableProp',
-  //   sortable: true,
-  // },
+  {
+    field: 'doneNum',
+    title: '已出库数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
   {
     field: 'bdStock.name',
     title: '仓库',
@@ -2509,13 +2509,13 @@ export const warOthersOutputOfDetailColumns = [
     className: 'disableProp',
     sortable: true,
   },
-  // {
-  //   field: 'doneNum',
-  //   title: '已入库数量',
-  //   width: 150,
-  //   className: 'disableProp',
-  //   sortable: true,
-  // },
+  {
+    field: 'doneNum',
+    title: '已入库数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
   {
     field: 'bdStock.name',
     title: '仓库',

@@ -198,7 +198,6 @@
     Form,
     FormItem,
     Input,
-    Select,
     LayoutHeader,
     Row,
     DatePicker,
