@@ -203,7 +203,6 @@
     DatePicker,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';

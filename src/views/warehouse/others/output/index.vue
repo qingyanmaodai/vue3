@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsPurchaseReturn"
+        tableName="BsOtherOut"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -17,7 +17,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsPurchaseReturn"
+        tableName="BsOtherOut"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -36,12 +36,12 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="BsPurchaseReturn"
+      tableName="BsOtherOut"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="BsPurchaseReturn"
+      tableName="BsOtherOut"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />
@@ -99,7 +99,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsPurchaseReturn.update_time'],
+        descList: ['BsOtherOut.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -120,12 +120,12 @@
     switch (status) {
       case 'A':
         res = await upSearch({ params: row });
-        modalTitle.value = '采购退货-上查';
+        modalTitle.value = '其它出库-上查';
         linkQueryMenuData.value = res;
         break;
       case 'B':
         res = await downSearch({ params: row });
-        modalTitle.value = '采购退货-下查';
+        modalTitle.value = '其它出库-下查';
         linkQueryMenuData.value = res;
         break;
     }
@@ -224,7 +224,7 @@
           params: '导入模板',
         })
           .then((res) => {
-            const data = { title: '采购退货导入模板.xls', data: res };
+            const data = { title: '其它出库导入模板.xls', data: res };
             resolve(data);
           })
           .catch((e) => {
@@ -240,13 +240,13 @@
         exportExcel({
           params: {
             list: tableData.value,
-            fileName: '采购退货',
+            fileName: '其它出库',
           },
           pageIndex: tablePages.currentPage,
           pageRows: tablePages.pageSize,
         })
           .then((res) => {
-            const data = { title: '采购退货.xls', data: res };
+            const data = { title: '其它出库.xls', data: res };
             resolve(data);
           })
           .catch((e) => {

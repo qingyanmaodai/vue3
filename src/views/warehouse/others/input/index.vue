@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsPurchaseInStock"
+        tableName="BsOtherIn"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -17,7 +17,7 @@
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsPurchaseInStock"
+        tableName="BsOtherIn"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -36,12 +36,12 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="BsPurchaseInStock"
+      tableName="BsOtherIn"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="BsPurchaseInStock"
+      tableName="BsOtherIn"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />
@@ -99,7 +99,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsPurchaseInStock.update_time'],
+        descList: ['BsOtherIn.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,

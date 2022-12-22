@@ -1221,4 +1221,3 @@ export const warOthersOutputColumns = [
   },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
-
