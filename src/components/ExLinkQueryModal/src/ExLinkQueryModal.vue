@@ -25,7 +25,8 @@
               <a-menu-item v-for="(item, index) in curMenuData" :key="index">
                 {{ item.tarBillIds.length > 0 ? item.name : item.source }} ({{
                   item.tarIds.length > 0 ? item.tarIds.length : item.srcIds.length
-                }})</a-menu-item>
+                }})</a-menu-item
+              >
             </a-sub-menu>
           </a-menu>
         </div>
@@ -60,7 +61,7 @@
   import { notToolInGridOptions } from '/@/components/ExTable/data';
   import { getPublicList } from '/@/api/public';
   import { SearchDataType, SearchLink, SearchMatchType, tableParams } from '/@/api/apiLink';
-  import { cloneDeep, uniq, uniqBy } from 'lodash-es';
+  import { cloneDeep, uniq } from 'lodash-es';
   const ASplitPanes = Splitpanes;
   const AMenuItem = MenuItem;
   const AMenu = Menu;
@@ -69,7 +70,6 @@
   const isShow = ref<boolean>(false); //弹框可见性，默认为关闭
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
   const currKey = ref<any>({});
-  let menuData = ref<any>([]);
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);

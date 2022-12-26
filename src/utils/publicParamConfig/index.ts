@@ -432,12 +432,10 @@ export const config = {
       value: 'BsProMoReturn',
       label: '生产出库',
     },
-    //生产工单---存疑
     {
       value: 'BsProMoOrder',
       label: '生产工单',
     },
-    //待确定
     {
       value: 'BsProMoReturn',
       label: '生产退料',
@@ -453,6 +451,30 @@ export const config = {
     {
       value: 'BsPurchaseOrder',
       label: '采购订单',
+    },
+    {
+      value: 'BsSaleOrder',
+      label: '销售订单',
+    },
+    {
+      value: 'BsSaleOut',
+      label: '销售发货',
+    },
+    {
+      value: 'BsSaleReturn',
+      label: '销售退货',
+    },
+    {
+      value: 'BsSaleNotice',
+      label: '销售通知',
+    },
+    {
+      value: 'BsOtherIn',
+      label: '其他入库',
+    },
+    {
+      value: 'BsOtherOut',
+      label: '其他出库',
     },
   ],
 };

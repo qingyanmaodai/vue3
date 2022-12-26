@@ -140,7 +140,7 @@
       ><Tag>{{ formatData(row.billType, config['BILL_TYPE'])['label'] }}</Tag></template
     >
     <template #returnReason="{ row }"
-    ><Tag v-if="row.returnReason">{{
+      ><Tag v-if="row.returnReason">{{
         formatData(row.returnReason, config['RETURN_REASON'])['label']
       }}</Tag></template
     >
