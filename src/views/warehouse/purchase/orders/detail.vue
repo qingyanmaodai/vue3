@@ -162,7 +162,7 @@
           <ExDetailTable
             :columns="warPurOrdersOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
@@ -265,12 +265,12 @@
 
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const material = 'bdMaterial.number';
-
-  const formRules = reactive({
+  const formRules = reactive({});
+  const formDataRules = reactive({
     num: [{ required: true, message: '请输入采购数量' }],
+    price: [{ required: true, message: '请输入单价' }],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
   });
-  formRules[material] = [{ required: true, message: '请选择物料信息' }];
 
   //筛选条件弹框组件
   //筛选条件查询

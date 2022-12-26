@@ -138,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warSaleOrderOfDetailColumns"
+            :columns="warTransferOrderOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
@@ -167,7 +167,7 @@
 <script lang="ts" setup name="warehouse-transfer-order-detail">
   import {
     detailOfExaGridOptions,
-    warSaleOrderOfDetailColumns,
+    warTransferOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
