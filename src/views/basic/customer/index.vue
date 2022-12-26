@@ -305,7 +305,6 @@
    * @param data
    */
   const selectGroupEvent = (selectedKeys: string[], data: any) => {
-    console.log(selectedKeys, data);
     getList();
   };
 

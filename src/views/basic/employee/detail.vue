@@ -93,6 +93,7 @@
                   <Input
                     allowClear
                     class="input"
+                    autocomplete="off"
                     v-model:value="formState.address"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请输入地址'"
                     :disabled="formState.bsStatus === 'B'"
@@ -139,6 +140,8 @@
                 <a-form-item label="出生日期：" ref="birthday" name="birthday" class="item">
                   <a-date-picker
                     class="input"
+                    valueFormat="YYYY-MM-DD HH:mm:ss"
+                    format="YYYY-MM-DD"
                     v-model:value="formState.birthday"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择出生日期'"
                     :disabled="formState.bsStatus === 'B'"
@@ -151,6 +154,8 @@
                 <a-form-item label="入职日期：" ref="entryDate" name="entryDate" class="item">
                   <a-date-picker
                     class="input"
+                    valueFormat="YYYY-MM-DD HH:mm:ss"
+                    format="YYYY-MM-DD"
                     v-model:value="formState.entryDate"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请选择入职日期'"
                     :disabled="formState.bsStatus === 'B'"

@@ -114,30 +114,34 @@
       <Tag v-if="row.bsType">{{ formatData(row.bsType, config['UNIT_TYPE'])['label'] }}</Tag>
     </template>
     <template #open="{ row }">
-      <Tag :color="row.isOpen === 1 ? 'processing' : 'default'">{{
+      <Tag :color="row.isOpen === 1 ? 'processing' : 'default'" v-if="row.isOpen">{{
         formatData(row.isOpen, config['ENABLE_STATUS'])['label']
       }}</Tag>
     </template>
     <template #sex="{ row }">
-      <Tag>{{ formatData(row.sex, config['GENDER'])['label'] }}</Tag>
+      <Tag v-if="row.sex">{{ formatData(row.sex, config['GENDER'])['label'] }}</Tag>
     </template>
     <template #job="{ row }">
-      <Tag>{{ formatData(row.job, config['JOB'])['label'] }}</Tag>
+      <Tag v-if="row.job">{{ formatData(row.job, config['JOB'])['label'] }}</Tag>
     </template>
     <template #way="{ row }">
-      <Tag>{{ formatData(row.way, config['INVENTORY_WAY'])['label'] }}</Tag>
+      <Tag v-if="row.way">{{ formatData(row.way, config['INVENTORY_WAY'])['label'] }}</Tag>
     </template>
     <template #proMoStatus="{ row }">
-      <Tag :color="formatData(row.proMoStatus, config['PRODUCT_STATUS'])['color']">{{
-        formatData(row.proMoStatus, config['PRODUCT_STATUS'])['label']
-      }}</Tag>
+      <Tag
+        :color="formatData(row.proMoStatus, config['PRODUCT_STATUS'])['color']"
+        v-if="row.proMoStatus"
+        >{{ formatData(row.proMoStatus, config['PRODUCT_STATUS'])['label'] }}</Tag
+      >
     </template>
     <template #attr="{ row }"
       >{{ formatData(row.attr, config['MATERIAL_ATTR'])['label'] }}
     </template>
     <template #bsDate="{ row }">{{ formatDate(row.bsDate) }} </template>
     <template #billType="{ row }"
-      ><Tag>{{ formatData(row.billType, config['BILL_TYPE'])['label'] }}</Tag></template
+      ><Tag v-if="row.billType">{{
+        formatData(row.billType, config['BILL_TYPE'])['label']
+      }}</Tag></template
     >
     <template #returnReason="{ row }"
       ><Tag v-if="row.returnReason">{{
