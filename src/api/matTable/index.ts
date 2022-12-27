@@ -77,10 +77,7 @@ export function getMatOption(json: RequestData<string>, mode: ErrorMessageMode =
 /**
  * 添加物料信息
  */
-export function addMatTable(
-  json: RequestData<MatEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function addMatTable(json: RequestData<MatEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.ADD_MATERIAL,
@@ -95,10 +92,7 @@ export function addMatTable(
 /**
  * 编辑物料信息
  */
-export function updateMatTable(
-  json: RequestData<MatEntity>,
-  mode: ErrorMessageMode = 'message',
-) {
+export function updateMatTable(json: RequestData<MatEntity>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
       url: Url.UPDATE_MATERIAL,
