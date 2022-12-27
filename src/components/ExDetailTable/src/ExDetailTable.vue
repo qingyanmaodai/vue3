@@ -85,10 +85,12 @@
       <span>{{ row.loss }}</span>
     </template>
     <template #numPrice="{ row }">
-      <span>{{ (row.totalPrice = row.num * row.price) }}</span>
+      <span>{{ row.num && row.price ? (row.totalPrice = row.num * row.price) : null }}</span>
     </template>
     <template #realNumPrice="{ row }">
-      <span>{{ (row.totalPrice = row.realNum * row.price) }}</span>
+      <span>{{
+        row.realNum && row.price ? (row.totalPrice = row.realNum * row.price) : null
+      }}</span>
     </template>
     <template #needNum="{ row }">
       <span>{{ row.needNum }}</span>
@@ -205,7 +207,6 @@
       column.field === 'bdInStockCompartment.name' ||
       column.field === 'bdOutStockCompartment.name'
     ) {
-      console.log(data);
       if (data.stockId) {
         filterParams = [
           {

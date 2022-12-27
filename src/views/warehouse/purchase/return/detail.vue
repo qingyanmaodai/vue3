@@ -78,7 +78,7 @@
                     <a-form-item label="退货原因：" ref="reason" name="reason" class="item">
                       <Select
                         allowClear
-                        v-model:value="formState.reason"
+                        v-model:value="formState.returnReason"
                         class="select"
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
                         :options="config.RETURN_REASON"

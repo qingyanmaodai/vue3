@@ -532,6 +532,13 @@ export const warPurReturnColumns = [
   { field: 'matModel', title: '规格型号', width: 120, sortable: true },
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '退货日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
+  {
+    field: 'returnReason',
+    title: '退货原因',
+    width: 120,
+    slots: { default: 'returnReason' },
+    sortable: true,
+  },
   { field: 'supId', title: '供应商', width: 120, sortable: true },
   { field: 'num', title: '应退数量', width: 120, sortable: true },
   { field: 'realNum', title: '实退数量', width: 120, sortable: true },
