@@ -31,6 +31,7 @@
             :isRelatedShow="false"
             :columns="customerColumns"
             :gridOptions="GridOptions"
+            :importConfig="importConfig"
             :tableData="tableData"
             :tablePages="tablePages"
             ref="tableRef"
@@ -70,6 +71,8 @@
   import { gridOptions, customerColumns } from '/@/components/ExTable/data'; //表格配置
   const GridOptions = gridOptions;
   import { useMessage } from '/@/hooks/web/useMessage'; //提示信息组件
+  //导入上传文件api
+  let importConfig = ref<string>('CUSTOMER_IMPORT');
   const { createMessage } = useMessage();
   import {
     audit,

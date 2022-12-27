@@ -119,7 +119,7 @@
       }}</Tag>
     </template>
     <template #sex="{ row }">
-      <Tag v-if="row.sex">{{ formatData(row.sex, config['GENDER'])['label'] }}</Tag>
+      <Tag v-if="row.sex || row.sex == 0">{{ formatData(row.sex, config['GENDER'])['label'] }}</Tag>
     </template>
     <template #job="{ row }">
       <Tag v-if="row.job">{{ formatData(row.job, config['JOB'])['label'] }}</Tag>

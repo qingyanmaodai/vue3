@@ -16,7 +16,6 @@
         tableName="BsInventoryCountGain"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
-        :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
         ref="tableRef"
@@ -29,7 +28,6 @@
         @unAuditRowEvent="unAuditRowEvent"
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
-        @importModelEvent="importModelEvent"
         @getList="getList"
         @pushDownEvent="pushDownEvent"
         @updownSearchEvent="updownSearchEvent"
@@ -61,7 +59,6 @@
     exportExcel,
     getDataList,
     getSearchOption,
-    importFile,
     unAudit,
     unAuditBatch,
     downSearch,
@@ -83,8 +80,6 @@
   import { SearchDataType, SearchLink, SearchMatchType } from '/@/api/apiLink';
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //导入上传文件api
-  let importConfig = ref<string>('IMPORT_INV_COUNT_GAIN');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -284,23 +279,7 @@
       createMessage.error('无法下推到该下游单据/已有下游单据');
     }
   };
-  //下载模板
-  const importModelEvent = async () => {
-    OptTableHook.importModel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        importFile({
-          params: '导入模板',
-        })
-          .then((res) => {
-            const data = { title: '盘盈单导入模板.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
-  };
+
   //导出
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
