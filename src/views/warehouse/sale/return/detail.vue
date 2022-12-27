@@ -76,14 +76,21 @@
                   </Col>
                   <Col :span="8">
                     <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
-                      <Input
-                        allowClear
+                      <ExInput
                         autocomplete="off"
                         class="input"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.cusName"
-                        disabled
+                        :disabled="formState.bsStatus === 'B'"
+                        @search="
+                          onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
+                            'cusId',
+                            'cusName',
+                          ])
+                        "
+                        @clear="onClear(['cusId', 'cusName'])"
                       />
                     </a-form-item>
                   </Col>

@@ -82,7 +82,7 @@
                         :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
                         label="客户"
                         :show="formState.bsStatus !== 'B'"
-                        :value="formState.bdCustomer"
+                        :value="formState.cusName"
                         :disabled="formState.bsStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
