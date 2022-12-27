@@ -1136,6 +1136,53 @@ export const warSaleNoticeColumns = [
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 
+//调拨订单
+export const warTransferOrderColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '单据编号', width: 220, slots: { default: 'number' }, sortable: true },
+  { field: 'srcBill', title: '来源单号', width: 220, sortable: true },
+  { field: 'empName', title: '调拨类型', width: 120, sortable: true },
+  { field: 'cusName', title: '申请组织', width: 120, sortable: true },
+  { field: 'matNumber', title: '物料编号', width: 120, sortable: true },
+  { field: 'matName', title: '物料名称', width: 120, sortable: true },
+  { field: 'matModel', title: '规格型号', width: 120, sortable: true },
+  { field: 'unitName', title: '基本单位', width: 120, sortable: true },
+  { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
+  // { field: 'num', title: '销售数量', width: 120, sortable: true },
+  // { field: 'price', title: '单价', width: 120, sortable: true },
+  // {
+  //   field: 'totalPrice',
+  //   title: '总额',
+  //   width: 120,
+  //   editRender: { props: { type: 'float', min: 0 } },
+  //   sortable: true,
+  // },
+  // {
+  //   field: 'pushNum',
+  //   title: '已推发货',
+  //   width: 120,
+  //   formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+  //   sortable: true,
+  // },
+  // {
+  //   field: 'doneNum',
+  //   title: '已发货数量',
+  //   width: 120,
+  //   formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
+  //   sortable: true,
+  // },
+  { field: 'mark', title: '备注', width: 150, sortable: true },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    width: 120,
+    sortable: true,
+    slots: { default: 'status' },
+  },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];
+
 //其他入库单
 export const warOthersInputColumns = [
   { type: 'checkbox', width: 50 },

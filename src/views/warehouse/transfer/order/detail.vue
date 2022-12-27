@@ -55,12 +55,12 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="销售员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="仓管员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择销售员'"
-                        label="销售员"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓管员'"
+                        label="仓管员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"
@@ -71,26 +71,6 @@
                           ])
                         "
                         @clear="onClear(['empId', 'empName'])"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="客户：" ref="cusId" name="cusId" class="item">
-                      <ExInput
-                        autocomplete="off"
-                        class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
-                        label="客户"
-                        :show="formState.bsStatus !== 'B'"
-                        :value="formState.bdCustomer"
-                        :disabled="formState.bsStatus === 'B'"
-                        @search="
-                          onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
-                            'cusId',
-                            'cusName',
-                          ])
-                        "
-                        @clear="onClear(['cusId', 'cusName'])"
                       />
                     </a-form-item>
                   </Col>
@@ -106,8 +86,6 @@
                       />
                     </a-form-item>
                   </Col>
-                </Row>
-                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -160,7 +138,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="warSaleOrderOfDetailColumns"
+            :columns="warTransferOrderOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
@@ -186,12 +164,12 @@
     />
   </div>
 </template>
-<script lang="ts" setup name="warehouse-sale-order-detail">
+<script lang="ts" setup name="warehouse-transfer-order-detail">
   import {
     detailOfExaGridOptions,
-    warSaleOrderOfDetailColumns,
+    warTransferOrderOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
-  import { onMounted, reactive, ref, toRef } from 'vue';
+  import { computed, onMounted, reactive, ref, toRef } from 'vue';
   import {
     Button,
     Col,
@@ -212,7 +190,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, saleOrderEntity } from '/@/api/warSale/order';
+  import { add, audit, unAudit, getOneById, transferOrderEntity } from '/@/api/warTransfer/order';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -250,7 +228,7 @@
     return new Date().toLocaleDateString();
   };
   //输入框默认值
-  const formData: saleOrderEntity = {
+  const formData: transferOrderEntity = {
     id: undefined,
     number: '',
     way: 'A',
@@ -261,14 +239,51 @@
   const formStateInit = reactive({
     data: formData,
   });
-
+  const requiredLocation: any = computed(() => {
+    return stockDis.value === 'C';
+  });
+  const requiredCompartment: any = computed(() => {
+    return stockDis.value !== 'A';
+  });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({});
   const formDataRules = reactive({
-    num: [{ required: true, message: '请输入销售数量' }],
-    price: [{ required: true, message: '请输入单价' }],
+    num: [{ required: true, message: '请输入调拨数量' }],
     'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
+    'bdInStock.name': [{ required: true, message: '请选择调入仓库' }],
+    'bdOutStock.name': [
+      { required: true, message: '请选择调出仓库' },
+      {
+        validator({ cellValue, row }) {
+          if (stockDis.value === 'A' && row.outStockId === row.inStockId) {
+            return new Error('调出不能与调入完全相同');
+          }
+        },
+      },
+    ],
+    'bdInStockCompartment.name': [{ required: requiredCompartment, message: '请选择调入分仓' }],
+    'bdOutStockCompartment.name': [
+      { required: requiredCompartment, message: '请选择调出分仓' },
+      {
+        validator({ cellValue, row }) {
+          if (stockDis.value === 'B' && row.outCompartmentId === row.inCompartmentId) {
+            return new Error('调出不能与调入完全相同');
+          }
+        },
+      },
+    ],
+    'bdInStockLocation.name': [{ required: requiredLocation, message: '请选择调入仓位' }],
+    'bdOutStockLocation.name': [
+      { required: requiredLocation, message: '请选择调出仓位' },
+      {
+        validator({ cellValue, row }) {
+          if (stockDis.value === 'C' && row.outLocationId === row.inLocationId) {
+            return new Error('调出不能与调入完全相同');
+          }
+        },
+      },
+    ],
   });
 
   //筛选条件弹框组件
@@ -491,39 +506,60 @@
         data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
-        data.bdStock = {};
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
-        data.stockId = res.bdStock ? res.bdStock.id : null;
-        data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        data.compartmentId =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
-        data.bdStockCompartment.name =
-          stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
-        data.bdStockLocation.name =
-          stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
+        // data.bdStock = {};
+        // data.bdStockCompartment = {};
+        // data.bdStockLocation = {};
+        // data.stockId = res.bdStock ? res.bdStock.id : null;
+        // data.bdStock.name = res.bdStock ? res.bdStock.name : null;
+        // data.compartmentId =
+        //   stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
+        // data.bdStockCompartment.name =
+        //   stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
+        // data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
+        // data.bdStockLocation.name =
+        //   stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
-      case 'bdStock':
-        data.bdStock = {};
-        data.stockId = row.id ? row.id : null;
-        data.bdStock.name = row.name ? row.name : null;
-        data.compartmentId = null;
-        data.locationId = null;
-        data.bdStockCompartment = {};
-        data.bdStockLocation = {};
+      case 'bdInStock':
+        data.bdInStock = {};
+        data.inStockId = row.id ? row.id : null;
+        data.bdInStock.name = row.name ? row.name : null;
+        data.inCompartmentId = null;
+        data.inLocationId = null;
+        data.bdInStockCompartment = {};
+        data.bdInStockLocation = {};
         break;
-      case 'bdStockCompartment':
-        data.bdStockCompartment = {};
-        data.compartmentId = row.id ? row.id : null;
-        data.bdStockCompartment.name = row.name ? row.name : null;
-        data.locationId = null;
-        data.bdStockLocation = {};
+      case 'bdOutStock':
+        data.bdOutStock = {};
+        data.outStockId = row.id ? row.id : null;
+        data.bdOutStock.name = row.name ? row.name : null;
+        data.outCompartmentId = null;
+        data.outLocationId = null;
+        data.bdOutStockCompartment = {};
+        data.bdOutStockLocation = {};
         break;
-      case 'bdStockLocation':
-        data.bdStockLocation = {};
-        data.locationId = row.id ? row.id : null;
-        data.bdStockLocation.name = row.name ? row.name : null;
+      case 'bdInStockCompartment':
+        data.bdInStockCompartment = {};
+        data.inCompartmentId = row.id ? row.id : null;
+        data.bdInStockCompartment.name = row.name ? row.name : null;
+        data.inLocationId = null;
+        data.bdInStockLocation = {};
+        break;
+      case 'bdOutStockCompartment':
+        data.bdOutStockCompartment = {};
+        data.outCompartmentId = row.id ? row.id : null;
+        data.bdOutStockCompartment.name = row.name ? row.name : null;
+        data.outLocationId = null;
+        data.bdOutStockLocation = {};
+        break;
+      case 'bdInStockLocation':
+        data.bdInStockLocation = {};
+        data.inLocationId = row.id ? row.id : null;
+        data.bdInStockLocation.name = row.name ? row.name : null;
+        break;
+      case 'bdOutStockLocation':
+        data.bdOutStockLocation = {};
+        data.outLocationId = row.id ? row.id : null;
+        data.bdOutStockLocation.name = row.name ? row.name : null;
         break;
     }
   };
@@ -538,14 +574,24 @@
       formState.value.dtData.map((r) => {
         r.bsStatus = formState.value.bsStatus;
         r['stockDis'] = stockDis.value;
-        if (r.bdStockCompartment && r.bdStockCompartment.name) {
-          r.compartmentId = stockDis.value !== 'A' ? r.compartmentId : undefined;
-          r.bdStockCompartment.name =
-            stockDis.value !== 'A' ? r.bdStockCompartment.name : undefined;
+        if (r.bdInStockCompartment && r.bdInStockCompartment.name) {
+          r.inCompartmentId = stockDis.value !== 'A' ? r.inCompartmentId : undefined;
+          r.bdInStockCompartment.name =
+            stockDis.value !== 'A' ? r.bdInStockCompartment.name : undefined;
         }
-        if (r.bdStockLocation && r.bdStockLocation.name) {
-          r.locationId = stockDis.value === 'C' ? r.locationId : undefined;
-          r.bdStockLocation.name = stockDis.value === 'C' ? r.bdStockLocation.name : undefined;
+        if (r.bdOutStockCompartment && r.bdOutStockCompartment.name) {
+          r.outCompartmentId = stockDis.value !== 'A' ? r.outCompartmentId : undefined;
+          r.bdOutStockCompartment.name =
+            stockDis.value !== 'A' ? r.bdOutStockCompartment.name : undefined;
+        }
+        if (r.bdInStockLocation && r.bdInStockLocation.name) {
+          r.inLocationId = stockDis.value === 'C' ? r.inLocationId : undefined;
+          r.bdInStockLocation.name = stockDis.value === 'C' ? r.bdInStockLocation.name : undefined;
+        }
+        if (r.bdOutStockLocation && r.bdOutStockLocation.name) {
+          r.outLocationId = stockDis.value === 'C' ? r.outLocationId : undefined;
+          r.bdOutStockLocation.name =
+            stockDis.value === 'C' ? r.bdOutStockLocation.name : undefined;
         }
       });
     }

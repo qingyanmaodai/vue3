@@ -54,9 +54,18 @@ export interface transferOrderDetailEntity extends PublicModel {
   compartmentId?: string;
   locationId?: string;
   bdMaterial?: MatEntity;
-  bdStock?: StockEntity;
-  bdStockCompartment?: StockCompartmentEntity;
-  bdStockLocation?: StockLocationEntity;
+  bdInStock?: StockEntity;
+  bdInStockCompartment?: StockCompartmentEntity;
+  bdInStockLocation?: StockLocationEntity;
+  bdOutStock?: StockEntity;
+  bdOutStockCompartment?: StockCompartmentEntity;
+  bdOutStockLocation?: StockLocationEntity;
+  inStockId?: string;
+  outStockId?: string;
+  inCompartmentId?: string;
+  outCompartmentId?: string;
+  inLocationId?: string;
+  outLocationId?: string;
 }
 
 /**

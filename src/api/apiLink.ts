@@ -574,23 +574,23 @@ export enum Url {
   UP_SEARCH_OTHERS_OUTPUT = '/wms/bs-other-out/up-search', //上查
 
   // 调拨订单
-  AUDIT_TRANSFER_ORDER = '/wms/saleOrder/audit', //审核
-  BATCH_AUDIT_TRANSFER_ORDER = '/wms/saleOrder/batch-audit', //批量审核
-  UN_AUDIT_TRANSFER_ORDER = '/wms/saleOrder/un-audit', //反审核
-  UN_BATCH_AUDIT_TRANSFER_ORDER = '/wms/saleOrder/batch-un-audit', //批量反审核
-  BATCH_DELETE_WITH_DETAIL_TRANSFER_ORDER = '/wms/saleOrder/delete-with-detail-batch', //批量删除含详情信息
-  DELETE_WITH_DETAIL_TRANSFER_ORDER = '/wms/saleOrder/delete-with-detail', //删除含详情信息
-  GET_PAGE_TRANSFER_ORDER_LIST = '/wms/saleOrder/list', //分页查询--获取列表
-  GET_TRANSFER_ORDER_DTO = '/wms/saleOrder/query-dto', //获取实体信息
-  GET_ONE_TRANSFER_ORDER = '/wms/saleOrder/query-one', //查询单条
-  IMPORT_TRANSFER_ORDER = 'http://192.168.200.136:9999/wms/saleOrder/import-list', //导入
-  IMPORT_MODEL_TRANSFER_ORDER = '/wms/saleOrder/import-model', //导入模板下载
-  EXPORT_TRANSFER_ORDER = '/wms/saleOrder/export-list', //导出
-  ADD_WITH_DETAIL_TRANSFER_ORDER = '/wms/saleOrder/save-with-detail', //添加含详情信息
-  UPDATE_TRANSFER_ORDER = '/wms/saleOrder/update', //编辑
-  PUSHDOWN_TRANSFER_ORDER = '/wms/saleOrder/push/', //下推
-  DOWN_SEARCH_TRANSFER_ORDER = '/wms/saleOrder/down-search', //下查
-  UP_SEARCH_TRANSFER_ORDER = '/wms/saleOrder/up-search', //上查
+  AUDIT_TRANSFER_ORDER = '/wms/transferOrder/audit',
+  BATCH_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/batch-audit', //批量审核
+  UN_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/un-audit', //反审核
+  UN_BATCH_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_TRANSFER_ORDER = '/wms/transferOrder/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_TRANSFER_ORDER = '/wms/transferOrder/delete-with-detail', //删除含详情信息
+  GET_PAGE_TRANSFER_ORDER_LIST = '/wms/transferOrder/list', //分页查询--获取列表
+  GET_TRANSFER_ORDER_DTO = '/wms/transferOrder/query-dto', //获取实体信息
+  GET_ONE_TRANSFER_ORDER = '/wms/transferOrder/query-one', //查询单条
+  IMPORT_TRANSFER_ORDER = 'http://192.168.200.136:9999/wms/transferOrder/import-list', //导入
+  IMPORT_MODEL_TRANSFER_ORDER = '/wms/transferOrder/import-model', //导入模板下载
+  EXPORT_TRANSFER_ORDER = '/wms/transferOrder/export-list', //导出
+  ADD_WITH_DETAIL_TRANSFER_ORDER = '/wms/transferOrder/save-with-detail', //添加含详情信息
+  UPDATE_TRANSFER_ORDER = '/wms/transferOrder/update', //编辑
+  PUSHDOWN_TRANSFER_ORDER = '/wms/transferOrder/push/', //下推
+  DOWN_SEARCH_TRANSFER_ORDER = '/wms/transferOrder/down-search', //下查
+  UP_SEARCH_TRANSFER_ORDER = '/wms/transferOrder/up-search', //上查
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

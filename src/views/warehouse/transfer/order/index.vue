@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsSaleOrder"
+        tableName="BsTransferOrder"
         searchNo="单据编号"
         :showSearchName="false"
         @getList="getList"
@@ -12,12 +12,12 @@
       />
       <ExTable
         :isShowImport="false"
-        :columns="warSaleOrderColumns"
+        :columns="warTransferOrderColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BsSaleOrder"
+        tableName="BsTransferOrder"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -36,18 +36,18 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="BsSaleOrder"
+      tableName="BsTransferOrder"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="BsSaleOrder"
+      tableName="BsTransferOrder"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />
   </div>
 </template>
-<script setup lang="ts" name="warehouse-sale-order-index">
+<script setup lang="ts" name="warehouse-transfer-order-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -65,10 +65,10 @@
     unAuditBatch,
     upSearch,
     pushDown,
-  } from '/@/api/warSale/order';
+  } from '/@/api/warTransfer/order';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, warSaleOrderColumns } from '/@/components/ExTable/data';
+  import { gridOptions, warTransferOrderColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
   import { OptTableHook } from '/@/api/utilHook';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -78,7 +78,7 @@
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
   //导入上传文件api
-  let importConfig = ref<string>('IMPORT_SALE_ORDER');
+  let importConfig = ref<string>('IMPORT_TRANSFER_ORDER');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -99,7 +99,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsSaleOrder.update_time'],
+        descList: ['BsTransferOrder.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -150,7 +150,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.WAR_SALE_ORDER_DETAIL,
+      path: PageEnum.WAR_TRANSFER_ORDER_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -159,7 +159,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_SALE_ORDER_DETAIL,
+      path: PageEnum.WAR_TRANSFER_ORDER_DETAIL,
       query: {
         row: row.id,
       },

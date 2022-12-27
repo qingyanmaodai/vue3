@@ -31,6 +31,17 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
           return false;
         case column.field == 'bdStockLocation.name' && (row.stockDis !== 'C' || !row.compartmentId):
           return false;
+        case column.field == 'bdInStockCompartment.name' && (row.stockDis == 'A' || !row.inStockId):
+          return false;
+        case column.field == 'bdInStockLocation.name' &&
+          (row.stockDis !== 'C' || !row.inCompartmentId):
+          return false;
+        case column.field == 'bdOutStockCompartment.name' &&
+          (row.stockDis == 'A' || !row.outStockId):
+          return false;
+        case column.field == 'bdOutStockLocation.name' &&
+          (row.stockDis !== 'C' || !row.outCompartmentId):
+          return false;
         default:
           return true;
       }
@@ -599,6 +610,7 @@ export const warPurOrdersOfDetailColumns = [
     field: 'totalPrice',
     title: '金额',
     className: 'disableProp',
+    editRender: { props: { type: 'float', min: 0 } },
     slots: { default: 'numPrice' },
     width: 150,
     sortable: true,
@@ -2297,6 +2309,191 @@ export const warSaleNoticeOfDetailColumns = [
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];
+//调拨订单详情明细
+export const warTransferOrderOfDetailColumns = [
+  { type: 'checkbox', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', className: 'disableProp', width: 50 },
+  {
+    field: 'bdMaterial.number',
+    title: '物料编码',
+    sortable: true,
+    width: 150,
+    params: {
+      tableName: 'bdMaterial', //物料信息表名
+      list: 'GET_MATERIAL_LIST', //物料信息表格数据
+      select: 'GET_MAT_DTO', //基本信息下拉框+表头
+      param: {
+        matId: 'bdMaterial',
+        stockId: 'bdStock',
+        compartmentId: 'bdStockCompartment',
+        locationId: 'bdStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model',
+    },
+  },
+  {
+    field: 'bdMaterial.name',
+    title: '物料名称',
+    className: 'disableProp',
+    sortable: true,
+    width: 150,
+  },
+  {
+    field: 'bdMaterial.model',
+    title: '规格型号',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.baseUnitName',
+    title: '基本单位',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdMaterial.weightUnitName',
+    title: '重量单位',
+    className: 'disableProp',
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'num',
+    title: '调拨数量',
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdInStock.name',
+    title: '调入仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
+      param: {
+        inStockId: 'bdInStock',
+        inCompartmentId: 'bdInStockCompartment',
+        inLocationId: 'bdInStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdInStockCompartment.name',
+    title: '调入分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_STOCK_DTO',
+      param: {
+        inCompartmentId: 'bdInStockCompartment',
+        inLocationId: 'bdInStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdInStockLocation.name',
+    title: '调入仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
+      param: {
+        inLocationId: 'bdInStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdOutStock.name',
+    title: '调出仓库',
+    params: {
+      list: 'GET_PAGE_STOCK_LIST',
+      select: 'GET_STOCK_DTO',
+      param: {
+        outStockId: 'bdOutStock',
+        outCompartmentId: 'bdOutStockCompartment',
+        outLocationId: 'bdOutStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdOutStockCompartment.name',
+    title: '调出分仓',
+    params: {
+      list: 'GET_PAGE_STOCK_COMPARTMENT_LIST',
+      select: 'GET_SUB_STOCK_DTO',
+      param: {
+        outCompartmentId: 'bdOutStockCompartment',
+        outLocationId: 'bdOutStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'bdOutStockLocation.name',
+    title: '调出仓位',
+    params: {
+      list: 'GET_PAGE_STOCK_LOCATION_LIST',
+      select: 'GET_LOCATION_DTO',
+      param: {
+        outLocationId: 'bdOutStockLocation',
+      },
+    },
+    editRender: { name: '$input' },
+    slots: {
+      edit: 'model1',
+    },
+    width: 150,
+    sortable: true,
+  },
+  {
+    field: 'pushNum',
+    title: '已推调拨',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  {
+    field: 'doneNum',
+    title: '已调拨数量',
+    width: 150,
+    className: 'disableProp',
+    sortable: true,
+  },
+  { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
+  { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
+];
 //其他入库单详情明细
 export const warOthersInputOfDetailColumns = [
   { type: 'checkbox', width: 50 },
@@ -2450,9 +2647,12 @@ export const warOthersOutputOfDetailColumns = [
       select: 'GET_MAT_DTO', //基本信息下拉框+表头
       param: {
         matId: 'bdMaterial',
-        stockId: 'bdStock',
-        compartmentId: 'bdStockCompartment',
-        locationId: 'bdStockLocation',
+        inStockId: 'bdInStock',
+        inCompartmentId: 'bdInStockCompartment',
+        inLocationId: 'bdInStockLocation',
+        outStockId: 'bdOutStock',
+        outCompartmentId: 'bdOutStockCompartment',
+        outLocationId: 'bdOutStockLocation',
       },
     },
     editRender: { name: '$input' },

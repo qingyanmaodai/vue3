@@ -200,7 +200,12 @@
     basicTableCols.value = TableColum[column.params.select];
     basicTableName.value = column.params.tableName;
     let filterParams: SearchParams[] = [];
-    if (column.field === 'bdStockCompartment.name') {
+    if (
+      column.field === 'bdStockCompartment.name' ||
+      column.field === 'bdInStockCompartment.name' ||
+      column.field === 'bdOutStockCompartment.name'
+    ) {
+      console.log(data);
       if (data.stockId) {
         filterParams = [
           {
@@ -213,9 +218,37 @@
             val: data.stockId,
           },
         ];
+      } else if (data.inStockId && column.field === 'bdInStockCompartment.name') {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.inStockId,
+          },
+        ];
+      } else if (data.outStockId && column.field === 'bdOutStockCompartment.name') {
+        filterParams = [
+          {
+            table: 'BdStockCompartment',
+            name: 'stockId',
+            column: 'stock_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.outStockId,
+          },
+        ];
       }
     }
-    if (column.field === 'bdStockLocation.name') {
+    if (
+      column.field === 'bdStockLocation.name' ||
+      column.field === 'bdInStockLocation.name' ||
+      column.field === 'bdOutStockLocation.name'
+    ) {
       if (data.compartmentId) {
         filterParams = [
           {
@@ -226,6 +259,30 @@
             rule: SearchMatchType.EQ,
             type: SearchDataType.string,
             val: data.compartmentId,
+          },
+        ];
+      } else if (data.inCompartmentId && column.field === 'bdInStockLocation.name') {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.inCompartmentId,
+          },
+        ];
+      } else if (data.outCompartmentId && column.field === 'bdOutStockLocation.name') {
+        filterParams = [
+          {
+            table: 'BdStockLocation',
+            name: 'compartmentId',
+            column: 'compartment_id',
+            link: SearchLink.AND,
+            rule: SearchMatchType.EQ,
+            type: SearchDataType.string,
+            val: data.outCompartmentId,
           },
         ];
       }
@@ -273,6 +330,24 @@
           backgroundColor: 'rgb(225 225 224)',
         };
       case column.field == 'bdStockLocation.name' && (row.stockDis !== 'C' || !row.compartmentId):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdInStockCompartment.name' && (row.stockDis == 'A' || !row.inStockId):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdInStockLocation.name' &&
+        (row.stockDis !== 'C' || !row.inCompartmentId):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdOutStockCompartment.name' && (row.stockDis == 'A' || !row.outStockId):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'bdOutStockLocation.name' &&
+        (row.stockDis !== 'C' || !row.outCompartmentId):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
