@@ -288,7 +288,16 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    realNum: [{ required: true, message: '请输入实退数量' }],
+    realNum: [
+      { required: true, message: '请输入实退数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
+            return new Error('实退数量不能超过可退数量');
+          }
+        },
+      },
+    ],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];

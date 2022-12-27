@@ -279,7 +279,7 @@
       { required: true, message: '请输入实收数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.num) < Number(cellValue)) {
+          if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
             return new Error('实收数量不能超过应收数量');
           }
         },
