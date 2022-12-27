@@ -15,7 +15,6 @@
         :isOrderShow="true"
         :columns="warProOrderColumns"
         :gridOptions="GridOptions"
-        :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
         tableName="BsProMo"
@@ -29,7 +28,6 @@
         @unAuditRowEvent="unAuditRowEvent"
         @unAuditBatchEvent="unAuditBatchEvent"
         @exportTable="exportTable"
-        @importModelEvent="importModelEvent"
         @getList="getList"
         @pushDownEvent="pushDownEvent"
         @createOrderEvent="createOrderEvent"
@@ -63,7 +61,6 @@
     exportExcel,
     getDataList,
     getSearchOption,
-    importFile,
     unAudit,
     unAuditBatch,
     upSearch,
@@ -82,8 +79,6 @@
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PRODUCE_ORDER');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -221,23 +216,7 @@
     await tableRef.value.computeData(res);
     await getList();
   };
-  //下载模板
-  const importModelEvent = async () => {
-    OptTableHook.importModel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        importFile({
-          params: '导入模板',
-        })
-          .then((res) => {
-            const data = { title: '生产订单导入模板.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
-  };
+
   //导出
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {

@@ -14,7 +14,6 @@
         :isShowImport="false"
         :columns="warPurInputColumns"
         :gridOptions="GridOptions"
-        :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
         tableName="BsPurchaseInStock"
@@ -29,7 +28,6 @@
         @unAuditBatchEvent="unAuditBatchEvent"
         @pushDownEvent="pushDownEvent"
         @exportTable="exportTable"
-        @importModelEvent="importModelEvent"
         @getList="getList"
         @updownSearchEvent="updownSearchEvent"
       />
@@ -60,7 +58,6 @@
     exportExcel,
     getDataList,
     getSearchOption,
-    importFile,
     unAudit,
     unAuditBatch,
     upSearch,
@@ -77,8 +74,6 @@
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //导入上传文件api
-  let importConfig = ref<string>('IMPORT_PURCHASE_INSTOCK');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -216,23 +211,7 @@
     await tableRef.value.computeData(res);
     await getList();
   };
-  //下载模板
-  const importModelEvent = async () => {
-    OptTableHook.importModel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        importFile({
-          params: '导入模板',
-        })
-          .then((res) => {
-            const data = { title: '采购入库单导入模板.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
-  };
+
   //导出
   const exportTable = async () => {
     OptTableHook.exportExcel = (): Promise<any> => {
