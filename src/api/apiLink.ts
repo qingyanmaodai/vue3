@@ -535,6 +535,44 @@ export enum Url {
   DOWN_SEARCH_SALE_NOTICE = '/wms/saleNotice/down-search', //下查
   UP_SEARCH_SALE_NOTICE = '/wms/saleNotice/up-search', //上查
 
+  //其他入库单
+  AUDIT_OTHERS_INPUT = '/wms/bs-other-in/audit', //审核
+  BATCH_AUDIT_OTHERS_INPUT = '/wms/bs-other-in/batch-audit', //批量审核
+  UN_AUDIT_OTHERS_INPUT = '/wms/bs-other-in/un-audit', //反审核
+  UN_BATCH_AUDIT_OTHERS_INPUT = '/wms/bs-other-in/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_OTHERS_INPUT = '/wms/bs-other-in/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_OTHERS_INPUT = '/wms/bs-other-in/delete-with-detail', //删除含详情信息
+  GET_PAGE_OTHERS_INPUT_LIST = '/wms/bs-other-in/list', //分页查询--获取列表
+  GET_OTHERS_INPUT_DTO = '/wms/bs-other-in/query-dto', //获取实体信息
+  GET_ONE_OTHERS_INPUT = '/wms/bs-other-in/query-one', //查询单条
+  IMPORT_OTHERS_INPUT = 'http://192.168.200.136:9999/wms/bs-other-in/import-list', //导入
+  IMPORT_MODEL_OTHERS_INPUT = '/wms/bs-other-in/import-model', //导入模板下载
+  EXPORT_OTHERS_INPUT = '/wms/bs-other-in/export-list', //导出
+  ADD_WITH_DETAIL_OTHERS_INPUT = '/wms/bs-other-in/save-with-detail', //添加含详情信息
+  UPDATE_OTHERS_INPUT = '/wms/bs-other-in/update', //编辑
+  PUSHDOWN_OTHERS_INPUT = '/wms/bs-other-in/push/', //下推
+  DOWN_SEARCH_OTHERS_INPUT = '/wms/bs-other-in/down-search', //下查
+  UP_SEARCH_OTHERS_INPUT = '/wms/bs-other-in/up-search', //上查
+
+  //其他出库单
+  AUDIT_OTHERS_OUTPUT = '/wms/bs-other-out/audit', //审核
+  BATCH_AUDIT_OTHERS_OUTPUT = '/wms/bs-other-out/batch-audit', //批量审核
+  UN_AUDIT_OTHERS_OUTPUT = '/wms/bs-other-out/un-audit', //反审核
+  UN_BATCH_AUDIT_OTHERS_OUTPUT = '/wms/bs-other-out/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_OTHERS_OUTPUT = '/wms/bs-other-out/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_OTHERS_OUTPUT = '/wms/bs-other-out/delete-with-detail', //删除含详情信息
+  GET_PAGE_OTHERS_OUTPUT_LIST = '/wms/bs-other-out/list', //分页查询--获取列表
+  GET_OTHERS_OUTPUT_DTO = '/wms/bs-other-out/query-dto', //获取实体信息
+  GET_ONE_OTHERS_OUTPUT = '/wms/bs-other-out/query-one', //查询单条
+  IMPORT_OTHERS_OUTPUT = 'http://192.168.200.136:9999/wms/bs-other-out/import-list', //导入
+  IMPORT_MODEL_OTHERS_OUTPUT = '/wms/bs-other-out/import-model', //导入模板下载
+  EXPORT_OTHERS_OUTPUT = '/wms/bs-other-out/export-list', //导出
+  ADD_WITH_DETAIL_OTHERS_OUTPUT = '/wms/bs-other-out/save-with-detail', //添加含详情信息
+  UPDATE_OTHERS_OUTPUT = '/wms/bs-other-out/update', //编辑
+  PUSHDOWN_OTHERS_OUTPUT = '/wms/bs-other-out/push/', //下推
+  DOWN_SEARCH_OTHERS_OUTPUT = '/wms/bs-other-out/down-search', //下查
+  UP_SEARCH_OTHERS_OUTPUT = '/wms/bs-other-out/up-search', //上查
+
   // 调拨订单
   AUDIT_TRANSFER_ORDER = '/wms/transferOrder/audit',
   BATCH_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/batch-audit', //批量审核

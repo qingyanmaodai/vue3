@@ -203,7 +203,6 @@
     DatePicker,
     TabPane,
     Tabs,
-    Select,
   } from 'ant-design-vue';
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
@@ -276,7 +275,16 @@
   const location = 'bdStockLocation.name';
 
   const formRules = reactive({
-    realNum: [{ required: true, message: '请输入实退数量' }],
+    realNum: [
+      { required: true, message: '请输入实出库数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
+            return new Error('实出库数量不能超过可出库数量');
+          }
+        },
+      },
+    ],
   });
   formRules[material] = [{ required: true, message: '请选择物料信息' }];
   formRules[stock] = [{ required: true, message: '请选择仓库' }];

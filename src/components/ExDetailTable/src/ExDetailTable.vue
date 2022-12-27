@@ -123,7 +123,7 @@
   import { onMounted, PropType, reactive, ref } from 'vue';
   import { VxeGridInstance } from 'vxe-table';
   import { ExInput } from '/@/components/ExInput';
-  import { Button, Tag, Switch, DatePicker } from 'ant-design-vue';
+  import { Button, Switch, DatePicker } from 'ant-design-vue';
   import { config, configEntity } from '/@/utils/publicParamConfig';
   import {
     ControlSet,

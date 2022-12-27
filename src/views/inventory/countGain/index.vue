@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsInventoryCountGainModel"
+        tableName="BsInventoryCountGain"
         searchNo="单据编号"
         searchName="物料编号"
         :showSearchName="false"
@@ -13,7 +13,7 @@
       />
       <ExTable
         :isShowImport="false"
-        tableName="BsInventoryCountGainModel"
+        tableName="BsInventoryCountGain"
         :columns="invCountGainColumns"
         :gridOptions="GridOptions"
         :importConfig="importConfig"
@@ -37,12 +37,12 @@
     </div>
     <ExPushDownModel
       ref="ExPushDownModelRef"
-      tableName="BsInventoryCountGainModel"
+      tableName="BsInventoryCountGain"
       @pushDownSelect="pushDownSelect"
     />
     <ExLinkQueryModal
       ref="exLinkQueryModelRef"
-      tableName="BsInventoryCountGainModel"
+      tableName="BsInventoryCountGain"
       :modalTitle="modalTitle"
       :linkQueryMenuData="linkQueryMenuData"
     />

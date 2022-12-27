@@ -109,23 +109,6 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item
-                      label="库存方向："
-                      ref="returnCause"
-                      name="returnCause"
-                      class="item"
-                    >
-                      <Select
-                        allowClear
-                        v-model:value="formState.invDirection"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择库存方向'"
-                        :options="config.PRO_RETURN_REASON"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
                         v-model:value="formState.mark"
@@ -215,7 +198,6 @@
     Form,
     FormItem,
     Input,
-    Select,
     LayoutHeader,
     Row,
     DatePicker,
@@ -297,7 +279,7 @@
       { required: true, message: '请输入实收数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(row.num) < Number(cellValue)) {
+          if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
             return new Error('实收数量不能超过应收数量');
           }
         },

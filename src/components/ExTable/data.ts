@@ -1196,8 +1196,8 @@ export const warOthersInputColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '入库日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supName', title: '供应商', width: 120, sortable: true },
-  { field: 'num', title: '应收数量', width: 120, sortable: true },
-  { field: 'realNum', title: '实收数量', width: 120, sortable: true },
+  { field: 'num', title: '应入库数量', width: 120, sortable: true },
+  { field: 'realNum', title: '实入库数量', width: 120, sortable: true },
   {
     field: 'pushNum',
     title: '已下推数量',
@@ -1207,7 +1207,7 @@ export const warOthersInputColumns = [
   },
   {
     field: 'doneNum',
-    title: '已退货数量',
+    title: '已出库数量',
     width: 120,
     formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
     sortable: true,
@@ -1239,8 +1239,8 @@ export const warOthersOutputColumns = [
   { field: 'unitName', title: '基本单位', width: 120, sortable: true },
   { field: 'bsDate', title: '出库日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supId', title: '供应商', width: 120, sortable: true },
-  { field: 'num', title: '应退数量', width: 120, sortable: true },
-  { field: 'realNum', title: '实退数量', width: 120, sortable: true },
+  { field: 'num', title: '可出库数量', width: 120, sortable: true },
+  { field: 'realNum', title: '实出库数量', width: 120, sortable: true },
   {
     field: 'pushNum',
     title: '已下推数量',
@@ -1250,7 +1250,7 @@ export const warOthersOutputColumns = [
   },
   {
     field: 'doneNum',
-    title: '已处理数量',
+    title: '已入库数量',
     width: 120,
     formatter: ({ cellValue }) => (cellValue ? cellValue : '0'),
     sortable: true,
@@ -1268,4 +1268,3 @@ export const warOthersOutputColumns = [
   },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
-

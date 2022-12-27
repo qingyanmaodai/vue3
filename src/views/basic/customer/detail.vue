@@ -50,6 +50,7 @@
                 <a-form-item label="简称：" ref="shortName" name="shortName" class="item">
                   <Input
                     allowClear
+                    autocomplete="off"
                     class="input"
                     v-model:value="formState.shortName"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请输入简称'"
@@ -94,6 +95,7 @@
                   <Input
                     allowClear
                     class="input"
+                    autocomplete="off"
                     v-model:value="formState.address"
                     :placeholder="formState.bsStatus === 'B' ? '' : '请输入地址'"
                     :disabled="formState.bsStatus === 'B'"
