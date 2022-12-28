@@ -485,6 +485,14 @@ export const warPurOrdersColumns = [
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   { field: 'supplierName', title: '供应商', width: 120, sortable: true },
   { field: 'num', title: '采购数量', width: 120, sortable: true },
+  { field: 'price', title: '单价', width: 120, sortable: true },
+  {
+    field: 'totalPrice',
+    title: '总额',
+    width: 120,
+    editRender: { props: { type: 'float', min: 0 } },
+    sortable: true,
+  },
   {
     field: 'pushNum',
     title: '已下推数量',
