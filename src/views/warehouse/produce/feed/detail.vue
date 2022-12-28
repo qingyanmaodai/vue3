@@ -207,7 +207,6 @@
     LayoutHeader,
     Row,
     DatePicker,
-    Select,
     TabPane,
     Tabs,
   } from 'ant-design-vue';

@@ -270,11 +270,20 @@
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({});
   const formDataRules = reactive({
-    realNum: [{ required: true, message: '请输入应退数量' }],
-    'bdMaterial.number':[{ required: true, message: '请选择物料信息' }],
-    'bdStock.name':[{ required: true, message: '请选择仓库' }],
-    'bdStockCompartment.name':[{ required: requiredCompartment, message: '请选择分仓' }],
-    'bdStockLocation.name':[{ required: requiredLocation, message: '请选择仓位' }],
+    realNum: [
+      { required: true, message: '请输入实退数量' },
+      {
+        validator({ cellValue, row }) {
+          if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
+            return new Error('可退数量不能超过申请数量');
+          }
+        },
+      },
+    ],
+    'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
+    'bdStock.name': [{ required: true, message: '请选择仓库' }],
+    'bdStockCompartment.name': [{ required: requiredCompartment, message: '请选择分仓' }],
+    'bdStockLocation.name': [{ required: requiredLocation, message: '请选择仓位' }],
   });
   //筛选条件弹框组件
   //筛选条件查询
