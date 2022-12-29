@@ -535,7 +535,7 @@ export const warPurReturnColumns = [
   {
     field: 'returnReason',
     title: '退货原因',
-    width: 120,
+    width: 135,
     slots: { default: 'returnReason' },
     sortable: true,
   },
@@ -1051,8 +1051,8 @@ export const warSaleReturnColumns = [
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   {
     field: 'returnReason',
-    title: '退料原因',
-    width: 120,
+    title: '退货原因',
+    width: 135,
     slots: { default: 'returnReason' },
     sortable: true,
   },
@@ -1108,8 +1108,8 @@ export const warSaleNoticeColumns = [
   { field: 'bsDate', title: '业务日期', width: 160, slots: { default: 'bsDate' }, sortable: true },
   {
     field: 'returnReason',
-    title: '退料原因',
-    width: 120,
+    title: '退货原因',
+    width: 135,
     slots: { default: 'returnReason' },
     sortable: true,
   },
