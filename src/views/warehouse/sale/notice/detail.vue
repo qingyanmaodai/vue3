@@ -55,12 +55,12 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="仓管员：" ref="empId" name="empId" class="item">
+                    <a-form-item label="通知员：" ref="empId" name="empId" class="item">
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓管员'"
-                        label="客户"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择通知员'"
+                        label="通知员"
                         :show="formState.bsStatus !== 'B'"
                         :value="formState.empName"
                         :disabled="formState.bsStatus === 'B'"

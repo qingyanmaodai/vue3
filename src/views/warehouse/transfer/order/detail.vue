@@ -379,9 +379,12 @@
               (e) =>
                 tableFullData.filter(
                   (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
+                    e1.inStockId === e.inStockId &&
+                    e1.outStockId === e.outStockId &&
+                    e1.inCompartmentId === e.inCompartmentId &&
+                    e1.outCompartmentId === e.outCompartmentId &&
+                    e1.inLocationId === e.inLocationId &&
+                    e1.outLocationId === e.outLocationId &&
                     e1.matId === e.matId,
                 ).length > 1,
             )
@@ -423,9 +426,12 @@
                 (e) =>
                   tableFullData.filter(
                     (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
+                      e1.inStockId === e.inStockId &&
+                      e1.outStockId === e.outStockId &&
+                      e1.inCompartmentId === e.inCompartmentId &&
+                      e1.outCompartmentId === e.outCompartmentId &&
+                      e1.inLocationId === e.inLocationId &&
+                      e1.outLocationId === e.outLocationId &&
                       e1.matId === e.matId,
                   ).length > 1,
               )

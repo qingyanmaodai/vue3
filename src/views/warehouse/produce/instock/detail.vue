@@ -352,6 +352,21 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
+          if (
+            tableFullData.some(
+              (e) =>
+                tableFullData.filter(
+                  (e1) =>
+                    e1.stockId === e.stockId &&
+                    e1.compartmentId === e.compartmentId &&
+                    e1.locationId === e.locationId &&
+                    e1.matId === e.matId,
+                ).length > 1,
+            )
+          ) {
+            createMessage.error('明细表存在相同数据，请检查!');
+            return;
+          }
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
@@ -379,6 +394,21 @@
           if (tableFullData) {
             if (validAllErrMapData) {
               createMessage.error('明细表数据校检不通过，请检查!');
+              return;
+            }
+            if (
+              tableFullData.some(
+                (e) =>
+                  tableFullData.filter(
+                    (e1) =>
+                      e1.stockId === e.stockId &&
+                      e1.compartmentId === e.compartmentId &&
+                      e1.locationId === e.locationId &&
+                      e1.matId === e.matId,
+                  ).length > 1,
+              )
+            ) {
+              createMessage.error('明细表存在相同数据，请检查!');
               return;
             }
             formState.value.dtData = cloneDeep(tableFullData);
