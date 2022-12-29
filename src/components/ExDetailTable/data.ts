@@ -1636,7 +1636,7 @@ export const warProFeedOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '申请数量',
+    title: '应领数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
@@ -1650,7 +1650,7 @@ export const warProFeedOfDetailColumns = [
   },
   {
     field: 'realNum',
-    title: '已领数量',
+    title: '实领数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,
