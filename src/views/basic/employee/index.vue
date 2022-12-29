@@ -94,7 +94,7 @@
   } from '/@/api/department';
   import { FormState, GroupFormData, SearchParams, tableParams } from '/@/api/apiLink';
   //导入上传文件api
-  let importConfig = ref<string>('CUSTOMER_IMPORT');
+  let importConfig = ref<string>('EMPLOYEE_IMPORT');
   /* data */
   const paneSize = ref(16); //面板尺寸
   const searchRef: any = ref<String | null>(null); //表格查询组件引用ref

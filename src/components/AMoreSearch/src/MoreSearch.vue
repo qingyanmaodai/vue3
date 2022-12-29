@@ -282,16 +282,24 @@
     if (formData.value.length > 0) {
       for (let i = 0; i < formData.value.length; i++) {
         const data = formData.value[i];
+        let tableName =
+          data.name == 'stockId' ||
+          data.name == 'compartmentId' ||
+          data.name == 'locationId' ||
+          data.name == 'matId'
+            ? props.tableName + 'Detail'
+            : props.tableName;
         if (data.name && data.val) {
           searchParams.push({
-            table: props.tableName,
+            table: tableName,
+            // table: props.tableName,
             // table: data.control.tableAsName ? data.control.tableAsName : props.tableName,
             name: data.name,
             column: data.control.fieldName,
             link: data.link,
             rule: data.rule,
             type: SearchDataType.string,
-            val: data.val ? data.val : '',
+            val: data.val || data.val == '0' ? data.val : '',
           });
         }
       }

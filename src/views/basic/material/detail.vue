@@ -130,6 +130,7 @@
                   <InputNumber
                     :placeholder="formState.bsStatus === 'B' ? '' : '请输入净重'"
                     class="input"
+                    v-model:value="formState.netWeight"
                     :min="0"
                     :step="0.1"
                     :disabled="formState.bsStatus === 'B'"
@@ -208,7 +209,9 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择分仓'"
+                    :placeholder="
+                      formState.bsStatus === 'B' || stockDis === 'A' ? '' : '请选择分仓'
+                    "
                     label="分仓"
                     :show="!(formState.bsStatus === 'B' || stockDis === 'A' || !formState.stockId)"
                     v-model:value="formState.bdStockCompartment"
@@ -237,14 +240,16 @@
                   <ExInput
                     autocomplete="off"
                     class="input"
-                    :placeholder="formState.bsStatus === 'B' ? '' : '请选择仓位'"
+                    :placeholder="
+                      formState.bsStatus === 'B' || stockDis !== 'C' ? '' : '请选择仓位'
+                    "
                     label="仓位"
                     :show="
-                      !(formState.bsStatus === 'B' || !formState.compartmentId || stockDis === 'B')
+                      !(formState.bsStatus === 'B' || !formState.compartmentId || stockDis !== 'C')
                     "
                     v-model:value="formState.bdStockLocation"
                     :disabled="
-                      formState.bsStatus === 'B' || !formState.compartmentId || stockDis === 'B'
+                      formState.bsStatus === 'B' || !formState.compartmentId || stockDis !== 'C'
                     "
                     @search="
                       onSearch(
@@ -745,7 +750,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });
@@ -765,7 +770,7 @@
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
         console.log(error);
-        if(error.errorFields) {
+        if (error.errorFields) {
           createMessage.error('数据校检不通过，请检查!');
         }
       });

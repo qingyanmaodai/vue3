@@ -9,6 +9,7 @@ export interface ExaRuleEntity extends PublicModel {
   min?: number;
   max?: number;
   percent?: number;
+  isOpen?: number;
 }
 /**
  * 获取表格信息

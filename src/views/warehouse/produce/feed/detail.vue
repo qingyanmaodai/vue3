@@ -75,7 +75,12 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="补料原因：" ref="reissueCause" name="reissueCause" class="item">
+                    <a-form-item
+                      label="补料原因："
+                      ref="reissueCause"
+                      name="reissueCause"
+                      class="item"
+                    >
                       <!--                      <Select-->
                       <!--                        allowClear-->
                       <!--                        v-model:value="formState.reissueCause"-->
@@ -86,6 +91,7 @@
                       <!--                      />-->
                       <Input
                         allowClear
+                        autocomplete="off"
                         class="input"
                         v-model:value="formState.reissueCause"
                         placeholder="请输入补料原因"
@@ -201,7 +207,6 @@
     LayoutHeader,
     Row,
     DatePicker,
-    Select,
     TabPane,
     Tabs,
   } from 'ant-design-vue';
