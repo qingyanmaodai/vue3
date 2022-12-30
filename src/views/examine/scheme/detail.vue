@@ -479,7 +479,6 @@
 
   //明细表双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
-    console.log('3333333', row.id);
     switch (column) {
       case 'bdExamineProject':
         data.exaProjectId = row.id;

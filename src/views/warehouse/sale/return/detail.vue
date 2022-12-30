@@ -293,7 +293,7 @@
       { required: true, message: '请输入实退数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
+          if (Number(cellValue) && Number(row.num) && Number(cellValue) > Number(row.num)) {
             return new Error('实退数量不能超过应退数量');
           }
         },

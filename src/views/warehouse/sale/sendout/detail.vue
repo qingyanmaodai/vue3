@@ -274,7 +274,7 @@
       { required: true, message: '请输入实发数量' },
       {
         validator({ cellValue, row }) {
-          if (Number(cellValue) && Number(cellValue) > Number(row.num)) {
+          if (Number(cellValue) && Number(row.num) && Number(cellValue) > Number(row.num)) {
             return new Error('实发数量不能超过应发数量');
           }
         },
