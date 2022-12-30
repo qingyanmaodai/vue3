@@ -184,11 +184,10 @@
             @clearDetailTableEvent="clearDetailTableEvent"
             @cellClickTableEvent="cellClickTableEvent"
             @setDefaultTableData="setDefaultTableData"
+            @filterEvent="filterEvent"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
-            @filterModalSearchEvent="filterModalSearchEvent"
-            filterTableName="BdMaterial"
           />
         </pane>
       </a-splitpanes>
@@ -200,6 +199,11 @@
       :control="basicControl"
       :tableCols="basicTableCols"
       :tableName="basicTableName"
+    />
+    <ExFilterModal
+      ref="filterModalRef"
+      @filterModalSearchEvent="filterModalSearchEvent"
+      tableName="BdMaterial"
     />
   </div>
 </template>
@@ -305,14 +309,20 @@
     'bdStockLocation.name': [{ required: requiredLocation, message: '请选择仓位' }],
   });
   //筛选条件弹框组件
+  const filterEvent = () => {
+    filterModalRef.value.show();
+  };
+  //筛选弹框组件ref
+  import { ExFilterModal } from '/@/components/ExFilterModal';
+  const filterModalRef: any = ref<any>(undefined);
+  const filterModalParams = (): SearchParams[] => {
+    return filterModalRef.value.getSearchParams();
+  };
   //筛选条件查询
   const filterModalSearchEvent = async (currPage = 1, pageSize = 1000000) => {
     let getParams: SearchParams[] = [];
-    if (
-      detailTableRef.value.filterModalParams() &&
-      detailTableRef.value.filterModalParams().length > 0
-    ) {
-      getParams = getParams.concat(detailTableRef.value.filterModalParams());
+    if (filterModalParams() && filterModalParams().length > 0) {
+      getParams = getParams.concat(filterModalParams());
     }
     const res: any = await getMatTable({
       params: getParams,

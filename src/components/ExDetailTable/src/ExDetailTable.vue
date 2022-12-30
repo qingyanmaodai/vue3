@@ -114,11 +114,6 @@
     :tableCols="basicTableCols"
     :tableName="basicTableName"
   />
-  <ExFilterModal
-    ref="filterModalRef"
-    @filterModalSearchEvent="filterModalSearchEvent"
-    :tableName="props.filterTableName"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -139,7 +134,6 @@
   import { getPublicList } from '/@/api/public';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { ExFilterModal } from '/@/components/ExFilterModal';
   import { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table/types/all';
 
   const AButton = Button;
@@ -164,10 +158,6 @@
     detailTableData: {
       type: Array,
     },
-    filterTableName: {
-      type: String,
-      default: '',
-    },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
@@ -175,19 +165,13 @@
     (event: 'clearDetailTableEvent', data, column): void; //双击获取字段数据
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
-    (event: 'filterModalSearchEvent'): void; ///筛选条件查询
+    (event: 'filterEvent'): void; ///筛选条件查询
   };
   const tableFullData: any = ref<object[]>([]); //表格数据
   let validAllErrMapData = ref<string>(''); //表格校验数据
   const nowColumFileName: any = reactive({ data: {} }); //当前选中单元格节点
   const nowCheckRow: any = reactive({ data: {} }); //当前选中行数据
   const xGrid = ref<VxeGridInstance>();
-  //筛选弹框组件ref
-  const filterModalRef: any = ref<any>(undefined);
-  const filterModalParams = (): SearchParams[] => {
-    return filterModalRef.value.getSearchParams();
-  };
-
   //基础信息查询组件ref
   const basicSearchRef: any = ref<any>(undefined);
   const basicControl = ref<ControlSet[]>(); //下拉框
@@ -377,11 +361,7 @@
   };
   //显示筛选弹框
   const filterEvent = () => {
-    filterModalRef.value.show();
-  };
-  //筛选弹框查询
-  const filterModalSearchEvent = async () => {
-    await emit('filterModalSearchEvent');
+    emit('filterEvent');
   };
   //获取校验规则
   const getValidAllData = async () => {
@@ -402,7 +382,6 @@
   defineExpose({
     getValidAllData,
     getDetailData,
-    filterModalParams,
   });
 
   onMounted(() => {});
