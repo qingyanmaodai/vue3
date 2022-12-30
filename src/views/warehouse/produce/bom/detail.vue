@@ -409,7 +409,6 @@
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
         break;
     }
-    await getCountAmount(data);
   };
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
