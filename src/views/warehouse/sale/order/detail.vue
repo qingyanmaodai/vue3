@@ -267,7 +267,9 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const formRules = reactive({});
+  const formRules = reactive({
+    cusId: [{ required: true, message: '请输入客户' }],
+  });
   const formDataRules = reactive({
     num: [{ required: true, message: '请输入销售数量' }],
     price: [{ required: true, message: '请输入单价' }],

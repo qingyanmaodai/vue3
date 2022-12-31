@@ -1883,7 +1883,7 @@ export const warSaleSendOutOfDetailColumns = [
   {
     field: 'num',
     title: '应发数量',
-    editRender: { name: '$input' },
+    className: 'disableProp',
     width: 150,
     sortable: true,
   },
@@ -1897,7 +1897,6 @@ export const warSaleSendOutOfDetailColumns = [
   {
     field: 'price',
     title: '单价',
-    className: 'disableProp',
     editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
     sortable: true,
@@ -2052,7 +2051,7 @@ export const warSaleReturnOfDetailColumns = [
   {
     field: 'num',
     title: '应退数量',
-    editRender: { name: '$input' },
+    className: 'disableProp',
     width: 150,
     sortable: true,
   },
@@ -2066,7 +2065,6 @@ export const warSaleReturnOfDetailColumns = [
   {
     field: 'price',
     title: '单价',
-    className: 'disableProp',
     editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
     sortable: true,
@@ -2207,7 +2205,7 @@ export const warSaleNoticeOfDetailColumns = [
   {
     field: 'num',
     title: '应收通知数量',
-    editRender: { name: '$input' },
+    className: 'disableProp',
     width: 150,
     sortable: true,
   },
@@ -2221,7 +2219,6 @@ export const warSaleNoticeOfDetailColumns = [
   {
     field: 'price',
     title: '单价',
-    className: 'disableProp',
     editRender: { name: '$input', props: { type: 'float', min: 0 } },
     width: 150,
     sortable: true,

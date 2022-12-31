@@ -291,7 +291,9 @@
   });
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const formRules = reactive({});
+  const formRules = reactive({
+    cusId: [{ required: true, message: '请输入客户' }],
+  });
   const formDataRules = reactive({
     realNum: [
       { required: true, message: '请输入实退数量' },
@@ -303,6 +305,7 @@
         },
       },
     ],
+    price: [{ required: true, message: '请输入单价' }],
     'bdMaterial.number': [{ required: true, message: '请选择物料信息' }],
     'bdStock.name': [{ required: true, message: '请选择仓库' }],
     'bdStockCompartment.name': [{ required: requiredCompartment, message: '请选择分仓' }],
