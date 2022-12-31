@@ -781,7 +781,7 @@ export const warProPicksColumns = [
   { field: 'bsDate', title: '领料日期', width: 160, sortable: true },
   { field: 'num', title: '申请数量', width: 120, sortable: true },
   { field: 'realNum', title: '已领数量', width: 120, sortable: true },
-  { field: 'doneNum', title: '已补数量', width: 120, sortable: true },
+  { field: 'reissueNum', title: '已补数量', width: 120, sortable: true },
   { field: 'needNum', title: '待领数量', width: 120, sortable: true },
   {
     field: 'pushReturnNum',
