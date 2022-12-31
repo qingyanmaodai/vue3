@@ -193,14 +193,15 @@
           <ExDetailTable
             :columns="exaProjectOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
-            :editRules="formRules"
+            :editRules="formDataRules"
             ref="detailTableRef"
             @cellClickTableEvent="cellClickTableEvent"
             @clearDetailTableEvent="clearDetailTableEvent"
-            :detailTableData="detailTableData"
             @setDefaultTableData="setDefaultTableData"
+            :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
+            :isShowFilterButton="false"
           />
         </pane>
       </a-splitpanes>
@@ -276,21 +277,22 @@
     business: 'A',
     ruleId: '',
   };
-
   const detailTableData: any = ref<object[]>([]); //表格数据
   //初始化
   const formStateInit = reactive({
     data: formData,
   });
+  // 明细表表头名
   const formState = toRef(formStateInit, 'data');
-  const project = 'bdExamineProject.number';
-
   const formRules = reactive({
     name: [{ required: true, message: '请输入方案名称' }],
     number: [{ required: true, message: '请输入方案编码' }],
     ruleId: [{ required: true, message: '请选择抽检规则' }],
-    business: [{ required: true, message: '请选择抽检规则' }],
-    examineType: [{ required: true, message: '请选择抽检规则' }],
+    business: [{ required: true, message: '请选择业务类型' }],
+    examineType: [{ required: true, message: '请选择检验类型' }],
+  });
+  const formDataRules = reactive({
+    'bdExamineProject.number': [{ required: true, message: '请选择检验项目' }],
     max: [
       { required: false },
       {
@@ -312,8 +314,6 @@
       },
     ],
   });
-  formRules[project] = [{ required: true, message: '请选择检验项目' }];
-
   //点击清空图标清空事件
   const onClear = (key: string[]) => {
     key.forEach((e) => {
@@ -354,9 +354,6 @@
     formState.value[currDataParam[1]].name = row.name;
     console.log(formState.value);
   };
-  //接受参数
-  const dataId = useRoute().query.row?.toString() || '';
-
   //保存
   const onSubmit = async () => {
     formRef.value
@@ -371,7 +368,7 @@
           }
           if (
             tableFullData.some(
-              (e) => tableFullData.filter((e1) => e1.exaProjectId === e.exaProjectId).length > 1,
+              (e) => tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
             )
           ) {
             createMessage.error('明细表存在相同数据，请检查!');
@@ -379,15 +376,14 @@
           }
           formState.value.bdExamineDetailList = cloneDeep(tableFullData);
         }
-        let data;
+        //保存：新增+更新
         if (!formState.value.id) {
-          data = await add({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
+          formState.value = await add({ params: formState.value });
         } else {
-          data = await update({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-          detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+          formState.value = await update({ params: formState.value });
         }
+        await setDataStatus();
+        detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -408,12 +404,12 @@
           const validAllErrMapData = await detailTableRef.value.getValidAllData();
           if (tableFullData) {
             if (validAllErrMapData) {
-              createMessage.error('数据校检不通过，请检查!');
+              createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
             if (
               tableFullData.some(
-                (e) => tableFullData.filter((e1) => e1.exaProjectId === e.exaProjectId).length > 1,
+                (e) => tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
               )
             ) {
               createMessage.error('明细表存在相同数据，请检查!');
@@ -421,14 +417,8 @@
             }
             formState.value.bdExamineDetailList = cloneDeep(tableFullData);
           }
-          const data = await audit({ params: formState.value });
-          formState.value = Object.assign({}, formState.value, data);
-          if (data.bsStatus === 'B' && tableFullData) {
-            tableFullData.map((e) => {
-              e.bsStatus = 'B';
-              return e;
-            });
-          }
+          formState.value = await audit({ params: formState.value });
+          await setDataStatus();
           detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
           createMessage.success('操作成功');
         }
@@ -448,14 +438,9 @@
       if (tableFullData) {
         formState.value.bdExamineDetailList = cloneDeep(tableFullData);
       }
-      const data = await unAudit({ params: formState.value });
-      formState.value = Object.assign({}, formState.value, data);
-      if (data.bsStatus === 'A' && tableFullData) {
-        tableFullData.map((e) => {
-          e.bsStatus = 'A';
-          return e;
-        });
-      }
+      formState.value = await unAudit({ params: formState.value });
+      await setDataStatus();
+      detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
       createMessage.success('操作成功');
     }
   };
@@ -464,24 +449,20 @@
     router.go(-1);
   };
   //获取初始值
-  const init = async () => {
-    if (dataId) {
+  const getListById = async () => {
+    if (useRoute().query.row) {
+      let dataId = useRoute().query.row?.toString() || '';
       const res: any = await getOneById({ params: dataId });
       formState.value = res;
-      if (formState.value.bdExamineDetailList) {
-        formState.value.bdExamineDetailList.map((r) => {
-          r.bsStatus = formState.value.bsStatus;
-        });
-      }
-      detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
     }
+    await setDataStatus();
+    detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
   };
-
   //明细表双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
     switch (column) {
       case 'bdExamineProject':
-        data.exaProjectId = row.id;
+        data.examineProjectId = row.id;
         data.bdExamineProject = row;
         break;
     }
@@ -498,9 +479,17 @@
     obj.isOpen = 1;
     obj.isRequire = 1;
   };
+  //dtData状态赋值
+  const setDataStatus = () => {
+    if (formState.value.bdExamineDetailList) {
+      formState.value.bdExamineDetailList.map((r) => {
+        r.bsStatus = formState.value.bsStatus;
+      });
+    }
+  };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
-    init();
+    getListById();
   });
 </script>
 <style scoped lang="less">
