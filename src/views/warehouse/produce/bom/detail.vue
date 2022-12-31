@@ -422,7 +422,6 @@
   //新增行时设置默认值
   const setDefaultTableData = (obj) => {
     obj.seq = obj.sort;
-    obj.moId = formState.value.moId;
   };
   //dtData状态赋值
   const setDataStatus = () => {
