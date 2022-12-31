@@ -832,7 +832,7 @@ export const warProFeedColumns = [
   { field: 'reissueCause', title: '申请原因', width: 120, sortable: true },
   { field: 'num', title: '申请数量', width: 120, sortable: true },
   { field: 'scrapNum', title: '报废数量', width: 120, sortable: true },
-  { field: 'realNum', title: '已领数量', width: 120, sortable: true },
+  { field: 'realNum', title: '已补数量', width: 120, sortable: true },
   {
     field: 'returnNum',
     title: '已退数量',
