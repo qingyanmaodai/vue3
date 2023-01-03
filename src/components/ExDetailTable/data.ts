@@ -2471,20 +2471,6 @@ export const warTransferOrderOfDetailColumns = [
     width: 150,
     sortable: true,
   },
-  {
-    field: 'pushNum',
-    title: '已推调拨',
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
-  {
-    field: 'doneNum',
-    title: '已调拨数量',
-    width: 150,
-    className: 'disableProp',
-    sortable: true,
-  },
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
 ];

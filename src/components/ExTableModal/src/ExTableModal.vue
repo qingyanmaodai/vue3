@@ -6,7 +6,7 @@
     resize
     :position="{ top: 40 }"
     width="65%"
-    @close="handleClose"
+    @close="close"
   >
     <template #title>
       <span>{{ props.tableModalTitle }}</span>
@@ -37,7 +37,7 @@
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
-  const tablePages = reactive(cloneDeep(tableParams));
+  let tablePages = reactive(cloneDeep(tableParams));
   // type Emits = {};
   // const emit = defineEmits<Emits>();
   interface ProType {
@@ -58,12 +58,6 @@
   const isShow = ref<boolean>(false);
   const listUrl = ref<string>();
   const tableShow = ref<boolean>(false); //表格可见性，默认为关闭
-  //关闭
-  const handleClose = () => {
-    isShow.value = false;
-    tableShow.value = false;
-  };
-
   const getList = async (
     currPage = tablePages.currentPage,
     pageSize = tablePages.pageSize,
@@ -108,6 +102,9 @@
   const close = () => {
     isShow.value = false;
     tableShow.value = false;
+    tablePages.currentPage = tableParams.currentPage;
+    tablePages.total = tableParams.total;
+    tablePages.pageSize = tableParams.pageSize;
   };
   const init = async (tableUrl: string) => {
     await getList(tablePages.currentPage, tablePages.pageSize, tableUrl);

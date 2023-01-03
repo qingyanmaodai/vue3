@@ -526,18 +526,6 @@
         data.bdMaterial = res;
         data.bdMaterial.baseUnitName = res.baseUnit ? res.baseUnit.name : null;
         data.bdMaterial.weightUnitName = res.weightUnit ? res.weightUnit.name : null;
-        // data.bdStock = {};
-        // data.bdStockCompartment = {};
-        // data.bdStockLocation = {};
-        // data.stockId = res.bdStock ? res.bdStock.id : null;
-        // data.bdStock.name = res.bdStock ? res.bdStock.name : null;
-        // data.compartmentId =
-        //   stockDis.value !== 'A' && res.bdStockCompartment ? res.compartmentId : null;
-        // data.bdStockCompartment.name =
-        //   stockDis.value !== 'A' && res.bdStockCompartment ? res.bdStockCompartment.name : null;
-        // data.locationId = stockDis.value === 'C' && res.bdStockLocation ? res.locationId : null;
-        // data.bdStockLocation.name =
-        //   stockDis.value === 'C' && res.bdStockLocation ? res.bdStockLocation.name : null;
         break;
       case 'bdInStock':
         data.bdInStock = {};
