@@ -31,6 +31,7 @@ export interface InvCountLossEntity extends PublicModel {
   srcBillId?: string;
   srcId?: string;
   srcType?: string;
+  pushDownStatus?: string;
 }
 export interface InvCountLossDetailEntity extends PublicModel {
   id: string | undefined;

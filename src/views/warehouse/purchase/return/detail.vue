@@ -75,32 +75,6 @@
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="退货原因：" ref="reason" name="reason" class="item">
-                      <Select
-                        allowClear
-                        v-model:value="formState.returnReason"
-                        class="select"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
-                        :options="config.RETURN_REASON"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
-                      <a-date-picker
-                        :showToday="false"
-                        class="select"
-                        valueFormat="YYYY-MM-DD HH:mm:ss"
-                        format="YYYY-MM-DD"
-                        v-model:value="formState.bsDate"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col :span="8">
                     <a-form-item label="供应商：" ref="supId" name="supId" class="item">
                       <ExInput
                         autocomplete="off"
@@ -117,6 +91,32 @@
                           ])
                         "
                         @clear="onClear(['supId', 'supName'])"
+                      />
+                    </a-form-item>
+                  </Col>
+                  <Col :span="8">
+                    <a-form-item label="退货原因：" ref="reason" name="reason" class="item">
+                      <Select
+                        allowClear
+                        v-model:value="formState.returnReason"
+                        class="select"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择退货原因'"
+                        :options="config.RETURN_REASON"
+                        :disabled="formState.bsStatus === 'B'"
+                      />
+                    </a-form-item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col :span="8">
+                    <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">
+                      <a-date-picker
+                        :showToday="false"
+                        class="select"
+                        valueFormat="YYYY-MM-DD HH:mm:ss"
+                        format="YYYY-MM-DD"
+                        v-model:value="formState.bsDate"
+                        :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
                   </Col>
@@ -273,7 +273,6 @@
     way: 'A',
     bsDate: moment(getCurrentData(), 'YYYY-MM-DD'),
   };
-
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -398,20 +397,22 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
-          if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.stockId === e.stockId &&
-                    e1.compartmentId === e.compartmentId &&
-                    e1.locationId === e.locationId &&
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
-          ) {
-            createMessage.error('明细表存在相同数据，请检查!');
-            return;
+          if (!formState.value.pushDownStatus){
+            if (
+              tableFullData.some(
+                (e) =>
+                  tableFullData.filter(
+                    (e1) =>
+                      e1.stockId === e.stockId &&
+                      e1.compartmentId === e.compartmentId &&
+                      e1.locationId === e.locationId &&
+                      e1.matId === e.matId,
+                  ).length > 1,
+              )
+            ) {
+              createMessage.error('明细表存在相同数据，请检查!');
+              return;
+            }
           }
           formState.value.dtData = cloneDeep(tableFullData);
         }
@@ -442,20 +443,22 @@
               createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
-            if (
-              tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.stockId === e.stockId &&
-                      e1.compartmentId === e.compartmentId &&
-                      e1.locationId === e.locationId &&
-                      e1.matId === e.matId,
-                  ).length > 1,
-              )
-            ) {
-              createMessage.error('明细表存在相同数据，请检查!');
-              return;
+            if (!formState.value.pushDownStatus){
+              if (
+                tableFullData.some(
+                  (e) =>
+                    tableFullData.filter(
+                      (e1) =>
+                        e1.stockId === e.stockId &&
+                        e1.compartmentId === e.compartmentId &&
+                        e1.locationId === e.locationId &&
+                        e1.matId === e.matId,
+                    ).length > 1,
+                )
+              ) {
+                createMessage.error('明细表存在相同数据，请检查!');
+                return;
+              }
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
@@ -499,6 +502,7 @@
       formState.value = res;
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+      formState.value.pushDownStatus = 'B';
     }
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);

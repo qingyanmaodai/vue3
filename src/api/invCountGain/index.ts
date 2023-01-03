@@ -29,6 +29,7 @@ export interface InvCountGainEntity extends PublicModel {
   srcBillId?: string;
   srcId?: string;
   srcType?: string;
+  pushDownStatus?: string;
 }
 export interface InvCountGainDetailEntity extends PublicModel {
   id: string | undefined;

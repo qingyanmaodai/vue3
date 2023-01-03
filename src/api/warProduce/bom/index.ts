@@ -44,6 +44,7 @@ export interface produceBomEntity extends PublicModel {
   moMatModel?: string;
   moMatNumber?: string;
   moSeq?: number;
+  pushDownStatus?: string;
 }
 
 export interface proBomDetailEntity extends PublicModel {

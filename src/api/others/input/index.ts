@@ -43,6 +43,7 @@ export interface othersInputEntity extends PublicModel {
   parentId?: string;
   stockId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface othersInputDetailEntity extends PublicModel {

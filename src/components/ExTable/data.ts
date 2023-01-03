@@ -400,7 +400,7 @@ export const invCountGainColumns = [
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },
   { field: 'way', title: '盘点方式', width: 120, slots: { default: 'way' }, sortable: true }, //普通盘点，全盘点
-  { field: 'empName', title: '盘点人', width: 120, sortable: true },
+  { field: 'empName', title: '负责人', width: 120, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {
     field: 'bsStatus',
@@ -433,7 +433,7 @@ export const invCountLossColumns = [
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },
   { field: 'way', title: '盘点方式', width: 120, slots: { default: 'way' }, sortable: true }, //普通盘点，全盘点
-  { field: 'empName', title: '盘点人', width: 120, sortable: true },
+  { field: 'empName', title: '负责人', width: 120, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {
     field: 'bsStatus',
@@ -459,7 +459,7 @@ export const invCountSheetColumns = [
   { field: 'compartmentName', title: '分仓', width: 120, sortable: true },
   { field: 'locationName', title: '仓位', width: 120, sortable: true },
   { field: 'way', title: '盘点方式', width: 120, slots: { default: 'way' }, sortable: true }, //普通盘点，全盘点
-  { field: 'empName', title: '盘点人', width: 120, sortable: true },
+  { field: 'empName', title: '负责人', width: 120, sortable: true },
   { field: 'mark', title: '备注', width: 150, sortable: true },
   {
     field: 'bsStatus',

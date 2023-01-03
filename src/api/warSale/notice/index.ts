@@ -36,6 +36,7 @@ export interface saleNoticeEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface saleNoticeDetailEntity extends PublicModel {

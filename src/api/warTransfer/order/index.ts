@@ -36,6 +36,7 @@ export interface transferOrderEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface transferOrderDetailEntity extends PublicModel {

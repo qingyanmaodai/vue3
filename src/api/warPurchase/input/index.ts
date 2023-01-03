@@ -43,6 +43,7 @@ export interface purchaseInstockEntity extends PublicModel {
   parentId?: string;
   stockId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface purInstockDetailEntity extends PublicModel {

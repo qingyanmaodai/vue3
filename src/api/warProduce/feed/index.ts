@@ -36,6 +36,7 @@ export interface produceFeedEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface proFeedDetailEntity extends PublicModel {

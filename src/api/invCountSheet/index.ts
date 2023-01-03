@@ -39,6 +39,7 @@ export interface InvCountSheetEntity extends PublicModel {
   parentId?: string;
   stockId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface InvCountSheetDetailEntity extends PublicModel {

@@ -36,6 +36,7 @@ export interface produceReturnEntity extends PublicModel {
   matId?: string;
   parentId?: string;
   tenantId?: string;
+  pushDownStatus?: string;
 }
 
 export interface proReturnDetailEntity extends PublicModel {

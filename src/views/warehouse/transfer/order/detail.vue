@@ -383,23 +383,25 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
-          if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter(
-                  (e1) =>
-                    e1.inStockId === e.inStockId &&
-                    e1.outStockId === e.outStockId &&
-                    e1.inCompartmentId === e.inCompartmentId &&
-                    e1.outCompartmentId === e.outCompartmentId &&
-                    e1.inLocationId === e.inLocationId &&
-                    e1.outLocationId === e.outLocationId &&
-                    e1.matId === e.matId,
-                ).length > 1,
-            )
-          ) {
-            createMessage.error('明细表存在相同数据，请检查!');
-            return;
+          if (!formState.value.pushDownStatus) {
+            if (
+              tableFullData.some(
+                (e) =>
+                  tableFullData.filter(
+                    (e1) =>
+                      e1.inStockId === e.inStockId &&
+                      e1.outStockId === e.outStockId &&
+                      e1.inCompartmentId === e.inCompartmentId &&
+                      e1.outCompartmentId === e.outCompartmentId &&
+                      e1.inLocationId === e.inLocationId &&
+                      e1.outLocationId === e.outLocationId &&
+                      e1.matId === e.matId,
+                  ).length > 1,
+              )
+            ) {
+              createMessage.error('明细表存在相同数据，请检查!');
+              return;
+            }
           }
           formState.value.dtData = cloneDeep(tableFullData);
         }
@@ -430,23 +432,25 @@
               createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
-            if (
-              tableFullData.some(
-                (e) =>
-                  tableFullData.filter(
-                    (e1) =>
-                      e1.inStockId === e.inStockId &&
-                      e1.outStockId === e.outStockId &&
-                      e1.inCompartmentId === e.inCompartmentId &&
-                      e1.outCompartmentId === e.outCompartmentId &&
-                      e1.inLocationId === e.inLocationId &&
-                      e1.outLocationId === e.outLocationId &&
-                      e1.matId === e.matId,
-                  ).length > 1,
-              )
-            ) {
-              createMessage.error('明细表存在相同数据，请检查!');
-              return;
+            if (!formState.value.pushDownStatus) {
+              if (
+                tableFullData.some(
+                  (e) =>
+                    tableFullData.filter(
+                      (e1) =>
+                        e1.inStockId === e.inStockId &&
+                        e1.outStockId === e.outStockId &&
+                        e1.inCompartmentId === e.inCompartmentId &&
+                        e1.outCompartmentId === e.outCompartmentId &&
+                        e1.inLocationId === e.inLocationId &&
+                        e1.outLocationId === e.outLocationId &&
+                        e1.matId === e.matId,
+                    ).length > 1,
+                )
+              ) {
+                createMessage.error('明细表存在相同数据，请检查!');
+                return;
+              }
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
@@ -490,6 +494,7 @@
       formState.value = res;
     } else if (useRoute().params.pushDownParam) {
       formState.value = JSON.parse(useRoute().params.pushDownParam as string);
+      formState.value.pushDownStatus = 'B';
     }
     await setDataStatus();
     detailTableData.value = cloneDeep(formState.value.dtData);
