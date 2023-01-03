@@ -1489,7 +1489,7 @@ export const warProPicksOfDetailColumns = [
     sortable: true,
   },
   {
-    field: 'doneNum',
+    field: 'reissueNum',
     title: '已补数量',
     className: 'disableProp',
     width: 150,
@@ -1636,7 +1636,7 @@ export const warProFeedOfDetailColumns = [
   },
   {
     field: 'num',
-    title: '应领数量',
+    title: '申请数量',
     editRender: { name: '$input', props: { type: 'integer', min: 0 } },
     width: 150,
     sortable: true,
@@ -1650,7 +1650,7 @@ export const warProFeedOfDetailColumns = [
   },
   {
     field: 'realNum',
-    title: '实领数量',
+    title: '实补数量',
     editRender: { name: '$input', props: { type: 'integer', min: 1 } },
     width: 150,
     sortable: true,

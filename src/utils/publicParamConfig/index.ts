@@ -430,7 +430,7 @@ export const config = {
     },
     {
       value: 'BsProMoReturn',
-      label: '生产出库',
+      label: '生产退料',
     },
     {
       value: 'BsProMoOrder',
@@ -442,7 +442,7 @@ export const config = {
     },
     {
       value: 'BsPurchaseReturn',
-      label: '采购出库',
+      label: '采购退库',
     },
     {
       value: 'BsPurchaseInStock',

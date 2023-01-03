@@ -283,11 +283,11 @@
   const formDataRules = reactive({
     num: [{ required: true, message: '请输入应领数量' }],
     realNum: [
-      { required: true, message: '请输入实领数量' },
+      { required: true, message: '请输入实补数量' },
       {
         validator({ cellValue, row }) {
           if (Number(cellValue) && Number(row.num) && Number(row.num) < Number(cellValue)) {
-            return new Error('实领数量不能超过应领数量');
+            return new Error('实补数量不能超过申请数量');
           }
         },
       },
