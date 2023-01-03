@@ -79,11 +79,11 @@
                       <ExInput
                         autocomplete="off"
                         class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择客户'"
+                        :placeholder="formState.bsStatus === 'B' || formState.pushDownStatus === 'B'? '' : '请选择客户'"
                         label="客户"
-                        :show="formState.bsStatus !== 'B'"
+                        :show="formState.bsStatus !== 'B' && !formState.pushDownStatus"
                         :value="formState.cusName"
-                        :disabled="formState.bsStatus === 'B'"
+                        :disabled="formState.bsStatus === 'B' || formState.pushDownStatus === 'B'"
                         @search="
                           onSearch('GET_CUSTOMER_DTO', 'bdCustomer', Url.CUSTOMER_GET_DATA, [
                             'cusId',
@@ -425,7 +425,8 @@
           formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
-        formState.value = await add({ params: formState.value });
+        const data = await add({ params: formState.value });
+        formState.value = Object.assign({}, formState.value, data);
         await setDataStatus();
         detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
@@ -468,7 +469,8 @@
             }
             formState.value.dtData = cloneDeep(tableFullData);
           }
-          formState.value = await audit({ params: formState.value });
+          const data = await audit({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
           await setDataStatus();
           detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
@@ -487,7 +489,8 @@
       if (tableFullData) {
         formState.value.dtData = cloneDeep(tableFullData);
       }
-      formState.value = await unAudit({ params: formState.value });
+      const data = await unAudit({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
       await setDataStatus();
       detailTableData.value = cloneDeep(formState.value.dtData);
       createMessage.success('操作成功');
