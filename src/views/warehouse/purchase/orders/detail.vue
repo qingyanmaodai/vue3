@@ -480,8 +480,8 @@
   };
   //计算数量
   const getCountAmount = (row) => {
-    if (row.num && row.prices) {
-      row.totalPrice = row.num * row.prices;
+    if (row.num && row.price) {
+      row.totalPrice = row.num * row.price;
     } else {
       row.totalPrice = '';
     }
@@ -490,7 +490,9 @@
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
-      data.countNum = '';
+      data.num = '';
+      data.price = '';
+      data.dlDate = '';
       for (const key in column.params.param) {
         data[key] = '';
         data[column.params.param[key]] = {};

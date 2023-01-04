@@ -471,7 +471,8 @@
   //明细表清空事件
   const clearDetailTableEvent = (data, column) => {
     if (column.field === 'bdMaterial.number') {
-      data.countNum = '';
+      data.num = '';
+      data.price = '';
       for (const key in column.params.param) {
         data[key] = '';
         data[column.params.param[key]] = {};

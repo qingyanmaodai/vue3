@@ -2318,9 +2318,12 @@ export const warTransferOrderOfDetailColumns = [
       select: 'GET_MAT_DTO', //基本信息下拉框+表头
       param: {
         matId: 'bdMaterial',
-        stockId: 'bdStock',
-        compartmentId: 'bdStockCompartment',
-        locationId: 'bdStockLocation',
+        inStockId: 'bdInStock',
+        inCompartmentId: 'bdInStockCompartment',
+        inLocationId: 'bdInStockLocation',
+        outStockId: 'bdOutStock',
+        outCompartmentId: 'bdOutStockCompartment',
+        outLocationId: 'bdOutStockLocation',
       },
     },
     editRender: { name: '$input' },
