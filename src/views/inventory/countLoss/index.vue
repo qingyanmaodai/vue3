@@ -29,7 +29,7 @@
         @exportTable="exportTable"
         @getList="getList"
         @pushDownEvent="pushDownEvent"
-        @updownSearchEvent="updownSearchEvent"
+        @upDownSearchEvent="upDownSearchEvent"
       />
     </div>
     <ExPushDownModel
@@ -119,7 +119,7 @@
   const linkQueryMenuData: any = ref<any>([]);
   const modalTitle: any = ref<any>('');
   //上下查
-  const updownSearchEvent = async (row: any, status: string) => {
+  const upDownSearchEvent = async (row: any, status: string) => {
     let res;
     switch (status) {
       case 'A':

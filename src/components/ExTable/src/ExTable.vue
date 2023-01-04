@@ -358,7 +358,7 @@
     (e: 'pushDownEvent', selectRecords: any): void;
     (e: 'createOrderEvent', selectRecords: any): void;
     (e: 'queryOrderEvent', row: any): void;
-    (e: 'updownSearchEvent', row: any, choice: string): void;
+    (e: 'upDownSearchEvent', row: any, choice: string): void;
     (e: 'basicClickEvent', data: object): void; //表格双击事件
     (e: 'checkDetailEvent', row: any, type: string): any;
   };
@@ -407,10 +407,10 @@
     if (selectRecords.length > 0) {
       switch (item.value) {
         case 'A':
-          emit('updownSearchEvent', selectRecords, 'A');
+          emit('upDownSearchEvent', selectRecords, 'A');
           break;
         case 'B':
-          emit('updownSearchEvent', selectRecords, 'B');
+          emit('upDownSearchEvent', selectRecords, 'B');
           break;
       }
     } else {
