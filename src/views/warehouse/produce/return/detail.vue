@@ -383,7 +383,7 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
-          if (!formState.value.pushDownStatus){
+          if (!formState.value.pushDownStatus) {
             if (
               tableFullData.some(
                 (e) =>
@@ -429,7 +429,7 @@
               createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
-            if (!formState.value.pushDownStatus){
+            if (!formState.value.pushDownStatus) {
               if (
                 tableFullData.some(
                   (e) =>
