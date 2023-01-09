@@ -17,6 +17,13 @@ import { setupGlobDirectives } from '/@/directives';
 import { setupI18n } from '/@/locales/setupI18n';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { setupVxeTable } from '/@/vxetable';
+import { hiPrintPlugin } from 'vue-plugin-hiprint';
+import Storage from 'vue-ls';
+const options = {
+  namespace: 'hiPrint-',
+  name: 'ls',
+  storage: 'local',
+};
 
 // Importing on demand in local development will increase the number of browser requests by around 20%.
 // This may slow down the browser refresh speed.
@@ -58,6 +65,10 @@ async function bootstrap() {
 
   // https://next.router.vuejs.org/api/#isready
   // await router.isReady();
+
+  app.use(hiPrintPlugin);
+  hiPrintPlugin.disAutoConnect();
+  app.use(Storage, options);
 
   app.mount('#app');
 }
