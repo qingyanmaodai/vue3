@@ -33,7 +33,7 @@
       </a-button>
       <a-button type="primary" @click="preView">
         <template #icon>
-          <EyeOutlined />
+          <a-eye-outlined />
         </template>
         预览
       </a-button>
@@ -159,7 +159,7 @@
 </template>
 <script setup>
   import { disAutoConnect, hiprint, defaultElementTypeProvider } from 'vue-plugin-hiprint';
-  // disAutoConnect();
+  disAutoConnect();
   let hiprintTemplate;
   import printPreview from '/@/views/sys/print/design/preview.vue';
   import {
@@ -313,6 +313,7 @@
     }
   };
   const preView = () => {
+    console.log(preViewRef.value, 'ooooo');
     preViewRef.value.show(hiprintTemplate, printData);
   };
   const onlyPrint = () => {
@@ -372,7 +373,7 @@
     }
   };
 </script>
-
+<!--<style src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" scoped></style>-->
 <style lang="less" scoped>
   // 拖拽
   .drag_item_box {

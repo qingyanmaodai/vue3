@@ -71,7 +71,6 @@
       // eslint-disable-next-line no-undef
       $('#preview_content').html(hiprintTemplate.getHtml(printData));
       content.data.spinning = false;
-      console.log('yulan-content.data.spinning', content.data.spinning);
     }, 500);
   };
   const print = () => {
