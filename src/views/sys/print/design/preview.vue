@@ -71,12 +71,11 @@
       // eslint-disable-next-line no-undef
       $('#preview_content').html(hiprintTemplate.getHtml(printData));
       content.data.spinning = false;
-      console.log('yulan-content.data.spinning', content.data.spinning);
     }, 500);
   };
   const print = () => {
     content.data.waitShowPrinter = true;
-    this.hiprintTemplate.print(
+    content.data.hiprintTemplate.print(
       content.data.printData,
       {},
       {
@@ -88,9 +87,14 @@
     );
   };
   const toPdf = () => {
-    data.hiprintTemplate.toPdf({}, '打印预览');
+    content.data.hiprintTemplate.toPdf({}, '打印预览');
   };
   defineExpose({
     show,
   });
 </script>
+<style lang="less" scoped>
+  .ant-modal-body {
+    padding: 0px !important;
+  }
+</style>
