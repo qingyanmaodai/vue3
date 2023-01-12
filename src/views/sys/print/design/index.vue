@@ -1,161 +1,166 @@
 <template>
-  <a-card>
-    <a-space style="margin-bottom: 10px">
-      <a-button-group>
-        <a-button
-          v-for="(value, type) in content.data.paperTypes"
-          :type="curPaperType === type ? 'primary' : 'default'"
-          @click="setPaper(type, value)"
-          :key="type"
-        >
-          {{ type }}
-        </a-button>
-      </a-button-group>
-      <a-button type="text" @click="changeScale(false)">
-        <template #icon>
-          <ZoomOutOutlined />
-        </template>
-      </a-button>
-      <InputNumber
-        :value="content.data.scaleValue"
-        :min="content.data.scaleMin"
-        :max="content.data.scaleMax"
-        :step="0.1"
-        disabled
-        style="width: 70px"
-        :formatter="(value) => `${(value * 100).toFixed(0)}%`"
-        :parser="(value) => value.replace('%', '')"
-      />
-      <a-button type="text" @click="changeScale(true)">
-        <template #icon>
-          <ZoomInOutlined />
-        </template>
-      </a-button>
-      <a-button type="primary" @click="preView">
-        <template #icon>
-          <EyeOutlined />
-        </template>
-        预览
-      </a-button>
-      <a-button type="primary" @click="print">
-        <template #icon>
-          <PrinterOutlined />
-        </template>
-        直接打印
-      </a-button>
-      <a-button type="primary" @click="onlyPrint"> Api单独打印 </a-button>
-      <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>
-      <a-popconfirm title="是否确认清空?" okType="danger" okText="确定清空" @confirm="clearPaper">
-        <template #icon>
-          <QuestionCircleOutlined style="color: red" />
-        </template>
-        <a-button type="primary" danger>
-          清空
+  <div class="scrollbox">
+    <a-card>
+      <a-space style="margin-bottom: 10px">
+        <a-button-group>
+          <a-button
+            v-for="(value, type) in content.data.paperTypes"
+            :type="curPaperType === type ? 'primary' : 'default'"
+            @click="setPaper(type, value)"
+            :key="type"
+          >
+            {{ type }}
+          </a-button>
+        </a-button-group>
+        <a-button type="text" @click="changeScale(false)">
           <template #icon>
-            <CloseOutlined />
+            <ZoomOutOutlined />
           </template>
         </a-button>
-      </a-popconfirm>
-    </a-space>
-    <a-row :gutter="[8, 0]">
-      <a-col :span="4">
-        <a-card style="height: 100vh">
-          <a-row>
-            <a-col :span="24" class="rect-printElement-types hiprintEpContainer">
-              <a-row class="drag_item_title">拖拽组件列表</a-row>
-              <a-row style="height: 100px">
-                <a-col :span="12" class="drag_item_box">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.text" style>
-                      <span class="glyphicon glyphicon-text-width" aria-hidden="true"></span>
-                      <p class="glyphicon-class">文本</p>
-                    </a>
-                  </div>
-                </a-col>
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.image" style>
-                      <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
-                      <p class="glyphicon-class">图片</p>
-                    </a>
-                  </div>
-                </a-col>
-              </a-row>
-              <a-row style="height: 100px">
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.longText">
-                      <span class="glyphicon glyphicon-subscript" aria-hidden="true"></span>
-                      <p class="glyphicon-class">长文</p>
-                    </a>
-                  </div>
-                </a-col>
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.tableCustom" style>
-                      <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
-                      <p class="glyphicon-class">表格</p>
-                    </a>
-                  </div>
-                </a-col>
-              </a-row>
-              <a-row class="drag_item_title">辅助</a-row>
-              <a-row style="height: 100px">
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.hline" style>
-                      <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
-                      <p class="glyphicon-class">横线</p>
-                    </a>
-                  </div>
-                </a-col>
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.vline" style>
-                      <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
-                      <p class="glyphicon-class">竖线</p>
-                    </a>
-                  </div>
-                </a-col>
-              </a-row>
-              <a-row style="height: 100px">
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.rect">
-                      <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
-                      <p class="glyphicon-class">矩形</p>
-                    </a>
-                  </div>
-                </a-col>
-                <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
-                  <div>
-                    <a class="ep-draggable-item" tid="defaultModule.oval">
-                      <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
-                      <p class="glyphicon-class">椭圆</p>
-                    </a>
-                  </div>
-                </a-col>
-              </a-row>
-            </a-col>
-          </a-row>
-        </a-card>
-      </a-col>
-      <a-col :span="15">
-        <a-card class="card-design">
-          <div id="hiprint-printTemplate" class="hiprint-printTemplate"></div>
-        </a-card>
-      </a-col>
-      <a-col :span="5" class="params_setting_container">
-        <a-card>
-          <a-row class="hinnn-layout-sider">
-            <div id="PrintElementOptionSetting"></div>
-          </a-row>
-        </a-card>
-      </a-col>
-    </a-row>
-    <!-- 预览 -->
-    <printPreview ref="preViewRef" />
-  </a-card>
+        <InputNumber
+          :value="content.data.scaleValue"
+          :min="content.data.scaleMin"
+          :max="content.data.scaleMax"
+          :step="0.1"
+          disabled
+          style="width: 70px"
+          :formatter="(value) => `${(value * 100).toFixed(0)}%`"
+          :parser="(value) => value.replace('%', '')"
+        />
+        <a-button type="text" @click="changeScale(true)">
+          <template #icon>
+            <ZoomInOutlined />
+          </template>
+        </a-button>
+        <a-button type="primary" @click="preView">
+          <template #icon>
+            <EyeOutlined />
+          </template>
+          预览
+        </a-button>
+        <a-button type="primary" @click="print">
+          <template #icon>
+            <PrinterOutlined />
+          </template>
+          直接打印
+        </a-button>
+        <a-button type="primary" @click="onlyPrint"> Api单独打印 </a-button>
+        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>
+        <a-popconfirm title="是否确认清空?" okType="danger" okText="确定清空" @confirm="clearPaper">
+          <template #icon>
+            <QuestionCircleOutlined style="color: red" />
+          </template>
+          <a-button type="primary" danger>
+            清空
+            <template #icon>
+              <CloseOutlined />
+            </template>
+          </a-button>
+        </a-popconfirm>
+      </a-space>
+      <a-row :gutter="[8, 0]">
+        <a-col :span="4">
+          <a-card style="height: 100vh">
+            <a-row>
+              <a-col :span="24" class="rect-printElement-types hiprintEpContainer">
+                <a-row class="drag_item_title">拖拽组件列表</a-row>
+                <a-row style="height: 100px">
+                  <a-col :span="12" class="drag_item_box">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.text" style>
+                        <span class="glyphicon glyphicon-text-width" aria-hidden="true"></span>
+                        <p class="glyphicon-class">文本</p>
+                      </a>
+                    </div>
+                  </a-col>
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.image" style>
+                        <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+                        <p class="glyphicon-class">图片</p>
+                      </a>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-row style="height: 100px">
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.longText">
+                        <span class="glyphicon glyphicon-subscript" aria-hidden="true"></span>
+                        <p class="glyphicon-class">长文</p>
+                      </a>
+                    </div>
+                  </a-col>
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.table" style>
+                        <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                        <p class="glyphicon-class">表格</p>
+                      </a>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-row class="drag_item_title">辅助</a-row>
+                <a-row style="height: 100px">
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.hline" style>
+                        <span
+                          class="glyphicon glyphicon-resize-horizontal"
+                          aria-hidden="true"
+                        ></span>
+                        <p class="glyphicon-class">横线</p>
+                      </a>
+                    </div>
+                  </a-col>
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.vline" style>
+                        <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                        <p class="glyphicon-class">竖线</p>
+                      </a>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-row style="height: 100px">
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.rect">
+                        <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+                        <p class="glyphicon-class">矩形</p>
+                      </a>
+                    </div>
+                  </a-col>
+                  <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
+                    <div>
+                      <a class="ep-draggable-item" tid="defaultModule.oval">
+                        <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+                        <p class="glyphicon-class">椭圆</p>
+                      </a>
+                    </div>
+                  </a-col>
+                </a-row>
+              </a-col>
+            </a-row>
+          </a-card>
+        </a-col>
+        <a-col :span="15">
+          <a-card class="card-design">
+            <div id="hiprint-printTemplate" class="hiprint-printTemplate"></div>
+          </a-card>
+        </a-col>
+        <a-col :span="5" class="params_setting_container">
+          <a-card>
+            <a-row class="hinnn-layout-sider">
+              <div id="PrintElementOptionSetting"></div>
+            </a-row>
+          </a-card>
+        </a-col>
+      </a-row>
+      <!-- 预览 -->
+      <printPreview ref="preViewRef" />
+    </a-card>
+  </div>
 </template>
 <script setup>
   import { disAutoConnect, hiprint, defaultElementTypeProvider } from 'vue-plugin-hiprint';
@@ -170,7 +175,6 @@
     ZoomInOutlined,
     ZoomOutOutlined,
   } from '@ant-design/icons-vue';
-  const AEyeOutlined = EyeOutlined;
   import panel from './panel.js';
   import printData from './print-data.js';
   import {
@@ -420,5 +424,25 @@
     overflow: hidden;
     overflow-x: auto;
     overflow-y: auto;
+  }
+
+  .scrollbox {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    // 滚动条整体部分
+    &::-webkit-scrollbar {
+      width: 6px; //对垂直方向滚动条
+      height: 6px; //对水平方向滚动条
+    }
+    //滚动的滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background-color: #ccc//滚动条的颜色;
+    }
+    //内层滚动槽
+    &::-webkit-scrollbar-track-piece {
+      background-color: #ccc;
+    }
   }
 </style>
