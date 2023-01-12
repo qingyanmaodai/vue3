@@ -313,7 +313,6 @@
     }
   };
   const preView = () => {
-    console.log(preViewRef.value, 'ooooo');
     preViewRef.value.show(hiprintTemplate, printData);
   };
   const onlyPrint = () => {
