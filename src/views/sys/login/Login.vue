@@ -128,7 +128,7 @@
     height: 120px;
   }
   &.ant-modal-body {
-    padding: 24px !important;
+    padding: 24px;
   }
   html[data-theme='dark'] {
     .@{prefix-cls} {

@@ -44,6 +44,12 @@
           </template>
           直接打印
         </a-button>
+        <a-button type="primary" @click="saveJson">
+          <template #icon>
+            <SaveOutlined />
+          </template>
+          保存
+        </a-button>
         <a-button type="primary" @click="onlyPrint"> Api单独打印 </a-button>
         <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>
         <a-popconfirm title="是否确认清空?" okType="danger" okText="确定清空" @confirm="clearPaper">
@@ -141,6 +147,7 @@
                   <a-col :span="12" class="drag_item_box" tid="defaultModule.text">
                     <div>
                       <a class="ep-draggable-item" tid="defaultModule.oval">
+                        <RightCircleOutlined />
                         <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
                         <p class="glyphicon-class">椭圆</p>
                       </a>
@@ -171,7 +178,9 @@
 </template>
 <script setup>
   import { disAutoConnect, hiprint, defaultElementTypeProvider } from 'vue-plugin-hiprint';
-  disAutoConnect();
+  // disAutoConnect();
+  import { useMessage } from '/@/hooks/web/useMessage';
+  const { createMessage } = useMessage();
   let hiprintTemplate;
   import printPreview from '/@/views/sys/print/design/preview.vue';
   import {
@@ -188,6 +197,8 @@
     TableOutlined,
     FileImageOutlined,
     BorderOutlined,
+    RightCircleOutlined,
+    SaveOutlined,
   } from '@ant-design/icons-vue';
   import panel from './panel.js';
   import printData from './print-data.js';
@@ -203,6 +214,7 @@
     Col,
   } from 'ant-design-vue';
   import { computed, onMounted, reactive, ref } from 'vue';
+  import providers from '../../sys/print/custom/providers';
   const ARow = Row;
   const ACard = Card;
   const ACol = Col;
@@ -312,7 +324,7 @@
         hiprintTemplate.setPaper(value.width, value.height);
       }
     } catch (error) {
-      message.error(`操作失败: ${error}`);
+      createMessage.error(`操作失败: ${error}`);
     }
   };
   const changeScale = (big) => {
@@ -390,8 +402,14 @@
       message.error(`操作失败: ${error}`);
     }
   };
+  //保存格式
+  const saveJson = () => {
+    let currentTemplate = hiprintTemplate.getJson();
+    console.log(currentTemplate, 'currentTemplate');
+    createMessage.success('操作成功');
+  };
 </script>
-<!--<style src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" scoped></style>-->
+
 <style lang="less" scoped>
   // 拖拽
   .drag_item_box {
