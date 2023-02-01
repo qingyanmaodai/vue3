@@ -2773,6 +2773,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'wayDefault', edit: 'way' },
   },
   {
     field: 'name',
@@ -2780,6 +2781,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'attrNameDefault', edit: 'attrName' },
   },
   {
     field: 'attrType',
@@ -2787,6 +2789,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'attrTypeDefault', edit: 'attrType' },
   },
   {
     field: 'format',
@@ -2794,6 +2797,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'formatDefault', edit: 'formatFormat' },
   },
   {
     field: 'len',

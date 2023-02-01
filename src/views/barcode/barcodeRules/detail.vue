@@ -329,7 +329,7 @@
             createMessage.error('明细表存在相同数据，请检查!');
             return;
           }
-          formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+          formState.value.bdBarcodeDetailList = cloneDeep(tableFullData);
         }
         //保存：新增+更新
         if (!formState.value.id) {
@@ -338,7 +338,7 @@
           formState.value = await update({ params: formState.value });
         }
         await setDataStatus();
-        detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+        detailTableData.value = cloneDeep(formState.value.bdBarcodeDetailList);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -372,11 +372,11 @@
               createMessage.error('明细表存在相同数据，请检查!');
               return;
             }
-            formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+            formState.value.bdBarcodeDetailList = cloneDeep(tableFullData);
           }
           formState.value = await audit({ params: formState.value });
           await setDataStatus();
-          detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+          detailTableData.value = cloneDeep(formState.value.bdBarcodeDetailList);
           createMessage.success('操作成功');
         }
       })
@@ -393,11 +393,11 @@
     if (type === 'confirm') {
       const tableFullData = detailTableRef.value.getDetailData();
       if (tableFullData) {
-        formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+        formState.value.bdBarcodeDetailList = cloneDeep(tableFullData);
       }
       formState.value = await unAudit({ params: formState.value });
       await setDataStatus();
-      detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+      detailTableData.value = cloneDeep(formState.value.bdBarcodeDetailList);
       createMessage.success('操作成功');
     }
   };
@@ -413,7 +413,7 @@
       formState.value = res;
     }
     await setDataStatus();
-    detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+    detailTableData.value = cloneDeep(formState.value.bdBarcodeDetailList);
   };
   //明细表双击赋值事件
   const cellClickTableEvent = async (row, data, column) => {
@@ -438,8 +438,8 @@
   };
   //dtData状态赋值
   const setDataStatus = () => {
-    if (formState.value.bdExamineDetailList) {
-      formState.value.bdExamineDetailList.map((r) => {
+    if (formState.value.bdBarcodeDetailList) {
+      formState.value.bdBarcodeDetailList.map((r) => {
         r.bsStatus = formState.value.bsStatus;
       });
     }

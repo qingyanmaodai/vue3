@@ -107,10 +107,52 @@
         v-model:checked="row.isRequire"
       />
     </template>
-    <template #edit="{ row }">
-      <vxe-select v-model="row.sex2" multiple transfer>
+    <template #wayDefault="{ row }">
+      <span>{{ formatData(row.way, config['WAY_BAR_RULES'])['label'] }}</span>
+    </template>
+    <template #way="{ row }">
+      <vxe-select v-model="row.way" transfer>
         <vxe-option
-          v-for="item in sexList1"
+          v-for="item in config.WAY_BAR_RULES"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
+      </vxe-select>
+    </template>
+    <template #attrNameDefault="{ row }">
+      <span>{{ formatData(row.name, config['ATTR_NAME'])['label'] }}</span>
+    </template>
+    <template #attrName="{ row }">
+      <vxe-select v-model="row.name">
+        <vxe-option
+          v-for="item in config.ATTR_NAME"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
+      </vxe-select>
+    </template>
+    <template #attrTypeDefault="{ row }">
+      <span>{{ formatData(row.name, config['ATTR_TYPE'])['label'] }}</span>
+    </template>
+    <template #attrType="{ row }">
+      <vxe-select v-model="row.name">
+        <vxe-option
+          v-for="item in config.ATTR_TYPE"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
+      </vxe-select>
+    </template>
+    <template #formatDefault="{ row }">
+      <span>{{ formatData(row.format, config['DATE_FORMAT'])['label'] }}</span>
+    </template>
+    <template #formatFormat="{ row }">
+      <vxe-select v-model="row.format">
+        <vxe-option
+          v-for="item in config.DATE_FORMAT"
           :key="item.value"
           :value="item.value"
           :label="item.label"
@@ -292,13 +334,13 @@
    * @param data
    * @param source
    */
-  // const formatData = (data: string | number, source: configEntity[]) => {
-  //   let res;
-  //   if (source && source.length > 0) {
-  //     res = source.find((item) => item.value === data);
-  //   }
-  //   return res ? res : '';
-  // };
+  const formatData = (data: string | number, source: configEntity[]) => {
+    let res;
+    if (source && source.length > 0) {
+      res = source.find((item) => item.value === data);
+    }
+    return res ? res : '';
+  };
   //截取基本属性
   const sliceBasicProp = (data: string) => {
     return data.split('.')[0];

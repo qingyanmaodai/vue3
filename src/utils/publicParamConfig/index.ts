@@ -484,4 +484,80 @@ export const config = {
       label: '批次码',
     },
   ],
+  //属性来源
+  WAY_BAR_RULES: [
+    {
+      value: 1,
+      label: '固定值',
+    },
+    {
+      value: 2,
+      label: '单据属性',
+    },
+  ],
+  //属性名称
+  ATTR_NAME: [
+    {
+      value: 'A',
+      label: '文本输入',
+    },
+    {
+      value: 'B',
+      label: '当前日期',
+    },
+    {
+      value: 'C',
+      label: '流水号',
+    },
+  ],
+  //属性类型
+  ATTR_TYPE: [
+    {
+      value: 'A',
+      label: '文本',
+    },
+    {
+      value: 'B',
+      label: '日期',
+    },
+    {
+      value: 'C',
+      label: '流水号',
+    },
+  ],
+  //格式中的日期选择
+  DATE_FORMAT: [
+    {
+      value: 'A',
+      label: 'yyyy-MM-dd HH:mm:ss',
+    },
+    {
+      value: 'B',
+      label: 'yyyy-MM-dd',
+    },
+    {
+      value: 'C',
+      label: 'yyyy-MM',
+    },
+    {
+      value: 'D',
+      label: 'yyyy',
+    },
+    {
+      value: 'E',
+      label: 'yy-MM-dd HH:mm:ss',
+    },
+    {
+      value: 'F',
+      label: 'yy-MM-dd',
+    },
+    {
+      value: 'G',
+      label: 'yy-MM',
+    },
+    {
+      value: 'H',
+      label: 'yy',
+    },
+  ],
 };
