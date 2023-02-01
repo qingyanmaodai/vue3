@@ -1299,3 +1299,19 @@ export const barcodeRulesColumns = [
   // },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
+
+//条码模块
+export const barcodeTemplateColumns = [
+  { type: 'checkbox', width: 50 },
+  { type: 'seq', title: '序号', width: 50 },
+  { field: 'number', title: '模板编码', slots: { default: 'number' }, sortable: true },
+  { field: 'name', title: '模板名称', sortable: true },
+  { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
+  // {
+  //   field: 'bsStatus',
+  //   title: '数据状态',
+  //   sortable: true,
+  //   slots: { default: 'status' },
+  // },
+  { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
+];

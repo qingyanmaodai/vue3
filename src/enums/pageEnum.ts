@@ -69,4 +69,6 @@ export enum PageEnum {
   WAR_OTHERS_OUTPUT_DETAIL = '/warehouse/others/output/detail',
   //条码规则
   BARCODE_RULES_DETAIL = '/barcode/barcodeRules/detail',
+  //条码模板
+  BARCODE_Template_DETAIL = '/barcode/barcodeTemplate/detail',
 }

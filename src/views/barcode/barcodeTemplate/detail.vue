@@ -3,23 +3,23 @@
     <a-card>
       <a-space style="margin-bottom: 10px">
         <!-- 模板选择 -->
-        <a-select
-          v-model="content.data.mode"
-          showSearch
-          @change="changeMode"
-          :defaultValue="0"
-          option-label-prop="label"
-          style="width: 100%"
-        >
-          <a-select-option
-            v-for="(opt, idx) in content.data.modeList"
-            :key="idx"
-            :label="opt.name"
-            :value="idx"
-          >
-            {{ opt.name }}
-          </a-select-option>
-        </a-select>
+        <!--        <a-select-->
+        <!--          v-model="content.data.mode"-->
+        <!--          showSearch-->
+        <!--          @change="changeMode"-->
+        <!--          :defaultValue="0"-->
+        <!--          option-label-prop="label"-->
+        <!--          style="width: 100%"-->
+        <!--        >-->
+        <!--          <a-select-option-->
+        <!--            v-for="(opt, idx) in content.data.modeList"-->
+        <!--            :key="idx"-->
+        <!--            :label="opt.name"-->
+        <!--            :value="idx"-->
+        <!--          >-->
+        <!--            {{ opt.name }}-->
+        <!--          </a-select-option>-->
+        <!--        </a-select>-->
         <a-button-group>
           <a-button
             v-for="(value, type) in content.data.paperTypes"
@@ -261,11 +261,12 @@
     Button,
     Row,
     Col,
-    Select,
-    SelectOption,
+    // Select,
+    // SelectOption,
     Popover,
   } from 'ant-design-vue';
   import { computed, onMounted, reactive, ref } from 'vue';
+  import { add } from '/@/api/barcode/barcodeTemplate';
   const ARow = Row;
   const AInput = Input;
   const ACard = Card;
@@ -275,8 +276,8 @@
   const APopconfirm = Popconfirm;
   const ASpace = Space;
   const AButton = Button;
-  const ASelect = Select;
-  const ASelectOption = SelectOption;
+  // const ASelect = Select;
+  // const ASelectOption = SelectOption;
   const APopover = Popover;
   let preViewRef = ref('');
   let content = reactive({
@@ -878,29 +879,30 @@
     }
   };
   //保存格式
-  const saveJson = () => {
+  const saveJson = async () => {
+    // let hiprintTemplateData = await add({ params: hiprintTemplate.getJson() });
     content.data.modeList[content.data.mode].template = hiprintTemplate.getJson();
-    console.log(hiprintTemplate.getJson(), 'hiprintTemplate.getJson()');
+    console.log(JSON.stringify(hiprintTemplate.getJson()), 'hiprintTemplate.getJson()');
     createMessage.success('操作成功');
   };
-  //改变样式
-  const changeMode = (value) => {
-    content.data.mode = value;
-    let provider = content.data.modeList[value];
-    // hiprintTemplate.clear();
-    // $('.hiprintEpContainer').empty();
-    // hiprint.PrintElementTypeManager.build('.hiprintEpContainer', provider.value);
-    $('#hiprint-printTemplate').empty();
-    hiprintTemplate = new hiprint.PrintTemplate({
-      template: provider.template,
-      settingContainer: '#PrintElementOptionSetting',
-      paginationContainer: '.hiprint-printPagination',
-    });
-    hiprintTemplate.design('#hiprint-printTemplate');
-    console.log(hiprintTemplate);
-    // 获取当前放大比例, 当zoom时传true 才会有
-    content.data.scaleValue = hiprintTemplate.editingPanel.scale || 1;
-  };
+  // //改变样式
+  // const changeMode = (value) => {
+  //   content.data.mode = value;
+  //   let provider = content.data.modeList[value];
+  //   // hiprintTemplate.clear();
+  //   // $('.hiprintEpContainer').empty();
+  //   // hiprint.PrintElementTypeManager.build('.hiprintEpContainer', provider.value);
+  //   $('#hiprint-printTemplate').empty();
+  //   hiprintTemplate = new hiprint.PrintTemplate({
+  //     template: provider.template,
+  //     settingContainer: '#PrintElementOptionSetting',
+  //     paginationContainer: '.hiprint-printPagination',
+  //   });
+  //   hiprintTemplate.design('#hiprint-printTemplate');
+  //   console.log(hiprintTemplate);
+  //   // 获取当前放大比例, 当zoom时传true 才会有
+  //   content.data.scaleValue = hiprintTemplate.editingPanel.scale || 1;
+  // };
   //自定义纸张
   const otherPaper = () => {
     let value = {};
