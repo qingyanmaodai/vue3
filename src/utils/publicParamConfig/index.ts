@@ -356,7 +356,7 @@ export const config = {
       label: '报废',
     },
   ],
-  //单据类型
+  //采购单据类型
   NUMBER_REASON: [
     {
       value: 'A',
@@ -437,14 +437,6 @@ export const config = {
       label: '生产工单',
     },
     {
-      value: 'BsProMoReturn',
-      label: '生产退料',
-    },
-    {
-      value: 'BsPurchaseReturn',
-      label: '采购退库',
-    },
-    {
       value: 'BsPurchaseInStock',
       label: '采购入库',
     },
@@ -453,8 +445,16 @@ export const config = {
       label: '采购订单',
     },
     {
+      value: 'BsPurchaseReturn',
+      label: '采购退库',
+    },
+    {
       value: 'BsSaleOrder',
       label: '销售订单',
+    },
+    {
+      value: 'BsSaleNotice',
+      label: '销售通知',
     },
     {
       value: 'BsSaleOut',
@@ -465,16 +465,23 @@ export const config = {
       label: '销售退货',
     },
     {
-      value: 'BsSaleNotice',
-      label: '销售通知',
-    },
-    {
       value: 'BsOtherIn',
       label: '其他入库',
     },
     {
       value: 'BsOtherOut',
       label: '其他出库',
+    },
+  ],
+  //条码类型
+  BARCODE_TYPE: [
+    {
+      value: 1,
+      label: '序列码',
+    },
+    {
+      value: 2,
+      label: '批次码',
     },
   ],
 };

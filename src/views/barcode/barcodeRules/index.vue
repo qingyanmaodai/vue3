@@ -5,8 +5,8 @@
         :control="moreSearchData"
         ref="searchRef"
         tableName="BdExamine"
-        searchNo="方案编码"
-        searchName="方案名称"
+        searchNo="规则编码"
+        searchName="规则名称"
         @getList="getList"
         @resetEvent="resetTable"
       />
@@ -15,9 +15,8 @@
         :isRelatedShow="false"
         :isShowImport="false"
         :isShowExport="false"
-        :columns="exaSchemeColumns"
+        :columns="barcodeRulesColumns"
         :gridOptions="GridOptions"
-        :importConfig="importConfig"
         :tableData="tableData"
         :tablePages="tablePages"
         ref="tableRef"
@@ -29,15 +28,13 @@
         @auditBatchEvent="auditBatchEvent"
         @unAuditRowEvent="unAuditRowEvent"
         @unAuditBatchEvent="unAuditBatchEvent"
-        @exportTable="exportTable"
-        @importModelEvent="importModelEvent"
         @getList="getList"
       />
     </div>
   </div>
 </template>
 
-<script setup lang="ts" name="examine-scheme-index">
+<script setup lang="ts" name="barcode-barcodeRules-index">
   import { ExTable } from '/@/components/ExTable';
   import { Search } from '/@/components/Search';
   import { onActivated, onMounted, reactive, ref } from 'vue';
@@ -46,18 +43,15 @@
     auditBatch,
     delBatch,
     delById,
-    exportExcel,
     getDataList,
     getSearchOption,
-    importFile,
     unAudit,
     unAuditBatch,
-  } from '/@/api/exa';
+  } from '/@/api/barcode/barcodeRules';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
-  import { gridOptions, exaSchemeColumns } from '/@/components/ExTable/data';
+  import { gridOptions, barcodeRulesColumns } from '/@/components/ExTable/data';
   import { FormState, SearchParams, tableParams } from '/@/api/apiLink';
-  import { OptTableHook } from '/@/api/utilHook';
   import { PageEnum } from '/@/enums/pageEnum';
   import { useGo } from '/@/hooks/web/usePage';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -67,8 +61,6 @@
   const GridOptions = gridOptions;
   const paneSize = ref<number>(16);
   const installPaneSize = ref<number>(16);
-  //导入上传文件api
-  let importConfig = ref<string>('UPLOAD_EXA_SCHEME');
   //表格数据
   const tableRef = ref<any>('');
   const tableData = ref<object[]>([]);
@@ -117,7 +109,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.EXA_SCHEME_DETAIL,
+      path: PageEnum.BARCODE_RULES_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -126,7 +118,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.EXA_SCHEME_DETAIL,
+      path: PageEnum.BARCODE_RULES_DETAIL,
       query: {
         row: row.id,
       },
@@ -184,45 +176,6 @@
     });
     await tableRef.value.computeData(res);
     await getList();
-  };
-  //下载模板
-  const importModelEvent = async () => {
-    OptTableHook.importModel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        importFile({
-          params: '导入模板',
-        })
-          .then((res) => {
-            const data = { title: '检验方案导入模板.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
-  };
-  //导出
-  const exportTable = async () => {
-    OptTableHook.exportExcel = (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        exportExcel({
-          params: {
-            list: tableData.value,
-            fileName: '检验方案',
-          },
-          pageIndex: tablePages.currentPage,
-          pageRows: tablePages.pageSize,
-        })
-          .then((res) => {
-            const data = { title: '检验方案.xls', data: res };
-            resolve(data);
-          })
-          .catch((e) => {
-            reject(e);
-          });
-      });
-    };
   };
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);

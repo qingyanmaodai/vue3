@@ -85,7 +85,9 @@
       <span>{{ row.loss }}</span>
     </template>
     <template #numPrice="{ row }">
-      <span>{{ row.num && row.price ? (row.totalPrice = row.num * row.price).toFixed(2) : null }}</span>
+      <span>{{
+        row.num && row.price ? (row.totalPrice = row.num * row.price).toFixed(2) : null
+      }}</span>
     </template>
     <template #realNumPrice="{ row }">
       <span>{{
@@ -104,6 +106,16 @@
         :unCheckedValue="0"
         v-model:checked="row.isRequire"
       />
+    </template>
+    <template #edit="{ row }">
+      <vxe-select v-model="row.sex2" multiple transfer>
+        <vxe-option
+          v-for="item in sexList1"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
+      </vxe-select>
     </template>
   </vxe-grid>
   <BasicSearch

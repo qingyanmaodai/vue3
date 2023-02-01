@@ -24,39 +24,44 @@
               <a-form ref="formRef" :model="formState" :rules="formRules">
                 <Row>
                   <Col :span="8">
-                    <a-form-item label="方案编码：" ref="number" name="number" class="item">
+                    <a-form-item label="规则编码：" ref="number" name="number" class="item">
                       <Input
                         allowClear
                         class="input"
                         autocomplete="off"
                         v-model:value="formState.number"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入方案编码'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入规则编码'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="方案名称：" ref="name" name="name" class="item">
+                    <a-form-item label="规则名称：" ref="name" name="name" class="item">
                       <Input
                         allowClear
                         class="input"
                         autocomplete="off"
                         v-model:value="formState.name"
                         name="name"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入方案名称'"
+                        :placeholder="formState.bsStatus === 'B' ? '' : '请输入规则名称'"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="是否启用" ref="isOpen" name="isOpen" class="switch">
+                    <a-form-item
+                      label="是否默认规则"
+                      ref="isDefault"
+                      name="isDefault"
+                      class="switch"
+                    >
                       <div class="switchDiv">
                         <Switch
-                          :checked-children="config.ENABLE_STATUS_SPE[1]"
-                          :un-checked-children="config.ENABLE_STATUS_SPE[0]"
+                          :checked-children="config.YES_OR_NO[1]"
+                          :un-checked-children="config.YES_OR_NO[0]"
                           :checkedValue="1"
                           :unCheckedValue="0"
-                          v-model:checked="formState.isOpen"
+                          v-model:checked="formState.isDefault"
                           :disabled="formState.bsStatus === 'B'"
                         />
                       </div>
@@ -65,52 +70,25 @@
                 </Row>
                 <Row>
                   <Col :span="8">
-                    <a-form-item
-                      label="检验类型："
-                      ref="examineType"
-                      name="examineType"
-                      class="item"
-                    >
+                    <a-form-item label="条码类型：" ref="codeType" name="codeType" class="item">
                       <Select
-                        v-model:value="formState.examineType"
+                        v-model:value="formState.codeType"
                         class="select"
-                        :options="config.EXAMINE_SCHEME_TYPE"
+                        :options="config.BARCODE_TYPE"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
                   </Col>
                   <Col :span="8">
-                    <a-form-item label="抽检规则：" ref="ruleId" name="ruleId" class="item">
-                      <ExInput
-                        autocomplete="off"
-                        class="input"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请选择抽检规则'"
-                        label="抽检规则"
-                        :show="formState.bsStatus !== 'B'"
-                        :value="formState.bdExamineRule"
-                        :disabled="formState.bsStatus === 'B'"
-                        @search="
-                          onSearch('GET_EXA_RULE_DTO', 'bdExamineRule', Url.GET_EXA_RULE_LIST, [
-                            'ruleId',
-                            'bdExamineRule',
-                          ])
-                        "
-                        @clear="onClear(['ruleId', 'bdExamineRule'])"
-                      />
-                    </a-form-item>
-                  </Col>
-                  <Col :span="8">
-                    <a-form-item label="业务类型：" ref="business" name="business" class="item">
+                    <a-form-item label="适用单据：" ref="billType" name="billType" class="item">
                       <Select
-                        v-model:value="formState.business"
+                        v-model:value="formState.billType"
                         class="select"
-                        :options="config.EXAMINE_BUSINESS"
+                        :options="config.BILL_TYPE"
                         :disabled="formState.bsStatus === 'B'"
                       />
                     </a-form-item>
                   </Col>
-                </Row>
-                <Row>
                   <Col :span="8">
                     <a-form-item label="业务状态：" ref="bsStatus" name="bsStatus" class="item">
                       <Input
@@ -123,22 +101,8 @@
                       />
                     </a-form-item>
                   </Col>
-                  <Col :span="8">
-                    <a-form-item
-                      label="方案描述："
-                      ref="description"
-                      name="description"
-                      class="item"
-                    >
-                      <a-textArea
-                        v-model:value="formState.description"
-                        :placeholder="formState.bsStatus === 'B' ? '' : '请添加方案描述'"
-                        :rows="3"
-                        class="textArea"
-                        :disabled="formState.bsStatus === 'B'"
-                      />
-                    </a-form-item>
-                  </Col>
+                </Row>
+                <Row>
                   <Col :span="8">
                     <a-form-item label="备注：" ref="mark" name="mark" class="item">
                       <a-textArea
@@ -191,7 +155,7 @@
         </pane>
         <pane :size="100 - paneSize">
           <ExDetailTable
-            :columns="exaProjectOfDetailColumns"
+            :columns="barcodeRulesOfDetailColumns"
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
@@ -216,10 +180,10 @@
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name="barcode-barcodeRules-detail">
   import {
     detailOfExaGridOptions,
-    exaProjectOfDetailColumns,
+    barcodeRulesOfDetailColumns,
   } from '/@/components/ExDetailTable/data';
   import { onMounted, reactive, ref, toRef } from 'vue';
   import {
@@ -238,11 +202,10 @@
   import { Pane, Splitpanes } from 'splitpanes';
   import 'splitpanes/dist/splitpanes.css';
   import { BasicSearch } from '/@/components/AMoreSearch';
-  import { ExInput } from '/@/components/ExInput';
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, ExaEntity, getOneById, update } from '/@/api/exa';
+  import { add, audit, unAudit, getOneById, update, BarEntity } from '/@/api/barcode/barcodeRules';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -267,15 +230,13 @@
   const basicTableCols = ref<VxeGridPropTypes.Columns[]>([]); //表头
   let basicTableName = ref<string>(''); //需要查询的表名
   const detailTableRef: any = ref<String | null>(null);
-  const formData: ExaEntity = {
+  const formData: BarEntity = {
     id: undefined,
     number: '',
     name: '',
-    isOpen: 1,
-    description: '',
-    examineType: 'A',
-    business: 'A',
-    ruleId: '',
+    isDefault: 0,
+    codeType: '',
+    billType: '',
   };
   const detailTableData: any = ref<object[]>([]); //表格数据
   //初始化
@@ -285,11 +246,10 @@
   // 明细表表头名
   const formState = toRef(formStateInit, 'data');
   const formRules = reactive({
-    name: [{ required: true, message: '请输入方案名称' }],
-    number: [{ required: true, message: '请输入方案编码' }],
-    ruleId: [{ required: true, message: '请选择抽检规则' }],
-    business: [{ required: true, message: '请选择业务类型' }],
-    examineType: [{ required: true, message: '请选择检验类型' }],
+    name: [{ required: true, message: '请输入规则名称' }],
+    number: [{ required: true, message: '请输入规则编码' }],
+    billType: [{ required: true, message: '请选择单据类型' }],
+    codeType: [{ required: true, message: '请选择条码类型' }],
   });
   const formDataRules = reactive({
     'bdExamineProject.number': [{ required: true, message: '请选择检验项目' }],
@@ -314,12 +274,6 @@
       },
     ],
   });
-  //点击清空图标清空事件
-  const onClear = (key: string[]) => {
-    key.forEach((e) => {
-      formState.value[e] = undefined;
-    });
-  };
 
   let currDataParam: string[] = []; //约定数组下标0为数据ID，1为数据包
   /**
@@ -368,7 +322,8 @@
           }
           if (
             tableFullData.some(
-              (e) => tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
+              (e) =>
+                tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
             )
           ) {
             createMessage.error('明细表存在相同数据，请检查!');
@@ -409,7 +364,9 @@
             }
             if (
               tableFullData.some(
-                (e) => tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
+                (e) =>
+                  tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length >
+                  1,
               )
             ) {
               createMessage.error('明细表存在相同数据，请检查!');
@@ -476,7 +433,7 @@
   };
   //设置Switch默认
   const setDefaultTableData = (obj) => {
-    obj.isOpen = 1;
+    obj.isDefault = 1;
     obj.isRequire = 1;
   };
   //dtData状态赋值
