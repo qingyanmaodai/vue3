@@ -37,6 +37,7 @@ export function getPushDownList(json: RequestData<object>, mode: ErrorMessageMod
     },
   );
 }
+
 /**
  * 公共请求
  */
@@ -48,6 +49,22 @@ export function getPublicList(
   return defHttp.post<any>(
     {
       url: url,
+      data: json,
+    },
+    {
+      errorMessageMode: mode,
+      isTransformResponse: true,
+    },
+  );
+}
+
+/**
+ * 获取条码属性
+ */
+export function getBarcodeAttr(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<any>(
+    {
+      url: Url.GET_BARCODE_ATTR,
       data: json,
     },
     {

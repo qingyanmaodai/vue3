@@ -9,7 +9,7 @@ export interface BarEntity extends PublicModel {
   isDefault?: number;
   codeType?: string;
   billType?: string;
-  bdBarcodeDetailList?: BarDetailEntity[];
+  dtData?: BarDetailEntity[];
 }
 export interface BarDetailEntity extends PublicModel {
   id: string | undefined;

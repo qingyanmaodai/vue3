@@ -120,39 +120,31 @@
         />
       </vxe-select>
     </template>
-    <template #attrNameDefault="{ row }">
-      <span>{{ formatData(row.name, config['ATTR_NAME'])['label'] }}</span>
-    </template>
     <template #attrName="{ row }">
       <vxe-select v-model="row.name">
         <vxe-option
-          v-for="item in config.ATTR_NAME"
-          :key="item.value"
-          :value="item.value"
-          :label="item.label"
+          v-for="(item, key) in props.attrNameData"
+          :key="key + 'k1'"
+          :value="item.name"
+          :label="item.name"
         />
       </vxe-select>
-    </template>
-    <template #attrTypeDefault="{ row }">
-      <span>{{ formatData(row.name, config['ATTR_TYPE'])['label'] }}</span>
     </template>
     <template #attrType="{ row }">
-      <vxe-select v-model="row.name">
-        <vxe-option
-          v-for="item in config.ATTR_TYPE"
-          :key="item.value"
-          :value="item.value"
-          :label="item.label"
-        />
-      </vxe-select>
+      <span>{{
+        formatData(row.name ? props.attrTypeData : '', config['ATTR_TYPE'])['label']
+      }}</span>
     </template>
+    <!--    <template #formatDefault="{ row }">-->
+    <!--      <span>{{ formatData(row.format, config['DATE_FORMAT'])['label'] }}</span>-->
+    <!--    </template>-->
     <template #formatDefault="{ row }">
-      <span>{{ formatData(row.format, config['DATE_FORMAT'])['label'] }}</span>
+      <span>{{ formatData(row.format, config['WAY_BAR_RULES'])['label'] }}</span>
     </template>
-    <template #formatFormat="{ row }">
-      <vxe-select v-model="row.format">
+    <template #format="{ row }">
+      <vxe-select v-model="row.format" transfer>
         <vxe-option
-          v-for="item in config.DATE_FORMAT"
+          v-for="item in config.WAY_BAR_RULES"
           :key="item.value"
           :value="item.value"
           :label="item.label"
@@ -212,12 +204,20 @@
     detailTableData: {
       type: Array,
     },
+    attrNameData: {
+      type: Array,
+    },
+    attrTypeData: {
+      type: String,
+      default: '',
+    },
   });
   const emit = defineEmits<Emits>();
   type Emits = {
     (event: 'cellClickTableEvent', row, data, column): void; //双击获取字段数据
-    (event: 'clearDetailTableEvent', data, column): void; //双击获取字段数据
+    (event: 'clearDetailTableEvent', data, column): void; //明细表清空事件
     (event: 'setDefaultTableData', obj): void; //新增行时设置默认值
+    (event: 'editDefaultTableData', obj): void; //编辑时，单元格数据变化
     (event: 'getCountAmount', data): void; //编辑单元格自动计算数量
     (event: 'filterEvent'): void; ///筛选条件查询
   };
@@ -346,8 +346,10 @@
     return data.split('.')[0];
   };
 
-  const editClosed = (row: any) => {
+  const editClosed = (row: any, column: any) => {
     emit('getCountAmount', row.row); //点击单元格时计算
+    emit('editDefaultTableData', row.row); //点击单元格
+    console.log('column', column);
   };
 
   //基本信息表格双击事件
@@ -387,6 +389,15 @@
         };
       case column.field == 'bdOutStockLocation.name' &&
         (row.stockDis !== 'C' || !row.outCompartmentId):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      // //条码规则
+      case row.bsStatus === 'B':
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case column.field == 'format' && row.attrType && row.attrType !== 'DATE':
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

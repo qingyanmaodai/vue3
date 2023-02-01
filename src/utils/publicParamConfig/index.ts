@@ -496,32 +496,32 @@ export const config = {
     },
   ],
   //属性名称
-  ATTR_NAME: [
-    {
-      value: 'A',
-      label: '文本输入',
-    },
-    {
-      value: 'B',
-      label: '当前日期',
-    },
-    {
-      value: 'C',
-      label: '流水号',
-    },
-  ],
+  // ATTR_NAME: [
+  //   {
+  //     value: 'A',
+  //     label: '文本输入',
+  //   },
+  //   {
+  //     value: 'B',
+  //     label: '当前日期',
+  //   },
+  //   {
+  //     value: 'C',
+  //     label: '流水号',
+  //   },
+  // ],
   //属性类型
   ATTR_TYPE: [
     {
-      value: 'A',
+      value: 'TEXT',
       label: '文本',
     },
     {
-      value: 'B',
+      value: 'DATE',
       label: '日期',
     },
     {
-      value: 'C',
+      value: 'SENO',
       label: '流水号',
     },
   ],
