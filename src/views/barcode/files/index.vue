@@ -229,7 +229,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   const { createMessage } = useMessage();
   let hiprintTemplate;
-  import printPreview from '/@/views/sys/print/design/preview.vue';
+  import printPreview from './preview.vue';
   import {
     CloseOutlined,
     EyeOutlined,
@@ -266,7 +266,6 @@
     Popover,
   } from 'ant-design-vue';
   import { computed, onMounted, reactive, ref } from 'vue';
-  import providers, { aProvider, bProvider } from '../../sys/print/custom/providers';
   const ARow = Row;
   const AInput = Input;
   const ACard = Card;

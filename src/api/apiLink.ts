@@ -591,6 +591,9 @@ export enum Url {
   PUSHDOWN_TRANSFER_ORDER = '/wms/transferOrder/push/', //下推
   DOWN_SEARCH_TRANSFER_ORDER = '/wms/transferOrder/down-search', //下查
   UP_SEARCH_TRANSFER_ORDER = '/wms/transferOrder/up-search', //上查
+
+  // 条码模板
+  ADD_TEMPLATE_TEMPLATE = '/wms/template/save-template', //添加含详情信息
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {
