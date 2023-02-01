@@ -574,7 +574,7 @@ export enum Url {
   UP_SEARCH_OTHERS_OUTPUT = '/wms/bs-other-out/up-search', //上查
 
   // 调拨订单
-  AUDIT_TRANSFER_ORDER = '/wms/transferOrder/audit',
+  AUDIT_TRANSFER_ORDER = '/wms/transferOrder/audit', //审核
   BATCH_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/batch-audit', //批量审核
   UN_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/un-audit', //反审核
   UN_BATCH_AUDIT_TRANSFER_ORDER = '/wms/transferOrder/batch-un-audit', //批量反审核
@@ -593,7 +593,10 @@ export enum Url {
   UP_SEARCH_TRANSFER_ORDER = '/wms/transferOrder/up-search', //上查
 
   // 条码模板
-  ADD_TEMPLATE_TEMPLATE = '/wms/template/save-template', //添加含详情信息
+  ADD_TEMPLATE = '/wms/template/save-template', //添加含详情信息
+  GET_PAGE_TEMPLATE_LIST = '/wms/template/list', //分页查询--获取列表
+  DELETE_TEMPLATE = '/wms/template/remove-template', //删除含详情信息
+  GET_TEMPLATE_QUERY = '/wms/template/query-templateId', //获取实体信息
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

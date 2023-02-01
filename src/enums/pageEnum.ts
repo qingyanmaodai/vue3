@@ -70,5 +70,5 @@ export enum PageEnum {
   //条码规则
   BARCODE_RULES_DETAIL = '/barcode/barcodeRules/detail',
   //条码模板
-  BARCODE_Template_DETAIL = '/barcode/barcodeTemplate/detail',
+  BARCODE_TEMPLATE_DETAIL = '/barcode/barcodeTemplate/detail',
 }

@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BsProMoInStock"
+        tableName="BarcodeTemplate"
         searchNo="模板名称"
         :showSearchName="false"
         @getList="getList"
@@ -44,7 +44,7 @@
     getSearchOption,
     unAudit,
     unAuditBatch,
-  } from '/@/api/warProduce/instock';
+  } from '/@/api/barcode/barcodeTemplate';
   import 'splitpanes/dist/splitpanes.css';
   import { cloneDeep } from 'lodash-es';
   import { gridOptions, barcodeTemplateColumns } from '/@/components/ExTable/data';
@@ -76,7 +76,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BsProMoInStock.update_time'],
+        descList: ['BarcodeTemplate.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,
@@ -101,7 +101,7 @@
   const addTableEvent = () => {
     let groupId = '';
     go({
-      path: PageEnum.BARCODE_Template_DETAIL,
+      path: PageEnum.BARCODE_TEMPLATE_DETAIL,
       query: {
         groupId: groupId == '' ? '' : groupId,
       },
@@ -110,7 +110,7 @@
   //编辑
   const editTableEvent = (row) => {
     go({
-      path: PageEnum.WAR_PRO_INSTOCK_DETAIL,
+      path: PageEnum.BARCODE_TEMPLATE_DETAIL,
       query: {
         row: row.id,
       },
@@ -124,7 +124,10 @@
   };
   //批量删除表格
   const deleteBatchEvent = async (rows: any[]) => {
-    const res = await delBatch({ params: rows });
+    let a = rows.map((item) => {
+      return item.id;
+    });
+    const res = await delBatch({ params: a });
     await tableRef.value.computeData(res);
     await getList();
   };
@@ -175,7 +178,7 @@
   // });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
-    // getList();
+    getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {

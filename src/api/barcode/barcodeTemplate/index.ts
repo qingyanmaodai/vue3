@@ -2,19 +2,19 @@ import { ErrorMessageMode, Result } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 import { Url, RequestData, SearchParams, PublicModel } from '/@/api/apiLink';
 
-export interface BarEntity extends PublicModel {
+export interface BarTemplateEntity extends PublicModel {
   id: string | undefined;
   number: string;
   name: string;
   isDefault?: number;
   codeType?: string;
   billType?: string;
-  bdBarcodeDetailList?: BarDetailEntity[];
+  bdBarcodeDetailList?: BarTemplateEntity[];
 }
-export interface BarDetailEntity extends PublicModel {
+export interface BarTemplateEntity extends PublicModel {
   id: string | undefined;
-  number?: string;
-  name?: string;
+  // number?: string;
+  // name?: string;
   seq: number;
   min?: number;
   max?: number;
@@ -23,7 +23,6 @@ export interface BarDetailEntity extends PublicModel {
   isRequire: number;
   description?: string;
   parentId?: string;
-  barcode?: BarEntity;
 }
 /**
  * 获取表格信息
@@ -31,7 +30,7 @@ export interface BarDetailEntity extends PublicModel {
 export function getDataList(json: RequestData<SearchParams[]>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.GET_EXA_SCHEME_LIST,
+      url: Url.GET_PAGE_TEMPLATE_LIST,
       data: json,
     },
     {
@@ -58,10 +57,10 @@ export function getSearchOption(json: RequestData<string>, mode: ErrorMessageMod
 /**
  * 添加物料信息
  */
-export function add(json: RequestData<BarEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<BarEntity>(
+export function add(json: RequestData<BarTemplateEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<BarTemplateEntity>(
     {
-      url: Url.ADD_TEMPLATE_TEMPLATE,
+      url: Url.ADD_TEMPLATE,
       data: json,
     },
     {
@@ -73,8 +72,8 @@ export function add(json: RequestData<BarEntity>, mode: ErrorMessageMode = 'mess
 /**
  * 编辑物料信息
  */
-export function update(json: RequestData<BarEntity>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<BarEntity>(
+export function update(json: RequestData<BarTemplateEntity>, mode: ErrorMessageMode = 'message') {
+  return defHttp.post<BarTemplateEntity>(
     {
       url: Url.UPDATE_EXA_SCHEME,
       data: json,
@@ -89,7 +88,7 @@ export function update(json: RequestData<BarEntity>, mode: ErrorMessageMode = 'm
  * 审核
  */
 export function audit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<BarEntity>(
+  return defHttp.post<BarTemplateEntity>(
     {
       url: Url.AUDIT_EXA_SCHEME,
       data: json,
@@ -121,7 +120,7 @@ export function auditBatch(json: RequestData<Array<string>>, mode: ErrorMessageM
 export function getOneById(json: RequestData<string>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.QUERY_ONE_EXA_SCHEME,
+      url: Url.GET_TEMPLATE_QUERY,
       data: json,
     },
     {
@@ -151,7 +150,7 @@ export function delById(json: RequestData<string>, mode: ErrorMessageMode = 'mes
 export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMode = 'message') {
   return defHttp.post<Result>(
     {
-      url: Url.BATCH_DEL_EXA_SCHEME,
+      url: Url.DELETE_TEMPLATE,
       data: json,
     },
     {
@@ -164,7 +163,7 @@ export function delBatch(json: RequestData<Array<string>>, mode: ErrorMessageMod
  * 反审核物料信息
  */
 export function unAudit(json: RequestData<object>, mode: ErrorMessageMode = 'message') {
-  return defHttp.post<BarEntity>(
+  return defHttp.post<BarTemplateEntity>(
     {
       url: Url.UN_AUDIT_EXA_SCHEME,
       data: json,
