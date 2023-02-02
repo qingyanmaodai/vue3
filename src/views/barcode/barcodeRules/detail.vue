@@ -57,10 +57,8 @@
                     >
                       <div class="switchDiv">
                         <Switch
-                          :checked-children="config.YES_OR_NO[1]"
-                          :un-checked-children="config.YES_OR_NO[0]"
-                          :checkedValue="1"
-                          :unCheckedValue="0"
+                          :checkedValue="true"
+                          :unCheckedValue="false"
                           v-model:checked="formState.isDefault"
                           :disabled="formState.bsStatus === 'B'"
                         />
@@ -234,7 +232,7 @@
     id: undefined,
     number: '',
     name: '',
-    isDefault: 0,
+    isDefault: false,
     codeType: '',
     billType: '',
   };
@@ -323,6 +321,13 @@
           }
           formState.value.dtData = cloneDeep(tableFullData);
         }
+        if (formState.value.dtData) {
+          let judgeAttrType = formState.value.dtData.every((item) => item.attrType === 'SENO');
+          if (formState.value.codeType && formState.value.codeType == 1 && judgeAttrType !== true) {
+            createMessage.error('当条码类型为[序列码]时，条码规则一定要存在[流水号]，请检查!');
+            return;
+          }
+        }
         //保存：新增+更新
         const data = await add({ params: formState.value });
         formState.value = Object.assign({}, formState.value, data);
@@ -352,6 +357,17 @@
               return;
             }
             formState.value.dtData = cloneDeep(tableFullData);
+          }
+          if (formState.value.dtData) {
+            let judgeAttrType = formState.value.dtData.every((item) => item.attrType === 'SENO');
+            if (
+              formState.value.codeType &&
+              formState.value.codeType == 1 &&
+              judgeAttrType !== true
+            ) {
+              createMessage.error('当条码类型为[序列码]时，条码规则一定要存在[流水号]，请检查!');
+              return;
+            }
           }
           const data = await audit({ params: formState.value });
           formState.value = Object.assign({}, formState.value, data);
@@ -412,24 +428,6 @@
       let attrTypeData1 = attrNameData.value.filter((item) => item.name == row.name);
       attrTypeData.value = attrTypeData1 ? attrTypeData1[0].attrType : '';
     }
-
-    // if (row.name && row.name === attrNameData.value.name) {
-
-    // let aa = attrNameData.value.every((r) => {
-    //   r.name = row.name;
-    //   // });
-    // });
-    // console.log('aa', aa);
-
-    // if (obj.way !== 1) {
-    //   console.log('flassss');
-    // }
-    // switch (true) {
-    //   case column.field == 'name' && row.way && row.way === 1:
-    //     return {
-    //       backgroundColor: 'rgb(225 225 224)',
-    //     };
-    // }
   };
   //dtData状态赋值
   const setDataStatus = () => {

@@ -495,6 +495,17 @@ export const config = {
       label: '单据属性',
     },
   ],
+  //是否默认规则
+  IS_DEFAULT: [
+    {
+      value: true,
+      label: '是',
+    },
+    {
+      value: false,
+      label: '否',
+    },
+  ],
   //属性名称
   // ATTR_NAME: [
   //   {

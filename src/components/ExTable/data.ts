@@ -1287,16 +1287,16 @@ export const barcodeRulesColumns = [
   { type: 'seq', title: '序号', width: 50 },
   { field: 'number', title: '规则编码', slots: { default: 'number' }, sortable: true },
   { field: 'name', title: '规则名称', sortable: true },
-  { field: 'codeType', title: '条码类型', sortable: true },
-  { field: 'billType', title: '适用单据', sortable: true },
-  { field: 'isDefault', title: '是否默认规则', sortable: true, slots: { default: 'open' } },
+  { field: 'codeType', title: '条码类型', sortable: true, slots: { default: 'codeType' } },
+  { field: 'billType', title: '适用单据', sortable: true, slots: { default: 'billType' } },
+  { field: 'isDefault', title: '是否默认规则', sortable: true, slots: { default: 'isDefault' } },
   { field: 'createTime', title: '创建日期', sortable: true, width: 160 },
-  // {
-  //   field: 'bsStatus',
-  //   title: '数据状态',
-  //   sortable: true,
-  //   slots: { default: 'status' },
-  // },
+  {
+    field: 'bsStatus',
+    title: '数据状态',
+    sortable: true,
+    slots: { default: 'status' },
+  },
   { field: 'operate', title: '操作', width: 160, slots: { default: 'operate' }, fixed: 'right' },
 ];
 

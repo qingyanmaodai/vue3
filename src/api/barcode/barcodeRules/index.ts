@@ -6,8 +6,8 @@ export interface BarEntity extends PublicModel {
   id: string | undefined;
   number: string;
   name: string;
-  isDefault?: number;
-  codeType?: string;
+  isDefault?: boolean;
+  codeType?: number;
   billType?: string;
   dtData?: BarDetailEntity[];
 }
@@ -16,12 +16,15 @@ export interface BarDetailEntity extends PublicModel {
   number?: string;
   name?: string;
   seq: number;
-  min?: number;
-  max?: number;
-  refer?: string;
-  isOpen?: number;
-  isRequire: number;
-  description?: string;
+  right: number;
+  left: number;
+  leftFix: number;
+  rightFix: number;
+  way?: string;
+  format?: string;
+  val?: string;
+  split?: string;
+  attrType?: string;
   parentId?: string;
   barcode?: BarEntity;
 }
