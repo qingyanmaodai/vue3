@@ -9,20 +9,7 @@ export interface BarTemplateEntity extends PublicModel {
   isDefault?: number;
   codeType?: string;
   billType?: string;
-  bdBarcodeDetailList?: BarTemplateEntity[];
-}
-export interface BarTemplateEntity extends PublicModel {
-  id: string | undefined;
-  // number?: string;
-  // name?: string;
-  seq: number;
-  min?: number;
-  max?: number;
-  refer?: string;
-  isOpen?: number;
-  isRequire: number;
-  description?: string;
-  parentId?: string;
+  templateData?: any;
 }
 /**
  * 获取表格信息

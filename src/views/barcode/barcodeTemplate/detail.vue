@@ -22,24 +22,6 @@
         </a-row>
       </a-form>
       <a-space style="margin-bottom: 10px">
-        <!-- 模板选择 -->
-        <!--        <a-select-->
-        <!--          v-model="content.data.mode"-->
-        <!--          showSearch-->
-        <!--          @change="changeMode"-->
-        <!--          :defaultValue="0"-->
-        <!--          option-label-prop="label"-->
-        <!--          style="width: 100%"-->
-        <!--        >-->
-        <!--          <a-select-option-->
-        <!--            v-for="(opt, idx) in content.data.modeList"-->
-        <!--            :key="idx"-->
-        <!--            :label="opt.name"-->
-        <!--            :value="idx"-->
-        <!--          >-->
-        <!--            {{ opt.name }}-->
-        <!--          </a-select-option>-->
-        <!--        </a-select>-->
         <a-button-group>
           <a-button
             v-for="(value, type) in content.data.paperTypes"
@@ -104,12 +86,12 @@
           </template>
           预览
         </a-button>
-        <a-button type="primary" @click="print">
-          <template #icon>
-            <PrinterOutlined />
-          </template>
-          直接打印
-        </a-button>
+        <!--        <a-button type="primary" @click="print">-->
+        <!--          <template #icon>-->
+        <!--            <PrinterOutlined />-->
+        <!--          </template>-->
+        <!--          直接打印-->
+        <!--        </a-button>-->
         <a-button type="primary" @click="saveJson">
           <template #icon>
             <SaveOutlined />
@@ -117,7 +99,7 @@
           保存
         </a-button>
         <a-button type="primary" @click="onlyPrint"> Api单独打印 </a-button>
-        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>
+        <!--        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>-->
         <a-popconfirm title="是否确认清空?" okType="danger" okText="确定清空" @confirm="clearPaper">
           <template #icon>
             <QuestionCircleOutlined style="color: red" />
@@ -279,8 +261,6 @@
     Button,
     Row,
     Col,
-    // Select,
-    // SelectOption,
     Popover,
     Form,
     FormItem,
@@ -303,8 +283,6 @@
   const APopconfirm = Popconfirm;
   const ASpace = Space;
   const AButton = Button;
-  // const ASelect = Select;
-  // const ASelectOption = SelectOption;
   const APopover = Popover;
   let preViewRef = ref('');
   let content = reactive({
@@ -867,39 +845,39 @@
     );
     console.log(hiprintTemplate1);
   };
-  const onlyPrint2 = () => {
-    if (window.hiwebSocket.opened) {
-      let hiprintTemplate1 = hiprintTemplate.print2(undefined, panel, printData, {
-        printer: '',
-        title: 'Api单独打印',
-        styleHandler: () => {
-          let css =
-            '<link href="http://hiprint.io/Content/hiprint/css/print-lock.css" media="print" rel="stylesheet">';
-          return css;
-        },
-      });
-      let key = 'Api单独直接打印';
-      hiprintTemplate1.on('printSuccess', function () {
-        hiprintTemplate.notification.success({
-          key: key,
-          placement: 'topRight',
-          message: key + ' 打印成功',
-          description: 'Api单独直接打印回调',
-        });
-      });
-      return;
-    }
-    message.error('客户端未连接,无法直接打印');
-  };
-  const print = () => {
-    if (window.hiwebSocket.opened) {
-      const printerList = hiprintTemplate.getPrinterList();
-      console.log(printerList);
-      hiprintTemplate.print2(printData, { printer: '', title: 'hiprint测试打印' });
-      return;
-    }
-    message.error('客户端未连接,无法直接打印');
-  };
+  // const onlyPrint2 = () => {
+  //   if (window.hiwebSocket.opened) {
+  //     let hiprintTemplate1 = hiprintTemplate.print2(undefined, panel, printData, {
+  //       printer: '',
+  //       title: 'Api单独打印',
+  //       styleHandler: () => {
+  //         let css =
+  //           '<link href="http://hiprint.io/Content/hiprint/css/print-lock.css" media="print" rel="stylesheet">';
+  //         return css;
+  //       },
+  //     });
+  //     let key = 'Api单独直接打印';
+  //     hiprintTemplate1.on('printSuccess', function () {
+  //       hiprintTemplate.notification.success({
+  //         key: key,
+  //         placement: 'topRight',
+  //         message: key + ' 打印成功',
+  //         description: 'Api单独直接打印回调',
+  //       });
+  //     });
+  //     return;
+  //   }
+  //   message.error('客户端未连接,无法直接打印');
+  // };
+  // const print = () => {
+  //   if (window.hiwebSocket.opened) {
+  //     const printerList = hiprintTemplate.getPrinterList();
+  //     console.log(printerList);
+  //     hiprintTemplate.print2(printData, { printer: '', title: 'hiprint测试打印' });
+  //     return;
+  //   }
+  //   message.error('客户端未连接,无法直接打印');
+  // };
   const clearPaper = () => {
     try {
       hiprintTemplate.clear();

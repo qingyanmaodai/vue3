@@ -597,6 +597,21 @@ export enum Url {
   GET_PAGE_TEMPLATE_LIST = '/wms/template/list', //分页查询--获取列表
   DELETE_TEMPLATE = '/wms/template/remove-template', //删除含详情信息
   GET_TEMPLATE_QUERY = '/wms/template/query-templateId', //获取实体信息
+
+  //获取条码属性
+  GET_BARCODE_ATTR = '/wms/public/bar-code-attr',
+  //条码规则
+  AUDIT_BARCODE_RULE = '/wms/bar-code-rule/audit',
+  BATCH_AUDIT_BARCODE_RULE = '/wms/bar-code-rule/batch-audit', //批量审核
+  UN_AUDIT_BARCODE_RULE = '/wms/bar-code-rule/un-audit', //反审核
+  UN_BATCH_AUDIT_BARCODE_RULE = '/wms/bar-code-rule/batch-un-audit', //批量反审核
+  BATCH_DELETE_WITH_DETAIL_BARCODE_RULE = '/wms/bar-code-rule/delete-with-detail-batch', //批量删除含详情信息
+  DELETE_WITH_DETAIL_BARCODE_RULE = '/wms/bar-code-rule/delete-with-detail', //删除含详情信息
+  GET_PAGE_BARCODE_RULE_LIST = '/wms/bar-code-rule/list', //分页查询--获取列表
+  GET_BARCODE_RULE_DTO = '/wms/bar-code-rule/query-dto', //获取实体信息
+  GET_ONE_BARCODE_RULE = '/wms/bar-code-rule/query-one', //查询单条
+  ADD_WITH_DETAIL_BARCODE_RULE = '/wms/bar-code-rule/save-with-detail', //添加含详情信息
+  UPDATE_BARCODE_RULE = '/wms/bar-code-rule/update', //编辑
 }
 //用于高级查询--基本信息查询下拉框字段
 export const TableColum = {

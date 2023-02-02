@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BdExamine"
+        tableName="BarCodeRule"
         searchNo="规则编码"
         searchName="规则名称"
         @getList="getList"
@@ -84,7 +84,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['update_time'],
+        descList: ['BarCodeRule.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,

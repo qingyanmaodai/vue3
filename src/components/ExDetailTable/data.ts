@@ -42,6 +42,11 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
         case column.field == 'bdOutStockLocation.name' &&
           (row.stockDis !== 'C' || !row.outCompartmentId):
           return false;
+        //条码规则
+        case (column.field == 'leftFix' || column.field == 'rightFix') && row.way && row.way === 1:
+          return false;
+        case column.field == 'format' && row.attrType && row.attrType !== 'DATE':
+          return false;
         default:
           return true;
       }
@@ -2773,6 +2778,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'wayDefault', edit: 'way' },
   },
   {
     field: 'name',
@@ -2780,13 +2786,15 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { edit: 'attrName' },
   },
   {
     field: 'attrType',
     title: '属性类型',
     width: 120,
     sortable: true,
-    editRender: { name: '$input' },
+    className: 'disableProp',
+    slots: { default: 'attrType' },
   },
   {
     field: 'format',
@@ -2794,6 +2802,7 @@ export const barcodeRulesOfDetailColumns = [
     width: 120,
     sortable: true,
     editRender: { name: '$input' },
+    slots: { default: 'formatDefault', edit: 'format' },
   },
   {
     field: 'len',

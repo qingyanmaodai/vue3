@@ -159,9 +159,9 @@
             :gridOptions="DetailOfExaGridOptions"
             :editRules="formDataRules"
             ref="detailTableRef"
-            @cellClickTableEvent="cellClickTableEvent"
-            @clearDetailTableEvent="clearDetailTableEvent"
-            @setDefaultTableData="setDefaultTableData"
+            @editDefaultTableData="editDefaultTableData"
+            :attrNameData="attrNameData"
+            :attrTypeData="attrTypeData"
             :detailTableData="detailTableData"
             :isShowIcon="formState.bsStatus !== 'B'"
             :isDisableButton="formState.bsStatus === 'B'"
@@ -205,7 +205,7 @@
   import { ExDetailTable } from '/@/components/ExDetailTable';
   import { RollbackOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { add, audit, unAudit, getOneById, update, BarEntity } from '/@/api/barcode/barcodeRules';
+  import { add, audit, unAudit, getOneById, BarEntity } from '/@/api/barcode/barcodeRules';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { config } from '/@/utils/publicParamConfig';
   import { VXETable } from 'vxe-table';
@@ -213,7 +213,7 @@
   import { ControlSet, SearchParams, TableColum, Url } from '/@/api/apiLink';
   import { basicGridOptions } from '/@/components/AMoreSearch/data';
   import { cloneDeep } from 'lodash-es';
-  import { getPublicList } from '/@/api/public';
+  import { getBarcodeAttr, getPublicList } from '/@/api/public';
   import { VxeGridPropTypes } from 'vxe-table/types/all';
   const { createMessage } = useMessage();
   const ASplitpanes = Splitpanes;
@@ -239,6 +239,7 @@
     billType: '',
   };
   const detailTableData: any = ref<object[]>([]); //表格数据
+  const barcodeAttrData: any = ref<object[]>([]); //获取条码属性
   //初始化
   const formStateInit = reactive({
     data: formData,
@@ -320,25 +321,13 @@
             createMessage.error('明细表数据校检不通过，请检查!');
             return;
           }
-          if (
-            tableFullData.some(
-              (e) =>
-                tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length > 1,
-            )
-          ) {
-            createMessage.error('明细表存在相同数据，请检查!');
-            return;
-          }
-          formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+          formState.value.dtData = cloneDeep(tableFullData);
         }
         //保存：新增+更新
-        if (!formState.value.id) {
-          formState.value = await add({ params: formState.value });
-        } else {
-          formState.value = await update({ params: formState.value });
-        }
+        const data = await add({ params: formState.value });
+        formState.value = Object.assign({}, formState.value, data);
         await setDataStatus();
-        detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+        detailTableData.value = cloneDeep(formState.value.dtData);
         createMessage.success('操作成功');
       })
       .catch((error: ValidateErrorEntity<FormData>) => {
@@ -362,21 +351,12 @@
               createMessage.error('明细表数据校检不通过，请检查!');
               return;
             }
-            if (
-              tableFullData.some(
-                (e) =>
-                  tableFullData.filter((e1) => e1.examineProjectId === e.examineProjectId).length >
-                  1,
-              )
-            ) {
-              createMessage.error('明细表存在相同数据，请检查!');
-              return;
-            }
-            formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+            formState.value.dtData = cloneDeep(tableFullData);
           }
-          formState.value = await audit({ params: formState.value });
+          const data = await audit({ params: formState.value });
+          formState.value = Object.assign({}, formState.value, data);
           await setDataStatus();
-          detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+          detailTableData.value = cloneDeep(formState.value.dtData);
           createMessage.success('操作成功');
         }
       })
@@ -393,11 +373,12 @@
     if (type === 'confirm') {
       const tableFullData = detailTableRef.value.getDetailData();
       if (tableFullData) {
-        formState.value.bdExamineDetailList = cloneDeep(tableFullData);
+        formState.value.dtData = cloneDeep(tableFullData);
       }
-      formState.value = await unAudit({ params: formState.value });
+      const data = await unAudit({ params: formState.value });
+      formState.value = Object.assign({}, formState.value, data);
       await setDataStatus();
-      detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+      detailTableData.value = cloneDeep(formState.value.dtData);
       createMessage.success('操作成功');
     }
   };
@@ -413,40 +394,60 @@
       formState.value = res;
     }
     await setDataStatus();
-    detailTableData.value = cloneDeep(formState.value.bdExamineDetailList);
+    detailTableData.value = cloneDeep(formState.value.dtData);
   };
-  //明细表双击赋值事件
-  const cellClickTableEvent = async (row, data, column) => {
-    switch (column) {
-      case 'bdExamineProject':
-        data.examineProjectId = row.id;
-        data.bdExamineProject = row;
-        break;
+  const attrNameData: any = ref<object[]>([]); //获取条码属性
+  const attrTypeData: any = ref<object[]>(); //属性类型
+  //编辑行时设置默认值
+  const editDefaultTableData = (row) => {
+    console.log('当前编辑数据', row);
+    if (row.way) {
+      if (row.way === 1) {
+        attrNameData.value = barcodeAttrData.value.other;
+      } else {
+        attrNameData.value = barcodeAttrData.value.base;
+      }
     }
-  };
-  //明细表清空事件
-  const clearDetailTableEvent = (data, column) => {
-    for (const key in column.params.param) {
-      data[key] = '';
-      data[column.params.param[key]] = {};
+    if (row.name) {
+      let attrTypeData1 = attrNameData.value.filter((item) => item.name == row.name);
+      attrTypeData.value = attrTypeData1 ? attrTypeData1[0].attrType : '';
     }
-  };
-  //设置Switch默认
-  const setDefaultTableData = (obj) => {
-    obj.isDefault = 1;
-    obj.isRequire = 1;
+
+    // if (row.name && row.name === attrNameData.value.name) {
+
+    // let aa = attrNameData.value.every((r) => {
+    //   r.name = row.name;
+    //   // });
+    // });
+    // console.log('aa', aa);
+
+    // if (obj.way !== 1) {
+    //   console.log('flassss');
+    // }
+    // switch (true) {
+    //   case column.field == 'name' && row.way && row.way === 1:
+    //     return {
+    //       backgroundColor: 'rgb(225 225 224)',
+    //     };
+    // }
   };
   //dtData状态赋值
   const setDataStatus = () => {
-    if (formState.value.bdExamineDetailList) {
-      formState.value.bdExamineDetailList.map((r) => {
+    if (formState.value.dtData) {
+      formState.value.dtData.map((r) => {
         r.bsStatus = formState.value.bsStatus;
       });
     }
   };
+  //获取条码属性
+  const getBarcodeAttrData = async () => {
+    const res: any = await getBarcodeAttr({ params: '' });
+    barcodeAttrData.value = res;
+  };
   //刚进入页面——加载完后，需要执行的方法
   onMounted(() => {
     getListById();
+    getBarcodeAttrData();
   });
 </script>
 <style scoped lang="less">
