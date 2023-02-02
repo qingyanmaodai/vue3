@@ -132,19 +132,21 @@
     </template>
     <template #attrType="{ row }">
       <span>{{
-        formatData(row.name ? props.attrTypeData : '', config['ATTR_TYPE'])['label']
+        formatData((row.attrType = row.name ? props.attrTypeData : ''), config['ATTR_TYPE'])[
+          'label'
+        ]
       }}</span>
     </template>
     <!--    <template #formatDefault="{ row }">-->
     <!--      <span>{{ formatData(row.format, config['DATE_FORMAT'])['label'] }}</span>-->
     <!--    </template>-->
     <template #formatDefault="{ row }">
-      <span>{{ formatData(row.format, config['WAY_BAR_RULES'])['label'] }}</span>
+      <span>{{ formatData(row.format, config['DATE_FORMAT'])['label'] }}</span>
     </template>
     <template #format="{ row }">
       <vxe-select v-model="row.format" transfer>
         <vxe-option
-          v-for="item in config.WAY_BAR_RULES"
+          v-for="item in config.DATE_FORMAT"
           :key="item.value"
           :value="item.value"
           :label="item.label"
@@ -397,7 +399,11 @@
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'format' && row.attrType && row.attrType !== 'DATE':
+      case column.field == 'format' && row.attrType && row.attrType != 'DATE':
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case (column.field == 'leftFix' || column.field == 'rightFix') && row.way && row.way === 1:
         return {
           backgroundColor: 'rgb(225 225 224)',
         };

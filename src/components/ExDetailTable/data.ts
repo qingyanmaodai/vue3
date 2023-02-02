@@ -43,8 +43,10 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
           (row.stockDis !== 'C' || !row.outCompartmentId):
           return false;
         //条码规则
-        // case column.field == 'attrType' && row.way && row.way !== 1:
-        //   return false;
+        case (column.field == 'leftFix' || column.field == 'rightFix') && row.way && row.way === 1:
+          return false;
+        case column.field == 'format' && row.attrType && row.attrType !== 'DATE':
+          return false;
         default:
           return true;
       }
