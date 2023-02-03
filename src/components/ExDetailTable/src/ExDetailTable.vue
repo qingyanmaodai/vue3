@@ -394,16 +394,21 @@
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      // //条码规则
-      case row.bsStatus === 'B':
+      // 条码规则
+      case column.field == 'format' && row.attrType !== 'DATE':
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case column.field == 'format' && row.attrType && row.attrType != 'DATE':
+      case column.field == 'len' && ((row.way === 1 && row.attrType !== 'SENO') || row.way === 2):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
-      case (column.field == 'leftFix' || column.field == 'rightFix') && row.way && row.way === 1:
+      case column.field == 'val' && (row.way === 2 || (row.way === 1 && row.attrType !== 'TEXT')):
+        return {
+          backgroundColor: 'rgb(225 225 224)',
+        };
+      case (column.field == 'leftFix' || column.field == 'rightFix') &&
+        ((row.way === 1 && row.attrType !== 'DATE') || !row.way):
         return {
           backgroundColor: 'rgb(225 225 224)',
         };
