@@ -4,7 +4,7 @@
       <Search
         :control="moreSearchData"
         ref="searchRef"
-        tableName="BarcodeTemplate"
+        tableName="BarCodeTemplate"
         searchNo="模板名称"
         :showSearchName="false"
         @getList="getList"
@@ -16,7 +16,7 @@
         :gridOptions="GridOptions"
         :tableData="tableData"
         :tablePages="tablePages"
-        tableName="BarcodeTemplate"
+        tableName="BarCodeTemplate"
         ref="tableRef"
         @addTableEvent="addTableEvent"
         @editTableEvent="editTableEvent"
@@ -76,7 +76,7 @@
     const res: any = await getDataList({
       params: getParams,
       orderByBean: {
-        descList: ['BarcodeTemplate.update_time'],
+        descList: ['BarCodeTemplate.update_time'],
       },
       pageIndex: currPage,
       pageRows: pageSize,

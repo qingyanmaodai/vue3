@@ -1,12 +1,130 @@
 <template>
   <div class="scrollbox">
+    <LayoutHeader style="background-color: #fff; height: 60px; padding: 0 20px">
+      <a style="font-size: 1.4rem; font-weight: bold; color: #000; line-height: 60px" @click="back"
+        ><RollbackOutlined /> 返回</a
+      >
+      <div style="display: flex; float: right">
+        <a-button type="primary" @click="preView" style="margin: 15px">
+          <template #icon>
+            <EyeOutlined />
+          </template>
+          预览
+        </a-button>
+        <!--        <a-button type="primary" @click="print">-->
+        <!--          <template #icon>-->
+        <!--            <PrinterOutlined />-->
+        <!--          </template>-->
+        <!--          直接打印-->
+        <!--        </a-button>-->
+        <a-button type="primary" @click="saveJson" style="margin: 15px">
+          <template #icon>
+            <SaveOutlined />
+          </template>
+          保存
+        </a-button>
+        <a-popconfirm
+          title="是否确认清空?"
+          okType="danger"
+          okText="确定清空"
+          @confirm="clearPaper"
+          placement="bottom"
+        >
+          <template #icon>
+            <QuestionCircleOutlined style="color: red" />
+          </template>
+          <a-button type="primary" danger style="margin: 15px">
+            清空
+            <template #icon>
+              <CloseOutlined />
+            </template>
+          </a-button>
+        </a-popconfirm>
+        <a-button type="primary" @click="onlyPrint" style="margin: 15px"> Api单独打印 </a-button>
+        <!--        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>-->
+      </div>
+    </LayoutHeader>
     <a-card>
       <a-form ref="formRef" :model="content.data" :rules="formRules">
-        <a-row>
-          <a-col :span="8">
-            <a-form-item label="模板名称：" ref="srcBill" name="srcBill" class="item">
-              <Input class="input" v-model:value="content.data.name" />
+        <a-row :gutter="24">
+          <a-col :span="6">
+            <a-form-item
+              label="模板名称："
+              ref="name"
+              name="name"
+              :label-col="{ span: 6 }"
+              :wrapper-col="{ span: 18 }"
+            >
+              <Input v-model:value="content.data.name" />
             </a-form-item>
+          </a-col>
+          <a-col :span="18">
+            <a-button-group>
+              <a-button
+                v-for="(value, type) in content.data.paperTypes"
+                :type="curPaperType === type ? 'primary' : 'default'"
+                @click="setPaper(type, value)"
+                :key="type"
+              >
+                {{ type }}
+              </a-button>
+              <a-popover
+                v-model="content.data.paperPopVisible"
+                title="设置纸张宽高(mm)"
+                trigger="click"
+              >
+                <template #content>
+                  <a-input-group compact style="margin: 10px 10px">
+                    <a-input
+                      type="number"
+                      v-model:value="content.data.paperWidth"
+                      style="width: 100px; text-align: center"
+                      placeholder="宽(mm)"
+                    />
+                    <a-input
+                      style="
+                        width: 30px;
+                        border-left: 0;
+                        pointer-events: none;
+                        backgroundcolor: #fff;
+                      "
+                      placeholder="~"
+                      disabled
+                    />
+                    <a-input
+                      type="number"
+                      v-model:value="content.data.paperHeight"
+                      style="width: 100px; text-align: center; border-left: 0"
+                      placeholder="高(mm)"
+                    />
+                  </a-input-group>
+                  <a-button type="primary" style="width: 100%" @click="otherPaper">确定</a-button>
+                </template>
+                <a-button :type="'other' == curPaperType ? 'primary' : 'default'"
+                  >自定义纸张</a-button
+                >
+              </a-popover>
+            </a-button-group>
+            <a-button type="text" @click="changeScale(false)">
+              <template #icon>
+                <ZoomOutOutlined />
+              </template>
+            </a-button>
+            <InputNumber
+              :value="content.data.scaleValue"
+              :min="content.data.scaleMin"
+              :max="content.data.scaleMax"
+              :step="0.1"
+              disabled
+              style="width: 70px"
+              :formatter="(value) => `${(value * 100).toFixed(0)}%`"
+              :parser="(value) => value.replace('%', '')"
+            />
+            <a-button type="text" @click="changeScale(true)">
+              <template #icon>
+                <ZoomInOutlined />
+              </template>
+            </a-button>
           </a-col>
           <!--          <a-col :span="8">-->
           <!--            <a-form-item label="业务日期：" ref="bsDate" name="bsDate" class="item">-->
@@ -21,96 +139,7 @@
           <!--          </a-col>-->
         </a-row>
       </a-form>
-      <a-space style="margin-bottom: 10px">
-        <a-button-group>
-          <a-button
-            v-for="(value, type) in content.data.paperTypes"
-            :type="curPaperType === type ? 'primary' : 'default'"
-            @click="setPaper(type, value)"
-            :key="type"
-          >
-            {{ type }}
-          </a-button>
-          <a-popover
-            v-model="content.data.paperPopVisible"
-            title="设置纸张宽高(mm)"
-            trigger="click"
-          >
-            <template #content>
-              <a-input-group compact style="margin: 10px 10px">
-                <a-input
-                  type="number"
-                  v-model:value="content.data.paperWidth"
-                  style="width: 100px; text-align: center"
-                  placeholder="宽(mm)"
-                />
-                <a-input
-                  style="width: 30px; border-left: 0; pointer-events: none; backgroundcolor: #fff"
-                  placeholder="~"
-                  disabled
-                />
-                <a-input
-                  type="number"
-                  v-model:value="content.data.paperHeight"
-                  style="width: 100px; text-align: center; border-left: 0"
-                  placeholder="高(mm)"
-                />
-              </a-input-group>
-              <a-button type="primary" style="width: 100%" @click="otherPaper">确定</a-button>
-            </template>
-            <a-button :type="'other' == curPaperType ? 'primary' : 'default'">自定义纸张</a-button>
-          </a-popover>
-        </a-button-group>
-        <a-button type="text" @click="changeScale(false)">
-          <template #icon>
-            <ZoomOutOutlined />
-          </template>
-        </a-button>
-        <InputNumber
-          :value="content.data.scaleValue"
-          :min="content.data.scaleMin"
-          :max="content.data.scaleMax"
-          :step="0.1"
-          disabled
-          style="width: 70px"
-          :formatter="(value) => `${(value * 100).toFixed(0)}%`"
-          :parser="(value) => value.replace('%', '')" />
-        <a-button type="text" @click="changeScale(true)">
-          <template #icon>
-            <ZoomInOutlined />
-          </template>
-        </a-button>
-        <a-button type="primary" @click="preView">
-          <template #icon>
-            <EyeOutlined />
-          </template>
-          预览
-        </a-button>
-        <!--        <a-button type="primary" @click="print">-->
-        <!--          <template #icon>-->
-        <!--            <PrinterOutlined />-->
-        <!--          </template>-->
-        <!--          直接打印-->
-        <!--        </a-button>-->
-        <a-button type="primary" @click="saveJson">
-          <template #icon>
-            <SaveOutlined />
-          </template>
-          保存
-        </a-button>
-        <a-button type="primary" @click="onlyPrint"> Api单独打印 </a-button>
-        <!--        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>-->
-        <a-popconfirm title="是否确认清空?" okType="danger" okText="确定清空" @confirm="clearPaper">
-          <template #icon>
-            <QuestionCircleOutlined style="color: red" />
-          </template>
-          <a-button type="primary" danger>
-            清空
-            <template #icon>
-              <CloseOutlined />
-            </template>
-          </a-button> </a-popconfirm
-      ></a-space>
+
       <a-row :gutter="[8, 0]">
         <a-col :span="4">
           <a-card style="height: 100vh">
@@ -246,6 +275,7 @@
     BorderOutlined,
     RightCircleOutlined,
     SaveOutlined,
+    RollbackOutlined,
   } from '@ant-design/icons-vue';
   import panel from './panel.js';
   import printData from './print-data.js';
@@ -265,6 +295,7 @@
     Form,
     FormItem,
     DatePicker,
+    LayoutHeader,
   } from 'ant-design-vue';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { add, getOneById } from '/@/api/barcode/barcodeTemplate';
@@ -743,7 +774,9 @@
       paperHeight: '',
     },
   });
-
+  // const formRules = {
+  //   name: [{ required: true, validator: validatePass, trigger: 'change' }]
+  // };
   let curPaperType = computed(() => {
     let type = 'other';
     let types = content.data.paperTypes;
