@@ -40,7 +40,12 @@
             </template>
           </a-button>
         </a-popconfirm>
-        <a-button type="primary" @click="onlyPrint" style="margin: 15px"> Api单独打印 </a-button>
+        <a-button type="primary" @click="onlyPrint" style="margin: 15px"
+          ><template #icon>
+            <PrinterOutlined />
+          </template>
+          Api单独打印
+        </a-button>
         <!--        <a-button type="primary" @click="onlyPrint2"> Api单独直接打印 </a-button>-->
       </div>
     </LayoutHeader>
@@ -287,22 +292,18 @@
     ButtonGroup,
     Popconfirm,
     Card,
-    Space,
     Button,
     Row,
     Col,
     Popover,
     Form,
     FormItem,
-    DatePicker,
     LayoutHeader,
   } from 'ant-design-vue';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { add, getOneById } from '/@/api/barcode/barcodeTemplate';
   import { useRoute, useRouter } from 'vue-router';
   const router = useRouter();
-  import { cloneDeep } from 'lodash-es';
-  const ADatePicker = DatePicker;
   const AForm = Form;
   const AFormItem = FormItem;
   const ARow = Row;
@@ -312,7 +313,6 @@
   const ACol = Col;
   const AButtonGroup = ButtonGroup;
   const APopconfirm = Popconfirm;
-  const ASpace = Space;
   const AButton = Button;
   const APopover = Popover;
   let preViewRef = ref('');
@@ -774,9 +774,9 @@
       paperHeight: '',
     },
   });
-  // const formRules = {
-  //   name: [{ required: true, validator: validatePass, trigger: 'change' }]
-  // };
+  const formRules = {
+    name: [{ required: true, message: '请输入模板名称', trigger: 'blur' }],
+  };
   let curPaperType = computed(() => {
     let type = 'other';
     let types = content.data.paperTypes;
@@ -920,11 +920,20 @@
     }
   };
   //保存格式
+  const formRef = ref('');
   const saveJson = async () => {
-    content.data.templateData = hiprintTemplate.getJson();
-    let hiprintTemplateData = await add({ params: content.data });
-    console.log(hiprintTemplateData, 'getJson()');
-    createMessage.success('操作成功');
+    formRef.value
+      .validate()
+      .then(async () => {
+        content.data.templateData = hiprintTemplate.getJson();
+        await add({ params: content.data });
+        createMessage.success('操作成功');
+      })
+      .catch((error) => {
+        if (error.errorFields) {
+          createMessage.error('数据校检不通过，请检查!');
+        }
+      });
   };
   // //改变样式
   // const changeMode = (value) => {

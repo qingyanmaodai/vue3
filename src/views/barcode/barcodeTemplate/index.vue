@@ -2,16 +2,21 @@
   <div class="default-theme" style="padding: 15px; height: 100%">
     <div style="background-color: #fff; height: 100%; padding: 0 6px">
       <Search
-        :control="moreSearchData"
         ref="searchRef"
         tableName="BarCodeTemplate"
         searchNo="模板名称"
-        :showSearchName="false"
+        :showMoreSearch="false"
+        :showSearchNo="false"
         @getList="getList"
         @resetEvent="resetTable"
       />
       <ExTable
+        :isAuditShow="false"
+        :isUnAuditShow="false"
+        :isPushDown="false"
+        :isRelatedShow="false"
         :isShowImport="false"
+        :isShowExport="false"
         :columns="barcodeTemplateColumns"
         :gridOptions="GridOptions"
         :tableData="tableData"
@@ -170,19 +175,13 @@
     await tableRef.value.computeData(res);
     await getList();
   };
-
-  //获取高级查询字段数据
-  // const moreSearchData = ref();
-  // getSearchOption({ params: '' }).then((res) => {
-  //   moreSearchData.value = res;
-  // });
   onMounted(() => {
     paneSize.value = cloneDeep(installPaneSize.value);
     getList();
   });
   //被keep-alive 缓存的组件激活时调用
   onActivated(() => {
-    // getList();
+    getList();
   });
 </script>
 
