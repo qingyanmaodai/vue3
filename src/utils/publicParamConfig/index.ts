@@ -356,7 +356,7 @@ export const config = {
       label: '报废',
     },
   ],
-  //单据类型
+  //采购单据类型
   NUMBER_REASON: [
     {
       value: 'A',
@@ -437,14 +437,6 @@ export const config = {
       label: '生产工单',
     },
     {
-      value: 'BsProMoReturn',
-      label: '生产退料',
-    },
-    {
-      value: 'BsPurchaseReturn',
-      label: '采购退库',
-    },
-    {
       value: 'BsPurchaseInStock',
       label: '采购入库',
     },
@@ -453,8 +445,16 @@ export const config = {
       label: '采购订单',
     },
     {
+      value: 'BsPurchaseReturn',
+      label: '采购退库',
+    },
+    {
       value: 'BsSaleOrder',
       label: '销售订单',
+    },
+    {
+      value: 'BsSaleNotice',
+      label: '销售通知',
     },
     {
       value: 'BsSaleOut',
@@ -465,16 +465,110 @@ export const config = {
       label: '销售退货',
     },
     {
-      value: 'BsSaleNotice',
-      label: '销售通知',
-    },
-    {
       value: 'BsOtherIn',
       label: '其他入库',
     },
     {
       value: 'BsOtherOut',
       label: '其他出库',
+    },
+  ],
+  //条码类型
+  BARCODE_TYPE: [
+    {
+      value: 1,
+      label: '序列码',
+    },
+    {
+      value: 2,
+      label: '批次码',
+    },
+  ],
+  //属性来源
+  WAY_BAR_RULES: [
+    {
+      value: 1,
+      label: '固定值',
+    },
+    {
+      value: 2,
+      label: '单据属性',
+    },
+  ],
+  //是否默认规则
+  IS_DEFAULT: [
+    {
+      value: true,
+      label: '是',
+    },
+    {
+      value: false,
+      label: '否',
+    },
+  ],
+  //属性名称
+  // ATTR_NAME: [
+  //   {
+  //     value: 'A',
+  //     label: '文本输入',
+  //   },
+  //   {
+  //     value: 'B',
+  //     label: '当前日期',
+  //   },
+  //   {
+  //     value: 'C',
+  //     label: '流水号',
+  //   },
+  // ],
+  //属性类型
+  ATTR_TYPE: [
+    {
+      value: 'TEXT',
+      label: '文本',
+    },
+    {
+      value: 'DATE',
+      label: '日期',
+    },
+    {
+      value: 'SENO',
+      label: '流水号',
+    },
+  ],
+  //格式中的日期选择
+  DATE_FORMAT: [
+    {
+      value: 'A',
+      label: 'yyyy-MM-dd HH:mm:ss',
+    },
+    {
+      value: 'B',
+      label: 'yyyy-MM-dd',
+    },
+    {
+      value: 'C',
+      label: 'yyyy-MM',
+    },
+    {
+      value: 'D',
+      label: 'yyyy',
+    },
+    {
+      value: 'E',
+      label: 'yy-MM-dd HH:mm:ss',
+    },
+    {
+      value: 'F',
+      label: 'yy-MM-dd',
+    },
+    {
+      value: 'G',
+      label: 'yy-MM',
+    },
+    {
+      value: 'H',
+      label: 'yy',
     },
   ],
 };

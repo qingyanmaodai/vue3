@@ -158,6 +158,12 @@
     <template #tag="{ row }"
       ><Tag>{{ formatData(row.tag, config['TAG'])['label'] }}</Tag></template
     >
+    <template #codeType="{ row }"
+      ><Tag>{{ formatData(row.codeType, config['BARCODE_TYPE'])['label'] }}</Tag></template
+    >
+    <template #isDefault="{ row }"
+      ><Tag>{{ formatData(row.isDefault, config['IS_DEFAULT'])['label'] }}</Tag></template
+    >
     <template #operate="{ row }">
       <AButton type="link" class="link" @click="editTableEvent(row)">编辑</AButton>
       <AButton

@@ -42,6 +42,16 @@ export const detailOfExaGridOptions = reactive<VxeGridProps>({
         case column.field == 'bdOutStockLocation.name' &&
           (row.stockDis !== 'C' || !row.outCompartmentId):
           return false;
+        //条码规则
+        case column.field == 'format' && row.attrType !== 'DATE':
+          return false;
+        case column.field == 'len' && ((row.way === 1 && row.attrType !== 'SENO') || row.way === 2):
+          return false;
+        case column.field == 'val' && (row.way === 2 || (row.way === 1 && row.attrType !== 'TEXT')):
+          return false;
+        case (column.field == 'leftFix' || column.field == 'rightFix') &&
+          ((row.way === 1 && row.attrType !== 'DATE') || !row.way):
+          return false;
         default:
           return true;
       }
@@ -2755,4 +2765,97 @@ export const warOthersOutputOfDetailColumns = [
   },
   { field: 'lot', title: '批次', editRender: { name: '$input' }, width: 150, sortable: true },
   { field: 'mark', title: '备注', editRender: { name: '$input' }, width: 150, sortable: true },
+];
+//条码规则详情
+export const barcodeRulesOfDetailColumns = [
+  { type: 'checkbox', width: 50 },
+  { field: 'seq', type: 'seq', title: '行号', width: 50 },
+  {
+    field: 'sort',
+    title: '顺序',
+    sortable: true,
+    width: 120,
+    editRender: { name: '$input', props: { type: 'integer', min: 1 } },
+  },
+  {
+    field: 'way',
+    title: '属性来源',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+    slots: { default: 'wayDefault', edit: 'way' },
+  },
+  {
+    field: 'name',
+    title: '属性名称',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+    slots: { edit: 'attrName' },
+  },
+  {
+    field: 'attrType',
+    title: '属性类型',
+    width: 120,
+    sortable: true,
+    className: 'disableProp',
+    slots: { default: 'attrType' },
+  },
+  {
+    field: 'format',
+    title: '格式',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+    slots: { default: 'formatDefault', edit: 'format' },
+  },
+  {
+    field: 'len',
+    title: '长度',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'integer' } },
+  },
+  {
+    field: 'val',
+    title: '设置值',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+  },
+  {
+    field: 'left',
+    title: '左截断',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'integer' } },
+  },
+  {
+    field: 'right',
+    title: '右截断',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input', props: { type: 'integer' } },
+  },
+  {
+    field: 'leftFix',
+    title: '左补位符',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+  },
+  {
+    field: 'rightFix',
+    title: '右补位符',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+  },
+  {
+    field: 'split',
+    title: '分隔符',
+    width: 120,
+    sortable: true,
+    editRender: { name: '$input' },
+  },
 ];
